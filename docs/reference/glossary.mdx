@@ -1,0 +1,134 @@
+---
+sidebar_position: 8
+sidebar_label: Glossary
+hide_title: true
+id: glossary
+title: Glossary
+---
+
+# Glossary
+
+Below, we define some frequently used terms in the ZetaChain ecosystem and
+during ZetaChain development.
+
+## Chain Id
+
+Every EVM chain has their own, unique id, represented by a number.
+
+[Chainlist](https://chainlist.org/) is a great resource to find EVM chain ids by
+chain name.
+
+## Connector Contract
+
+Smart contracts on connected chains like Ethereum or Arbitrum interact with
+ZetaChain by passing/receiving messages from ZetaChain's Connector Contracts,
+which are deployed on each connected chain.
+
+## Core Validator
+
+ZetaChain uses the Tendermint consensus protocol which is a partially
+synchronous Byzantine Fault Tolerant (BFT) consensus algorithm. Each validator
+node can vote on block proposals with voting power proportional to the staking
+coins (ZETA) bonded. Each validator is identified by its consensus public key.
+Validators need to be online all the time, ready to participate in the
+constantly growing block production. In exchange for their service, validators
+will receive block rewards, and potentially other rewards such as gas fees or
+processing fees, proportional to their bonded staking coins.
+
+## Cross-Chain
+
+Blanket term for anything that is transacting data or value between different
+blockchains.
+
+## Externally Managed Vault/Assets
+
+The ZetaChain validator set can manage vaults on connected chains just as an
+account on that chain can, through its TSS architecture. This functionality
+allows even non-smart-contract chains like Bitcoin to be managed by contracts on
+ZetaChain.
+
+## Hyper-Connected Node
+
+ZetaChain's node observes and processes transactions from all connected chains.
+By being "hyper-connected" the node is able to support chain-agnostic
+observation and thus interoperability.
+
+## Multichain
+
+Blanket term for apps or concepts that span multiple blockchains.
+
+## Observer Validator
+
+The observers watch externally connected chains for certain relevant
+transactions/events/states at particular addresses via their full nodes of
+external chains. The observers can be further divided into two roles: sequencer
+and verifier. The sequencer discovers relevant external
+transactions/events/states and reports to verifiers; the verifiers verify and
+vote on ZetaChain to reach consensus. The system requires at least one sequencer
+and multiple verifiers. The sequencer does not need to be trusted, but at least
+one honest sequencer is needed for liveness.
+
+## Omnichain
+
+As if all blockchains or layers were connected into a single chain. ZetaChain is
+an 'omnichain' solution, since it is chain-agnostic and allows interoperability
+between all connected chains.
+
+## Omnichain messaging
+
+Messaging value and/or data between chains seamlessly (via ZetaChain).
+
+## Omnichain smart contracts
+
+ZetaChain's native smart contracts are omnichain, meaning that they can manage,
+read, and write state to/from external chains. These smart contracts are the
+first of their kind, and unlock a new paradigm of dApps that transcend
+individual chains and layers.
+
+## Revert
+
+During a cross-chain transaction, the case that a destination transaction fails
+(insufficient funds sent, unforeseen changes on the destination, etc.) ZetaChain
+is capable of reverting the transaction and returning funds to the sender on the
+source chain.
+
+## Signer Validator
+
+The ZetaChain collectively holds standard ECDSA/EdDSA keys for authenticated
+interaction with external chains. The keys are distributed among multiple
+signers in such a way that only a super majority of them can sign on behalf of
+the ZetaChain. Its important to ensure that at no time is any single entity or
+small fraction of nodes able to sign messages on behalf of ZetaChain on external
+chains. The ZetaChain system uses bonded stakes and positive/negative incentives
+to ensure economic safety
+
+## TSS
+
+Threshold Signature Scheme. To avoid any single point of failure, ZetaChain uses
+state-of-the-art multi-party threshold signature scheme (TSS) (see
+[whitepaper](https://zetachain.com/whitepaper.pdf) for more details). To the
+outside world, the ZetaChain validators collectively possess a single
+ECDSA/EdDSA private key, public key, and address, and the signature signed by
+ZetaChain can be verified efficiently and natively by standard ECDSA/EdDSA
+verification procedure by the connected blockchains. Internally, the private key
+is generated without a dealer, and the private key is distributed in all the
+validators. At no time is a single entity or a minority of validators able to
+piece together the private key and sign messages on behalf of the whole network.
+The key generation and signing procedures are done by Multi-Party Computation
+(MPC) which reveal no secret of any participating node. Because ZetaChain can
+hold a TSS key and address, ZetaChain can support smart contracts that can
+manage native vaults/pools on connected chains including Bitcoin. This
+effectively adds smart contract capabilities to the Bitcoin network, and
+potentially other non-smart contract blockchains. The TSS employed by ZetaChain
+gives the performance and convenience of hot wallet with cold wallet level
+security.
+
+## ZRC-20
+
+ZRC-20 is a token standard integrated into ZetaChain's omnichain smart contract
+platform. At a high-level, ZRC-20 tokens are an extension of the standard ERC-20
+tokens found in the Ethereum ecosystem, ZRC-20 tokens have the added ability to
+manage assets on all ZetaChain-connected chains. Any fungible token, including
+Bitcoin, Dogecoin, ERC-20-equivalents on other chains, gas assets on other
+chains, and so on, may be represented on ZetaChain as a ZRC-20 and orchestrated
+as if it were any other fungible token (like an ERC-20).

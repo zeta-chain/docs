@@ -1,0 +1,30 @@
+---
+sidebar_position: 1
+---
+
+# Start building with ZetaChain
+
+At a high level, ZetaChain is a Proof of Stake (PoS) blockchain developed using
+the Cosmos SDK and Tendermint Core consensus engine. As a result, ZetaChain
+enjoys fast block time and instant finality.
+
+ZetaChain hosts an Ethereum Virtual Machine (EVM) compatible execution layer
+called zEVM. In addition to supporting all EVM features and standard
+interactions (such as contract creation, contract interaction, and contract
+composition), zEVM's distinguishing characteristics include:
+
+- The ability for contracts on zEVM to be called from external chains
+- The capacity for contracts on zEVM to generate outbound transactions on
+  external chains.
+
+These two unique features enable zEVM to function as a general-purpose
+programmable platform, supporting cross-chain transactions that can atomically
+modify states across different chains in a single step.
+
+When developing on ZetaChain, you create zEVM contracts. While zEVM contracts
+can be any standard Solidity contract, to fully utilize ZetaChain's
+capabilities, they should adhere to specific interfaces. These interfaces,
+unique to ZetaChain, enable interaction with externally connected blockchains.
+
+Contracts that that run on ZetaChain and satisfy its interfaces are called
+**omnichain smart contracts**.

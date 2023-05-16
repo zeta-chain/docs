@@ -1,0 +1,29 @@
+---
+sidebar_position: 3
+sidebar_label: Cross-Chain NFT
+hide_title: true
+id: cross-chain-nft
+title: Build a Cross-Chain NFT
+---
+
+# Build a cross-chain NFT
+
+An NFT collection with cross-chain transfer capabilities using [Zeta Connector](/developers/cross-chain-messaging/connector.mdx).
+
+![Cross-chain NFT transfer](/img/graphs/cross-chain-nft-transfer.svg)
+
+To create a cross-chain NFT collection you will need to deploy NFT contracts implementing Zeta's interfaces and functions to multiple chains.
+
+In a nutshell, your contracts will need to:
+
+- Implement a `crossChainTransfer` function, that burns the NFT on the current chain and uses `zeta.send` to send a message that mints it on the other one.
+- Implement `onZetaMessage` to mint the NFT that was burned on the other chain.
+- Implement `onZetaRevert` to handle `crossChainTransfer` errors, and re-mint the previously burned NFT.
+
+Here's a code example:
+
+```solidity reference
+https://github.com/zeta-chain/zetachain/blob/main/packages/example-contracts/contracts/cross-chain-warriors/CrossChainWarriors.sol
+```
+
+To see a tested, working implementation and try it in testnet, check our [examples package](https://github.com/zeta-chain/zetachain/tree/main/packages/example-contracts).

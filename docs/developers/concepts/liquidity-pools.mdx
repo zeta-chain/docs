@@ -1,0 +1,58 @@
+---
+sidebar_label: Liquidity Pools
+hide_title: true
+title: Liquidity Pools
+sidebar_position: 4
+---
+
+# Liquidity Pools
+
+Liquidity pools help facilitate both crucial functions of ZetaChain and improved
+user experience (lower fees, more fluid exchanges, more versatile financial
+applications) for the entire crypto ecosystem. the pools in ZetaChain's
+environment fall into three main buckets: core ZETA pools, additional zEVM
+pools, and external ZETA pools.
+
+## Core ZETA Pools
+
+A [ZETA] / [Gas ZRC-20] Uniswap Pool (on zEVM) is the core pool needed by
+ZetaChain to write outbound transactions to that chain. Whenever a chain's
+support is added, a corresponding pool between ZETA and that chain's native gas
+asset is also created.
+
+Here, you can visualize how a UniswapV2 contract controls ZETA / gas pools.
+Liquidity is provided to TSS addresses on connected chains, and then Uniswap (or
+any exchange contract) can use those assets (ZRC-20) against ZETA or any other
+asset.
+
+![example-image](/img/graphs/zeta-pools-example.svg)
+
+For example, you can see how cross-chain messaging functions using these core
+pools that pair native gas (ZRC-20) with ZETA to pay for outbound transactions:
+
+![example-image](/img/graphs/messaging-based-dex-using-zrc-20-graph.svg)
+
+## Additional zEVM Pools
+
+Any liquidity pool may be created on zEVM. One can deploy normal ERC-20 tokens
+onto ZetaChain, incorporate external chain tokens through ZRC-20, and make any
+permutation of liquidity pool required for their applications, just as one would
+on a single-chain EVM. For example, one could create useful [ZETA] /
+[Stablecoin] or [Gas] / [Stablecoin] pools that let users trade more fluidly
+against different assets.
+
+As another example, you can see how one could swap using a DEX that uses ZRC-20
+tokens in a pool directly against each other. This depicts a swap between native
+MATIC and ETH. Of course, if needed, tokens could use ZETA as an intermediary
+(MATIC -> ZETA -> ETH) if a certain pool does not exist.
+
+![example-image](/img/graphs/zevm-based-dex-using-zrc-20-graph.svg)
+
+## External ZETA Pools
+
+ZETA is an omnichain token that exists both on ZetaChain as well as on any
+connected chain, as it is for both smart contract gas fees and cross-chain
+messaging. Certain pools such as [ZETA] / [Gas] on each chain will be helpful
+for applications to facilitate cross-chain value transfer through messaging.
+Developers also need pools on external chains to acquire ZETA, in order to use
+it for messaging.

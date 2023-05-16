@@ -1,0 +1,66 @@
+---
+sidebar_position: 1
+title: System contract
+sidebar_label: System contract
+id: system-contract
+---
+
+import CodeBlock from "@theme/CodeBlock";
+
+To make your life easier we already deployed a system contract with some
+information you may need in your protocol. You can import this code into your
+project and instance with the deployed address ([Testnet
+addresses](/reference/testnet.mdx) or [Mainnet
+addresses](/reference/mainnet.mdx))
+
+In this contract you will find:
+
+- wZetaContractAddress: ZRC20 version of Zeta Native Token
+- uniswapv2FactoryAddress and uniswapv2Router02Address: Uniswap v2 already
+  deployed on zEVM
+- gasZetaPoolByChainId and gasCoinZRC20ByChainId: helpers with ZRC20 data
+  indexed by chain id
+- gasPriceByChainId: helper to estimate gas for an external transaction
+
+[Swap Helper
+Lib](https://github.com/zeta-chain/zetachain/tree/main/packages/zevm-protocol-contracts/contracts/system/SystemContract.sol)
+
+```solidity title="SystemContract.sol"
+contract SystemContract is SystemContractErrors {
+    mapping(uint256 => uint256) public gasPriceByChainId;
+    mapping(uint256 => address) public gasCoinZRC20ByChainId;
+    mapping(uint256 => address) public gasZetaPoolByChainId;
+    //...
+    address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6226aB;
+    address public wZetaContractAddress;
+    address public uniswapv2FactoryAddress;
+    address public uniswapv2Router02Address;
+    //...
+}
+```
+
+Let's write an example of how to use this in your smart contract
+
+```solidity title="Sample.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+//...
+import "../system/SystemContract.sol";
+//...
+
+contract SystemContractSample {
+    SystemContract public immutable systemContract;
+
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
+    }
+
+    function getZRC20AddressByChainId(uint32 targetZRC20ChainId) public returns(address) {
+        return systemContract.gasCoinZRC20ByChainId(targetZRC20ChainId);
+    }
+}
+```
+
+This are the more primitive helpers, if you want more sofisticated please
+reference to [Smart contract helpers](/developers/tutorials/examples/smart-contracts-helpers.mdx)

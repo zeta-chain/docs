@@ -1,0 +1,60 @@
+---
+sidebar_position: 2
+sidebar_label: ZetaChain's Omnichain Toolkit
+hide_title: true
+id: omnichain-toolkit
+title: ZetaChain's Omnichain Toolkit
+---
+
+# ZetaChain's Omnichain Toolkit
+
+ZetaChain offers a complete toolkit for developers to build omnichain
+applications using omnichain smart contracts and/or cross-chain messaging. Here
+is an overview of these two features and their use cases. For a deeper dive into
+the different use cases, check out [Smart Contracts vs.
+Messaging](/developers/cross-chain-messaging/contracts-vs-messaging.mdx).
+
+## Omnichain Smart Contracts
+
+Omnichain Smart Contracts are contracts deployed on ZetaChain that can use and
+orchestrate assets on connected chains, as well as on ZetaChain. With Omnichain
+Smart Contracts, you are able to have a single place of logic that can maintain
+the state of assets and data across all connected chains.
+
+Omnichain Smart Contracts are ideal for more complex applications where state
+management between different chains is core to the application. Some use case
+examples include:
+
+- Complex trading or DeFi applications that involve liquidity on multiple
+  chains.
+- Adding smart contract layer to non-smart-contract chains like Bitcoin and
+  Dogecoin, or incorporating these chains/assets with other pieces of the DeFi
+  ecosystem natively.
+- Multichain smart-contract wallet applications like portfolio management across
+  all chains.
+- Leveraging existing implementations of protocols like Aave, Uniswap, Curve,
+  etc. for omnichain. Since zEVM is EVM-compatible, one can build on top of
+  these implementations (just as they would on Ethereum) to adapt them for
+  omnichain interoperability.
+
+## Cross-Chain Messaging
+
+Cross-chain messaging lets you send messages from any connected chain to any
+connected chain, including ZetaChain. Cross-chain messaging makes the most sense
+for applications that generally need minimal logic or state to maintain across
+all chains, and where data that needs only to be passed between different chains
+one way.
+
+A good example of this is an application that needs only to call a contract or
+send value to an address on a different chain. After the message is received and
+processed on the destination, the application ideally doesn't have to broadcast
+anything back to synchronize state for anything, and the sender doesn't care
+about the results.
+
+Cross-chain messaging works to build a variety of applications and primitives
+such as:
+
+- Omnichain NFTs that can be sent between different chains, and that don't need
+  to know about the state of the collection on other chains
+- “Simple” swap or bridge apps that use liquidity pools on existing chains
+- Proving ownership of NFTs or simple action-calls to a different chain
