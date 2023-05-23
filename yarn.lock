@@ -5628,7 +5628,7 @@ __metadata:
     "@tsconfig/docusaurus": 1.0.6
     "@typescript-eslint/eslint-plugin": 5.26.0
     "@typescript-eslint/parser": 5.14.0
-    "@zetachain/ui-toolkit": 1.0.0
+    "@zetachain/ui-toolkit": 1.0.1
     autoprefixer: 10.4.7
     babel-plugin-macros: 3.1.0
     babel-plugin-twin: 1.1.0
@@ -5662,17 +5662,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@zetachain/ui-toolkit@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@zetachain/ui-toolkit@npm:1.0.0"
+"@zetachain/ui-toolkit@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@zetachain/ui-toolkit@npm:1.0.1"
   peerDependencies:
     "@emotion/react": 11.10.5
     "@emotion/styled": 11.10.5
-    "@mui/material": 5.8.1
-    react: 17.0.2
-    react-dom: 17.0.2
+    "@mui/material": 5.13.1
+    react: 18.2.0
+    react-dom: 18.2.0
     tailwindcss: 3.2.6
-  checksum: 6d731832c180d01e48a6f7ff05cf9dc8f83e935d1cdb12dabecf66fe8dde300643ad53c18d28a1a1d3a05a4207a2186dadc1737d6af34c0093a118801d8b517c
+  checksum: 9674a557c53d99232bdf27b772aa20439fc5f9697f507b18d135e55cd2a79b87646dfbb0d82db806036cdff00338447759aad5b011b691910b44e85ed84fae1b
   languageName: node
   linkType: hard
 
