@@ -2,6 +2,7 @@ const themeTw = require("@zetachain/ui-toolkit/theme/tailwind.config");
 
 module.exports = {
   ...themeTw,
+  content: ["./src/**/*.{ts,tsx,js,jsx}"],
   darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     screens: {

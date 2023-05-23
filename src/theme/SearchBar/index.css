@@ -1,0 +1,57 @@
+:root {
+  --aa-search-input-height: 36px;
+}
+
+body.dark,
+body[data-theme="dark"] {
+  --aa-muted-color-alpha: 1;
+}
+
+body[data-theme] .aa-DetachedSearchButton {
+  border-radius: 100px;
+  border: none;
+  padding: 8px 12px;
+  height: var(--aa-search-input-height);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  cursor: pointer;
+  width: 200px;
+  transition: background-color 0.2s ease-in-out;
+  font-family: "QuestionMark", "Roobert", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+body[data-theme="light"] .aa-DetachedSearchButton {
+  background-color: #eff1f4;
+  color: #1f2328;
+}
+
+body[data-theme="dark"] .aa-DetachedSearchButton {
+  background-color: #1f2328;
+  color: #e5e8ec;
+  --aa-primary-color-rgb: 255, 255, 255 !important;
+}
+
+.aa-DetachedSearchButtonIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+@media (max-width: 599px) {
+  body[data-theme] .aa-DetachedSearchButton {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .dsla-search-wrapper {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .aa-DetachedSearchButtonIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
