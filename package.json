@@ -32,7 +32,7 @@
     "@sentry/integrations": "7.12.1",
     "@sentry/react": "7.12.1",
     "@sentry/tracing": "7.12.1",
-    "@zetachain/ui-toolkit": "1.0.0",
+    "@zetachain/ui-toolkit": "1.0.1",
     "autoprefixer": "10.4.7",
     "clsx": "1.2.1",
     "docusaurus-theme-github-codeblock": "1.1.4",
