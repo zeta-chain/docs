@@ -10,7 +10,7 @@ Operators should ignore this document.
 
 `git pull` the merged branch so that you have all the files in the gentx folder.
 
-`bash ./scripts/genesis_collector.sh `
+`bash ./scripts/genesis_collector.sh`
 
 - This would put a genesis.json into the `genesis_files/config/` folder
   - Commit and push the file to the Repo
