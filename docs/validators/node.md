@@ -38,7 +38,8 @@ jq --version
 
 Download and install `zetacored` and `zetaclientd` binaries.
 
-Binaries are built based on OS version and CPU architecture. The available binaries are:
+Binaries are built based on OS version and CPU architecture. The available
+binaries are:
 
 ```
 zetaclientd-alpine-amd64
@@ -56,8 +57,8 @@ For the rest of these instructions we'll assume you are usinng Ubuntu 22 with
 need to adjust the commands below.
 
 ```
-wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/1.0.0/zetacored-ubuntu-22-amd64
-wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/1.0.0/zetaclientd-ubuntu-22-amd64
+wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetacored-ubuntu-22-amd64
+wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetaclientd-ubuntu-22-amd64
 mv zetacored-ubuntu-22-amd64 /usr/bin/zetacored && chmod +x /usr/bin/zetacored
 mv zetaclientd-ubuntu-22-amd64 /usr/bin/zetaclientd && chmod +x /usr/bin/zetaclientd
 # You may need to set additional permissions depending on your node configuration
@@ -134,10 +135,9 @@ Note: a backup up is created for the existing zetacored folder under
 
 ### Node Configuration for Observer/Signer Validators
 
-:::caution
-These instructions apply to **Observer/Signer Validators only**. Most operators are
-"core validators" and can skip to Phase 2. If you aren't sure what type of node you have, you are most likely a core validator.
-:::
+:::caution These instructions apply to **Observer/Signer Validators only**. Most
+operators are "core validators" and can skip to Phase 2. If you aren't sure what
+type of node you have, you are most likely a core validator. :::
 
 #### Configure RPC Connectivity
 
@@ -151,18 +151,29 @@ to a node setup guide for each chain.
 - [Polygon RPC Node Setup](https://wiki.polygon.technology/docs/category/run-a-full-node)
 - [BTC RPC Node Setup](/validators/btc)
 
-Edit the `zetaclient_config.json` file located in the `.zetacored/config` directory
-and add the RPC endpoints to the `Endpoint = ` section of each chain.
+Edit the `zetaclient_config.json` file located in the `.zetacored/config`
+directory and add the RPC endpoints to the `Endpoint = ` section of each chain.
+
+**BTC RPC Only:** When adding your BTC rpc endpoint to the
+`zetaclient_config.json` file, you must use exclude http/https and only use the
+hostname:port. It will always attempt to connect using http. If you include http
+or https in the endpoint name, it will fail.
 
 #### Set Public IP in `zetaclient_config.json`
 
-Observer/Signer Validators must set their public IP in the `zetaclient_config.json` file located in the `.zetacored/config` directory.
+Observer/Signer Validators must set their public IP in the
+`zetaclient_config.json` file located in the `.zetacored/config` directory.
+
+Observer/Signer Validators must set their public IP in the
+`zetaclient_config.json` file located in the `.zetacored/config` directory. This
+file will be automatically created when you run `zetaclientd init`.
 
 ## Phase 2: Core Genesis
 
 ### Get Updated Genesis File
 
-After the ZetaChain coordinator has merged the gentx PRs and updated the genesis file:
+After the ZetaChain coordinator has merged the gentx PRs and updated the genesis
+file:
 
 - Switch back to the `main` branch
 - Pull the latest changes to get the updated `genesis.json` file
@@ -176,7 +187,8 @@ git merge upstream/main
 
 ### Start The Node
 
-The `start-zetacored.sh` script automatically copies the new genesis file to `~/.zetacored/config/`.
+The `start-zetacored.sh` script automatically copies the new genesis file to
+`~/.zetacored/config/`.
 
 ```
 ./scripts/start-zetacore.sh
@@ -193,9 +205,7 @@ SEEDIP=3.218.170.198
 
 ### Wait for Genesis to Complete
 
-:::note
-Wait until ZetaChain coordinator confirms that genesis is completed.
-:::
+:::note Wait until ZetaChain coordinator confirms that genesis is completed. :::
 
 You can terminate the `zetacored` process that was manually started in the
 previous step. You'll want to resume zetacored using a more robust process
@@ -215,8 +225,7 @@ environment you are running the validator in. At a minimum we reccomend you:
 - Do NOT run these services as root. Create a new restricted ZetaChain user
 - Create Sentry nodes to protect your validator
 - Setup ngnix to forward p2p traffic from Sentry node to zetaclientd
-- Make sure you setup resource monitoring (CPU, RAM, etc), uptime
-  monitoring, log ingestion, etc to minimize the risk of downtime or
-  slashing
-- Install adequate security measures such as, endpoint protection,
-  anti-virus, system level logging, WAF, etc
+- Make sure you setup resource monitoring (CPU, RAM, etc), uptime monitoring,
+  log ingestion, etc to minimize the risk of downtime or slashing
+- Install adequate security measures such as, endpoint protection, anti-virus,
+  system level logging, WAF, etc
