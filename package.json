@@ -32,7 +32,7 @@
     "@sentry/integrations": "7.12.1",
     "@sentry/react": "7.12.1",
     "@sentry/tracing": "7.12.1",
-    "@zetachain/ui-toolkit": "1.0.0",
+    "@zetachain/ui-toolkit": "1.0.1",
     "autoprefixer": "10.4.7",
     "clsx": "1.2.1",
     "docusaurus-theme-github-codeblock": "1.1.4",
@@ -87,10 +87,8 @@
   },
   "engines": {
     "node": ">=16.0.0",
-    "yarn": ">=3.2.1",
     "npm": "please-use-yarn"
   },
-  "packageManager": "yarn@3.2.1",
   "babelMacros": {
     "twin": {
       "preset": "emotion",
