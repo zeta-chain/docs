@@ -87,10 +87,8 @@
   },
   "engines": {
     "node": ">=16.0.0",
-    "yarn": ">=3.2.1",
     "npm": "please-use-yarn"
   },
-  "packageManager": "yarn@3.2.1",
   "babelMacros": {
     "twin": {
       "preset": "emotion",
