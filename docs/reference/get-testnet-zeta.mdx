@@ -7,7 +7,7 @@ sidebar_position: 6
 
 ## What is ZETA?
 
-ZETA token is used to deploy and call smart contracts on ZetaChain, and to transact
+ZETA is a token used to deploy and call smart contracts on ZetaChain, and to transact
 data and value across chains (through messaging). For ZetaChain's Athens
 network, they use the same ZETA that lives on connected testnet networks. With
 ZetaChain's Mainnet launch, ZETA will be traded and transacted across all
@@ -41,7 +41,7 @@ Once installed, you can use the faucet to get ZETA tokens on any EVM-compatible
 network. For example, to get ZETA on the Goerli testnet, you can run:
 
 ```bash
-zetafaucet -d -a 0x4bB9089ee3B86e97b171838205483362966f9dE8 -c goerli
+zetafaucet --drip --address 0x4bB9089ee3B86e97b171838205483362966f9dE8 --chain goerli
 ```
 
 You will be prompted to authenticate with your Github account to use the faucet.
@@ -56,7 +56,7 @@ If you're using [a Hardhat template](https://github.com/zeta-chain/template),
 you can get ZETA tokens by running the following command:
 
 ```bash
-npx hardhat faucet --network goerli
+npx hardhat faucet --chain goerli
 ```
 
 Under the hood this command uses the ZetaChain CLI faucet.

@@ -2,6 +2,13 @@
 
 This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
+## Make sure you have a .env with:
+
+```
+URL=https://docs.staging.zetachain.com/
+BASE_URL=/docs/
+```
+
 ### Installation
 
 ```
@@ -11,7 +18,7 @@ $ yarn
 ### Local Development
 
 ```
-$ yarn start
+$ yarn dev
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.

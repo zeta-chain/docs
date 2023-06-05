@@ -8,11 +8,88 @@ title: ZetaScan
 
 # ZetaScan
 
-ZetaScan is ZetaChain's maintained explorer. You can view recent ZetaChain
-transactions and track the status of cross-chain transactions end-to-end. Check
-it out [here](https://explorer.zetachain.com).
+ZetaScan is a blockchain explorer maintained by the ZetaChain team. You can view
+recent ZetaChain transactions and track the status of cross-chain transactions
+end-to-end. Check it out: https://explorer.zetachain.com.
 
-![ZetaScan](/img/graphs/zeta-scan-screen-capture.png)
+![ZetaScan](/img/graphs/zeta-scan-screen-capture.jpg)
+
+## Verifying Smart Contracts
+
+ZetaScan allows you to verify the source code of deployed smart contracts and
+interact with them directly from the explorer.
+
+To verify a smart contract, navigate to the contract's page and click the
+"Verify & Publish" button. You will need to provide the contract's source code
+and metadata file.
+
+Let's compile, deploy and verify one of the example contracts as an example.
+
+Clone the example contracts repository and navigate to the withdraw contract:
+
+```
+git clone https://github.com/zeta-chain/example-contracts
+cd example-contracts/withdraw
+```
+
+Install the dependencies:
+
+```
+yarn
+```
+
+Compile the contract:
+
+```
+npx hardhat compile
+```
+
+Create a wallet:
+
+```
+npx hardhat account --save
+```
+
+Request testnet ZETA tokens:
+
+```
+npx hardhat faucet
+```
+
+Deploy the compiled contract to ZetaChain's testnet:
+
+```
+npx hardhat deploy --network athens
+```
+
+Follow the link in the output to view the contract on ZetaScan. Please, note
+that it may take a few minutes for the contract to appear on ZetaScan.
+
+![Contract on ZetaScan](/img/graphs/zeta-scan-contract.jpg)
+
+Click the "Verify & Publish" button. You will need to provide the contract's
+source code and metadata file.
+
+The source code of the contract is contained in the `contracts/Withdraw.sol`
+file. Drag the file into the drop zone in ZetaScan.
+
+The metadata is contained in the `artifacts/build-info` directory. Drag the JSON
+file into the drop zone in ZetaScan as well.
+
+![Source code and metadata on ZetaScan](/img/graphs/zeta-scan-files.jpg)
+
+After both the source code and metadata have been uploaded, click the "Verify &
+Publish" button. If your contract imports other contracts, you may see a pop-up
+window asking you to select which contract you want to verify.
+
+![Source code and metadata on ZetaScan](/img/graphs/zeta-scan-select-contract.jpg)
+
+Select "Withdraw" and click "Verify again".
+
+![Verified on ZetaScan](/img/graphs/zeta-scan-verified.jpg)
+
+Congratulations! Your contract is now verified on ZetaScan. You can now interact
+with it directly from the explorer.
 
 ## Want to see more?
 
