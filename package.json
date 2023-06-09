@@ -34,6 +34,7 @@
     "@sentry/tracing": "7.12.1",
     "@zetachain/ui-toolkit": "1.0.1",
     "autoprefixer": "10.4.7",
+    "bech32": "^2.0.0",
     "clsx": "1.2.1",
     "docusaurus-theme-github-codeblock": "1.1.4",
     "esbuild-loader": "2.21.0",
