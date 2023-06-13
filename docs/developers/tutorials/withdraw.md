@@ -31,9 +31,9 @@ by the payload of the data field of the transaction).
 
 ## Set up your environment
 
-:::note
-This tutorial assumes that you have already completed the [setup tutorial](/developers/tutorials/setup) or cloned [the template Hardhat project](https://github.com/zeta-chain/template).
-:::
+:::note This tutorial assumes that you have already completed the
+[setup tutorial](/developers/tutorials/setup) or cloned
+[the template Hardhat project](https://github.com/zeta-chain/template). :::
 
 Install the ZetaChain's protocol contracts so that your contract can inherit
 ZetaChain-specific functionality:
@@ -68,11 +68,7 @@ npx hardhat faucet
 First, create a new Solidity contract called `Withdraw.sol`:
 
 ```solidity reference
-<<<<<<< HEAD
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/withdraw/contracts/Withdraw.sol
-=======
 https://github.com/zeta-chain/example-contracts/blob/main/omnichain/withdraw/contracts/Withdraw.sol
->>>>>>> main
 ```
 
 Start by importing the necessary interfaces from the
@@ -120,11 +116,7 @@ Next, create a deployment task script called `deploy.ts`. This script will
 deploy the Withdraw contract to ZetaChain.
 
 ```ts reference
-<<<<<<< HEAD
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/withdraw/tasks/deploy.ts
-=======
 https://github.com/zeta-chain/example-contracts/blob/main/omnichain/withdraw/tasks/deploy.ts
->>>>>>> main
 ```
 
 Don't forget to import the deployment task in your `hardhat.config.ts` file.
@@ -151,11 +143,7 @@ npx hardhat deploy --network athens
 ## Interacting with the contract
 
 ```ts reference
-<<<<<<< HEAD
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/withdraw/tasks/withdraw.ts
-=======
 https://github.com/zeta-chain/example-contracts/blob/main/omnichain/withdraw/tasks/withdraw.ts
->>>>>>> main
 ```
 
 Don't forget to import the withdraw task in your `hardhat.config.ts` file.
