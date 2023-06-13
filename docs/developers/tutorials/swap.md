@@ -31,11 +31,9 @@ ZetaChain.
 
 ## Set up your environment
 
-:::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
-:::
+:::note This tutorial assumes that you have already completed the
+[setup tutorial](/developers/tutorials/setup) or cloned
+[the template Hardhat project](https://github.com/zeta-chain/template). :::
 
 Install the dependencies:
 
@@ -55,7 +53,7 @@ npx hardhat faucet
 ## Create the contract
 
 ```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/contracts/ZetaSwapV2.sol
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/contracts/ZetaSwapV2.sol
 ```
 
 ### Configure the Hardhat environment
@@ -78,7 +76,7 @@ npx hardhat compile
 ## Write a test for the contract
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/test/Swap.spec.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/test/Swap.spec.ts
 ```
 
 ### Implement helper functions
@@ -88,14 +86,14 @@ The test uses a helper function to encode the parameters for the
 file.
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/test/helpers.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/test/helpers.ts
 ```
 
 The test also uses a helper function to set up the environment for the test. The
 helper function is defined in the `test.helpers.ts` file.
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/test/test.helpers.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/test/test.helpers.ts
 ```
 
 ### Import contracts
@@ -104,11 +102,11 @@ The test depends on types from external contracts. Import these contracts to
 enable Hardhat to compile their types.
 
 ```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/contracts/TestContracts.sol
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/contracts/TestContracts.sol
 ```
 
 ```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/contracts/TestUniswap.sol
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/contracts/TestUniswap.sol
 ```
 
 ### Configure the Hardhat environment
@@ -121,7 +119,10 @@ Hardhat configuration to include both versions of Solidity.
 const config: HardhatUserConfig = {
   // highlight-start
   solidity: {
-    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
+    compilers: [
+      { version: "0.6.6" /** For uniswap v2 */ },
+      { version: "0.8.7" },
+    ],
   },
   // highlight-end
 };
@@ -148,7 +149,7 @@ Getting weth9 address from mainnet: eth-mainnet.
 ## Create a deployment task
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/tasks/deploy.ts
 ```
 
 ### Deploy the contract to the ZetaChain testnet
@@ -177,17 +178,33 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
   console.log(`🔑 Using account: ${signer.address}\n`);
 
-  const prepareData = (zetaSwapContract: string, recipient: string, destinationToken: string, minOutput: BigNumber) => {
-    const paddedRecipient = hre.ethers.utils.hexlify(hre.ethers.utils.zeroPad(recipient, 32));
+  const prepareData = (
+    zetaSwapContract: string,
+    recipient: string,
+    destinationToken: string,
+    minOutput: BigNumber
+  ) => {
+    const paddedRecipient = hre.ethers.utils.hexlify(
+      hre.ethers.utils.zeroPad(recipient, 32)
+    );
     const abiCoder = hre.ethers.utils.defaultAbiCoder;
-    const params = abiCoder.encode(["address", "bytes32", "uint256"], [destinationToken, paddedRecipient, minOutput]);
+    const params = abiCoder.encode(
+      ["address", "bytes32", "uint256"],
+      [destinationToken, paddedRecipient, minOutput]
+    );
     return `${zetaSwapContract}${params.slice(2)}`;
   };
 
-  const destinationToken = ZRC20Addresses[args.destination as keyof typeof ZRC20Addresses];
+  const destinationToken =
+    ZRC20Addresses[args.destination as keyof typeof ZRC20Addresses];
 
   const network = hre.network.name;
-  const data = prepareData(args.contract, signer.address, destinationToken, BigNumber.from("0"));
+  const data = prepareData(
+    args.contract,
+    signer.address,
+    destinationToken,
+    BigNumber.from("0")
+  );
   const to = getAddress({
     address: "tss",
     networkName: network,
