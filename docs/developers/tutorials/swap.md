@@ -55,7 +55,7 @@ npx hardhat faucet
 ## Create the contract
 
 ```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/contracts/ZetaSwapV2.sol
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/contracts/ZetaSwapV2.sol
 ```
 
 ### Configure the Hardhat environment
@@ -78,7 +78,7 @@ npx hardhat compile
 ## Write a test for the contract
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/test/Swap.spec.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/test/Swap.spec.ts
 ```
 
 ### Implement helper functions
@@ -88,14 +88,14 @@ The test uses a helper function to encode the parameters for the
 file.
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/test/helpers.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/test/helpers.ts
 ```
 
 The test also uses a helper function to set up the environment for the test. The
 helper function is defined in the `test.helpers.ts` file.
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/test/test.helpers.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/test/test.helpers.ts
 ```
 
 ### Import contracts
@@ -104,11 +104,11 @@ The test depends on types from external contracts. Import these contracts to
 enable Hardhat to compile their types.
 
 ```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/contracts/TestContracts.sol
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/contracts/TestContracts.sol
 ```
 
 ```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/contracts/TestUniswap.sol
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/contracts/TestUniswap.sol
 ```
 
 ### Configure the Hardhat environment
@@ -148,7 +148,7 @@ Getting weth9 address from mainnet: eth-mainnet.
 ## Create a deployment task
 
 ```ts reference
-https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/swap/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/tasks/deploy.ts
 ```
 
 ### Deploy the contract to the ZetaChain testnet
