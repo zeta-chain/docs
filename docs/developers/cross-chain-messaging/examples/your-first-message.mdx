@@ -37,7 +37,11 @@ npx hardhat faucet
 ## Create a new contract
 
 ```solidity title="contracts/CrossChainMessage.sol" reference
+<<<<<<< HEAD
 https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/messaging/message/contracts/CrossChainMessage.sol
+=======
+https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/contracts/CrossChainMessage.sol
+>>>>>>> main
 ```
 
 The `sendHelloWorld` function is used to send a "Hello, Cross-Chain World!"
@@ -100,7 +104,11 @@ contract address. If deploying to more than two chains, you must call
 `setInteractorByChainId` for each link between the chains.
 
 ```ts title="tasks/deploy.ts" reference
+<<<<<<< HEAD
 https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/messaging/message/tasks/deploy.ts
+=======
+https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/deploy.ts
+>>>>>>> main
 ```
 
 Run the following command to deploy the contract to two networks:
@@ -131,7 +139,11 @@ two parameters: the contract address and the destination chain ID.
 The task calls sendHelloWorld on the contract, passing the arguments.
 
 ```ts title="tasks/message.ts" reference
+<<<<<<< HEAD
 https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/messaging/message/tasks/message.ts
+=======
+https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/message.ts
+>>>>>>> main
 ```
 
 Send a message from BSC testnet to Goerli (chain ID: 5) using the contract

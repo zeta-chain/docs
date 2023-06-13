@@ -5,7 +5,9 @@ sidebar_position: 10
 # API endpoints
 
 Below is a list of public API endpoints that can be used to interact with the
-ZetaChain testnet.
+ZetaChain testnets.
+
+## Athens 2 Testnet (current)
 
 | Type                 | Provider                                    | Endpoint                                           |
 | -------------------- | ------------------------------------------- | -------------------------------------------------- |
@@ -17,6 +19,15 @@ ZetaChain testnet.
 | Tendermint HTTP      | ZetaChain                                   | https://api.athens2.zetachain.com/tendermint       |
 | Tendermint WebSocket | ZetaChain                                   | wss://api-lb.athens2.zetachain.com:26657/websocket |
 | Cosmos SDK HTTP      | ZetaChain                                   | https://api.athens2.zetachain.com/                 |
+
+## Athens 3 Testnet (upcoming)
+
+| Type                 | Provider                       | Endpoint                                                       |
+| -------------------- | ------------------------------ | -------------------------------------------------------------- |
+| EVM RPC              | [BlockPI](https://blockpi.io/) | https://zetachain-athens-evm.blockpi.network/v1/rpc/public     |
+| Tendermint RPC       | [BlockPI](https://blockpi.io/) | https://zetachain-athens.blockpi.network/rpc/v1/public         |
+| Cosmos SDK HTTP      | [BlockPI](https://blockpi.io/) | https://zetachain-athens.blockpi.network/lcd/v1/public         |
+| Tendermint WebSocket | [BlockPI](https://blockpi.io/) | wss://zetachain-athens.blockpi.network/rpc/v1/public/websocket |
 
 ## EVM RPC
 

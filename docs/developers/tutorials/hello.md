@@ -35,7 +35,11 @@ In the `contracts` directory, create a new file called `HelloZeta.sol` and add
 the following Solidity code to it:
 
 ```solidity reference
+<<<<<<< HEAD
 https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/hello/contracts/HelloZeta.sol
+=======
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/hello/contracts/HelloZeta.sol
+>>>>>>> main
 ```
 
 This contract has a single function, `helloZeta()`, which returns a string
@@ -47,7 +51,11 @@ In the `test` directory, create a new file called `HelloZeta.test.ts` and add
 the following test code to it:
 
 ```ts reference
+<<<<<<< HEAD
 https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/hello/test/HelloZeta.spec.ts
+=======
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/hello/test/HelloZeta.spec.ts
+>>>>>>> main
 ```
 
 First, we import the necessary modules. The `expect` function is imported from
@@ -107,7 +115,11 @@ Now, we'll implement a simple Hardhat task that deploys a smart contract to the
 ZetaChain.
 
 ```ts reference
+<<<<<<< HEAD
 https://github.com/zeta-chain/example-contracts/blob/feat/ccm-message/omnichain/hello/tasks/deploy.ts
+=======
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/hello/tasks/deploy.ts
+>>>>>>> main
 ```
 
 Don't forget to import the deployment task in your `hardhat.config.ts` file.
