@@ -14,11 +14,9 @@ and testing a smart contract.
 
 ## Set up your environment
 
-:::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
-:::
+:::note This tutorial assumes that you have already completed the
+[setup tutorial](/developers/tutorials/setup) or cloned
+[the template Hardhat project](https://github.com/zeta-chain/template). :::
 
 Create a new wallet and request tokens from the testnet faucet if you haven't
 done so already:

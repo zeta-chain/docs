@@ -31,11 +31,9 @@ ZetaChain.
 
 ## Set up your environment
 
-:::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
-:::
+:::note This tutorial assumes that you have already completed the
+[setup tutorial](/developers/tutorials/setup) or cloned
+[the template Hardhat project](https://github.com/zeta-chain/template). :::
 
 Install the dependencies:
 
@@ -121,7 +119,10 @@ Hardhat configuration to include both versions of Solidity.
 const config: HardhatUserConfig = {
   // highlight-start
   solidity: {
-    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
+    compilers: [
+      { version: "0.6.6" /** For uniswap v2 */ },
+      { version: "0.8.7" },
+    ],
   },
   // highlight-end
 };
@@ -177,17 +178,33 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
   console.log(`🔑 Using account: ${signer.address}\n`);
 
-  const prepareData = (zetaSwapContract: string, recipient: string, destinationToken: string, minOutput: BigNumber) => {
-    const paddedRecipient = hre.ethers.utils.hexlify(hre.ethers.utils.zeroPad(recipient, 32));
+  const prepareData = (
+    zetaSwapContract: string,
+    recipient: string,
+    destinationToken: string,
+    minOutput: BigNumber
+  ) => {
+    const paddedRecipient = hre.ethers.utils.hexlify(
+      hre.ethers.utils.zeroPad(recipient, 32)
+    );
     const abiCoder = hre.ethers.utils.defaultAbiCoder;
-    const params = abiCoder.encode(["address", "bytes32", "uint256"], [destinationToken, paddedRecipient, minOutput]);
+    const params = abiCoder.encode(
+      ["address", "bytes32", "uint256"],
+      [destinationToken, paddedRecipient, minOutput]
+    );
     return `${zetaSwapContract}${params.slice(2)}`;
   };
 
-  const destinationToken = ZRC20Addresses[args.destination as keyof typeof ZRC20Addresses];
+  const destinationToken =
+    ZRC20Addresses[args.destination as keyof typeof ZRC20Addresses];
 
   const network = hre.network.name;
-  const data = prepareData(args.contract, signer.address, destinationToken, BigNumber.from("0"));
+  const data = prepareData(
+    args.contract,
+    signer.address,
+    destinationToken,
+    BigNumber.from("0")
+  );
   const to = getAddress({
     address: "tss",
     networkName: network,
