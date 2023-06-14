@@ -1,8 +1,8 @@
+import { useHistory, useLocation } from "@docusaurus/router";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Mark from "mark.js";
 import { useEffect, useState } from "react";
-import { useLocation } from "@docusaurus/router";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import { useHistory } from "@docusaurus/router";
+
 export function HighlightSearchResults() {
   const location = useLocation();
   const history = useHistory();

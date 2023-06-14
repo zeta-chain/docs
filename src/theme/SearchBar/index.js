@@ -1,22 +1,25 @@
+import { autocomplete } from "@algolia/autocomplete-js";
+import Head from "@docusaurus/Head";
+import { useHistory } from "@docusaurus/router";
+import { useContextualSearchFilters } from "@docusaurus/theme-common";
+import { translate } from "@docusaurus/Translate";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { usePluginData } from "@docusaurus/useGlobalData";
+import useIsBrowser from "@docusaurus/useIsBrowser";
 import React, {
-  useRef,
-  useEffect,
   createElement,
   Fragment,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import { render } from "react-dom";
-import { autocomplete } from "@algolia/autocomplete-js";
-import Head from "@docusaurus/Head";
-import { translate } from "@docusaurus/Translate";
-import { useHistory } from "@docusaurus/router";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+
 import { mylunr, tokenize } from "./generatedWrapper";
 import { HighlightSearchResults } from "./HighlightSearchResults";
-import { usePluginData } from "@docusaurus/useGlobalData";
-import useIsBrowser from "@docusaurus/useIsBrowser";
-import { useContextualSearchFilters } from "@docusaurus/theme-common";
+
 const SEARCH_INDEX_AVAILABLE = process.env.NODE_ENV === "production";
+
 function getItemUrl({ document }) {
   const [path, hash] = document.sectionRoute.split("#");
   let url = path;
@@ -25,6 +28,7 @@ function getItemUrl({ document }) {
   }
   return url;
 }
+
 const EMPTY_INDEX = {
   documents: [],
   index: mylunr(function () {
@@ -33,6 +37,7 @@ const EMPTY_INDEX = {
     this.field("content");
   }),
 };
+
 async function fetchIndex(baseUrl, tag) {
   if (SEARCH_INDEX_AVAILABLE) {
     let json;
@@ -51,11 +56,11 @@ async function fetchIndex(baseUrl, tag) {
       documents: json.documents,
       index: mylunr.Index.load(json.index),
     };
-  } else {
-    // The index does not exist in development, therefore load a dummy index here.
-    return Promise.resolve(EMPTY_INDEX);
   }
+  // The index does not exist in development, therefore load a dummy index here.
+  return Promise.resolve(EMPTY_INDEX);
 }
+
 const SearchBar = () => {
   // A bit of a hack that makes sure data-theme is not only set on <html>, but also on <body>.
   // We would like to useThemeContext, but that is specific to docusaurus-theme-classic.
@@ -65,6 +70,7 @@ const SearchBar = () => {
       ? document.documentElement.getAttribute("data-theme") === "dark"
       : false
   );
+
   useEffect(() => {
     const observer = new MutationObserver(() => {
       setIsDarkTheme(
@@ -77,9 +83,11 @@ const SearchBar = () => {
     });
     return () => observer.disconnect();
   }, []);
+
   const {
     siteConfig: { baseUrl },
   } = useDocusaurusContext();
+
   const {
     titleBoost,
     contentBoost,
@@ -88,13 +96,17 @@ const SearchBar = () => {
     indexDocSidebarParentCategories,
     maxSearchResults,
   } = usePluginData("@cmfcmf/docusaurus-search-local");
+
   const history = useHistory();
   const { tags } = useContextualSearchFilters();
   const tagsRef = useRef(tags);
+
   useEffect(() => {
     tagsRef.current = tags;
   }, [tags]);
+
   const indexes = useRef({});
+
   const getIndex = async (tag) => {
     const index = indexes.current[tag];
     switch (index?.state) {
@@ -119,16 +131,20 @@ const SearchBar = () => {
         });
     }
   };
+
   const placeholder = translate({
     message: "cmfcmf/d-s-l.searchBar.placeholder",
     description: "Placeholder shown in the searchbar",
   });
+
   const autocompleteRef = useRef(null);
   const autocompleteApi = useRef(null);
+
   useEffect(() => {
     if (!autocompleteRef.current) {
       return;
     }
+
     autocompleteApi.current = autocomplete({
       container: autocompleteRef.current,
       placeholder,
@@ -341,6 +357,7 @@ const SearchBar = () => {
     });
     return () => autocompleteApi.current?.destroy();
   }, [maxSearchResults]);
+
   return React.createElement(
     React.Fragment,
     null,
@@ -363,4 +380,5 @@ const SearchBar = () => {
     )
   );
 };
+
 export default SearchBar;

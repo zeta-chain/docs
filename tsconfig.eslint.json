@@ -1,0 +1,4 @@
+{
+  "include": [".eslintrc.js", "**/*/.eslintrc.js", "./eslint/**/*.js"],
+  "comments": true
+}
