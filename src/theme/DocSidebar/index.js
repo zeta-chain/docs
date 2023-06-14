@@ -12,7 +12,14 @@ import { sortBy } from "lodash-es";
 
 const IconChevronRight = ({ className }) => {
   return (
-    <svg className={className} width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className={className}
+      width="8"
+      height="14"
+      viewBox="0 0 8 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -35,17 +42,25 @@ const TreeNode = ({ node, level, path }) => {
   const mobileSidebar = useNavbarMobileSidebar();
 
   const [isCollapsed, setIsCollapsed] = useState(
-    !getAllChildrenHrefs(node?.items)?.some((_childPath) => path?.match(_childPath)) // Open if any child is active (for nested items)
+    !getAllChildrenHrefs(node?.items)?.some((_childPath) =>
+      path?.match(_childPath)
+    ) // Open if any child is active (for nested items)
   );
 
   // Open and close depending on active path
   useEffect(() => {
-    setIsCollapsed(!getAllChildrenHrefs(node?.items)?.some((_childPath) => path?.match(_childPath)));
+    setIsCollapsed(
+      !getAllChildrenHrefs(node?.items)?.some((_childPath) =>
+        path?.match(_childPath)
+      )
+    );
   }, [path]);
 
   // Sort items so that collapsible items are always at the end
   const items = useMemo(
-    () => node.items?.length && sortBy(node.items, (item) => (!item.collapsible ? 0 : 1)), // use stable sort to ensure that items will not change their position on each render
+    () =>
+      node.items?.length &&
+      sortBy(node.items, (item) => (!item.collapsible ? 0 : 1)), // use stable sort to ensure that items will not change their position on each render
     [node.items]
   );
 
@@ -56,13 +71,16 @@ const TreeNode = ({ node, level, path }) => {
   const toggleClasses = useMemo(() => {
     return clsx({
       "pl-4 py-[10px] text-[14px]": level > 0,
-      "py-4 text-black pl-[32px] pr-[38px] text-[20px] bg-[#F9F9FB] dark:bg-black dark:text-white": level === 0,
-      "border-b border-grey-200 dark:border-grey-600": level === 0 && !node.collapsible,
+      "py-4 text-black pl-[32px] pr-[38px] text-[20px] bg-[#F9F9FB] dark:bg-black dark:text-white":
+        level === 0,
+      "border-b border-grey-200 dark:border-grey-600":
+        level === 0 && !node.collapsible,
       "text-grey-400 dark:text-grey-300": !node.collapsible && level > 0,
-      "flex flex-row items-center justify-between hover:text-green-200 dark:hover:text-green-100": node.collapsible,
+      "flex flex-row items-center justify-between hover:text-green-200 dark:hover:text-green-100":
+        node.collapsible,
       "text-green-100 dark:text-green-100": path === node.href,
-      "dark:text-grey-50 text-grey-900": getAllChildrenHrefs(node?.items)?.some((_childPath) =>
-        path?.match(_childPath)
+      "dark:text-grey-50 text-grey-900": getAllChildrenHrefs(node?.items)?.some(
+        (_childPath) => path?.match(_childPath)
       ),
     });
   }, [level, isCollapsed, node.collapsible, path, node.href]);
@@ -92,7 +110,10 @@ const TreeNode = ({ node, level, path }) => {
   } else if (node.type === "category") {
     return (
       <>
-        <button className={clsx(toggleClasses)} onClick={handleOpenAndCollapseClick}>
+        <button
+          className={clsx(toggleClasses)}
+          onClick={handleOpenAndCollapseClick}
+        >
           <div>{node.label}</div>
 
           {node.collapsible && (
@@ -115,7 +136,12 @@ const TreeNode = ({ node, level, path }) => {
           })}
         >
           {items?.map((item) => (
-            <TreeNode key={item.label} node={item} level={level + 1} path={path} />
+            <TreeNode
+              key={item.label}
+              node={item}
+              level={level + 1}
+              path={path}
+            />
           ))}
         </motion.div>
       </>
@@ -141,7 +167,7 @@ export function DocSidebarDesktop({ path, sidebar }) {
   }, [path]);
 
   return (
-    <div className="h-[calc(100%-60px)] sticky top-[60px] overflow-y-scroll">
+    <div className="h-[calc(100%-60px)] sticky overflow-y-scroll">
       <nav className="bg-white dark:bg-black">
         <div className="px-6 py-3 md:hidden bg-[#F9F9FB] dark:bg-[transparent] border-b border-grey-200 dark:border-grey-600">
           <ColorModeToggle />
