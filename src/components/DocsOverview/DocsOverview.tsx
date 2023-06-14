@@ -7,15 +7,29 @@ interface Props {
   headerTitle: string;
   sectionInfo: string;
   link: string;
-  items?: ({ icon: React.ReactNode; href: string } | { iconUrl: string; href: string })[];
+  items?: (
+    | { icon: React.ReactNode; href: string }
+    | { iconUrl: string; href: string }
+  )[];
 }
 
-const Overview = ({ headerIconPath, headerTitle, sectionInfo, items }: Omit<Props, "link">) => (
+const Overview = ({
+  headerIconPath,
+  headerTitle,
+  sectionInfo,
+  items,
+}: Omit<Props, "link">) => (
   <div className="flex flex-col bg-grey-100 dark:bg-grey-700 dark:hover:bg-grey-600 border border-grey-100 dark:border-grey-700 dark:hover:border-grey-500 rounded-md p-6 w-full! mb-4 dark:hover:text-white dark:hover:scale-100 hover:shadow-lg dark:shadow-none hover:shadow-grey-200 hover:scale-[100.5%] transition-scale transition-colors duration-[50ms]">
     <div className="w-full flex items-center gap-[12.25px]">
       {headerIconPath && <img src={headerIconPath} alt={headerTitle} />}
 
-      <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        width="16"
+        height="20"
+        viewBox="0 0 16 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -27,17 +41,31 @@ const Overview = ({ headerIconPath, headerTitle, sectionInfo, items }: Omit<Prop
       <span className="text-xl">{headerTitle}</span>
     </div>
 
-    {sectionInfo && <div className="mt-6 text-sm opacity-70">{sectionInfo}</div>}
+    {sectionInfo && (
+      <div className="mt-6 text-sm opacity-70">{sectionInfo}</div>
+    )}
 
     {items && items?.length > 0 && (
       <div className="w-full">
         {items.map(({ href, ...rest }) =>
           "iconUrl" in rest ? (
-            <a key={href} href={href} target="_blank" rel="noreferrer" className="w-full">
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full"
+            >
               <img src={rest.iconUrl} alt={rest.iconUrl} />
             </a>
           ) : (
-            <a key={href} href={href} target="_blank" rel="noreferrer" className="w-full">
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full"
+            >
               {rest.icon}
             </a>
           )

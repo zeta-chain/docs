@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, createElement, Fragment, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  createElement,
+  Fragment,
+  useState,
+} from "react";
 import { render } from "react-dom";
 import { autocomplete } from "@algolia/autocomplete-js";
 import Head from "@docusaurus/Head";
@@ -55,11 +61,15 @@ const SearchBar = () => {
   // We would like to useThemeContext, but that is specific to docusaurus-theme-classic.
   const isBrowser = useIsBrowser();
   const [isDarkTheme, setIsDarkTheme] = useState(() =>
-    isBrowser ? document.documentElement.getAttribute("data-theme") === "dark" : false
+    isBrowser
+      ? document.documentElement.getAttribute("data-theme") === "dark"
+      : false
   );
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      setIsDarkTheme(document.documentElement.getAttribute("data-theme") === "dark");
+      setIsDarkTheme(
+        document.documentElement.getAttribute("data-theme") === "dark"
+      );
     });
     observer.observe(document.documentElement, {
       attributes: true,
@@ -133,7 +143,8 @@ const SearchBar = () => {
           history.push(itemUrl, {
             cmfcmfhighlight: {
               terms: item.terms,
-              isDocsOrBlog: item.document.type === "docs" || item.document.type === "blog",
+              isDocsOrBlog:
+                item.document.type === "docs" || item.document.type === "blog",
             },
           });
         },
@@ -187,7 +198,9 @@ const SearchBar = () => {
                         history.push(url, {
                           cmfcmfhighlight: {
                             terms: item.terms,
-                            isDocsOrBlog: item.document.type === "docs" || item.document.type === "blog",
+                            isDocsOrBlog:
+                              item.document.type === "docs" ||
+                              item.document.type === "blog",
                           },
                         });
                       },
@@ -198,8 +211,13 @@ const SearchBar = () => {
                       React.createElement(
                         "div",
                         { className: "aa-ItemContentBody" },
-                        React.createElement("div", { className: "aa-ItemContentTitle" }, item.document.sectionTitle),
-                        item.document.pageTitle !== item.document.sectionTitle &&
+                        React.createElement(
+                          "div",
+                          { className: "aa-ItemContentTitle" },
+                          item.document.sectionTitle
+                        ),
+                        item.document.pageTitle !==
+                          item.document.sectionTitle &&
                           React.createElement(
                             "div",
                             { className: "aa-ItemContentDescription" },
@@ -213,13 +231,19 @@ const SearchBar = () => {
                       React.createElement(
                         "button",
                         {
-                          className: "aa-ItemActionButton aa-DesktopOnly aa-ActiveOnly",
+                          className:
+                            "aa-ItemActionButton aa-DesktopOnly aa-ActiveOnly",
                           type: "button",
                           title: "Select",
                         },
                         React.createElement(
                           "svg",
-                          { viewBox: "0 0 24 24", width: "20", height: "20", fill: "currentColor" },
+                          {
+                            viewBox: "0 0 24 24",
+                            width: "20",
+                            height: "20",
+                            fill: "currentColor",
+                          },
                           React.createElement("path", {
                             d: "M18.984 6.984h2.016v6h-15.188l3.609 3.609-1.406 1.406-6-6 6-6 1.406 1.406-3.609 3.609h13.172v-4.031z",
                           })
@@ -252,7 +276,9 @@ const SearchBar = () => {
             },
             async getItems() {
               const tags = tagsRef.current;
-              const indexes = await Promise.all(tags.map((tag) => getIndex(tag)));
+              const indexes = await Promise.all(
+                tags.map((tag) => getIndex(tag))
+              );
               const terms = tokenize(input);
               return indexes
                 .flatMap(({ index, documents }) =>
@@ -299,7 +325,9 @@ const SearchBar = () => {
                     })
                     .slice(0, maxSearchResults)
                     .map((result) => ({
-                      document: documents.find((document) => document.id.toString() === result.ref),
+                      document: documents.find(
+                        (document) => document.id.toString() === result.ref
+                      ),
                       score: result.score,
                       terms,
                     }))
@@ -316,7 +344,13 @@ const SearchBar = () => {
   return React.createElement(
     React.Fragment,
     null,
-    React.createElement(Head, null, React.createElement("body", { "data-theme": isDarkTheme ? "dark" : "light" })),
+    React.createElement(
+      Head,
+      null,
+      React.createElement("body", {
+        "data-theme": isDarkTheme ? "dark" : "light",
+      })
+    ),
     React.createElement(HighlightSearchResults, null),
     React.createElement(
       "div",

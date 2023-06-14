@@ -17,7 +17,8 @@ export const AddressConverter: React.FC<{}> = () => {
         converted = bech32.encode("zeta", bech32.toWords(data));
       } else {
         const decoded = bech32.decode(address);
-        converted = "0x" + Buffer.from(bech32.fromWords(decoded.words)).toString("hex");
+        converted =
+          "0x" + Buffer.from(bech32.fromWords(decoded.words)).toString("hex");
       }
 
       setConvertedAddress(converted);

@@ -24,7 +24,7 @@ scope of this document. If you are uncomfortable building the binary from source
 code we recommend using a prebuilt binary as shown in the next step.
 
 You can build from source by cloning the repository and running the following
-commands. 
+commands.
 
 ```bash
 git clone https://github.com/zeta-chain/cosmos-sdk
@@ -35,9 +35,10 @@ make zetavisor
 mv $GOPATH/bin/zetavisor /usr/local/bin/zetavisor
 ```
 
-### Download Zetavisor Binary 
+### Download Zetavisor Binary
+
 Download the Binary for your system architecture from the following links and
-place it in your $PATH 
+place it in your $PATH
 amd64: https://zetachain-external-files.s3.amazonaws.com/binaries/zetavisor/latest/zetavisor-amd64
 arm64: https://zetachain-external-files.s3.amazonaws.com/binaries/zetavisor/latest/zetavisor-arm64
 
@@ -60,7 +61,7 @@ mkdir -p ~/.zetacored/zetavisor/upgrades
 
 ```
 
-### Setup `zetavisor` systemd service 
+### Setup `zetavisor` systemd service
 
 In this example we'll run zetavisor as a systemd service. You can also run it as
 a docker container or as a standalone process. The environment variables are
@@ -99,13 +100,14 @@ ExecStart=zetavisor start --home /home/zetachain/.zetacored/ --log_format json  
 
 ## Install the `zetacored` Binary
 
-### Download `zetacored` Binary 
+### Download `zetacored` Binary
+
 Download the latest `zetacored` binary for your system architecture from the following
 links and place it in the `zetavisor/genesis/bin/` directory. This example
 assumes you are using ubuntu 22 on amd64 architecture. You may need to make
 adjustments for your system.
 
-```bash 
+```bash
 wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetacored-ubuntu-22-amd64
 mv zetacored-ubuntu-22-amd64 ~/.zetacored/zetavisor/genesis/bin/zetacored
 chmod +x ~/.zetacored/zetavisor/genesis/bin/zetacored
@@ -147,7 +149,7 @@ sudo systemctl start zetavisor
 sudo systemctl status zetavisor
 ```
 
-### Check the `zetavisor`  Logs
+### Check the `zetavisor` Logs
 
 ```bash
 journalctl -u zetavisor -f
@@ -170,63 +172,67 @@ information.
 
 ## ZetaVisor Environment Variables
 
-Breif explanation of the environment variables used by zetavisor. 
+Breif explanation of the environment variables used by zetavisor.
 
 - `DAEMON_HOME`
-    - The location where the zetavisor/ directory is kept that contains the
-      genesis binary, the upgrade binaries, and any additional auxiliary files
-      associated with each binary (e.g. $HOME/.zetacored, etc.).
+
+  - The location where the zetavisor/ directory is kept that contains the
+    genesis binary, the upgrade binaries, and any additional auxiliary files
+    associated with each binary (e.g. $HOME/.zetacored, etc.).
 
 - `DAEMON_NAME`
-    - The name of the binary itself (e.g. gaiad, regend, simd, etc.).
+
+  - The name of the binary itself (e.g. gaiad, regend, simd, etc.).
 
 - `DAEMON_ALLOW_DOWNLOAD_BINARIES` (optional)
-    - If set to true, enables auto-downloading of new binaries (for security
-      reasons, this is intended for full nodes rather than validators). By
-      default, zetavisor will not auto-download new binaries.
+
+  - If set to true, enables auto-downloading of new binaries (for security
+    reasons, this is intended for full nodes rather than validators). By
+    default, zetavisor will not auto-download new binaries.
 
 - `DAEMON_RESTART_AFTER_UPGRADE` (optional, default = true)
-    - If true, restarts the subprocess with the same command-line arguments and
-      flags (but with the new binary) after a successful upgrade. Otherwise
-      (false), zetavisor stops running after an upgrade and requires the system
-      administrator to manually restart it. Note that restart is only after the
-      upgrade and does not auto-restart the subprocess after an error occurs.
+
+  - If true, restarts the subprocess with the same command-line arguments and
+    flags (but with the new binary) after a successful upgrade. Otherwise
+    (false), zetavisor stops running after an upgrade and requires the system
+    administrator to manually restart it. Note that restart is only after the
+    upgrade and does not auto-restart the subprocess after an error occurs.
 
 - `DAEMON_DATA_BACKUP_DIR`
-    - Option to set a custom backup directory. If not set, DAEMON_HOME is used.
+
+  - Option to set a custom backup directory. If not set, DAEMON_HOME is used.
 
 - `UNSAFE_SKIP_BACKUP` (defaults to false)
-    - If set to true, upgrades directly without performing a backup. Otherwise
-      (false, default), backs up the data before trying the upgrade. The default
-      value of false is useful and recommended in case of failures and when a
-      backup is needed to rollback. We recommend using the default backup option
-      UNSAFE_SKIP_BACKUP=false.
-    
+  - If set to true, upgrades directly without performing a backup. Otherwise
+    (false, default), backs up the data before trying the upgrade. The default
+    value of false is useful and recommended in case of failures and when a
+    backup is needed to rollback. We recommend using the default backup option
+    UNSAFE_SKIP_BACKUP=false.
 - `CLIENT_DAEMON_NAME`
-    - Top level config for name of core binary
+  - Top level config for name of core binary
 - `AllowDownloadBinaries`
-    - True : Top level config to allow download during an upgrade
-    - False : Top Level config to stop the above
+  - True : Top level config to allow download during an upgrade
+  - False : Top Level config to stop the above
 - `CLIENT_SKIP_UPGRADE`
-    - True :
-        - Skips upgrade for the client (Does not replace binary)
-            - Note Upgrade includes download also
-        - Does not kill the client process at upgrade height
-        - Does not start the client after upgrade
-        - Use this to completely ignore zetaclient .
-    - False: Replaces the client binary at the correct height
+  - True :
+    - Skips upgrade for the client (Does not replace binary)
+      - Note Upgrade includes download also
+    - Does not kill the client process at upgrade height
+    - Does not start the client after upgrade
+    - Use this to completely ignore zetaclient .
+  - False: Replaces the client binary at the correct height
 - `CLIENT_START_PROCESS`
-    - True : Starts zetaclientd
-    - False : Does not start zetaclientd
-    - Note
-        - Both `RestartAfterUpgrade` and `StartClientProcess` need to be `true`
-          for this to work
-        - `SkipClientUpgrade` needs to be `false` and `StartClientProcess` needs
-          to be `true` for this to work
-    - Use this to tune upgrade process
-        - Example : `SkipClientUpgrade`  : false && `StartClientProcess` false
-            - Will do the upgrade , replace binaries etc but starting the client
-              needs to be handled separately
-            - Note the client will still be killed at the upgrade height , and
-              new binaries will be copied to the correct location (Dowloaded if
-              allowed)
+  - True : Starts zetaclientd
+  - False : Does not start zetaclientd
+  - Note
+    - Both `RestartAfterUpgrade` and `StartClientProcess` need to be `true`
+      for this to work
+    - `SkipClientUpgrade` needs to be `false` and `StartClientProcess` needs
+      to be `true` for this to work
+  - Use this to tune upgrade process
+    - Example : `SkipClientUpgrade` : false && `StartClientProcess` false
+      - Will do the upgrade , replace binaries etc but starting the client
+        needs to be handled separately
+      - Note the client will still be killed at the upgrade height , and
+        new binaries will be copied to the correct location (Dowloaded if
+        allowed)

@@ -9,7 +9,13 @@ const ERROR = 2;
  */
 module.exports = {
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "simple-import-sort", "prettier", "unused-imports", "zeta-eslint"],
+  plugins: [
+    "@typescript-eslint",
+    "simple-import-sort",
+    "prettier",
+    "unused-imports",
+    "zeta-eslint",
+  ],
   extends: ["prettier"],
   env: {
     es6: true,
@@ -26,14 +32,20 @@ module.exports = {
     },
   },
   parserOptions: {
-    project: [path.join(__dirname, "tsconfig.base.json"), path.join(__dirname, "tsconfig.eslint.json")],
+    project: [
+      path.join(__dirname, "tsconfig.base.json"),
+      path.join(__dirname, "tsconfig.eslint.json"),
+    ],
   },
   rules: {
     "no-process-env": "error",
     "no-underscore-dangle": OFF,
     "zeta-eslint/enum-prefer-pascal-case": WARN,
     "@typescript-eslint/ban-ts-comment": WARN,
-    "zeta-eslint/to-do-enforcer": [WARN, { names: ["Andy", "Juan", "Manu", "Martin", "Lucas", "Guille"] }],
+    "zeta-eslint/to-do-enforcer": [
+      WARN,
+      { names: ["Andy", "Juan", "Manu", "Martin", "Lucas", "Guille"] },
+    ],
     "prettier/prettier": [
       ERROR,
       {
@@ -55,5 +67,5 @@ module.exports = {
         leadingUnderscore: "allow",
       },
     ],
-  }
+  },
 };

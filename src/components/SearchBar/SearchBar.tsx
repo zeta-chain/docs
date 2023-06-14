@@ -15,7 +15,10 @@ const SearchBar = () => {
         // className={isFocus ? styles.searchInput : ""}
       />
       {isFocus ? (
-        <img src={`${siteConfig.baseUrl}img/icons/search-black.png`} alt="search" />
+        <img
+          src={`${siteConfig.baseUrl}img/icons/search-black.png`}
+          alt="search"
+        />
       ) : (
         <img src={`${siteConfig.baseUrl}img/icons/search.png`} alt="search" />
       )}

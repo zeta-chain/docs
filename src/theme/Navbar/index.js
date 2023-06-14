@@ -9,11 +9,21 @@ import { useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
 import { motion } from "framer-motion";
 
 const Path = (props) => (
-  <motion.path fill="transparent" strokeWidth="2" stroke="currentColor" strokeLinecap="round" {...props} />
+  <motion.path
+    fill="transparent"
+    strokeWidth="2"
+    stroke="currentColor"
+    strokeLinecap="round"
+    {...props}
+  />
 );
 
 export const HamburgerMenuButton = ({ toggle, isOpen, ...otherProps }) => (
-  <motion.nav initial={false} animate={isOpen ? "open" : "closed"} className="items-center flex md:hidden mt-[5px]">
+  <motion.nav
+    initial={false}
+    animate={isOpen ? "open" : "closed"}
+    className="items-center flex md:hidden mt-[5px]"
+  >
     <button type="button" onClick={toggle} {...otherProps}>
       <svg width="23" height="23" viewBox="0 0 23 23">
         <Path
@@ -50,7 +60,9 @@ const IconZetaLogo = ({ color, ...otherProps }) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...otherProps}
-    className={clsx(otherProps?.className, { "text-grey-500 dark:text-grey-300": !otherProps?.className })}
+    className={clsx(otherProps?.className, {
+      "text-grey-500 dark:text-grey-300": !otherProps?.className,
+    })}
   >
     <path
       d="M16.807 17.2227V20.4134H3.64454C3.82611 18.3135 4.5037 16.8359 6.84699 14.7584L16.807 6.2615V13.7177H20.3923V0H0.00394715V6.83778H3.58796V3.58533H14.4189L4.50765 12.0428L4.48396 12.0651C0.330245 15.7426 0 18.7108 0 22.208V24H20.391V17.2241H16.8057L16.807 17.2227Z"
@@ -96,10 +108,16 @@ export default function Navbar() {
 
   return (
     <>
-      <NavbarLayout className="bg-white! dark:bg-black!" style={{ zIndex: "99999999 !important" }}>
+      <NavbarLayout
+        className="bg-white! dark:bg-black!"
+        style={{ zIndex: "99999999 !important" }}
+      >
         <div className="flex items-center justify-between w-full px-2 md:px-[15px] bg-white! dark:bg-black!">
           <div className="w-full flex gap-3 sm:gap-6 items-center">
-            <HamburgerMenuButton isOpen={mobileSidebar.shown} toggle={mobileSidebar.toggle} />
+            <HamburgerMenuButton
+              isOpen={mobileSidebar.shown}
+              toggle={mobileSidebar.toggle}
+            />
 
             <div className="w-full md:w-auto flex items-center justify-between md:justify-start gap-4">
               <Link href="/">

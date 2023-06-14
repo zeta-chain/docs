@@ -30,10 +30,13 @@ export default function DocItem(props) {
   // - user asks to hide it with front matter
   // - the markdown content does not already contain a top-level h1 heading
 
-  const shouldAddTitle = !hideTitle && typeof DocContent.contentTitle === "undefined";
+  const shouldAddTitle =
+    !hideTitle && typeof DocContent.contentTitle === "undefined";
   const windowSize = useWindowSize();
-  const canRenderTOC = !hideTableOfContents && DocContent.toc && DocContent.toc.length > 0;
-  const renderTocDesktop = canRenderTOC && (windowSize === "desktop" || windowSize === "ssr");
+  const canRenderTOC =
+    !hideTableOfContents && DocContent.toc && DocContent.toc.length > 0;
+  const renderTocDesktop =
+    canRenderTOC && (windowSize === "desktop" || windowSize === "ssr");
 
   return (
     <>
@@ -67,7 +70,9 @@ export default function DocItem(props) {
                 />
               )}
 
-              <div className={clsx(ThemeClassNames.docs.docMarkdown, "markdown")}>
+              <div
+                className={clsx(ThemeClassNames.docs.docMarkdown, "markdown")}
+              >
                 {/*
                 Title can be declared inside md content or declared through front matter and added manually
                 To make both cases consistent, the added title is added under the same div.markdown block

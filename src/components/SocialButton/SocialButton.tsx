@@ -17,7 +17,8 @@ export const SocialButton: React.FC<{
         {
           "bg-[#69ACE0]": headerTitle === "Twitter",
           "bg-[#7289DA]": headerTitle === "Discord",
-          "bg-[#000000] dark:bg-white dark:text-black": headerTitle === "Medium",
+          "bg-[#000000] dark:bg-white dark:text-black":
+            headerTitle === "Medium",
           "bg-[#38B0E3]": headerTitle === "Telegram",
         }
       )}
@@ -26,7 +27,13 @@ export const SocialButton: React.FC<{
 
       <div className="flex items-center gap-[9.25px]">
         <div className="text-xl">{headerTitle}</div>
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 18 18"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             fillRule="evenodd"
             clipRule="evenodd"

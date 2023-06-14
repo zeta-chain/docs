@@ -5,9 +5,20 @@ interface Props extends React.ComponentPropsWithRef<"svg"> {
   color?: string;
 }
 
-export const IconTelegram = ({ size = 20, color = "currentColor", ...other }: Props) => {
+export const IconTelegram = ({
+  size = 20,
+  color = "currentColor",
+  ...other
+}: Props) => {
   return (
-    <svg width={size} height={size} {...other} viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width={size}
+      height={size}
+      {...other}
+      viewBox="0 0 60 60"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M24.9055 43.3205C25.8135 43.3205 26.2145 42.9053 26.7215 42.4125L31.5642 37.7036L25.5235 34.0609"
         fill={color}

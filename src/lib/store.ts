@@ -7,7 +7,8 @@ export const store = configureStore({
   reducer: {
     [zetaCodeApi.reducerPath]: zetaCodeApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(zetaCodeApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(zetaCodeApi.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

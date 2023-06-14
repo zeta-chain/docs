@@ -8,7 +8,13 @@ export const DocsHighlightBlockRack: React.FC = () => {
       <Link href="./about/zetachain">
         <DocsHighlightBlock
           icon={
-            <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="17"
+              height="20"
+              viewBox="0 0 17 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M14.0029 14.3515V17.0102H3.03479C3.18609 15.2604 3.75073 14.0292 5.70336 12.298L14.0029 5.21763V11.4308H16.9905V0H0.00223303V5.69784H2.98984V2.98761H12.0152L3.75621 10.0362L3.73645 10.0548C0.275209 13.1192 3.8147e-05 15.5926 3.8147e-05 18.5067V20H16.9916V14.3537H14.004L14.0029 14.3515Z"
                 fill="white"
@@ -23,7 +29,13 @@ export const DocsHighlightBlockRack: React.FC = () => {
       <Link href="./about/zeta">
         <DocsHighlightBlock
           icon={
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <circle cx="16" cy="16" r="12" stroke="white" strokeWidth="2" />
               <path
                 d="M19.3755 18.8737V20.6295H12.1325C12.2325 19.4739 12.6053 18.6609 13.8948 17.5177L19.3755 12.842V16.945H21.3484V9.39648H10.1299V13.1592H12.1029V11.3694H18.0629L12.6089 16.024L12.5959 16.0364C10.3102 18.06 10.1285 19.6933 10.1285 21.6177V22.6038H21.3492V18.8752H19.3762L19.3755 18.8737Z"
@@ -39,7 +51,13 @@ export const DocsHighlightBlockRack: React.FC = () => {
       <Link href="./developers/overview">
         <DocsHighlightBlock
           icon={
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 26 26"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
