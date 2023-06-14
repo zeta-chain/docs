@@ -1,48 +1,48 @@
-# Website
+# ZetaChain Documentation
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+Welcome to the ZetaChain documentation repository! Here you will find
+comprehensive information about the ZetaChain protocol, including tutorials,
+developer resources, and more.
 
-## Make sure you have a .env with:
+To access the live version of the documentation, please visit
+https://www.zetachain.com/docs/.
 
-```
-URL=https://docs.staging.zetachain.com/
-BASE_URL=/docs/
-```
+## Contributing
 
 ### Installation
 
+To get started, make sure you have all the necessary dependencies installed. You
+can do this by running the following command:
+
 ```
-$ yarn
+yarn
 ```
 
 ### Local Development
 
+For local development, you can run a development server by executing the
+following command:
+
 ```
-$ yarn dev
+yarn dev
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+This will start a local development server and automatically open a browser
+window. Most changes you make will be reflected live without the need to restart
+the server.
 
 ### Build
 
-```
-$ yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
+To generate static content for deployment, you can use the following command:
 
 ```
-$ USE_SSH=true yarn deploy
+yarn build
 ```
 
-Not using SSH:
+Running this command will generate the static content and store it in the build
+directory. You can then use any static content hosting service to serve the
+documentation.
 
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+We encourage and welcome contributions to the ZetaChain documentation. If you
+have any suggestions, improvements, or find any issues, please feel free to
+contribute by submitting a pull request.
