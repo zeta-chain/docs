@@ -1,8 +1,8 @@
 ---
-sidebar_position: 10
+sidebar_position: 0
 ---
 
-# API endpoints
+# API/RPC endpoints
 
 Below is a list of public API endpoints that can be used to interact with the
 ZetaChain testnets.
@@ -22,12 +22,15 @@ ZetaChain testnets.
 
 ## Athens 3 Testnet (upcoming)
 
-| Type                 | Provider                       | Endpoint                                                       |
-| -------------------- | ------------------------------ | -------------------------------------------------------------- |
-| EVM RPC              | [BlockPI](https://blockpi.io/) | https://zetachain-athens-evm.blockpi.network/v1/rpc/public     |
-| Tendermint RPC       | [BlockPI](https://blockpi.io/) | https://zetachain-athens.blockpi.network/rpc/v1/public         |
-| Cosmos SDK HTTP      | [BlockPI](https://blockpi.io/) | https://zetachain-athens.blockpi.network/lcd/v1/public         |
-| Tendermint WebSocket | [BlockPI](https://blockpi.io/) | wss://zetachain-athens.blockpi.network/rpc/v1/public/websocket |
+| Type                 | Provider                             | Endpoint                                                       |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------- |
+| EVM RPC              | [BlockPI](https://blockpi.io/)       | https://zetachain-athens-evm.blockpi.network/v1/rpc/public     |
+| Tendermint RPC       | [BlockPI](https://blockpi.io/)       | https://zetachain-athens.blockpi.network/rpc/v1/public         |
+| Cosmos SDK HTTP      | [BlockPI](https://blockpi.io/)       | https://zetachain-athens.blockpi.network/lcd/v1/public         |
+| Tendermint WebSocket | [BlockPI](https://blockpi.io/)       | wss://zetachain-athens.blockpi.network/rpc/v1/public/websocket |
+| Tendermint RPC       | [NodeJumper](https://nodejumper.io/) | https://zetachain-testnet.nodejumper.io:443                    |
+| Cosmos SDK HTTP      | [NodeJumper](https://nodejumper.io/) | https://zetachain-testnet.nodejumper.io:1317                   |
+| Cosmos SDK gRPC      | [NodeJumper](https://nodejumper.io/) | https://zetachain-testnet.nodejumper.io:9090                   |
 
 ## EVM RPC
 
