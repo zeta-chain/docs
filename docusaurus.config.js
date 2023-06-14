@@ -70,7 +70,10 @@ const config = {
       return {
         name: "postcss-tailwindcss-loader",
         configurePostCss(postcssOptions) {
-          postcssOptions.plugins.push(require("tailwindcss"), require("autoprefixer"));
+          postcssOptions.plugins.push(
+            require("tailwindcss"),
+            require("autoprefixer")
+          );
 
           return postcssOptions;
         },
@@ -199,7 +202,10 @@ const config = {
             "ZetaChain Docs. ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.",
         },
         { property: "og:url", content: "https://www.zetachain.com/docs/" },
-        { property: "og:image", content: "https://www.zetachain.com/docs/img/logos/og-banner.png" },
+        {
+          property: "og:image",
+          content: "https://www.zetachain.com/docs/img/logos/og-banner.png",
+        },
         { property: "og:image:alt", content: "ZetaChain" },
         { property: "og:type", content: "website" },
         { property: "og:site_name", content: "ZetaChain" },
@@ -212,7 +218,10 @@ const config = {
           content:
             "ZetaChain Docs. ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.",
         },
-        { name: "twitter:image", content: "https://www.zetachain.com/docs/img/logos/og-banner.png" },
+        {
+          name: "twitter:image",
+          content: "https://www.zetachain.com/docs/img/logos/og-banner.png",
+        },
         { name: "twitter:card", content: "summary_large_image" },
       ],
     },

@@ -12,7 +12,8 @@ const shouldLoadAnalytics = Math.random() < samplingRate;
 /**
  * @todo (Manu): Get via env vars (need to update docusaurus package first)
  */
-const isClientProd = typeof window !== "undefined" && window.origin.includes("zetachain.com");
+const isClientProd =
+  typeof window !== "undefined" && window.origin.includes("zetachain.com");
 
 if (!isClientProd) {
   console.error("Not on zetachain.com domain, not loading analytics.");
@@ -24,7 +25,9 @@ export enum AnalyticsTrackEvents {
 
 export enum AnalyticsProperties {}
 
-type AnalyticsPropertiesRecord = Partial<Record<AnalyticsProperties, string | null>>;
+type AnalyticsPropertiesRecord = Partial<
+  Record<AnalyticsProperties, string | null>
+>;
 
 /**
  * @todo (Manu): Add segment key to env vars (need to update docusaurus package first)
@@ -34,7 +37,10 @@ const analytics =
     ? AnalyticsBrowser.load({ writeKey: "iDHt2XDs8t1eC2SA21Yt2oMFIYR6hDxc" })
     : { track: () => null, page: () => null, identify: () => null };
 
-export const trackEvent = (title: AnalyticsTrackEvents, properties?: AnalyticsPropertiesRecord) => {
+export const trackEvent = (
+  title: AnalyticsTrackEvents,
+  properties?: AnalyticsPropertiesRecord
+) => {
   if (isClientProd) analytics.track(title, properties);
 };
 

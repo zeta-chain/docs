@@ -16,9 +16,15 @@ export const useInitSentryClient = () => {
     (async () => {
       let isBrowserBrave = false;
 
-      if ("brave" in navigator && (await (navigator as any)?.brave?.isBrave())) isBrowserBrave = true;
+      if ("brave" in navigator && (await (navigator as any)?.brave?.isBrave()))
+        isBrowserBrave = true;
 
-      if (!isBrowserBrave && isNodeEnvProd && sentryDsn && !isSentryInitialized) {
+      if (
+        !isBrowserBrave &&
+        isNodeEnvProd &&
+        sentryDsn &&
+        !isSentryInitialized
+      ) {
         Sentry.init({
           dsn: sentryDsn,
           integrations: [

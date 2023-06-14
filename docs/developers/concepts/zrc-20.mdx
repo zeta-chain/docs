@@ -144,15 +144,24 @@ import { ethers } from "hardhat";
 import { ZRC20Addresses, TSS_ATHENS2 } from "../systemConstants";
 import { network } from "hardhat";
 // Helper function to format data for sending a swap transaction
-const getSwapData = (zetaSwap: string, destination: string, destinationToken: string, minOutput: BigNumber) => {
+const getSwapData = (
+  zetaSwap: string,
+  destination: string,
+  destinationToken: string,
+  minOutput: BigNumber
+) => {
   const params = getSwapParams(destination, destinationToken, minOutput);
   return zetaSwap + params.slice(2);
 };
 // Primary function definition
 const main = async () => {
-  if (!isNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
+  if (!isNetworkName(network.name) || !network.name)
+    throw new Error("Invalid network name");
   // Here you're choosing the target token you want the swap to output based on the network
-  const destinationToken = network.name == "goerli" ? ZRC20Addresses["tMATIC"] : ZRC20Addresses["gETH"];
+  const destinationToken =
+    network.name == "goerli"
+      ? ZRC20Addresses["tMATIC"]
+      : ZRC20Addresses["gETH"];
   console.log("Swapping native token...");
   // Get a signer to write your transaction
   const [signer] = await ethers.getSigners();
@@ -163,7 +172,12 @@ const main = async () => {
     zetaNetwork: "athens",
   });
   // Use formatting function to get the correct data format
-  const data = getSwapData(zetaSwap, signer.address, destinationToken, BigNumber.from("0"));
+  const data = getSwapData(
+    zetaSwap,
+    signer.address,
+    destinationToken,
+    BigNumber.from("0")
+  );
   // Sign your transaction with Swap data.
   const tx = await signer.sendTransaction({
     data,

@@ -6,11 +6,15 @@ import React, { PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import tw, { GlobalStyles } from "twin.macro";
 
-import { useInitSentryClient, useSubscribeToPageChangeAnalytics } from "../hooks";
+import {
+  useInitSentryClient,
+  useSubscribeToPageChangeAnalytics,
+} from "../hooks";
 import { store } from "../lib/store";
 import { theme } from "../lib/theme";
 
-export const createEmotionCache = () => createCache({ key: "css", prepend: true });
+export const createEmotionCache = () =>
+  createCache({ key: "css", prepend: true });
 
 const GlobalStylesWrapper = styled.div`
   ${tw`antialiased font-roobert text-black dark:text-white bg-grey-50 dark:bg-grey-900 min-w-[320px]`};

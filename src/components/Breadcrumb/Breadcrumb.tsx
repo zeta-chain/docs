@@ -16,7 +16,10 @@ function useBreadCrumbs() {
 
     function buildBreadcrumbs(sidebar) {
       for (const item of sidebar) {
-        if (item.href && item.href.replace(/\/$/, "") === pathname.replace(/\/$/, "")) {
+        if (
+          item.href &&
+          item.href.replace(/\/$/, "") === pathname.replace(/\/$/, "")
+        ) {
           _breadCrumbs.push(item.label);
           return _breadCrumbs;
         }
@@ -49,7 +52,13 @@ export const Breadcrumb = () => {
 
   return (
     <div className="flex items-center gap-[17px] flex-wrap mb-10">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <rect width="24" height="24" rx="4" fill="#00DDA5" fillOpacity="0.15" />
         <path
           fillRule="evenodd"
@@ -60,7 +69,13 @@ export const Breadcrumb = () => {
       </svg>
 
       {breadCrumbs.length && (
-        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="7"
+          height="12"
+          viewBox="0 0 7 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -74,15 +89,25 @@ export const Breadcrumb = () => {
         <div key={index}>
           <div className="flex items-center gap-[17px]">
             <div
-              className={clsx("text-grey-400 dark:text-grey-300 leading-[100%] flex items-center text-roobert", {
-                "text-green-100 dark:text-green-50": index === breadCrumbs.length - 1,
-              })}
+              className={clsx(
+                "text-grey-400 dark:text-grey-300 leading-[100%] flex items-center text-roobert",
+                {
+                  "text-green-100 dark:text-green-50":
+                    index === breadCrumbs.length - 1,
+                }
+              )}
             >
               {item}
             </div>
 
             {index !== breadCrumbs.length - 1 && (
-              <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="7"
+                height="12"
+                viewBox="0 0 7 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"

@@ -1,16 +1,25 @@
-import React, { useRef, useEffect, createElement, Fragment, useState } from "react";
-import { render } from "react-dom";
 import { autocomplete } from "@algolia/autocomplete-js";
 import Head from "@docusaurus/Head";
-import { translate } from "@docusaurus/Translate";
 import { useHistory } from "@docusaurus/router";
+import { useContextualSearchFilters } from "@docusaurus/theme-common";
+import { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import { mylunr, tokenize } from "./generatedWrapper";
-import { HighlightSearchResults } from "./HighlightSearchResults";
 import { usePluginData } from "@docusaurus/useGlobalData";
 import useIsBrowser from "@docusaurus/useIsBrowser";
-import { useContextualSearchFilters } from "@docusaurus/theme-common";
+import React, {
+  createElement,
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { render } from "react-dom";
+
+import { mylunr, tokenize } from "./generatedWrapper";
+import { HighlightSearchResults } from "./HighlightSearchResults";
+
 const SEARCH_INDEX_AVAILABLE = process.env.NODE_ENV === "production";
+
 function getItemUrl({ document }) {
   const [path, hash] = document.sectionRoute.split("#");
   let url = path;
@@ -19,6 +28,7 @@ function getItemUrl({ document }) {
   }
   return url;
 }
+
 const EMPTY_INDEX = {
   documents: [],
   index: mylunr(function () {
@@ -27,6 +37,7 @@ const EMPTY_INDEX = {
     this.field("content");
   }),
 };
+
 async function fetchIndex(baseUrl, tag) {
   if (SEARCH_INDEX_AVAILABLE) {
     let json;
@@ -45,21 +56,26 @@ async function fetchIndex(baseUrl, tag) {
       documents: json.documents,
       index: mylunr.Index.load(json.index),
     };
-  } else {
-    // The index does not exist in development, therefore load a dummy index here.
-    return Promise.resolve(EMPTY_INDEX);
   }
+  // The index does not exist in development, therefore load a dummy index here.
+  return Promise.resolve(EMPTY_INDEX);
 }
+
 const SearchBar = () => {
   // A bit of a hack that makes sure data-theme is not only set on <html>, but also on <body>.
   // We would like to useThemeContext, but that is specific to docusaurus-theme-classic.
   const isBrowser = useIsBrowser();
   const [isDarkTheme, setIsDarkTheme] = useState(() =>
-    isBrowser ? document.documentElement.getAttribute("data-theme") === "dark" : false
+    isBrowser
+      ? document.documentElement.getAttribute("data-theme") === "dark"
+      : false
   );
+
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      setIsDarkTheme(document.documentElement.getAttribute("data-theme") === "dark");
+      setIsDarkTheme(
+        document.documentElement.getAttribute("data-theme") === "dark"
+      );
     });
     observer.observe(document.documentElement, {
       attributes: true,
@@ -67,9 +83,11 @@ const SearchBar = () => {
     });
     return () => observer.disconnect();
   }, []);
+
   const {
     siteConfig: { baseUrl },
   } = useDocusaurusContext();
+
   const {
     titleBoost,
     contentBoost,
@@ -78,13 +96,17 @@ const SearchBar = () => {
     indexDocSidebarParentCategories,
     maxSearchResults,
   } = usePluginData("@cmfcmf/docusaurus-search-local");
+
   const history = useHistory();
   const { tags } = useContextualSearchFilters();
   const tagsRef = useRef(tags);
+
   useEffect(() => {
     tagsRef.current = tags;
   }, [tags]);
+
   const indexes = useRef({});
+
   const getIndex = async (tag) => {
     const index = indexes.current[tag];
     switch (index?.state) {
@@ -109,16 +131,20 @@ const SearchBar = () => {
         });
     }
   };
+
   const placeholder = translate({
     message: "cmfcmf/d-s-l.searchBar.placeholder",
     description: "Placeholder shown in the searchbar",
   });
+
   const autocompleteRef = useRef(null);
   const autocompleteApi = useRef(null);
+
   useEffect(() => {
     if (!autocompleteRef.current) {
       return;
     }
+
     autocompleteApi.current = autocomplete({
       container: autocompleteRef.current,
       placeholder,
@@ -133,7 +159,8 @@ const SearchBar = () => {
           history.push(itemUrl, {
             cmfcmfhighlight: {
               terms: item.terms,
-              isDocsOrBlog: item.document.type === "docs" || item.document.type === "blog",
+              isDocsOrBlog:
+                item.document.type === "docs" || item.document.type === "blog",
             },
           });
         },
@@ -187,7 +214,9 @@ const SearchBar = () => {
                         history.push(url, {
                           cmfcmfhighlight: {
                             terms: item.terms,
-                            isDocsOrBlog: item.document.type === "docs" || item.document.type === "blog",
+                            isDocsOrBlog:
+                              item.document.type === "docs" ||
+                              item.document.type === "blog",
                           },
                         });
                       },
@@ -198,8 +227,13 @@ const SearchBar = () => {
                       React.createElement(
                         "div",
                         { className: "aa-ItemContentBody" },
-                        React.createElement("div", { className: "aa-ItemContentTitle" }, item.document.sectionTitle),
-                        item.document.pageTitle !== item.document.sectionTitle &&
+                        React.createElement(
+                          "div",
+                          { className: "aa-ItemContentTitle" },
+                          item.document.sectionTitle
+                        ),
+                        item.document.pageTitle !==
+                          item.document.sectionTitle &&
                           React.createElement(
                             "div",
                             { className: "aa-ItemContentDescription" },
@@ -213,13 +247,19 @@ const SearchBar = () => {
                       React.createElement(
                         "button",
                         {
-                          className: "aa-ItemActionButton aa-DesktopOnly aa-ActiveOnly",
+                          className:
+                            "aa-ItemActionButton aa-DesktopOnly aa-ActiveOnly",
                           type: "button",
                           title: "Select",
                         },
                         React.createElement(
                           "svg",
-                          { viewBox: "0 0 24 24", width: "20", height: "20", fill: "currentColor" },
+                          {
+                            viewBox: "0 0 24 24",
+                            width: "20",
+                            height: "20",
+                            fill: "currentColor",
+                          },
                           React.createElement("path", {
                             d: "M18.984 6.984h2.016v6h-15.188l3.609 3.609-1.406 1.406-6-6 6-6 1.406 1.406-3.609 3.609h13.172v-4.031z",
                           })
@@ -252,7 +292,9 @@ const SearchBar = () => {
             },
             async getItems() {
               const tags = tagsRef.current;
-              const indexes = await Promise.all(tags.map((tag) => getIndex(tag)));
+              const indexes = await Promise.all(
+                tags.map((tag) => getIndex(tag))
+              );
               const terms = tokenize(input);
               return indexes
                 .flatMap(({ index, documents }) =>
@@ -299,7 +341,9 @@ const SearchBar = () => {
                     })
                     .slice(0, maxSearchResults)
                     .map((result) => ({
-                      document: documents.find((document) => document.id.toString() === result.ref),
+                      document: documents.find(
+                        (document) => document.id.toString() === result.ref
+                      ),
                       score: result.score,
                       terms,
                     }))
@@ -313,10 +357,17 @@ const SearchBar = () => {
     });
     return () => autocompleteApi.current?.destroy();
   }, [maxSearchResults]);
+
   return React.createElement(
     React.Fragment,
     null,
-    React.createElement(Head, null, React.createElement("body", { "data-theme": isDarkTheme ? "dark" : "light" })),
+    React.createElement(
+      Head,
+      null,
+      React.createElement("body", {
+        "data-theme": isDarkTheme ? "dark" : "light",
+      })
+    ),
     React.createElement(HighlightSearchResults, null),
     React.createElement(
       "div",
@@ -329,4 +380,5 @@ const SearchBar = () => {
     )
   );
 };
+
 export default SearchBar;

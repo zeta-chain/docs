@@ -2,9 +2,9 @@ import {
   useLockBodyScroll,
   useNavbarMobileSidebar,
 } from "@docusaurus/theme-common/internal";
-import { DocSidebarDesktop } from "../../DocSidebar";
-
 import React from "react";
+
+import { DocSidebarDesktop } from "../../DocSidebar";
 
 // another example of docusaurus being awful, the build breaks when using this hook if we don't check for window
 const useDocsSidebar =

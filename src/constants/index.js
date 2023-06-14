@@ -1,6 +1,7 @@
 const constants = {
   contactLink: "mailto:hello@zetachain.com",
-  jobsLink: "https://zetachain.notion.site/Work-With-ZetaChain-5023467bea594d9c83e54e81a1afa97b",
+  jobsLink:
+    "https://zetachain.notion.site/Work-With-ZetaChain-5023467bea594d9c83e54e81a1afa97b",
   helpLink: "mailto:help@zetachain.com",
   pressLink: "mailto:press@zetachain.com",
   partnershipsLink: "mailto:partnerships@zetachain.com",

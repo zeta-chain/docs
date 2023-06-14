@@ -1,19 +1,29 @@
-import React from "react";
 import Link from "@docusaurus/Link";
+import { useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
 import NavbarLayout from "@theme/Navbar/Layout";
 import SearchBar from "@theme/SearchBar";
 import clsx from "clsx";
+import { motion } from "framer-motion";
+import React from "react";
+
 import ColorModeToggle from "../ColorModeToggle";
 
-import { useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
-import { motion } from "framer-motion";
-
 const Path = (props) => (
-  <motion.path fill="transparent" strokeWidth="2" stroke="currentColor" strokeLinecap="round" {...props} />
+  <motion.path
+    fill="transparent"
+    strokeWidth="2"
+    stroke="currentColor"
+    strokeLinecap="round"
+    {...props}
+  />
 );
 
 export const HamburgerMenuButton = ({ toggle, isOpen, ...otherProps }) => (
-  <motion.nav initial={false} animate={isOpen ? "open" : "closed"} className="items-center flex md:hidden mt-[5px]">
+  <motion.nav
+    initial={false}
+    animate={isOpen ? "open" : "closed"}
+    className="items-center flex md:hidden mt-[5px]"
+  >
     <button type="button" onClick={toggle} {...otherProps}>
       <svg width="23" height="23" viewBox="0 0 23 23">
         <Path
@@ -50,7 +60,9 @@ const IconZetaLogo = ({ color, ...otherProps }) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...otherProps}
-    className={clsx(otherProps?.className, { "text-grey-500 dark:text-grey-300": !otherProps?.className })}
+    className={clsx(otherProps?.className, {
+      "text-grey-500 dark:text-grey-300": !otherProps?.className,
+    })}
   >
     <path
       d="M16.807 17.2227V20.4134H3.64454C3.82611 18.3135 4.5037 16.8359 6.84699 14.7584L16.807 6.2615V13.7177H20.3923V0H0.00394715V6.83778H3.58796V3.58533H14.4189L4.50765 12.0428L4.48396 12.0651C0.330245 15.7426 0 18.7108 0 22.208V24H20.391V17.2241H16.8057L16.807 17.2227Z"
@@ -95,58 +107,66 @@ export default function Navbar() {
   const mobileSidebar = useNavbarMobileSidebar();
 
   return (
-    <>
-      <NavbarLayout className="bg-white! dark:bg-black!" style={{ zIndex: "99999999 !important" }}>
-        <div className="flex items-center justify-between w-full px-2 md:px-[15px] bg-white! dark:bg-black!">
-          <div className="w-full flex gap-3 sm:gap-6 items-center">
-            <HamburgerMenuButton isOpen={mobileSidebar.shown} toggle={mobileSidebar.toggle} />
+    <NavbarLayout
+      className="bg-white! dark:bg-black!"
+      style={{ zIndex: "99999999 !important" }}
+    >
+      <div className="flex items-center justify-between w-full px-2 md:px-[15px] bg-white! dark:bg-black!">
+        <div className="w-full flex gap-3 sm:gap-6 items-center">
+          <HamburgerMenuButton
+            isOpen={mobileSidebar.shown}
+            toggle={mobileSidebar.toggle}
+          />
 
-            <div className="w-full md:w-auto flex items-center justify-between md:justify-start gap-4">
-              <Link href="/">
-                <IconZetaLogo className="text-green-700 dark:text-grey-50 w-[100px] sm:w-auto" />
-              </Link>
+          <div className="w-full md:w-auto flex items-center justify-between md:justify-start gap-4">
+            <Link href="/">
+              <IconZetaLogo className="text-green-700 dark:text-grey-50 w-[100px] sm:w-auto" />
+            </Link>
 
-              <SearchBar />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-9">
-            <a
-              className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
-              href="https://www.zetachain.com/whitepaper.pdf"
-              target={"_blank"}
-            >
-              Whitepaper
-            </a>
-
-            <a
-              className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
-              href="https://explorer.zetachain.com/"
-              target={"_blank"}
-            >
-              Explorer
-            </a>
-
-            <a
-              className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
-              href="https://link3.to/zetachain"
-              target={"_blank"}
-            >
-              Community
-            </a>
-
-            <a
-              className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
-              href="https://blog.zetachain.com/"
-              target={"_blank"}
-            >
-              Blog
-            </a>
-
-            <ColorModeToggle className="hidden md:flex" />
+            <SearchBar />
           </div>
         </div>
-      </NavbarLayout>
-    </>
+
+        <div className="flex items-center gap-9">
+          <a
+            className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
+            href="https://www.zetachain.com/whitepaper.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Whitepaper
+          </a>
+
+          <a
+            className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
+            href="https://explorer.zetachain.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Explorer
+          </a>
+
+          <a
+            className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
+            href="https://link3.to/zetachain"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Community
+          </a>
+
+          <a
+            className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
+            href="https://blog.zetachain.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Blog
+          </a>
+
+          <ColorModeToggle className="hidden md:flex" />
+        </div>
+      </div>
+    </NavbarLayout>
   );
 }

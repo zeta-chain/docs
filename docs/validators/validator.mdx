@@ -13,11 +13,11 @@ This guide assumes your have already created and synced up your node using the [
 This guide is design for simplicity and does not cover the intricacies of secure
 key management. We recommend you follow best practices when it comes to secure
 key generation and key management. We are unable to offer support outside of the
-basic setup of a ZetaChain validator. 
+basic setup of a ZetaChain validator.
 
 ### Create a Validator Account
 
-Create the account `operator`. 
+Create the account `operator`.
 
 Make sure to store the mnemonic from the output in a safe place. You will need this information to later access your account.
 
@@ -35,7 +35,7 @@ zetacored query bank balances $(zetacored keys show operator -a)
 
 Add funds to your validator account.
 
-Send tokens from your own wallet or from an exchange to your validators address. 
+Send tokens from your own wallet or from an exchange to your validators address.
 Make sure you are sending them using the zetachain cosmos based network, not the zEVM network.
 
 Check your validator account funds `balances`.
@@ -46,7 +46,7 @@ zetacored query bank balances $(zetacored keys show operator -a)
 
 ### Create Your Validator
 
-Create a new validator by staking ***azeta*** tokens. Here is an example of
+Create a new validator by staking **_azeta_** tokens. Here is an example of
 creating a validator on Zetachain Testnet. Save the transaction hash
 from the output.
 
@@ -97,10 +97,9 @@ status of your validator.
 zetacored query staking validator $(zetacored keys show operator --bech operator -a)
 ```
 
-It's possible that you don’t have enough ***azeta*** tokens to be part of the
-active set of validators in the beginning. If the status is unbonded `status:
-BOND_STATUS_UNBONDED`, you didn’t stake enough tokens `amount` when you created
-your validator.
+It's possible that you don’t have enough **_azeta_** tokens to be part of the
+active set of validators in the beginning. If the status is unbonded `status: BOND_STATUS_UNBONDED`,
+you didn’t stake enough tokens `amount` when you created your validator.
 
 In this case, your validator is not in the active set. It cannot sign blocks and
 it does not earn rewards. It can however, receive delegations.

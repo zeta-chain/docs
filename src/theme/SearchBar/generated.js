@@ -3,7 +3,10 @@
 
 import "@algolia/autocomplete-theme-classic";
 import "./index.css";
+
 const lunr = require("lunr");
+
 lunr.tokenizer.separator = /[\s\-]+/;
-export const tokenize = (input) => lunr.tokenizer(input).map((token) => token.str);
+export const tokenize = (input) =>
+  lunr.tokenizer(input).map((token) => token.str);
 export const mylunr = lunr;

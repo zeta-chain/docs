@@ -29,7 +29,9 @@ function TOC({ className, ...props }) {
   const { height: windowHeight } = useWindowSize();
 
   const maxScrollPosition = useMemo(() => {
-    return isBrowser ? document?.documentElement?.scrollHeight - windowHeight : 0;
+    return isBrowser
+      ? document?.documentElement?.scrollHeight - windowHeight
+      : 0;
   }, [scrollHeight]);
 
   const normalizedTocY = useMemo(() => {
@@ -44,18 +46,23 @@ function TOC({ className, ...props }) {
       })
       .sort((a, b) => a.y - b.y);
 
-    const lastScrollableIndex = tocItems.indexOf(tocItems.find((item) => item.y > maxScrollPosition)) - 1;
+    const lastScrollableIndex =
+      tocItems.indexOf(tocItems.find((item) => item.y > maxScrollPosition)) - 1;
 
     if (lastScrollableIndex < 1) return tocItems;
 
     const missingScroll = maxScrollPosition - tocItems[lastScrollableIndex]?.y;
-    const missingScrollPerItem = missingScroll / (tocItems.length - lastScrollableIndex);
+    const missingScrollPerItem =
+      missingScroll / (tocItems.length - lastScrollableIndex);
 
     let counter = 0;
     return tocItems.map((item, index) => {
       if (index > lastScrollableIndex) {
         counter++;
-        return { ...item, y: tocItems[lastScrollableIndex]?.y + missingScrollPerItem * counter };
+        return {
+          ...item,
+          y: tocItems[lastScrollableIndex]?.y + missingScrollPerItem * counter,
+        };
       }
       return item;
     });
@@ -105,13 +112,20 @@ function TOC({ className, ...props }) {
     >
       <div className="-ml-[15px]">
         {props?.toc?.map((item, index) => {
-          const isActive = activeId && (activeId === item?.id || (!activeId && index === 0));
+          const isActive =
+            activeId && (activeId === item?.id || (!activeId && index === 0));
           return (
-            <div key={item.id} className="border-l border-grey-100 dark:border-grey-600 py-0">
+            <div
+              key={item.id}
+              className="border-l border-grey-100 dark:border-grey-600 py-0"
+            >
               <button
-                className={clsx("hover:text-green-300 text-sm text-black dark:text-grey-300 -ml-[1px] text-left", {
-                  "!text-green-100 border-l border-green-100": isActive,
-                })}
+                className={clsx(
+                  "hover:text-green-300 text-sm text-black dark:text-grey-300 -ml-[1px] text-left",
+                  {
+                    "!text-green-100 border-l border-green-100": isActive,
+                  }
+                )}
                 style={{ paddingLeft: item?.level * 15, lineHeight: "24px" }}
                 onClick={() => {
                   const el = normalizedTocY.find((_item) => {
@@ -125,7 +139,10 @@ function TOC({ className, ...props }) {
                   }
                 }}
               >
-                {sanitizeHtml(item.value, { allowedTags: [], allowedAttributes: {} })}
+                {sanitizeHtml(item.value, {
+                  allowedTags: [],
+                  allowedAttributes: {},
+                })}
               </button>
             </div>
           );
