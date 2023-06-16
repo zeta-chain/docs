@@ -1,7 +1,9 @@
 {
-  "name": "@zeta-apps-frontend/docs-site",
+  "name": "zetachain",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
+  "license": "MIT",
+  "author": "zetachain",
   "scripts": {
     "docusaurus": "docusaurus",
     "dev": "docusaurus start --port 3001 --no-open",
