@@ -23,6 +23,7 @@
     "@docusaurus/mdx-loader": "2.3.1",
     "@docusaurus/plugin-client-redirects": "2.3.1",
     "@docusaurus/preset-classic": "2.3.1",
+    "@docusaurus/theme-mermaid": "2.3.1",
     "@emotion/react": "11.10.5",
     "@emotion/styled": "11.10.5",
     "@mdx-js/react": "1.6.22",
