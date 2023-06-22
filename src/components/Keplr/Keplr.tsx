@@ -5,20 +5,22 @@ export const Keplr: React.FC<{}> = () => {
   const [chainStatusMessage, setChainStatusMessage] = useState("");
 
   const checkChain = useCallback(async () => {
-    if (window.keplr) {
-      try {
-        const key = await window.keplr.getKey("athens_7001-1");
-        if (key) {
-          setChainAdded(true);
-          setChainStatusMessage(
-            "☑️ ZetaChain Athens 3 testnet is already added to your Keplr extension."
-          );
-        } else {
-          setChainAdded(false);
-          setChainStatusMessage("ZetaChain has not been added yet");
+    if (typeof window !== "undefined" && window.keplr) {
+      if (window && window.keplr) {
+        try {
+          const key = await window.keplr.getKey("athens_7001-1");
+          if (key) {
+            setChainAdded(true);
+            setChainStatusMessage(
+              "☑️ ZetaChain Athens 3 testnet is already added to your Keplr extension."
+            );
+          } else {
+            setChainAdded(false);
+            setChainStatusMessage("ZetaChain has not been added yet");
+          }
+        } catch (error) {
+          console.error("Error getting key:", error);
         }
-      } catch (error) {
-        console.error("Error getting key:", error);
       }
     } else {
       setChainAdded(false);
@@ -79,7 +81,11 @@ export const Keplr: React.FC<{}> = () => {
       features: ["eth-address-gen", "eth-key-sign"],
     };
 
-    if (window.keplr && window.keplr.experimentalSuggestChain) {
+    if (
+      typeof window !== "undefined" &&
+      window.keplr &&
+      window.keplr.experimentalSuggestChain
+    ) {
       try {
         await window.keplr.experimentalSuggestChain(chainInfo);
         checkChain();
@@ -96,13 +102,15 @@ export const Keplr: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    checkChain();
+    if (typeof window !== "undefined") {
+      checkChain();
+    }
   }, [checkChain]);
 
   return (
     <div>
       <p>{chainStatusMessage}</p>
-      {!isChainAdded && window.keplr && (
+      {typeof window !== "undefined" && !isChainAdded && window.keplr && (
         <button
           className="border border-grey-200 dark:border-grey-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition-[border-color]"
           onClick={handleButtonClick}
