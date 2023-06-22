@@ -173,7 +173,10 @@ const config = {
       }),
     ],
   ],
-  themes: ["docusaurus-theme-github-codeblock"],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["docusaurus-theme-github-codeblock", "@docusaurus/theme-mermaid"],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
