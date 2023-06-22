@@ -91,9 +91,6 @@ export const Keplr: React.FC<{}> = () => {
         checkChain();
       } catch (error) {
         console.error("Error suggesting chain:", error);
-        setChainStatusMessage(
-          "Failed to suggest ZetaChain to Keplr extension."
-        );
       }
     } else {
       checkChain();
