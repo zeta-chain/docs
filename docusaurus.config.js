@@ -63,6 +63,10 @@ const config = {
             from: "/learn/faq/",
             to: "/reference/faq/",
           },
+          {
+            from: "/reference/using-zetascan/",
+            to: "/reference/explorers/",
+          },
         ],
       },
     ],
