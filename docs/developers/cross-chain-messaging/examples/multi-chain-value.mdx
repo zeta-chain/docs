@@ -22,25 +22,20 @@ chain to another using the
 
 ## Set up your environment
 
+```
+git clone https://github.com/zeta-chain/template
+```
+
 Install the dependencies:
 
 ```
-yarn add --dev @openzeppelin/contracts @zetachain/protocol-contracts
-```
-
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
-```
-npx hardhat account --save
-
-npx hardhat faucet
+yarn add --dev @openzeppelin/contracts
 ```
 
 ## Create a new contract
 
 ```solidity title="contracts/MultiChainValue.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/value/contracts/MultiChainValue.sol
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value/contracts/MultiChainValue.sol
 ```
 
 The contract's main functionality is implemented in the `sendValue` function.
@@ -62,23 +57,6 @@ function and transferring value between chains you need to call the
 ID to the list of available chains. In this example this logic is implemented in
 the deploy task.
 
-## Configure the Hardhat environment
-
-The ZetaSwap contract expects a specific version of the Solidity compiler.
-Modify the Hardhat config to ensure that the correct version is used.
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  // ...
-};
-```
-
-```
-npx hardhat compile
-```
-
 ## Create a deployment task
 
 The deploy task is fairly standard. It deploys the contract to two or more
@@ -87,7 +65,7 @@ the script also calls the `addAvailableChainId` function on each chain to add
 the other chain to the list of available chains.
 
 ```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/value/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value/tasks/deploy.ts
 ```
 
 Run the following command to deploy the contract to two networks:

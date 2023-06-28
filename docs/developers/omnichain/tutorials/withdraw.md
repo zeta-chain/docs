@@ -31,25 +31,6 @@ by the payload of the data field of the transaction).
 
 ## Set up your environment
 
-Install the ZetaChain's protocol contracts so that your contract can inherit
-ZetaChain-specific functionality:
-
-```
-yarn add --dev @zetachain/protocol-contracts
-```
-
-Configure the version of Solidity:
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  networks: {
-    ...getHardhatConfigNetworks(PRIVATE_KEYS),
-  },
-};
-```
-
 Create a new wallet and request tokens from the testnet faucet if you haven't
 done so already:
 
@@ -63,8 +44,8 @@ npx hardhat faucet
 
 First, create a new Solidity contract called `Withdraw.sol`:
 
-```solidity reference
-https://github.com/zeta-chain/example-contracts/blob/main/omnichain/withdraw/contracts/Withdraw.sol
+```solidity title="contracts/Withdraw.sol" reference
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw/contracts/Withdraw.sol
 ```
 
 Start by importing the necessary interfaces from the
@@ -111,8 +92,8 @@ input parameters. Within the function, you will:
 Next, create a deployment task script called `deploy.ts`. This script will
 deploy the Withdraw contract to ZetaChain.
 
-```ts reference
-https://github.com/zeta-chain/example-contracts/blob/main/omnichain/withdraw/tasks/deploy.ts
+```ts title="tasks/deploy.ts" reference
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw/tasks/deploy.ts
 ```
 
 Don't forget to import the deployment task in your `hardhat.config.ts` file.
@@ -125,7 +106,7 @@ You can now run the `deploy` task to deploy the Withdraw contract to ZetaChain's
 "athens" testnet.
 
 ```
-npx hardhat deploy --network athens
+npx hardhat deploy --network zeta_testnet
 ```
 
 ```
@@ -138,8 +119,8 @@ npx hardhat deploy --network athens
 
 ## Interacting with the contract
 
-```ts reference
-https://github.com/zeta-chain/example-contracts/blob/main/omnichain/withdraw/tasks/withdraw.ts
+```ts title="tasks/withdraw.ts" reference
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw/tasks/withdraw.ts
 ```
 
 Don't forget to import the withdraw task in your `hardhat.config.ts` file.

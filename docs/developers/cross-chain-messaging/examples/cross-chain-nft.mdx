@@ -16,19 +16,14 @@ capabilities using
 
 ## Set up your environment
 
+```
+git clone https://github.com/zeta-chain/template
+```
+
 Install the dependencies:
 
 ```
-yarn add --dev @openzeppelin/contracts @zetachain/protocol-contracts
-```
-
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
-```
-npx hardhat account --save
-
-npx hardhat faucet
+yarn add --dev @openzeppelin/contracts
 ```
 
 ## Create a new contract
@@ -45,24 +40,7 @@ In a nutshell, your contracts will need to:
   the previously burned NFT.
 
 ```solidity title="contracts/CrossChainWarriors.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/contracts/CrossChainWarriors.sol
-```
-
-## Configure the Hardhat environment
-
-The ZetaSwap contract expects a specific version of the Solidity compiler.
-Modify the Hardhat config to ensure that the correct version is used.
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  // ...
-};
-```
-
-```
-npx hardhat compile
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/contracts/CrossChainWarriors.sol
 ```
 
 ## Create a deployment task
@@ -77,7 +55,7 @@ The deploy task will deploy the CrossChainWarriors contract to two or more
 chains and set the interactors for all chains.
 
 ```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/deploy.ts
 ```
 
 Run the following command to deploy the contract to two networks:
@@ -107,7 +85,7 @@ function on it, searches the events for a "Transfer" event and prints out the
 token ID.
 
 ```ts title="tasks/mint.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/mint.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/mint.ts
 ```
 
 ```
@@ -135,7 +113,7 @@ The transfer task accepts the following arguments:
 - amount: amount of tokens to cover gas costs
 
 ```ts title="tasks/transfer.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/transfer.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/transfer.ts
 ```
 
 ```
