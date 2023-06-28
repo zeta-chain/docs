@@ -31,47 +31,25 @@ ZetaChain.
 
 ## Set up your environment
 
+```
+git clone https://github.com/zeta-chain/template
+```
+
 Install the dependencies:
 
 ```
 yarn add --dev @uniswap/v2-periphery @uniswap/v2-core
 ```
 
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
-```
-npx hardhat account --save
-
-npx hardhat faucet
-```
-
 ## Create the contract
 
-```solidity reference
+```solidity title="contracts/ZetaSwapV2.sol" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/swap/contracts/ZetaSwapV2.sol
-```
-
-### Configure the Hardhat environment
-
-The ZetaSwap contract expects a specific version of the Solidity compiler.
-Modify the Hardhat config to ensure that the correct version is used.
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  // ...
-};
-```
-
-```
-npx hardhat compile
 ```
 
 ## Write a test for the contract
 
-```ts reference
+```ts title="test/swap.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/swap/test/swap.ts
 ```
 
@@ -80,11 +58,11 @@ https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnicha
 The test depends on types from external contracts. Import these contracts to
 enable Hardhat to compile their types.
 
-```solidity reference
+```solidity title="contracts/TestContracts.sol" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/swap/contracts/TestContracts.sol
 ```
 
-```solidity reference
+```solidity title="contracts/TestUniswap.sol" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/swap/contracts/TestUniswap.sol
 ```
 

@@ -31,13 +31,8 @@ by the payload of the data field of the transaction).
 
 ## Set up your environment
 
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
 ```
-npx hardhat account --save
-
-npx hardhat faucet
+git clone https://github.com/zeta-chain/template
 ```
 
 ## Creating the contract
