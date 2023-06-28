@@ -9,10 +9,10 @@ title: Deploy an Omnichain NFT
 
 ## Overview
 
-ZetaChain offers two types of contracts: [Cross Chain
-Messaging](/developers/cross-chain-messaging/overview.mdx) Contracts (CCM) and
-[zEVM](/developers/concepts/zeta-evm.mdx) Contracts (Omnichain Smart
-Contracts).
+ZetaChain offers two types of contracts:
+[Cross Chain Messaging](/developers/cross-chain-messaging/overview.mdx)
+Contracts (CCM) and [zEVM](/developers/omnichain/zeta-evm.mdx) Contracts
+(Omnichain Smart Contracts).
 
 This tutorial specifically focuses on deploying a CCM-based Omnichain NFT. This
 NFT may be transferred between different chains seamlessly by passing messages
@@ -26,24 +26,24 @@ You have two options for configuring your local system
 
 ### Option 1: Use Docker
 
-1. Make sure your machine has `docker` installed: [Install Docker
-   Engine](https://docs.docker.com/engine/install/)
-2. Download the zetachain docker image: `docker pull ghcr.io/zeta-chain/zetachain`
+1. Make sure your machine has `docker` installed:
+   [Install Docker Engine](https://docs.docker.com/engine/install/)
+2. Download the zetachain docker image:
+   `docker pull ghcr.io/zeta-chain/zetachain`
 3. Open a shell using this image: `docker run -it zetachain`
 4. Create your wallet and .env files with this command: `yarn setup-tutorial`
-5. Proceed to the [Deploying an Omnichain Smart Contract on
-   zEVM](#Deploying-an-Omnichain-Smart-Contract-on-zEVM) section below
+5. Proceed to the
+   [Deploying an Omnichain Smart Contract on zEVM](#Deploying-an-Omnichain-Smart-Contract-on-zEVM)
+   section below
 
 ### Option 2: Configure Your Local System Manually
 
 1. Make sure your machine has `git` installed:
    [Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-2. Install [Node.js 16.30
-   LTS](https://nodejs.org/en/download/package-manager) (other versions may, but
-   are not guaranteed to work).
+2. Install [Node.js 16.30 LTS](https://nodejs.org/en/download/package-manager) (other
+   versions may, but are not guaranteed to work).
 3. Install `yarn` (make sure NPM has the right permissions to add global
-   packages):
-   `npm i -g yarn`
+   packages): `npm i -g yarn`
 4. Clone the `zetachain` repository to your machine
 
    ```jsx
@@ -59,9 +59,8 @@ You have two options for configuring your local system
 
    `yarn compile`
 
-   This will compile all the contracts in the repository for you so that you
-   can try deploying them. You can compile these later if you need to edit
-   anything.
+   This will compile all the contracts in the repository for you so that you can
+   try deploying them. You can compile these later if you need to edit anything.
 
 7. You should have an EVM-compatible wallet (not necessarily for this tutorial,
    but in general). We recommend Metamask as an easy default, but also XDEFI if
@@ -112,25 +111,27 @@ Let's go over each variable in this file:
    the addresses package. You will find the file at
    `packages/addresses/src/addresses.athens.json` and it is indexed by chain,
    with each attribute being a contract name. In this example, the contract name
-   is `crossChainNft`.
-   To deploy to Goerli, go to the `packages/example-contracts/` directory and
-   you will find several scripts. Take a look at
+   is `crossChainNft`. To deploy to Goerli, go to the
+   `packages/example-contracts/` directory and you will find several scripts.
+   Take a look at
    `packages/example-contracts/scripts/cross-chain-warriors/deploy.ts`. This
    script deploys a new instance of CrossChainWarriors (a demo NFT) and mints
    the first one to the deployer. We will use Hardhat, a powerful tool for
-   working with smart contracts, to run this script.
-   The command to run the script is as follows:
+   working with smart contracts, to run this script. The command to run the
+   script is as follows:
    ```
    npx hardhat run scripts/cross-chain-warriors/deploy.ts --network goerli
    ```
    The `--network goerli` flag specifies the blockchain network where the
-   deployment will take place. It is important to note that this command will
-   be executed using the private key previously set up, so make sure there are
+   deployment will take place. It is important to note that this command will be
+   executed using the private key previously set up, so make sure there are
    sufficient funds in the chosen network to perform the deployment.
-5. To deploy the contract, run the following command: `npx hardhat run scripts/cross-chain-warriors/deploy.ts`. This Hardhat command will execute
-   the script and add the deployer information, etc. Once the command is
-   executed, you can verify that the address file has been updated in your Git
-   changes. Repeat the command using the `--network "bsc-testnet"` flag.
+5. To deploy the contract, run the following command:
+   `npx hardhat run scripts/cross-chain-warriors/deploy.ts`. This Hardhat
+   command will execute the script and add the deployer information, etc. Once
+   the command is executed, you can verify that the address file has been
+   updated in your Git changes. Repeat the command using the
+   `--network "bsc-testnet"` flag.
 6. Next, update the data to allow the contract to communicate with each other by
    using the following command:
    ```
@@ -138,16 +139,16 @@ Let's go over each variable in this file:
    ```
    The script will perform the following steps:
    1. Retrieve the contract address on the current chain.
-   2. Retrieve the contract address on the opposite chain (for testing
-      purposes, we have defined this concept in our repository and Goerli is
-      opposite to BSC, but you can choose any chain you desire).
+   2. Retrieve the contract address on the opposite chain (for testing purposes,
+      we have defined this concept in our repository and Goerli is opposite to
+      BSC, but you can choose any chain you desire).
    3. Call the method `crossChainWarriorsContract.setInteractorByChainId` with
       two parameters: the first is the destination chain, and the second is the
-      address of the contract on that chain.
-      Please note that you will need to run this script twice, once on each chain.
-      If you are on a non-unix command line (Windows), please add
-      `ZETA_NETWORK=athens` and `EXECUTE_PROGRAMMATICALLY=true` to your
-      environment (e. g. `set ZETA_NETWORK=athens`), and rerun the commands.
+      address of the contract on that chain. Please note that you will need to
+      run this script twice, once on each chain. If you are on a non-unix
+      command line (Windows), please add `ZETA_NETWORK=athens` and
+      `EXECUTE_PROGRAMMATICALLY=true` to your environment (e. g.
+      `set ZETA_NETWORK=athens`), and rerun the commands.
 
 Congratulations, you have successfully deployed your first cross-chain NFT! This
 NFT can be transferred between chains using ZetaChain's cross-chain messaging

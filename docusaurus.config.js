@@ -45,7 +45,7 @@ const config = {
           },
           {
             from: "/developers/tutorials/examples/system-contract",
-            to: "/developers/concepts/system-contract",
+            to: "/developers/omnichain/system-contract",
           },
           {
             from: "/developers/cross-chain-messaging/connector-api/",
