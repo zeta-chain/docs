@@ -31,14 +31,6 @@ ZetaChain.
 
 ## Set up your environment
 
-:::note
-
-This tutorial assumes that you have already completed the
-[setup tutorial](/developers/tutorials/setup) or cloned
-[the template Hardhat project](https://github.com/zeta-chain/template).
-
-:::
-
 Install the dependencies:
 
 ```

@@ -8,14 +8,6 @@ In this tutorial you will set up a basic template for a ZetaChain smart contract
 project. You will then be able to use this template for any of the following
 tutorials.
 
-:::note
-
-If you prefer to skip the setup step and dive into coding, you can clone
-[the template Hardhat project](https://github.com/zeta-chain/template) and jump
-directly to the next tutorial.
-
-:::
-
 ## Prerequisites
 
 - Node.js installed (version 16 or higher)
