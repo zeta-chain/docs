@@ -9,17 +9,19 @@ title: Build a Cross-Chain NFT
 # Build a cross-chain NFT
 
 In this tutorial you will create an NFT collection with cross-chain transfer
-capabilities using [Zeta
-Connector](/developers/cross-chain-messaging/connector.mdx).
+capabilities using
+[Zeta Connector](/developers/cross-chain-messaging/connector.mdx).
 
 ![Cross-chain NFT transfer](/img/graphs/cross-chain-nft-transfer.svg)
 
 ## Set up your environment
 
 :::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
+
+This tutorial assumes that you have already completed the
+[setup tutorial](/developers/tutorials/setup) or cloned
+[the template Hardhat project](https://github.com/zeta-chain/template).
+
 :::
 
 Install the dependencies:
@@ -148,7 +150,7 @@ https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tas
 npx hardhat transfer --network goerli --contract 0xFeAF74733B6f046F3d609e663F667Ba61B19A148 --address 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --destination 97 --token 2 --amount 0.4
 ```
 
-After the transfer transaction is confirmed, you will be able to see the
-NFT on the recipient address page on the destination chain (in this case, BSC).
+After the transfer transaction is confirmed, you will be able to see the NFT on
+the recipient address page on the destination chain (in this case, BSC).
 
 ![](/img/docs/ccm-warriors-explorer.jpg)

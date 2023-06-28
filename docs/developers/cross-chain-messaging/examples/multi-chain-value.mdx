@@ -17,15 +17,17 @@ asset exchanges via a swap to/from ZETA on source and destination.
 # Multichain Value Transfer
 
 In this tutorial we will create a contract that allows sending value from one
-chain to another using the [Connector
-API](/developers/cross-chain-messaging/connector/).
+chain to another using the
+[Connector API](/developers/cross-chain-messaging/connector/).
 
 ## Set up your environment
 
 :::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
+
+This tutorial assumes that you have already completed the
+[setup tutorial](/developers/tutorials/setup) or cloned
+[the template Hardhat project](https://github.com/zeta-chain/template).
+
 :::
 
 Install the dependencies:
@@ -87,10 +89,10 @@ npx hardhat compile
 
 ## Create a deployment task
 
-The deploy task is fairly standard. It deploys the contract to two or more chains
-and sets the interactors on each chain. Additionally, for this example, the script
-also calls the `addAvailableChainId` function on each chain to add the other chain
-to the list of available chains.
+The deploy task is fairly standard. It deploys the contract to two or more
+chains and sets the interactors on each chain. Additionally, for this example,
+the script also calls the `addAvailableChainId` function on each chain to add
+the other chain to the list of available chains.
 
 ```ts title="tasks/deploy.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/main/messaging/value/tasks/deploy.ts
