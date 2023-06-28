@@ -14,13 +14,8 @@ and testing a smart contract.
 
 ## Set up your environment
 
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
 ```
-npx hardhat account --save
-
-npx hardhat faucet
+git clone https://github.com/zeta-chain/template
 ```
 
 ## Create the contract
@@ -28,7 +23,7 @@ npx hardhat faucet
 In the `contracts` directory, create a new file called `HelloZeta.sol` and add
 the following Solidity code to it:
 
-```solidity reference
+```solidity title="contracts/HelloZeta.sol" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/hello/contracts/HelloZeta.sol
 ```
 
@@ -40,7 +35,7 @@ This contract has a single function, `helloZeta()`, which returns a string
 In the `test` directory, create a new file called `HelloZeta.test.ts` and add
 the following test code to it:
 
-```ts reference
+```ts title="test/HelloZeta.spec.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/hello/test/HelloZeta.spec.ts
 ```
 
@@ -81,11 +76,10 @@ for more complex smart contracts.
 
 ### Run the test
 
-Execute the following command to run the `HelloZeta` test using `hardhat` on the
-`athens` testnet:
+Execute the following command to run the `HelloZeta` test:
 
 ```
-npx hardhat test --network athens
+npx hardhat test
 ```
 
 ```
@@ -100,7 +94,7 @@ HelloZeta
 Now, we'll implement a simple Hardhat task that deploys a smart contract to the
 ZetaChain.
 
-```ts reference
+```ts title="tasks/deploy.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/hello/tasks/deploy.ts
 ```
 
@@ -124,8 +118,8 @@ deployed contract is logged to the console.
 
 ### Deploy the contract to the ZetaChain testnet
 
-Execute the following command to deploy `HelloZeta` contract to the `athens`
-testnet:
+Execute the following command to deploy `HelloZeta` contract to the
+`zeta_testnet` testnet:
 
 ```
 npx hardhat deploy --network zeta_testnet
