@@ -217,12 +217,22 @@ the Bitcoin transaction must conform to this specifications:
    field must consists of a smart contract address, and a binary message that
    will be forwarded to the said smart contract: `[DATA] = [zEVM contract address (20B)] + [arbitrary binary message]`
 
-** TODO: show two examples of deposit and depositAndCall Bitcon transctions**
+
+**Example 1: Deposit BTC into an account in zEVM**
+[Here's](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f?expand) 
+an example Bitcoin transaction on Bitcoin Testnet that deposits 0.00050000 BTCt (50000 sats)
+into the address (0x)6da30bfa65e85a16b05bce3846339ed2bc746316. Note the three outputs: 1st is sending the intended
+amount (50000sats) to the current TSS Bitcoin address tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur; the 2nd output
+is the memo output, encoding the recipient address on zEVM (0x)6a146da30bfa65e85a16b05bce3846339ed2bc746316; the 3rd
+is change sent back to the user. 
+
+**Example 2: Deposit BTC and call a smart contract in zEVM**
+
+Notes: 
 
 _In order to test with Bitcoin, you will need to use a wallet that allows
 setting an `OP_RETURN`. Please see our wallet suggestions
 [here](/reference/wallets.mdx)._
-
 
 If invalid information is sent (i. e. invalid address), the assets may be
 lost and not recoverable. 
