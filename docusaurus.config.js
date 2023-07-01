@@ -41,7 +41,7 @@ const config = {
           },
           {
             from: "/developers/omnichain-smart-contracts/examples/single-input-multiple-output/",
-            to: "/developers/omnichain/tutorials/examples/single-input-multiple-output/",
+            to: "/developers/omnichain/tutorials/single-input-multiple-output/",
           },
           {
             from: "/developers/tutorials/examples/system-contract",

@@ -1,11 +1,4 @@
----
-sidebar_label: ZetaChain Architecture
-hide_title: true
-title: ZetaChain Architecture Overview
-sidebar_position: 1
----
-
-# ZetaChain Architecture Overview
+# Overview
 
 At a high level, ZetaChain is a Proof of Stake (PoS) blockchain built on the
 Cosmos SDK and Tendermint PBFT consensus engine. As a result, ZetaChain enjoys
@@ -25,12 +18,12 @@ permissionless), transparent, and efficient way.
 
 Contained within each validator is the ZetaCore and ZetaClient. ZetaCore is
 responsible for producing the blockchain and maintaining the replicated state
-machine. ZetaClient is responsible for observing events on external chains
-and signing outbound transactions.
+machine. ZetaClient is responsible for observing events on external chains and
+signing outbound transactions.
 
-ZetaCore and ZetaClient are bundled together
-and run by node operators. Anyone can become a node operator to participate in
-validation provided that enough bonds are staked.
+ZetaCore and ZetaClient are bundled together and run by node operators. Anyone
+can become a node operator to participate in validation provided that enough
+bonds are staked.
 
 ![high-level-architecture](/img/graphs/zetachain-architecture-overview-graph.svg)
 

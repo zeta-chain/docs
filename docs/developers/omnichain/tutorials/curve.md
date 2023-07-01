@@ -1,9 +1,8 @@
 ---
-sidebar_position: 11
-title: Curve on zEVM
-sidebar_label: Curve on zEVM
-id: curve-sample-on-zevm
+sidebar_position: 6
 ---
+
+# Curve on zEVM
 
 ## Overview
 
