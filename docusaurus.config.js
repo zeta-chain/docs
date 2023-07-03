@@ -53,7 +53,7 @@ const config = {
           },
           {
             from: "/developers/concepts/omnichain-toolkit/",
-            to: "/developers/cross-chain-messaging/omnichain-toolkit/",
+            to: "/developers/cross-chain-messaging/overview/",
           },
           {
             from: "/developers/omnichain-smart-contracts/overview/",
