@@ -23,8 +23,8 @@ modify states across different chains in a single step.
 
 When developing on ZetaChain, you create zEVM contracts. While zEVM contracts
 can be any standard Solidity contract, to fully utilize ZetaChain's
-capabilities, they should adhere to specific interfaces. These interfaces,
-unique to ZetaChain, enable interaction with externally connected blockchains.
+capabilities, they must adhere to specific interfaces. These interfaces, unique
+to ZetaChain, enable interaction with externally connected blockchains.
 
 ZetaChain offers two ways to develop dApps: **omnichain contracts** and
 **cross-chain message passing**.
@@ -34,21 +34,21 @@ ZetaChain offers two ways to develop dApps: **omnichain contracts** and
 With omnichain contract you only need to deploy **a single omnichain contract**
 to ZetaChain. No contracts on connected chains are required.
 
-For a contract to be considered omnichain, it must implement a method that gets
+For a contract to be considered omnichain, it must implement a method that is
 executed on a cross chain call.
 
-On a connected chain a user can transfer an asset to a specific ZetaChain
-address (a Threshold Signature Scheme, TSS, address).
+On a connected chain, a user can transfer an asset to a ZetaChain address,
+referred to as a Threshold Signature Scheme (TSS) address.
 
-- If the transfer only **an asset**, the asset becomes available to the
+- If the transfer only includes **an asset**, the asset becomes available to the
   omnichain contract.
-- If the transfer includes **an asset and a message** (containing omnichain
-  contract address and data), the asset becomes available to the omnichain
+- If the transfer includes **an asset and a message** containing the omnichain
+  contract address and data, the asset becomes available to the omnichain
   contract, and the contract is called with the message data as an argument.
 
-Assets transferred to a TSS address are represented on ZetaChain as ZRC-20
+Assets transferred to a TSS address on ZetaChain are represented as ZRC-20
 tokens. ZRC-20 is an extension of ERC-20 that supports additional functionality
-for depositing from and withdrawing assets to connected chains.
+for deposits from and withdrawals to connected chains.
 
 The state of your whole dApp can be stored in this omnichain contract.
 
@@ -59,12 +59,12 @@ Right now omnichain contracts support the following features:
 
 ### Advantages of omnichain contracts
 
-Developers can extend common applications like Uniswap V2/V3, Curve, Aave,
-Compound by adding compatibility with ZRC-20. These applications have been
+Developers can extend common applications like Uniswap V2/V3, Curve, Aave, and
+Compound by making them compatible with ZRC-20. These applications have been
 audited and battle-tested on Ethereum and can easily be deployed and built on
-top of in ZetaChain. The changes required to add ZRC-20 support are minimal and
-the majority of logic may remain the same, and users may interact with these
-applications in single-step transactions just as they would on Ethereum.
+ZetaChain.The changes required to add ZRC-20 support are minimal, and users may
+interact with these applications in single-step transactions just as they would
+on Ethereum.
 
 ZRC-20 can easily support Bitcoin/Algorand/Cardano/XRP which do not have
 capability or efficiency to support general purpose smart contracts for
@@ -76,15 +76,14 @@ because its interactions with foreign chains are confined to fungible coins
 costs around 60k gas; no logic/state on foreign chains means much less gas).
 
 With omnichain smart contracts, you can pair and trade native asset liquidity
-directly against each other. This minimizes steps to trade native assets (a
-single step), and neither involves a bridge or wrapping step nor sending complex
+directly against each other. This minimizes steps to trade native assets in a
+single step, and it doesn't involve a bridge or wrapping step or sending complex
 messages. For example, you could trade Ethereum ETH directly for Polygon USDC
 through a unified pool in a single transaction.
 
-With ZRC-20/zEVM, exception/revert handling is much simpler, as foreign
+With ZRC-20/zEVM, exception/revert handling is much simpler as foreign
 interaction is confined to either a standard ERC-20/contract interaction
-(success) or no contract interaction (failure) immediately as the transaction is
-processed.
+(success) or no contract interaction (failure) immediately.
 
 ## Cross-chain message passing
 
