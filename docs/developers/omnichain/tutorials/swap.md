@@ -6,9 +6,10 @@ sidebar_position: 4
 
 ## Overview
 
-High-level overview: In this tutorial you will write a contract that allows
-users to swap native tokens from one connected chain to another through
-ZetaChain.
+In this tutorial you will write a contract that allows users to swap native
+tokens from one connected chain to another through ZetaChain.
+
+High-level overview:
 
 1. A `ZetaSwapV2.sol` contract is created and deployed to ZetaChain.
 2. A user wants to swap tMATIC from Polygon Mumbai to gETH on Goerli.
@@ -144,3 +145,9 @@ for updates on the progress of the cross-chain transaction.
 
 🌍 Explorer: https://explorer.zetachain.com/address/0x74f8e77E9E8AC20B25a2bd358C618494107207De?tab=ccTxs
 ```
+
+# Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/swap

@@ -48,3 +48,9 @@ https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnicha
 ```solidity title="tasks/send.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/multioutput/tasks/send.ts
 ```
+
+# Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/multioutput

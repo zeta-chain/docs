@@ -129,3 +129,9 @@ npx hardhat deploy --network zeta_testnet
 Deploying contracts with the account: 0x4bc06EAA43CA52BAaa857B21df6F49939a78274E
 HelloZeta contract deployed to: 0xff4bB2F0F2F947320e1Aa09e14789E62cc429e9c
 ```
+
+# Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/main/omnichain/hello
