@@ -34,6 +34,16 @@ contract YourContract is zContract {
 }
 ```
 
+The contract above is a very simple example of an omnichain contract. Check out
+the [Withdraw tutorial](/developers/omnichain/tutorials/withdraw) for a more
+in-depth example.
+
+To call on omnichain contract the only thing a user has to do is send a
+transaction to a connected chain to ZetaChain's TSS address. The transaction
+`amount` becomes available to the sender on ZetaChain and the `data` byte array
+(containing an the omnichain contract `address` and `message`) is used to call
+the omnichain contract by `address` and pass arguments from the `message`.
+
 Omnichain Smart Contracts are ideal for more complex applications where state
 management between different chains is core to the application. Some use case
 examples include:
