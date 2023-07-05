@@ -38,6 +38,9 @@ The contract above is a very simple example of an omnichain contract. Check out
 the [Withdraw tutorial](/developers/omnichain/tutorials/withdraw) for a more
 in-depth example.
 
+An omnichain contract is deployed on ZetaChain and can be called from any
+connected chain.
+
 To call on omnichain contract the only thing a user has to do is send a
 transaction to a connected chain to ZetaChain's TSS address. The transaction
 `amount` becomes available to the sender on ZetaChain and the `data` byte array
