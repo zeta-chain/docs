@@ -35,6 +35,6 @@ jobs:
         with:
           title: Update docs/modules from zeta-node
           commit-message: Update docs/modules from zeta-node
-          branch: update-docs-modules
           base: ci/zeta-node
+          branch: update-docs-modules
         if: steps.check-changes.outputs.changed == 'true'
