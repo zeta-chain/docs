@@ -1,10 +1,9 @@
-name: Update module specs from zeta-node
+name: Update module specs from zeta-chain/node
 
 on:
   schedule:
     - cron: "0 0 * * *" # scheduled to run every day at midnight
-  repository_dispatch:
-    types: [manual-trigger]
+  workflow_dispatch:
 
 jobs:
   update-docs:
@@ -17,14 +16,14 @@ jobs:
       - name: Checkout protocol-contracts repository
         uses: actions/checkout@v2
         with:
-          repository: zeta-chain/zeta-node
-          path: zeta-node
+          repository: zeta-chain/node
+          path: node
 
       - name: Replace contents of docs/modules
         run: |
           mkdir -p docs/architecture/modules
           rm -rf docs/architecture/modules/*
-          cp -r zeta-node/docs/spec/* docs/architecture/modules/
+          cp -r node/docs/spec/* docs/architecture/modules/
 
       - name: Check for changes
         id: check-changes
@@ -35,11 +34,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: "docs: update module specs from zeta-node"
-          body:
+          title: "docs: update module specs from node"
+          body: |
             This PR contains updates to the Cosmos SDK module specifications
-            from the `zeta-node` repository.
-          commit-message: "docs: update module specs from zeta-node"
+            from the `zeta-chain/node` repository.
+          commit-message: "docs: update module specs from zeta-chain/node"
           base: main
-          branch: docs/updates-from-zeta-node
+          branch: docs/updates-from-zeta-chain-node
         if: steps.check-changes.outputs.changed == 'true'
