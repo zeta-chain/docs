@@ -1,14 +1,11 @@
 name: Update docs/modules from zeta-node
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
+    types: [synchronize, reopened]
 
 jobs:
   update-docs:
-    if:
-      github.event.issue.pull_request != '' &&
-      contains(github.event.comment.body, '/update-docs')
     runs-on: ubuntu-latest
 
     steps:
