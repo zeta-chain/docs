@@ -1,8 +1,10 @@
-name: Update docs/modules from zeta-node
+name: Update module specs from zeta-node
 
 on:
-  pull_request:
-    types: [synchronize, reopened]
+  schedule:
+    - cron: "0 0 * * *" # scheduled to run every day at midnight
+  repository_dispatch:
+    types: [manual-trigger]
 
 jobs:
   update-docs:
@@ -15,19 +17,19 @@ jobs:
       - name: Checkout protocol-contracts repository
         uses: actions/checkout@v2
         with:
-          repository: zeta-chain/protocol-contracts
-          path: protocol-contracts
+          repository: zeta-chain/zeta-node
+          path: zeta-node
 
       - name: Replace contents of docs/modules
         run: |
-          mkdir -p docs/data
-          rm -rf docs/data/*
-          cp -r protocol-contracts/data/* docs/data/
+          mkdir -p docs/architecture/modules
+          rm -rf docs/architecture/modules/*
+          cp -r zeta-node/docs/spec/* docs/architecture/modules/
 
       - name: Check for changes
         id: check-changes
         run: |
-          git add docs/data/
+          git add docs/architecture/modules
           git diff --cached --exit-code docs/data/ || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
