@@ -20,6 +20,7 @@ jobs:
 
       - name: Replace contents of docs/modules
         run: |
+          mkdir -p docs/data
           rm -rf docs/data/*
           cp -r protocol-contracts/data/* docs/data/
 
