@@ -1,17 +1,21 @@
 name: Update docs/modules from zeta-node
 
 on:
-  workflow_dispatch:
+  issue_comment:
+    types: [created]
 
 jobs:
   update-docs:
+    if:
+      github.event.issue.pull_request != '' &&
+      contains(github.event.comment.body, '/update-docs')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Checkout zeta-node repository
+      - name: Checkout protocol-contracts repository
         uses: actions/checkout@v2
         with:
           repository: zeta-chain/protocol-contracts
