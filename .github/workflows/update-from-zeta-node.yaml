@@ -1,0 +1,36 @@
+name: Update docs/modules from zeta-node
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Checkout zeta-node repository
+        uses: actions/checkout@v2
+        with:
+          repository: zeta-chain/protocol-contracts
+          path: protocol-contracts
+
+      - name: Replace contents of docs/modules
+        run: |
+          rm -rf docs/data/*
+          cp -r protocol-contracts/data/* docs/data/
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git diff --exit-code docs/data/ || echo "::set-output name=changed::true"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: Update docs/modules from zeta-node
+          commit-message: Update docs/modules from zeta-node
+          branch: update-docs-modules
+        if: steps.check-changes.outputs.changed == 'true'
