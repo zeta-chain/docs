@@ -27,7 +27,8 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          git diff --exit-code docs/data/ || echo "::set-output name=changed::true"
+          git add docs/data/
+          git diff --cached --exit-code docs/data/ || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
