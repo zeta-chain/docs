@@ -24,6 +24,7 @@ jobs:
           mkdir -p docs/architecture/modules
           rm -rf docs/architecture/modules/*
           cp -r node/docs/spec/* docs/architecture/modules/
+          rm -rf node
 
       - name: Check for changes
         id: check-changes
