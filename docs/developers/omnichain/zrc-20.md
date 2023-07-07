@@ -63,18 +63,17 @@ extremely simple interface to also function in an omnichain way.
 ### `deposit`
 
 When a user sends/deposits assets to the ZetaChain TSS address
-([Testnet](/reference/testnet.mdx), [Mainnet](/reference/mainnet.mdx))
-on a connected chain, `deposit` is called by `zetacore` and made available to
-the address that deposited. If there is data on the TX `message`, the system
-contract `DepositAndCall` is called, forwarding that data in a call to
-`onCrossChainCall` on the target zEVM contract. The `deposit` and
-`DepositAndCall` functions are only callable by the CCTX module (`zetacore`
-module) address.
+([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)) on a connected
+chain, `deposit` is called by `zetacore` and made available to the address that
+deposited. If there is data on the TX `message`, the system contract
+`DepositAndCall` is called, forwarding that data in a call to `onCrossChainCall`
+on the target zEVM contract. The `deposit` and `DepositAndCall` functions are
+only callable by the CCTX module (`zetacore` module) address.
 
 This is a snippet of what the system contract looks like, where `DepositAndCall`
 may be called by `zetacore` after receiving a dep osit into a TSS address
-([Testnet](/reference/testnet.mdx), [Mainnet](/reference/mainnet.mdx))
-managed by the ZetaChain network.
+([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)) managed by the
+ZetaChain network.
 
 ```solidity
 contract SystemContract {
@@ -92,7 +91,8 @@ contract SystemContract {
   }
 ```
 
-A contract that implements this interface may be called by a ZRC-20 deposit call.
+A contract that implements this interface may be called by a ZRC-20 deposit
+call.
 
 ```solidity
 interface zContract {
@@ -200,20 +200,19 @@ the ZetaChain network in order to allow zEVM to interact with them.
 
 _In order to test with Bitcoin, you will need to use a wallet that allows
 setting an `OP_RETURN`. Please see our wallet suggestions
-[here](/reference/wallets.mdx)._
+[here](/reference/wallets)._
 
 In order to deposit Bitcoin into ZetaChain to use via ZRC-20 and with the rest
 of the ZetaChain ecosystem, you must send your Bitcoin to an address managed by
-ZetaChain's TSS ([Testnet](/reference/testnet.mdx),
-[Mainnet](/reference/mainnet.mdx)). the transaction should include an `OP_RETURN`
-formatted as we document below (the `|` symbols are to make it more readable,
-you shouldn't include them in your actual message):
+ZetaChain's TSS ([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)).
+the transaction should include an `OP_RETURN` formatted as we document below
+(the `|` symbols are to make it more readable, you shouldn't include them in
+your actual message):
 
 ```markdown
 z|0xcc7bb2d219a0fc08033e130629c2b854b7ba9195|00000000000000000000000000000000000000000000000000000000000
-| | |
-| | └ An arbitrary message to send to the contract you want to call (59 bytes)
-| └─────── An address that can be a contract or an account (20 bytes)
+| | | | | └ An arbitrary message to send to the contract you want to call (59
+bytes) | └─────── An address that can be a contract or an account (20 bytes)
 └───── The letter "z" in lowercase (1 byte)
 ```
 
@@ -230,17 +229,16 @@ to the original sender address.
 In summary, a zEVM BTC transaction would look like this:
 
 - A user sends 1 BTC on Bitcoin network to the Bitcoin TSS address
-  ([Testnet](/reference/testnet.mdx), [Mainnet](/reference/mainnet.mdx)), adding a
-  memo (via `OP_RETURN`) in the tx saying (colloquially) “deposit to 0x1337”.
+  ([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)), adding a memo
+  (via `OP_RETURN`) in the tx saying (colloquially) “deposit to 0x1337”.
 - Upon receiving this tx, the ZetaCore state machine calls the deposit (0x1337,
   1e8) to mint and credit 0x1337 with 1 zBTC minus fees.
 - If 0x1337 is an Externally Owned Account (EOA), that's it. If it's a contract,
   ZetaCore will call the `onCrossChainMessage` function sending the message that
   was specified in the `OP_RETURN` memo.
 
-The TSS address ([Testnet](/reference/testnet.mdx),
-[Mainnet](/reference/mainnet.mdx)) holds the BTC, where ownerships are
-tracked inside this BTC ZRC-20 contract.
+The TSS address ([Testnet](/reference/testnet), [Mainnet](/reference/mainnet))
+holds the BTC, where ownerships are tracked inside this BTC ZRC-20 contract.
 
 ### `withdraw`
 

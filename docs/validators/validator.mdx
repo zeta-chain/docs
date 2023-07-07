@@ -8,7 +8,8 @@ title: Creating A Core Validator
 
 # Creating a Core Validator
 
-This guide assumes your have already created and synced up your node using the [Node Setup Guide](/validators/node.mdx).
+This guide assumes your have already created and synced up your node using the
+[Node Setup Guide](/validators/running-a-full-node).
 
 This guide is design for simplicity and does not cover the intricacies of secure
 key management. We recommend you follow best practices when it comes to secure
@@ -19,7 +20,8 @@ basic setup of a ZetaChain validator.
 
 Create the account `operator`.
 
-Make sure to store the mnemonic from the output in a safe place. You will need this information to later access your account.
+Make sure to store the mnemonic from the output in a safe place. You will need
+this information to later access your account.
 
 ```bash
 zetacored keys add operator --algo secp256k1
@@ -27,7 +29,8 @@ zetacored keys add operator --algo secp256k1
 
 ### Add Funds to the Validator Account
 
-Check your validator account balance. It’s newly created so `balances` should be empty.
+Check your validator account balance. It’s newly created so `balances` should be
+empty.
 
 ```bash
 zetacored query bank balances $(zetacored keys show operator -a)
@@ -36,7 +39,8 @@ zetacored query bank balances $(zetacored keys show operator -a)
 Add funds to your validator account.
 
 Send tokens from your own wallet or from an exchange to your validators address.
-Make sure you are sending them using the zetachain cosmos based network, not the zEVM network.
+Make sure you are sending them using the zetachain cosmos based network, not the
+zEVM network.
 
 Check your validator account funds `balances`.
 
@@ -47,8 +51,8 @@ zetacored query bank balances $(zetacored keys show operator -a)
 ### Create Your Validator
 
 Create a new validator by staking **_azeta_** tokens. Here is an example of
-creating a validator on Zetachain Testnet. Save the transaction hash
-from the output.
+creating a validator on Zetachain Testnet. Save the transaction hash from the
+output.
 
 ```bash
 zetacored tx staking create-validator \
@@ -70,13 +74,24 @@ zetacored tx staking create-validator \
 
 - `amount` is the amount of tokens to be bonded
 - `moniker` is the validator's name
-- `commission-rate` is the commission rate on block rewards and fees charged to delegators
-- `commission-max-rate` is the maximum commission rate that this validator can charge. This parameter is fixed and cannot be changed after the validator is created
-- `commission-max-change-rate` is the maximum daily increase of the validator commission. This parameter is fixed cannot be changed after the validator is created
-- `min-self-delegation` is the minimum amount of **azeta** the validator requires to have bonded at all time. If the validator's self-delegated stake falls below this limit, the validator gets jailed and kicked out of the active validator set
+- `commission-rate` is the commission rate on block rewards and fees charged to
+  delegators
+- `commission-max-rate` is the maximum commission rate that this validator can
+  charge. This parameter is fixed and cannot be changed after the validator is
+  created
+- `commission-max-change-rate` is the maximum daily increase of the validator
+  commission. This parameter is fixed cannot be changed after the validator is
+  created
+- `min-self-delegation` is the minimum amount of **azeta** the validator
+  requires to have bonded at all time. If the validator's self-delegated stake
+  falls below this limit, the validator gets jailed and kicked out of the active
+  validator set
 - `gas-prices` is gas prices in decimal format to determine the transaction fee
-- When specifying commission parameters, the `commission-max-change-rate` is used to measure % *point* change over the `commission-rate`. E.g. 1% to 2% is a 100% rate increase, but only 1 percentage point
-- `min-self-delegation` is a strictly positive integer that represents the minimum amount of self-delegated voting power your validator must always have
+- When specifying commission parameters, the `commission-max-change-rate` is
+  used to measure % *point* change over the `commission-rate`. E.g. 1% to 2% is
+  a 100% rate increase, but only 1 percentage point
+- `min-self-delegation` is a strictly positive integer that represents the
+  minimum amount of self-delegated voting power your validator must always have
 
 ### Check Transaction Status
 
@@ -98,8 +113,9 @@ zetacored query staking validator $(zetacored keys show operator --bech operator
 ```
 
 It's possible that you don’t have enough **_azeta_** tokens to be part of the
-active set of validators in the beginning. If the status is unbonded `status: BOND_STATUS_UNBONDED`,
-you didn’t stake enough tokens `amount` when you created your validator.
+active set of validators in the beginning. If the status is unbonded
+`status: BOND_STATUS_UNBONDED`, you didn’t stake enough tokens `amount` when you
+created your validator.
 
 In this case, your validator is not in the active set. It cannot sign blocks and
 it does not earn rewards. It can however, receive delegations.

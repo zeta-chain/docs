@@ -9,7 +9,7 @@ title: Build a Cross-Chain Counter
 # Build a cross-chain counter
 
 This is an example app of cross-chain counter using
-[Zeta Connector](/developers/cross-chain-messaging/connector.mdx).
+[Zeta Connector](/developers/cross-chain-messaging/connector).
 
 ![Cross-chain counter](/img/graphs/cross-chain-counter.svg)
 

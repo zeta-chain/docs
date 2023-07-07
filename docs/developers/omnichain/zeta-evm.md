@@ -14,6 +14,6 @@ chain.
 
 ![zeta-evm](/img/graphs/omnichain-smart-contracts-orchestrate-graph.svg)
 
-Contracts on zEVM can be called via [ZRC-20](/developers/omnichain/zrc-20.mdx)
-from external chains. To connect to zEVM directly, check out the network info
-[here](/reference/testnet.mdx).
+Contracts on zEVM can be called via [ZRC-20](/developers/omnichain/zrc-20) from
+external chains. To connect to zEVM directly, check out the network info
+[here](/reference/testnet).

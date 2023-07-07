@@ -10,7 +10,7 @@ title: Build a Cross-Chain NFT
 
 In this tutorial you will create an NFT collection with cross-chain transfer
 capabilities using
-[Zeta Connector](/developers/cross-chain-messaging/connector.mdx).
+[Zeta Connector](/developers/cross-chain-messaging/connector).
 
 ![Cross-chain NFT transfer](/img/graphs/cross-chain-nft-transfer.svg)
 

@@ -7,8 +7,8 @@ sidebar_position: 6
 ## Overview
 
 Assuming you have familiarized yourself with
-[ZRC-20 Tokens](/developers/omnichain/zrc-20.mdx) and
-[zEVM](/developers/omnichain/zeta-evm.mdx), this example walks through how you'd
+[ZRC-20 Tokens](/developers/omnichain/zrc-20) and
+[zEVM](/developers/omnichain/zeta-evm), this example walks through how you'd
 create an omnichain Curve pool! This means you can leverage the existing Curve
 contracts and orchestrate external, native assets as if they were all on one
 chain.
@@ -17,8 +17,8 @@ chain.
 
 Since zEVM is fully EVM compatible, you can download the Curve repo as it is and
 deploy it on zEVM, simply pointing the RPC to zEVM RPC. You can find all the
-ZetaChain RPC information here: [testnet](/reference/testnet.mdx) and here
-[mainnet](/reference/mainnet.mdx).
+ZetaChain RPC information here: [testnet](/reference/testnet) and here
+[mainnet](/reference/mainnet).
 
 ## Deploy a tri-token pool of ZRC-20 tokens
 
