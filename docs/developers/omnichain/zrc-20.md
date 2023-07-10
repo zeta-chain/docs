@@ -245,4 +245,5 @@ simple solutions for omnichain application building.
 With ZRC-20, developers have the power to build seamless, omnichain applications
 while also leveraging the entire EVM ecosystem to-date and plethora of
 contracts/protocols to build on top of. To start building with ZRC-20, check out
-some quickstart examples **here**.
+some examples in the
+[tutorials section](/developers/omnichain/tutorials/withdraw).
