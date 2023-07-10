@@ -134,7 +134,7 @@ emitted `HelloWorldEvent` event.
 
 ![](/img/docs/ccm-message-explorer.png)
 
-# Source Code
+## Source Code
 
 You can find the source code for the example in this tutorial here:
 

@@ -146,7 +146,7 @@ for updates on the progress of the cross-chain transaction.
 🌍 Explorer: https://explorer.zetachain.com/address/0x74f8e77E9E8AC20B25a2bd358C618494107207De?tab=ccTxs
 ```
 
-# Source Code
+## Source Code
 
 You can find the source code for the example in this tutorial here:
 

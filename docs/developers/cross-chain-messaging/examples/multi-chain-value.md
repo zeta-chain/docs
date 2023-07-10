@@ -97,7 +97,7 @@ Please, refer to ZetaChain's explorer for updates on the progress of the cross-c
 🌍 Explorer: https://explorer.zetachain.com/address/0x042AF09ae20f924Ce18Dc3daBFa1866B114aFa89
 ```
 
-# Source Code
+## Source Code
 
 You can find the source code for the example in this tutorial here:
 

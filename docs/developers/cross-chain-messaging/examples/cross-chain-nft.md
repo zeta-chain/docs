@@ -125,7 +125,7 @@ the recipient address page on the destination chain (in this case, BSC).
 
 ![](/img/docs/ccm-warriors-explorer.jpg)
 
-# Source Code
+## Source Code
 
 You can find the source code for the example in this tutorial here:
 

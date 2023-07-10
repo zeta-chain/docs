@@ -114,7 +114,7 @@ npx hardhat counter:increment --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3
 📝 Transaction hash: 0xf569119f06ddac13093ba97c2dea9932036ee7ad51ac8d3ac9379dd22c48dd94
 ```
 
-# Source Code
+## Source Code
 
 You can find the source code for the example in this tutorial here:
 
