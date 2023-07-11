@@ -8,10 +8,15 @@ sidebar_position: 5
 
 If you already read the previous tutorials you already know how to use zEVM. A
 very common use case on zEVM is a smart contract with a single input from one
-chain, do some magic, and then execute the output to another or multiple chains.
+chain, perform some logic, and then execute the output to another or multiple
+chains.
 
 The example in this tutorial does exactly that: the contract reads an address
 from the message, and then send some tokens to that address in several chains.
+
+This capability may be useful for applications like multichain asset managers or
+DeFi applications that need to distribute or manage assets on many chains from
+one place.
 
 ## Set up your environment
 
