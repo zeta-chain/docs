@@ -60,7 +60,8 @@ transfer, and `memo` is the recipient address on zEVM.
 :::tip
 
 In order to test with Bitcoin, you will need to use a wallet that allows setting
-an `OP_RETURN`. Please see our wallet suggestions [here](/reference/wallets).
+an `OP_RETURN` and memos in a binary format. Please see our wallet suggestions
+[here](/reference/wallets).
 
 :::
 
