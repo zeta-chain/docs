@@ -71,7 +71,7 @@ on the target zEVM contract. The `deposit` and `DepositAndCall` functions are
 only callable by the CCTX module (`zetacore` module) address.
 
 This is a snippet of what the system contract looks like, where `DepositAndCall`
-may be called by `zetacore` after receiving a dep osit into a TSS address
+may be called by `zetacore` after receiving a deposit into a TSS address
 ([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)) managed by the
 ZetaChain network.
 
