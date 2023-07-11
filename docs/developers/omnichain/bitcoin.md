@@ -14,10 +14,10 @@ This section is important for wallet and app developers.
 To deposit BTC into zEVM ZRC-20 contract (and optionally call a smart contract),
 the Bitcoin transaction must conform to this specifications:
 
-1. The Bitcoin transaction must have at least 2 outputs;
-2. The first output must be addressed to the TSS Bitcoin address;
+1. The Bitcoin transaction must have at least 2 outputs.
+2. The first output must be addressed to the TSS Bitcoin address.
 3. The second output must be a memo output, i.e. `OP_RETURN PUSH_x [DATA]`. This
-   output must be less than 80 bytes;
+   output must be less than 80 bytes.
 4. The memo `[DATA]` is an array of bytes that encodes the recipient address of
    this deposit into ZRC-20 or the smart contract on zEVM that will be invoked
    by this transaction.
@@ -39,9 +39,9 @@ an example Bitcoin transaction on Bitcoin Testnet that deposits 0.0005 tBTC
 Note the three outputs:
 
 1. sending the intended amount (50000sats) to the current TSS Bitcoin address
-   tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur;
+   tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur.
 2. the memo output, encoding the recipient address on zEVM
-   (0x)6a146da30bfa65e85a16b05bce3846339ed2bc746316;
+   (0x)6a146da30bfa65e85a16b05bce3846339ed2bc746316.
 3. change sent back to the user.
 
 If you're using ZetaChain's Hardhat
