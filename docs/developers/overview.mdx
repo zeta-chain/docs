@@ -31,8 +31,9 @@ ZetaChain offers two ways to develop dApps: **omnichain contracts** and
 
 ## Omnichain contracts
 
-With omnichain contract you only need to deploy **a single omnichain contract**
-to ZetaChain. No contracts on connected chains are required.
+With [omnichain contract](/developers/omnichain/overview) you only need to
+deploy **a single omnichain contract** to ZetaChain. No contracts on connected
+chains are required.
 
 For a contract to be considered omnichain, it must implement a method that is
 executed on a cross chain call.
@@ -88,9 +89,10 @@ interaction is confined to either a standard ERC-20/contract interaction
 
 ## Cross-chain message passing
 
-With cross-chain message (CCM) passing you deploy **CCM-enabled contracts on
-connected chains** that can pass arbitrary message data and value between each
-other.
+With
+[cross-chain message (CCM) passing](/developers/cross-chain-messaging/overview)
+you deploy **CCM-enabled contracts on connected chains** that can pass arbitrary
+message data and value between each other.
 
 On a connected chain a user can call a CCM-enabled contract. The contract calls
 the Connector API and sends a message. ZetaChain acts as relayer and transmits
