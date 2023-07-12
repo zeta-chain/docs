@@ -31,6 +31,10 @@ ZetaChain testnets.
 | Tendermint RPC       | [NodeJumper](https://nodejumper.io/) | https://zetachain-testnet.nodejumper.io:443                    |
 | Cosmos SDK HTTP      | [NodeJumper](https://nodejumper.io/) | https://zetachain-testnet.nodejumper.io:1317                   |
 | Cosmos SDK gRPC      | [NodeJumper](https://nodejumper.io/) | https://zetachain-testnet.nodejumper.io:9090                   |
+| EVM RPC              | [Ankr](https://www.ankr.com/)        | https://rpc.ankr.com/zetachain_evm_athens_testnet              |
+| Tendermint RPC       | [Ankr](https://www.ankr.com/)        | https://rpc.ankr.com/zetachain_tendermint_athens_testnet       |
+| Tendermint HTTP      | [Ankr](https://www.ankr.com/)        | https://rpc.ankr.com/http/zetachain_tendermint_athens_testnet  |
+| Cosmos SDK HTTP      | [Ankr](https://www.ankr.com/)        | https://rpc.ankr.com/http/zetachain_athens_testnet             |
 
 ## EVM RPC
 
