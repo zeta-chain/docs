@@ -9,10 +9,10 @@ id: system-contract
 
 To make your life easier we already deployed a system contract with some
 information you may need in your protocol. You can import this code into your
-project and instance with the deployed address. You can find the up-to-date address
-of the system contract using the ZetaChain's API:
+project and instance with the deployed address. You can find the up-to-date
+address of the system contract using the ZetaChain's API:
 
-https://api.athens2.zetachain.com/zeta-chain/zetacore/fungible/system_contract
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/zetacore/fungible/system_contract
 
 In this contract you will find:
 
@@ -38,16 +38,26 @@ contract SystemContract is SystemContractErrors {
 }
 ```
 
-Source: [`SystemContract.sol`](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/SystemContract.sol)
+Source:
+[`SystemContract.sol`](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/SystemContract.sol)
 
-Let's look at an example of how to the system contract in your smart contract:
+Let's look at an example of how to use the system contract in your smart
+contract.
 
-```solidity title="Sample.sol"
+Install the protocol contracts package:
+
+```
+yarn add --dev @zetachain/protocol-contracts
+```
+
+Import the system contract and create a reference to the system contract in the
+constructor:
+
+```solidity title="Contract.sol"
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "../system/SystemContract.sol";
-//...
+import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 
 contract SystemContractSample {
     SystemContract public immutable systemContract;
@@ -61,3 +71,15 @@ contract SystemContractSample {
     }
 }
 ```
+
+In your deploy script, you can get the system contract address by using the
+`getAddress` helper function.
+
+```ts
+import { getAddress } from "@zetachain/protocol-contracts";
+
+const SYSTEM_CONTRACT = getAddress("systemContract", "zeta_testnet");
+```
+
+For an example of how the system contract can be used, please, refer to the
+[Swap example project](https://github.com/zeta-chain/example-contracts/tree/main/omnichain/swap).
