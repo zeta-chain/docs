@@ -40,7 +40,8 @@ npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_tes
 ```
 
 `send-zeta` sends native ZETA to the wrapped ZETA contract on ZetaChain,
-approves the wrapped ZETA to be spent by the connector contract, then finally
+approves the wrapped ZETA to be spent by the
+[connector](/developers/cross-chain-messaging/connector) contract, then finally
 calls the connector's `send` method to send the wrapped ZETA to the connected
 chain.
 
