@@ -124,21 +124,12 @@ knowing that ZETA is being used. Furthermore, ZETA liquidity can be consumed on
 the local chain, negating the need to worry about how much ZETA to buy; you can
 simply acquire the amount that is required.
 
-[ZetaTokenConsumer](https://github.com/zeta-chain/zetachain/blob/main/packages/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol)
+[ZetaTokenConsumer](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/ZetaInterfaces.sol)
 is an interface with several implementations that handles all the logic you need
 to swap ZETA from/to another token. Right now we have three implementations
-([Uniswap
-V2](https://github.com/zeta-chain/zetachain/blob/main/packages/protocol-contracts/contracts/ZetaTokenConsumerUniV2.strategy.sol),
-[Uniswap
-V3](https://github.com/zeta-chain/zetachain/blob/main/packages/protocol-contracts/contracts/ZetaTokenConsumerUniV3.strategy.sol),
+([Uniswap V2](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV2.strategy.sol),
+[Uniswap V3](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV3.strategy.sol),
 and
-[Trident](https://github.com/zeta-chain/zetachain/blob/main/packages/protocol-contracts/contracts/ZetaTokenConsumerTrident.strategy.sol))
+[Trident](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerTrident.strategy.sol))
 using different DEX. You can include it in your contract and just call the
 different methods.
-
-You can see in our examples two ways to introduce this in your code:
-
-1. Use an external ZetaTokenConsumer as we show in [Cross Chain
-   Warriors](/developers/cross-chain-messaging/examples/cross-chain-nft.mdx)
-2. Inherit from ZetaTokenConsumer as we show in [Multi Chain
-   Swap](/developers/cross-chain-messaging/examples/multi-chain-swap.mdx)

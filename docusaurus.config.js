@@ -37,15 +37,15 @@ const config = {
         redirects: [
           {
             from: "/developers/quickstart-tutorials/deploy-first-zevm-contract/",
-            to: "/developers/tutorials/setup/",
+            to: "/developers/omnichain/tutorials/hello/",
           },
           {
             from: "/developers/omnichain-smart-contracts/examples/single-input-multiple-output/",
-            to: "/developers/tutorials/examples/single-input-multiple-output/",
+            to: "/developers/omnichain/tutorials/single-input-multiple-output/",
           },
           {
             from: "/developers/tutorials/examples/system-contract",
-            to: "/developers/concepts/system-contract",
+            to: "/developers/omnichain/system-contract",
           },
           {
             from: "/developers/cross-chain-messaging/connector-api/",
@@ -53,11 +53,11 @@ const config = {
           },
           {
             from: "/developers/concepts/omnichain-toolkit/",
-            to: "/developers/cross-chain-messaging/omnichain-toolkit/",
+            to: "/developers/cross-chain-messaging/overview/",
           },
           {
             from: "/developers/omnichain-smart-contracts/overview/",
-            to: "/developers/tutorials/setup/",
+            to: "/developers/omnichain/tutorials/hello/",
           },
           {
             from: "/learn/faq/",

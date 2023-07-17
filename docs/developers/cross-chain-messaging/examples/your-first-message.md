@@ -14,29 +14,20 @@ from one chain to another using the
 
 ## Set up your environment
 
-:::note This tutorial assumes that you have already completed the
-[setup tutorial](/developers/tutorials/setup) or cloned
-[the template Hardhat project](https://github.com/zeta-chain/template). :::
+```
+git clone https://github.com/zeta-chain/template
+```
 
 Install the dependencies:
 
 ```
-yarn add --dev @openzeppelin/contracts @zetachain/protocol-contracts
-```
-
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
-```
-npx hardhat account --save
-
-npx hardhat faucet
+yarn add --dev @openzeppelin/contracts
 ```
 
 ## Create a new contract
 
 ```solidity title="contracts/CrossChainMessage.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/contracts/CrossChainMessage.sol
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/message/contracts/CrossChainMessage.sol
 ```
 
 The `sendHelloWorld` function is used to send a "Hello, Cross-Chain World!"
@@ -52,23 +43,6 @@ Cross-Chain World!" message, it emits a HelloWorldEvent with the message data.
 The `onZetaRevert` function is triggered if a message fails to send. It decodes
 the message similarly to `onZetaMessage` and emits a `RevertedHelloWorldEvent`
 in case of failure.
-
-## Configure the Hardhat environment
-
-The ZetaSwap contract expects a specific version of the Solidity compiler.
-Modify the Hardhat config to ensure that the correct version is used.
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  // ...
-};
-```
-
-```
-npx hardhat compile
-```
 
 ## Create a deployment task
 
@@ -99,7 +73,7 @@ contract address. If deploying to more than two chains, you must call
 `setInteractorByChainId` for each link between the chains.
 
 ```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/message/tasks/deploy.ts
 ```
 
 Run the following command to deploy the contract to two networks:
@@ -130,7 +104,7 @@ two parameters: the contract address and the destination chain ID.
 The task calls sendHelloWorld on the contract, passing the arguments.
 
 ```ts title="tasks/message.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/message.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/message/tasks/message.ts
 ```
 
 Send a message from BSC testnet to Goerli (chain ID: 5) using the contract
@@ -159,3 +133,9 @@ contract on the Goerli explorer by the contract address
 emitted `HelloWorldEvent` event.
 
 ![](/img/docs/ccm-message-explorer.png)
+
+## Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/message

@@ -9,32 +9,21 @@ title: Build a Cross-Chain NFT
 # Build a cross-chain NFT
 
 In this tutorial you will create an NFT collection with cross-chain transfer
-capabilities using [Zeta
-Connector](/developers/cross-chain-messaging/connector.mdx).
+capabilities using
+[Zeta Connector](/developers/cross-chain-messaging/connector).
 
 ![Cross-chain NFT transfer](/img/graphs/cross-chain-nft-transfer.svg)
 
 ## Set up your environment
 
-:::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
-:::
+```
+git clone https://github.com/zeta-chain/template
+```
 
 Install the dependencies:
 
 ```
-yarn add --dev @openzeppelin/contracts @zetachain/protocol-contracts
-```
-
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
-```
-npx hardhat account --save
-
-npx hardhat faucet
+yarn add --dev @openzeppelin/contracts
 ```
 
 ## Create a new contract
@@ -51,24 +40,7 @@ In a nutshell, your contracts will need to:
   the previously burned NFT.
 
 ```solidity title="contracts/CrossChainWarriors.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/contracts/CrossChainWarriors.sol
-```
-
-## Configure the Hardhat environment
-
-The ZetaSwap contract expects a specific version of the Solidity compiler.
-Modify the Hardhat config to ensure that the correct version is used.
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  // ...
-};
-```
-
-```
-npx hardhat compile
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/contracts/CrossChainWarriors.sol
 ```
 
 ## Create a deployment task
@@ -83,7 +55,7 @@ The deploy task will deploy the CrossChainWarriors contract to two or more
 chains and set the interactors for all chains.
 
 ```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/deploy.ts
 ```
 
 Run the following command to deploy the contract to two networks:
@@ -113,7 +85,7 @@ function on it, searches the events for a "Transfer" event and prints out the
 token ID.
 
 ```ts title="tasks/mint.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/mint.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/mint.ts
 ```
 
 ```
@@ -141,14 +113,20 @@ The transfer task accepts the following arguments:
 - amount: amount of tokens to cover gas costs
 
 ```ts title="tasks/transfer.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/transfer.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/transfer.ts
 ```
 
 ```
 npx hardhat transfer --network goerli --contract 0xFeAF74733B6f046F3d609e663F667Ba61B19A148 --address 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --destination 97 --token 2 --amount 0.4
 ```
 
-After the transfer transaction is confirmed, you will be able to see the
-NFT on the recipient address page on the destination chain (in this case, BSC).
+After the transfer transaction is confirmed, you will be able to see the NFT on
+the recipient address page on the destination chain (in this case, BSC).
 
 ![](/img/docs/ccm-warriors-explorer.jpg)
+
+## Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors

@@ -5,13 +5,11 @@ hide_title: true
 title: Connector API
 ---
 
-import { StartBuilding } from "@site/src/components/StartBuilding/StartBuilding";
-
 # Connector
 
 ZetaChain connector lets you send cross-chain messages (data and value) between
 any connected chains. To find up-to-date Connector and ZETA addresses to develop
-with, go [here](/reference/testnet.mdx).
+with, go [here](/reference/testnet).
 
 ## Introduction
 
@@ -125,5 +123,3 @@ be able to send messages and value between each other by implementing the
 
 We have a growing library of example apps with real code you can use to
 kickstart your development.
-
-<StartBuilding />

@@ -17,36 +17,25 @@ asset exchanges via a swap to/from ZETA on source and destination.
 # Multichain Value Transfer
 
 In this tutorial we will create a contract that allows sending value from one
-chain to another using the [Connector
-API](/developers/cross-chain-messaging/connector/).
+chain to another using the
+[Connector API](/developers/cross-chain-messaging/connector/).
 
 ## Set up your environment
 
-:::note
-This tutorial assumes that you have already completed the [setup
-tutorial](/developers/tutorials/setup) or cloned [the template Hardhat
-project](https://github.com/zeta-chain/template).
-:::
+```
+git clone https://github.com/zeta-chain/template
+```
 
 Install the dependencies:
 
 ```
-yarn add --dev @openzeppelin/contracts @zetachain/protocol-contracts
-```
-
-Create a new wallet and request tokens from the testnet faucet if you haven't
-done so already:
-
-```
-npx hardhat account --save
-
-npx hardhat faucet
+yarn add --dev @openzeppelin/contracts
 ```
 
 ## Create a new contract
 
 ```solidity title="contracts/MultiChainValue.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/value/contracts/MultiChainValue.sol
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value/contracts/MultiChainValue.sol
 ```
 
 The contract's main functionality is implemented in the `sendValue` function.
@@ -68,32 +57,15 @@ function and transferring value between chains you need to call the
 ID to the list of available chains. In this example this logic is implemented in
 the deploy task.
 
-## Configure the Hardhat environment
-
-The ZetaSwap contract expects a specific version of the Solidity compiler.
-Modify the Hardhat config to ensure that the correct version is used.
-
-```ts title="hardhat.config.ts"
-const config: HardhatUserConfig = {
-  // highlight-next-line
-  solidity: "0.8.7",
-  // ...
-};
-```
-
-```
-npx hardhat compile
-```
-
 ## Create a deployment task
 
-The deploy task is fairly standard. It deploys the contract to two or more chains
-and sets the interactors on each chain. Additionally, for this example, the script
-also calls the `addAvailableChainId` function on each chain to add the other chain
-to the list of available chains.
+The deploy task is fairly standard. It deploys the contract to two or more
+chains and sets the interactors on each chain. Additionally, for this example,
+the script also calls the `addAvailableChainId` function on each chain to add
+the other chain to the list of available chains.
 
 ```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/value/tasks/deploy.ts
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value/tasks/deploy.ts
 ```
 
 Run the following command to deploy the contract to two networks:
@@ -124,3 +96,9 @@ Please, refer to ZetaChain's explorer for updates on the progress of the cross-c
 
 🌍 Explorer: https://explorer.zetachain.com/address/0x042AF09ae20f924Ce18Dc3daBFa1866B114aFa89
 ```
+
+## Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value

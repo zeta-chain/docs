@@ -12,7 +12,7 @@ This document outlines the process for running a full ZetaChain node. It is
 intended for those who are familiar with the Linux operating system and the
 command line interface.
 
-Please refer to [Technical Requirements](/validators/requirements.mdx) for more
+Please refer to [Technical Requirements](/validators/requirements) for more
 details on the technical requirements for running a ZetaChain node.
 
 ## Getting Started
@@ -59,7 +59,8 @@ mkdir /home/zetachain/.zetacored/config
 
 ### Download and Install the zetacored binary
 
-Binaries are built based on OS version and CPU architecture. The available binaries are:
+Binaries are built based on OS version and CPU architecture. The available
+binaries are:
 
 ```
 https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetacored-zetacored-alpine-amd64
@@ -78,8 +79,8 @@ Install it as follows:
 
 ### Install ZetaChain Configuration Files
 
-ZetaChain configuration files can be downloaded from the [Athens3 Github
-Repo](https://github.com/zeta-chain/network-athens3/tree/main/network_files/config)
+ZetaChain configuration files can be downloaded from the
+[Athens3 Github Repo](https://github.com/zeta-chain/network-athens3/tree/main/network_files/config)
 
 Install it as follows:
 
@@ -93,7 +94,8 @@ Install it as follows:
 ### Create a Systemd Unit File
 
 We recommend using Systemd to start and stop ZetaChain binary files and view the
-logs. You can create a Systemd unit file at the following location `/etc/systemd/system/zetacored.service`:
+logs. You can create a Systemd unit file at the following location
+`/etc/systemd/system/zetacored.service`:
 
 ```bash
 [Unit]
@@ -131,13 +133,14 @@ load, Memory Usage, Disk usage and Disk IO) for any performance degradation.
 
 ZetaChain Core generates a log that can be monitored for errors and used for
 troubleshooting. If you install Zetacore as a Systemd service using the
-instructions above you can view this log with `journalctl -o cat -f -u zetacored`.
+instructions above you can view this log with
+`journalctl -o cat -f -u zetacored`.
 
 Prometheus can be enabled to serve metrics which can be consumed by Prometheus
 collector(s). Telemetry include Prometheus metrics can be enabled in the
-app.toml file. See the [CosmosSDK Telemetry
-Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html) for more
-information.
+app.toml file. See the
+[CosmosSDK Telemetry Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html)
+for more information.
 
 # Syncing from a StateSync node
 
@@ -159,7 +162,8 @@ information.
 | Ireland (EU West)           | TBD |
 | Singapore (APAC South East) | TBD |
 
-Use the state sync node closer your node. Run the following command to collect the `latest block height` and `latest block hash`:
+Use the state sync node closer your node. Run the following command to collect
+the `latest block height` and `latest block hash`:
 
 ```bash
 curl -s http://<closest StateSync IP>:26657/block | jq -r '.result.block.header.height + "\n" + .result.block_id.hash'
@@ -173,7 +177,8 @@ $ curl -s http://52.3.196.71:26657/block | jq -r '.result.block.header.height + 
 2554175FC58E5AC01723903971D1153BC1AF5341A51E5EABC22904730085B3CA
 ```
 
-Use the return values to edit the following variables in `/home/zetachain/.zetacored/config/config.toml`
+Use the return values to edit the following variables in
+`/home/zetachain/.zetacored/config/config.toml`
 
 ```bash
 [statesync]
