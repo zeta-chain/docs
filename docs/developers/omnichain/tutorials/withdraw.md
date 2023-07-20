@@ -37,68 +37,78 @@ git clone https://github.com/zeta-chain/template
 
 ## Creating the contract
 
-First, create a new Solidity contract called `Withdraw.sol`:
+Run the following command to create a new omnichain contract called `Withdraw`.
+Pass the `recipient` parameter (`bytes32` by default) to the command to specify
+the arguments to the cross-chani call.
 
-```solidity title="contracts/Withdraw.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw/contracts/Withdraw.sol
+```
+npx hardhat omnichain Withdraw recipient
 ```
 
-Start by importing the necessary interfaces from the
-`@zetachain/zevm-protocol-contracts` package. You will need the `IZRC20`
-interface to interact with ZRC20 tokens and the `zContract` interface to
-implement the cross-chain functionality provided by the ZetaChain protocol.
+Modify the `onCrossChainCall` function to withdraw the tokens to the recipient:
 
-Create a new contract called Withdraw that inherits from the `zContract`
-interface. By inheriting from the `zContract` interface, the Withdraw contract
-will be able to implement the cross-chain functionality.
+```solidity title="contracts/Withdraw.sol"
+    // highlight-start
+    error WrongGasContract();
+    error NotEnoughToPayGasFee();
+    error InvalidZRC20Address();
+    error ZeroAmount();
+    // highlight-end
 
-Define two custom errors: `WrongGasContract` and `NotEnoughToPayGasFee`. These
-errors will be used later in the `doWithdrawal()` function. `WrongGasContract`
-will be used when the gas contract is incorrect, and `NotEnoughToPayGasFee` will
-be used when the token amount is insufficient to cover the gas fee.
+    function onCrossChainCall(
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        bytes32 recipient = abi.decode(message, (bytes32));
+        // highlight-start
+        if (zrc20 == address(0)) revert InvalidZRC20Address();
+        if (amount == 0) revert ZeroAmount();
 
-Create a private function called `doWithdrawal()` that takes the ZRC20 token
-address, the amount of tokens to be withdrawn, and the recipient address as
-input parameters. This function is responsible for checking and paying the
-required gas fee and performing the token withdrawal. Within the function, you
-will:
+        (address gasZRC20, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
 
-1. Retrieve the gas ZRC20 token address and the gas fee.
-1. Check if the gas ZRC20 token address matches the target ZRC20 token address.
-   If not, revert with the `WrongGasContract` error.
-1. Check if the gas fee is greater than or equal to the amount to be withdrawn.
-   If so, revert with the `NotEnoughToPayGasFee` error.
-1. Approve the gas fee and call the `withdraw` function of the ZRC20 token with
-   the recipient address and the amount minus the gas fee.
+        if (gasZRC20 != zrc20) revert WrongGasContract();
+        if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
-Next, create an external function called `onCrossChainCall()` that is called by
-the `zContract`. This function should take the ZRC20 token address, the amount
-to be withdrawn, and an encoded message containing the recipient address as
-input parameters. Within the function, you will:
+        IZRC20(zrc20).approve(zrc20, gasFee);
+        IZRC20(zrc20).withdraw(abi.encodePacked(recipient), amount - gasFee);
+        // highlight-end
+    }
+```
 
-1. Check if the ZRC20 token address is valid (i.e., not a zero address).
-1. Check if the amount is greater than zero.
-1. Decode the message to obtain the recipient address.
-1. Call the `doWithdrawal()` function with the ZRC20 token address, the amount,
-   and the recipient address.
+First, define error types. These types, `WrongGasContract`,
+`NotEnoughToPayGasFee`, `InvalidZRC20Address`, and `ZeroAmount`, replace general
+reverts with detailed error messages, offering insights into what causes a
+transaction to be reverted. By using custom error types, it becomes easier for
+both developers and users to debug transactions that fail due to these specific
+issues.
+
+In the `onCrossChainCall` function, the first two conditions you need to set up
+validate that the `zrc20` address isn't a null address and the amount being
+transferred isn't zero. If either of these conditions isn't met, make the
+contract execution revert with a specific error message (`InvalidZRC20Address`
+or `ZeroAmount`, respectively).
+
+Next, handle the gas fees for the transaction with a pair of conditions.
+Retrieve the `gasZRC20` address and `gasFee` amount using the `withdrawGasFee`
+method from the `IZRC20` interface. Then, check if the contract address for
+withdrawing the gas fee matches the `zrc20` address. If it doesn't, an
+`WrongGasContract` error is raised.
+
+Also, verify that the `gasFee` isn't greater than or equal to the amount being
+transacted. If it is, this suggests that the user doesn't have sufficient funds
+to cover the gas fee for the transaction, resulting in a `NotEnoughToPayGasFee`
+error.
+
+Finally, approve the gas fee to be withdrawn from the `zrc20` address and
+proceed with the withdrawal, passing the recipient address and the amount to be
+sent, after the gas fee has been deducted. This step ensures the gas fee is
+deducted before the cross chain transfer, safeguarding the contract from users
+who might not have enough funds to cover the gas fee.
 
 ## Deploying the contract
 
-Next, create a deployment task script called `deploy.ts`. This script will
-deploy the Withdraw contract to ZetaChain.
-
-```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw/tasks/deploy.ts
-```
-
-Don't forget to import the deployment task in your `hardhat.config.ts` file.
-
-```ts title="hardhat.config.ts"
-import "./tasks/deploy";
-```
-
-You can now run the `deploy` task to deploy the Withdraw contract to ZetaChain's
-"athens" testnet.
+Use the standard deploy task to deploy the contract to ZetaChain:
 
 ```
 npx hardhat deploy --network zeta_testnet
@@ -109,66 +119,20 @@ npx hardhat deploy --network zeta_testnet
 
 🚀 Successfully deployed contract on ZetaChain.
 📜 Contract address: 0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a
-🌍 Explorer: https://explorer.zetachain.com/address/0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a
 ```
 
 ## Interacting with the contract
 
-```ts title="tasks/withdraw.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw/tasks/withdraw.ts
-```
-
-Don't forget to import the withdraw task in your `hardhat.config.ts` file.
-
-```ts title="hardhat.config.ts"
-import "./tasks/withdraw";
-```
-
-First, obtain the signer's address from the available signers in the Hardhat
-Runtime Environment (HRE). The signer's address is the account that will be used
-to send the transaction.
-
-Create a function called `prepareData()` that takes the contract address and the
-recipient address as input parameters. This function is responsible for
-preparing the data needed for the transaction. To do this, you will:
-
-1. Pad the recipient address with zeros, ensuring it is 32 bytes long.
-1. Convert the padded recipient address to a hexadecimal string.
-1. Concatenate the contract address and the padded recipient address (excluding
-   the 0x prefix).
-
-Finally, create and send a token transfer transaction from the signer's address
-to ZetaChain's TSS the target network. The `data` field of the transaction will
-contain two pieces of information:
-
-- The contract address of the Withdraw contract on ZetaChain.
-- The recipient address on the target network.
-
-## Executing the cross-chain transaction
-
-Run the following command in your terminal:
+Use the standard interact task to call the omnichain contract:
 
 ```
-npx hardhat withdraw --network goerli --contract CONTRACT --recipient RECIPIENT --amount 0.01
+npx hardhat withdraw --network goerli_testnet --amount 0.5 --contract 0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a --recipient 0x2c2d7aF555156eFB8Bfc3eBB0C41fE57D4D1C7c4
 ```
 
-Where `CONTRACT` is the contract address from the output of the `deploy` task
-and `RECIPIENT` is any random address on the target network. You're using the
-`goerli` network in this example, but you can use any other supported testnet
-like `polygon-mumbai`.
-
-Follow the link to ZetaChain's explorer in the output of the `withdraw` task to
-see the status of the cross-chain transaction. Due to the number of transactions
-it might take a while for the transaction to be processed. Once it does, you
-will see recipient's balance increase on the target network by the amount of
-tokens you sent.
-
-Here's an example of what an input and output of the `withdraw` task could look
-like:
-
-```
-npx hardhat withdraw --network goerli --amount 0.01 --contract 0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a --recipient 0x2c2d7aF555156eFB8Bfc3eBB0C41fE57D4D1C7c4
-```
+Where `--contract` is the contract address from the output of the `deploy` task
+and `--recipient` is any address on the target network. You're using the
+`goerli_testnet` network in this example, but you can use any other supported
+testnet like `mumbai_testnet`.
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
@@ -177,18 +141,13 @@ Getting tss address from athens: goerli.
 
 🚀 Successfully broadcasted a token transfer transaction on goerli network.
 📝 Transaction hash: 0xc6b72c5cc7b7ec68e0853827eab8cead9664b951bfe66340bd2711e2abdf0013
-💰 Amount: 0.01 native goerli gas tokens
-💁 Sender: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 (your address on goerli)
-💁 Recipient: 0x2c2d7aF555156eFB8Bfc3eBB0C41fE57D4D1C7c4 (ZetaChain's TSS address on goerli)
-
-This transaction has been submitted to goerli, but it may take some time
-for it to be processed on ZetaChain. Please refer to ZetaChain's explorer
-for updates on the progress of the cross-chain transaction.
-
-🌍 Explorer: https://explorer.zetachain.com/address/0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a?tab=ccTxs
 ```
 
-Congratulations! You have successfully created and deployed your first omnichain
+You should a progress see the transaction being tracked on ZetaChain. Once the
+transaction is finalized on ZetaChain, you should see a token transaction to the
+recipient address on the target network.
+
+Congratulations! You have successfully created and deployed the Withdraw
 contract to ZetaChain, and executed a cross-chain transaction by sending tokens
 to a TSS address on Goerli, which triggered a Withdraw contract call on
 ZetaChain and withdrew the tokens to the recipient address on Goerli.
