@@ -107,29 +107,29 @@ interface zContract {
 ### How to deposit and call zEVM contracts from a smart contract chain
 
 This is an example calling from an Ethereum chain to send a transaction to the
-Athens 2 TSS address in order to `deposit`.
+ZetaChain's testnet TSS address in order to `deposit`.
 
-```jsx
+```ts
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { parseEther } from "@ethersproject/units";
-import { ethers } from "hardhat";
-// This is a constant address, the TSS address of the ZetaChain network.
-import { TSS_ATHENS2 } from "../systemConstants";
-// Primary function definition
-const main = async () => {
-  // Get signer in order to write transction.
-  const [signer] = await ethers.getSigners();
-  // Sign a transaction that sends Ether to the TSS address.
-  const tx = await signer.sendTransaction({
-    to: TSS_ATHENS2,
-    value: parseEther("100"),
-  });
-  // That's it! ZetaChain will pick up the transaction.
-  console.log("Token sent. tx:", tx.hash);
+import { getAddress } from "@zetachain/protocol-contracts";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+
+  const to = getAddress("tss", hre.network.name as any);
+  const value = parseEther(args.amount);
+
+  const tx = await signer.sendTransaction({ to, value });
+
+  console.log(`Transaction hash: ${tx.hash}`);
 };
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+
+task("swap", "Swap tokens", main).addParam(
+  "amount",
+  "Amount to send to the recipient"
+);
 ```
 
 If you instead wanted to do a `DepositAndCall`, you can do a similar pattern but

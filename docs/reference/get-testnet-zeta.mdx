@@ -9,9 +9,9 @@ sidebar_position: 6
 
 ZETA is a token used to deploy and call smart contracts on ZetaChain, and to
 transact data and value across chains (through messaging). For ZetaChain's
-Athens network, they use the same ZETA that lives on connected testnet networks.
-With ZetaChain's Mainnet launch, ZETA will be traded and transacted across all
-connected chains.
+testnet network, they use the same ZETA that lives on connected testnet
+networks. With ZetaChain's mainnet launch, ZETA will be traded and transacted
+across all connected chains.
 
 You can view the addresses on respective chains [here](/reference/testnet.mdx).
 Check out [Omnichain Smart Contacts](/developers/overview.mdx) for more
@@ -22,19 +22,12 @@ how to send ZETA as well as any data or value via ZetaChain.
 
 ## How to get testnet ZETA
 
-:::note
-
-Faucet currently works only on the Athens 2 testnet.
-
-:::
-
 Please note that testnet ZETA has no monetary value and is solely intended for
 testing and development purposes. Therefore, if you're not a developer, there's
 no need for you to acquire testnet ZETA.
 
-To obtain testnet ZETA on the **Athens 2 testnet** for development purposes,
-please follow the instructions provided below. Please note that the faucet will
-soon be updated to support Athens 3 in the coming weeks.
+To obtain testnet ZETA for development purposes, please follow the instructions
+provided below.
 
 ### Using the ZetaChain CLI faucet
 
@@ -42,14 +35,14 @@ The easiest way to get testnet ZETA is to use the ZetaChain CLI faucet. You can
 install the CLI by following the instructions (you may need `sudo` priveleges):
 
 ```bash
-npm install -g @zetachain/faucet-cli
+npm install -g @zetachain/faucet-cli@athens3
 ```
 
 Once installed, you can use the faucet to get ZETA tokens on any EVM-compatible
 network. For example, to get ZETA on the Goerli testnet, you can run:
 
 ```bash
-zetafaucet --drip --address 0x4bB9089ee3B86e97b171838205483362966f9dE8 --chain goerli
+zetafaucet --drip --address 0x4bB9089ee3B86e97b171838205483362966f9dE8 --chain goerli_testnet
 ```
 
 You will be prompted to authenticate with your Github account to use the faucet.
@@ -68,22 +61,6 @@ npx hardhat faucet --chain goerli
 ```
 
 Under the hood this command uses the ZetaChain CLI faucet.
-
-### On Discord
-
-In our [Discord](https://discord.com/invite/kjQBqcZtnh) you can acquire ZETA via
-the #zeta-faucet channel. To get some ZETA, use the command
-`zeta faucet drip [address]` in #zeta-faucet, replacing `[address]` with your
-EVM-compatible address. As we add support for additional chains, we'll allow you
-to get ZETA for various other networks and addresses. The faucet will also drip
-some native gas assets so you can get started transacting immediately!
-
-After requesting ZETA from the bot, you will receive ZETA on each connected
-chain. With this ZETA in your wallets, you have all you need to start building
-on ZetaChain!
-
-Note that this testnet ZETA has no monetary value, and is only needed for
-testing and development purposes.
 
 ## Getting Additional Testnet Gas Assets
 
