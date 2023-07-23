@@ -31,28 +31,8 @@ as if it were any other fungible token (like an ERC-20).
 ZRC-20 is based on ERC-20, with three additional functions and some associated
 events for integration with Cross-Chain Transactions (CCTXs) in ZetaChain.
 
-```solidity
-pragma solidity 0.8.7;
-
-interface IZRC20 {
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    // highlight-start
-    function deposit(address to, uint256 amount) external returns (bool);
-    function withdraw(bytes memory to, uint256 amount) external returns (bool);
-    function withdrawGasFee() external view returns (address, uint256);
-    // highlight-end
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-    // highlight-start
-    event Deposit(bytes from, address indexed to, uint256 value);
-    event Withdrawal(address indexed from, bytes to, uint256 value);
-    // highlight-end
-}
+```solidity reference title="IZRC20.sol"
+https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol
 ```
 
 Comparing ZRC-20 to ERC-20, there are additional external functions to deposit
@@ -94,14 +74,8 @@ contract SystemContract {
 A contract that implements this interface may be called by a ZRC-20 deposit
 call.
 
-```solidity
-interface zContract {
-    function onCrossChainCall(
-        address zrc20,
-        uint256 amount,
-        bytes calldata message
-    ) external;
-}
+```solidity reference title="zContract.sol"
+https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol
 ```
 
 ### How to deposit and call zEVM contracts from a smart contract chain
@@ -126,7 +100,7 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   console.log(`Transaction hash: ${tx.hash}`);
 };
 
-task("swap", "Swap tokens", main).addParam(
+task("send", "Send tokens to a TSS address", main).addParam(
   "amount",
   "Amount to send to the recipient"
 );
@@ -137,60 +111,39 @@ include data in the deposit call. This example demonstrates calling a `swap`
 contract that exists on the zEVM.
 
 ```jsx title="TestDepositAndCall.js"
-import { BigNumber } from "@ethersproject/bignumber";
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { parseEther } from "@ethersproject/units";
-import { getAddress, isNetworkName } from "@zetachain/addresses";
-import { ethers } from "hardhat";
-import { ZRC20Addresses, TSS_ATHENS2 } from "../systemConstants";
-import { network } from "hardhat";
-// Helper function to format data for sending a swap transaction
-const getSwapData = (
-  zetaSwap: string,
-  destination: string,
-  destinationToken: string,
-  minOutput: BigNumber
-) => {
-  const params = getSwapParams(destination, destinationToken, minOutput);
-  return zetaSwap + params.slice(2);
-};
-// Primary function definition
-const main = async () => {
-  if (!isNetworkName(network.name) || !network.name)
-    throw new Error("Invalid network name");
-  // Here you're choosing the target token you want the swap to output based on the network
-  const destinationToken =
-    network.name == "goerli"
-      ? ZRC20Addresses["tMATIC"]
-      : ZRC20Addresses["gETH"];
-  console.log("Swapping native token...");
-  // Get a signer to write your transaction
-  const [signer] = await ethers.getSigners();
-  // Get the correct address of the swap contract (using a helper function)
-  const zetaSwap = getAddress({
-    address: "zetaSwap",
-    networkName: "athens",
-    zetaNetwork: "athens",
-  });
-  // Use formatting function to get the correct data format
-  const data = getSwapData(
-    zetaSwap,
-    signer.address,
-    destinationToken,
-    BigNumber.from("0")
+import { getAddress } from "@zetachain/protocol-contracts";
+import { BigNumber } from "@ethersproject/bignumber";
+import { prepareData } from "@zetachain/toolkit/helpers";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+  console.log(`🔑 Using account: ${signer.address}\n`);
+
+  const network = hre.network.name;
+  const destinationToken = getAddress("zrc20" as any, args.destination as any);
+  const data = prepareData(
+    args.contract,
+    ["address", "bytes32", "uint256"],
+    [destinationToken, args.recipient || signer.address, BigNumber.from("0")]
   );
-  // Sign your transaction with Swap data.
-  const tx = await signer.sendTransaction({
-    data,
-    to: TSS_ATHENS2,
-    value: parseEther("0.5"),
-  });
-  console.log("tx:", tx.hash);
+  const to = getAddress("tss", network as any);
+  const value = parseEther(args.amount);
+  const tx = await signer.sendTransaction({ data, to, value });
+  console.log(`Transaction hash: ${tx.hash}`);
 };
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+
+task("swap", "Swap tokens", main)
+  .addOptionalParam("recipient", "Address of the recipient, defaults to signer")
+  .addParam("contract", "Address of the swap contract on ZetaChain")
+  .addParam("amount", "Amount to send to the recipient")
+  .addParam("destination", "Destination network, like 'goerli_testnet'");
 ```
+
+Source:
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/swap/tasks/swap.ts
 
 Supported assets include ZETA, native gas tokens on all connected chains
 including Bitcoin as well as ERC20 tokens. ERC20 tokens must be whitelisted by
@@ -226,14 +179,14 @@ contract ZEVMSwapApp is zContract {
         IZRC20(zrc20).approve(address(router02), amount);
         // Swap for your target token
         uint256[] memory amounts = IUniswapV2Router01(router02).swapExactTokensForTokens(amount, minAmountOut, path, address(this), block.timestamp);
-        // Withdraw amountto target recipient
+        // Withdraw amount to target recipient
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amounts[1]);
     }
 }
 ```
 
-Note how simple this example is. With ~20 lines of code -- much of which is
-generic code -- one is able to create a cross-chain swap dApp where users can
+Note how simple this example is. With ~20 lines of code — much of which is
+generic code — one is able to create a cross-chain swap dApp where users can
 trade native assets for other native assets. `withdraw` may be used in any
 situation where a user needs to get assets back onto one's native wallet, while
 `deposit` from above allows you to deposit and orchestrate any assets via zEVM
