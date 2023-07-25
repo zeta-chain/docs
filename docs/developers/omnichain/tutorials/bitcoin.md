@@ -87,13 +87,13 @@ You can learn more about how to construct the memo in the
 [Bitcoin section](/developers/omnichain/bitcoin).
 
 The `send-btc` command will return the transaction hash. You can use the `cctx`
-commmand to track the status of the cross-chain transaction:
+command to track the status of the cross-chain transaction:
 
 ```
 npx hardhat cctx --tx TX_HASH
 ```
 
-Add the token contract addres `0x629eEe97B95Bd6e04B0885De58eF016177a709Ae` to
+Add the token contract address `0x629eEe97B95Bd6e04B0885De58eF016177a709Ae` to
 Metamask (or any other wallet) to be able to check the balance of the ERC-20
 token minted by the contract.
 

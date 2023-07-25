@@ -39,7 +39,7 @@ git clone https://github.com/zeta-chain/template
 
 Run the following command to create a new omnichain contract called `Withdraw`.
 Pass the `recipient` parameter (`bytes32` by default) to the command to specify
-the arguments to the cross-chani call.
+the arguments to the cross-chain call.
 
 ```
 npx hardhat omnichain Withdraw recipient

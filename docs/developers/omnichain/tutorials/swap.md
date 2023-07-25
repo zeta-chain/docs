@@ -23,7 +23,7 @@ High-level overview:
 4. ZetaChain detects the token transfer transaction and triggers the
    `onCrossChainCall()` function of the ZetaSwapV2 contract.
 5. `onCrossChainCall()` does the following:
-   1. calls the UniswapV2 router contract (Uniswap acontracts already have been
+   1. calls the UniswapV2 router contract (Uniswap contracts have already been
       deployed to ZetaChain), specifically `swapExactTokensForTokens` to swap
       tMATIC represented on ZetaChain as a ZRC20 for gETH also represented as a
       ZRC20.
