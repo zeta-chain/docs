@@ -170,6 +170,10 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 task("destination", "", main).addParam("contract").addParam("destination");
 ```
 
+```ts title="hardhat.config.ts"
+import "./tasks/destination";
+```
+
 ## Interact with the Contract
 
 Set the destination chain to Mumbai:
