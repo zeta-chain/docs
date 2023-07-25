@@ -197,6 +197,18 @@ const config = {
         theme: require("prism-react-renderer/themes/github"),
         darkTheme: require("prism-react-renderer/themes/dracula"),
         additionalLanguages: ["solidity"],
+        magicComments: [
+          {
+            className: "theme-code-block-highlighted-line",
+            line: "highlight-next-line",
+            block: { start: "highlight-start", end: "highlight-end" },
+          },
+          {
+            className: "code-block-removed-line",
+            line: "remove-next-line",
+            block: { start: "remove-start", end: "remove-end" },
+          },
+        ],
       },
       scroll: {
         smooth: true,
