@@ -126,7 +126,7 @@ npx hardhat deploy --network zeta_testnet
 Use the standard interact task to call the omnichain contract:
 
 ```
-npx hardhat withdraw --network goerli_testnet --amount 0.5 --contract 0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a --recipient 0x2c2d7aF555156eFB8Bfc3eBB0C41fE57D4D1C7c4
+npx hardhat interact --network goerli_testnet --amount 0.5 --contract 0x5E3229522BeFD3D9CD422Fd91f4273ed4EB2639a --recipient 0x2c2d7aF555156eFB8Bfc3eBB0C41fE57D4D1C7c4
 ```
 
 Where `--contract` is the contract address from the output of the `deploy` task
@@ -156,4 +156,4 @@ ZetaChain and withdrew the tokens to the recipient address on Goerli.
 
 You can find the source code for the example in this tutorial here:
 
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/withdraw
+https://github.com/zeta-chain/example-contracts/tree/main/omnichain/withdraw/
