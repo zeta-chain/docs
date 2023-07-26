@@ -35,6 +35,13 @@ by the payload of the data field of the transaction).
 git clone https://github.com/zeta-chain/template
 ```
 
+Install dependencies:
+
+```
+cd template
+yarn
+```
+
 ## Creating the contract
 
 Run the following command to create a new omnichain contract called `Withdraw`.

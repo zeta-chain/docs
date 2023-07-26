@@ -310,3 +310,12 @@ mark {
 .tabs-container pre {
   margin-bottom: var(--ifm-leading);
 }
+
+.code-block-removed-line {
+  background-color: #ff000020;
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+  border-left: 3px solid #ff000080;
+  text-decoration: line-through;
+}
