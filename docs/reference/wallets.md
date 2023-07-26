@@ -32,7 +32,7 @@ To add ZetaChain to the Metamask extension wallet follow these steps:
 - Learn about
   [how to add a custom network RPC](https://support.metamask.io/hc/en-us/articles/360043227612-How-to-add-a-custom-network-RPC)
 - Use the following values:
-  - Network Name: `ZetaChain Athens 3 Testnet` (or choose another name)
+  - Network Name: `ZetaChain Testnet` (or choose another name)
   - New RPC URL: `https://zetachain-athens-evm.blockpi.network/v1/rpc/public`
     (or choose another one from
     [the list](https://www.zetachain.com/docs/reference/api/))

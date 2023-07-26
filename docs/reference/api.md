@@ -5,22 +5,7 @@ sidebar_position: 0
 # API/RPC endpoints
 
 Below is a list of public API endpoints that can be used to interact with the
-ZetaChain testnets.
-
-## Athens 2 Testnet (current)
-
-| Type                 | Provider                                    | Endpoint                                           |
-| -------------------- | ------------------------------------------- | -------------------------------------------------- |
-| EVM RPC              | [Ankr](https://www.ankr.com/rpc/zetachain/) | https://rpc.ankr.com/zetachain_evm_testnet         |
-| Tendermint RPC       | [Ankr](https://www.ankr.com/rpc/zetachain/) | https://rpc.ankr.com/zetachain_tendermint_testnet  |
-| Cosmos SDK HTTP      | [Ankr](https://www.ankr.com/rpc/zetachain/) | https://rpc.ankr.com/http/zetachain_testnet        |
-| EVM RPC              | ZetaChain                                   | https://api.athens2.zetachain.com/evm              |
-| Tendermint RPC       | ZetaChain                                   | https://api.athens2.zetachain.com/tendermint       |
-| Tendermint HTTP      | ZetaChain                                   | https://api.athens2.zetachain.com/tendermint       |
-| Tendermint WebSocket | ZetaChain                                   | wss://api-lb.athens2.zetachain.com:26657/websocket |
-| Cosmos SDK HTTP      | ZetaChain                                   | https://api.athens2.zetachain.com/                 |
-
-## Athens 3 Testnet (upcoming)
+ZetaChain testnet.
 
 | Type                 | Provider                             | Endpoint                                                       |
 | -------------------- | ------------------------------------ | -------------------------------------------------------------- |
