@@ -150,7 +150,7 @@ Getting tss address from athens: goerli.
 📝 Transaction hash: 0xc6b72c5cc7b7ec68e0853827eab8cead9664b951bfe66340bd2711e2abdf0013
 ```
 
-You should a progress see the transaction being tracked on ZetaChain. Once the
+You should be able to see the progress of the transaction being tracked on ZetaChain. Once the
 transaction is finalized on ZetaChain, you should see a token transaction to the
 recipient address on the target network.
 
