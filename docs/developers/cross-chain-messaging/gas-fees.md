@@ -33,7 +33,7 @@ and is burned.
 
 ## Different approaches to paying gas fee
 
-When you write a smart contract that use cross chain message this contract needs
+When you write a smart contract that uses cross chain messages this contract needs
 to pay fees in zeta for every cross chain transaction.
 
 At this point there are several ways to handle this, let's list the main ones:
