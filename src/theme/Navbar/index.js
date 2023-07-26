@@ -130,6 +130,15 @@ export default function Navbar() {
         <div className="flex items-center gap-9">
           <a
             className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
+            href="https://github.com/zeta-chain"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+
+          <a
+            className="no-underline hover:text-green-200 hover:no-underline text-[14px] hidden md:block"
             href="https://www.zetachain.com/whitepaper.pdf"
             target="_blank"
             rel="noreferrer"
