@@ -172,31 +172,4 @@ message MsgSetNodeKeys {
 }
 ```
 
-## MsgUpdatePermissionFlags
-
-Updates permissions. Currently, this is only used to enable/disable the
-inbound transactions.
-
-Only the admin policy account is authorized to broadcast this message.
-
-```proto
-message MsgUpdatePermissionFlags {
-	string creator = 1;
-	bool isInboundEnabled = 3;
-}
-```
-
-## MsgUpdateKeygen
-
-Updates the block height of the keygen and sets the status to "pending
-keygen".
-
-Only the admin policy account is authorized to broadcast this message.
-
-```proto
-message MsgUpdateKeygen {
-	string creator = 1;
-	int64 block = 2;
-}
-```
 
