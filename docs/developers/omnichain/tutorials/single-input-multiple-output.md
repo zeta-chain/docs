@@ -129,6 +129,12 @@ contract MultiOutput is zContract, Ownable {
 
 ## Deploy the Contract
 
+Compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 ```
 npx hardhat deploy --network zeta_testnet
 ```

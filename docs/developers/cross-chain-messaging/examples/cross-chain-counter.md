@@ -63,8 +63,10 @@ import "./tasks/counter_increment.ts";
 
 ## Deploy the contract
 
+Compile the contract:
+
 ```
-npx hardhat compile
+npx hardhat compile --force
 ```
 
 ```

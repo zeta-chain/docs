@@ -58,6 +58,12 @@ chains and set the interactors for all chains.
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/deploy.ts
 ```
 
+Compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Run the following command to deploy the contract to two networks:
 
 ```
