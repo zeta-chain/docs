@@ -1,4 +1,4 @@
-name: Update module specs from zeta-chain/node
+name: Update module and OpenAPI specs from zeta-chain/node
 
 on:
   schedule:
@@ -24,22 +24,31 @@ jobs:
           mkdir -p docs/architecture/modules
           rm -rf docs/architecture/modules/*
           cp -r node/docs/spec/* docs/architecture/modules/
+
+      - name: Replace OpenAPI specs
+        run: |
+          mkdir -p static/data
+          rm static/data/openapi.swagger.yaml
+          cp -r node/docs/openapi/openapi.swagger.yaml static/data/
+          echo "\nhost: zetachain-athens.blockpi.network/lcd/v1/public" >> static/data/openapi.swagger.yaml
           rm -rf node
 
       - name: Check for changes
         id: check-changes
         run: |
           git add docs/architecture/modules
-          git diff --cached --exit-code docs/data/ || echo "::set-output name=changed::true"
+          git add static/data/openapi.swagger.yaml
+          git diff --cached --exit-code || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: "docs: update module specs from node"
+          title: "docs: update module and OpenAPI specs from the node repo"
           body: |
-            This PR contains updates to the Cosmos SDK module specifications
-            from the `zeta-chain/node` repository.
-          commit-message: "docs: update module specs from zeta-chain/node"
+            This PR contains updates to the Cosmos SDK module and OpenAPI
+            specifications from the `zeta-chain/node` repository.
+          commit-message: |
+            "docs: update module and OpenAPI specs from zeta-chain/node"
           base: main
           branch: docs/updates-from-zeta-chain-node
         if: steps.check-changes.outputs.changed == 'true'
