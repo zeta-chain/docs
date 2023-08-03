@@ -245,7 +245,7 @@ npx hardhat balances
 
 ## Deploy the Contract
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force
