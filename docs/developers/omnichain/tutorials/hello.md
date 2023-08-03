@@ -2,121 +2,248 @@
 sidebar_position: 2
 ---
 
-# Hello Zeta
+# First Omnichain Contract
 
-## Overview
+In this tutorial you will create a simple omnnichain contract, deploy it on
+ZetaChain and make a contract call from a connected chain.
 
-In this tutorial, we will walk through the process of creating, testing, and
-deploying a simple Solidity smart contract to the ZetaChain testnet using the
-Hardhat development environment. This tutorial will not feature any
-ZetaChain-specific features, but will instead focus on the basics of creating
-and testing a smart contract.
+## Prerequisites
 
-## Set up your environment
+- [Node.js](https://nodejs.org/en/) v12 or later
+- [Yarn](https://yarnpkg.com/) v1 or later
+- [Git](https://git-scm.com/)
+
+## Set Up Your Environment
+
+Clone the Hardhat contract template:
 
 ```
 git clone https://github.com/zeta-chain/template
 ```
 
-## Create the contract
-
-In the `contracts` directory, create a new file called `HelloZeta.sol` and add
-the following Solidity code to it:
-
-```solidity title="contracts/HelloZeta.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/hello/contracts/HelloZeta.sol
-```
-
-This contract has a single function, `helloZeta()`, which returns a string
-"Hello Zeta".
-
-## Write a test for the contract
-
-In the `test` directory, create a new file called `HelloZeta.test.ts` and add
-the following test code to it:
-
-```ts title="test/HelloZeta.spec.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/hello/test/HelloZeta.spec.ts
-```
-
-First, we import the necessary modules. The `expect` function is imported from
-the Chai library, which is an assertion library that allows us to write
-human-readable assertions for our tests. The `ethers` object is imported from
-the Hardhat library, which provides a set of tools and utilities for smart
-contract development and testing.
-
-We then define a test suite for the HelloZeta contract using the `describe`
-function from the Mocha framework. This function takes two arguments: a string
-describing the test suite, and a callback function that contains the tests.
-
-Inside the test suite, we write a single test case using the `it` function. This
-function also takes two arguments: a string describing the test case, and an
-asynchronous callback function that performs the test.
-
-In the test case, we begin by deploying the HelloZeta smart contract. We first
-get the contract factory using the `ethers.getContractFactory()` method, passing
-the name of the contract as an argument. Next, we deploy the contract by calling
-the `deploy()` method on the contract factory. We wait for the contract to be
-deployed using the `deployed()` method.
-
-Once the contract is deployed, we call the `helloZeta()` function on the
-contract instance. This function should return the string "Hello Zeta". We store
-the result of this function call in a constant variable named `result`.
-
-Finally, we check if the result matches our expectation using the `expect`
-function from the Chai library. We pass the `result` variable to the `expect`
-function and chain the `to.equal()` method to it, asserting that the result
-should be equal to the expected string "Hello Zeta".
-
-In summary, this test suite is a simple example of testing a smart contract
-using Hardhat, Mocha, and Chai. It deploys the HelloZeta contract, calls the
-`helloZeta()` function, and checks if the returned result matches the expected
-value. This serves as a good starting point for understanding how to write tests
-for more complex smart contracts.
-
-### Run the test
-
-Execute the following command to run the `HelloZeta` test:
+Install dependencies:
 
 ```
-npx hardhat test
+cd template
+yarn
 ```
 
+## Create the Contract
+
+To create a new omnichain contract you will use the `omnichain` Hardhat task
+available by default in the template.
+
 ```
-HelloZeta
-    ✔ Should return 'Hello Zeta' when calling helloZeta() (4709ms)
-
-  1 passing (5s)
+npx hardhat omnichain MyContract
 ```
 
-## Create a deployment task
+The `omnichain` task can also accept a list of arguments (optionally with types)
+to create a contract that accepts specific data from a connected chain. You can
+learn more about passing arguments in the following tutorials. In this tutorial
+you will create a contract that does not accept any arguments.
 
-Now, we'll implement a simple Hardhat task that deploys a smart contract to the
+This `omnichain` task has created:
+
+- `contracts/MyContract.sol`: a Solidity omnichain smart contract
+- `tasks/deploy.ts`: a Hardhat task to deploy the contract
+- `tasks/interact.ts`: a Hardhat task to interact with the contract
+
+### Omnichain Contract
+
+Let's review the contents of the `MyContract` contract:
+
+```solidity title="contracts/MyContract.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+
+contract MyContract is zContract {
+    SystemContract public immutable systemContract;
+
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
+    }
+
+    function onCrossChainCall(
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // TODO: implement the logic
+    }
+}
+```
+
+`MyContract` is a simple contract that inherits from the
+[`zContract` interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol).
+
+The contract declares a state variable of type `SystemContract` that stores a
+reference to the [system contract](/developers/omnichain/system-contract).
+
+The constructor function accepts the address of the system contract and stores
+it in the `systemContract` state variable.
+
+`onCrossChainCall` is a function that is called when the contract gets called by
+a token transfer transaction sent to the TSS address on a connected chain. The
+function receives the following inputs:
+
+- `zrc20`: the address of the ZRC-20 token contract that represents an asset
+  from a connected chain on ZetaChain.
+- `amount`: the amount of tokens that were transferred to the TSS address.
+- `message`: the contents of the `data` field of the token transfer transaction.
+
+By default, the `onCrossChainCall` function is empty and does nothing. You will
+implement the logic yourself based on your use case.
+
+### Deploy Task
+
+The `omnichain` task has created a Hardhat task to deploy the contract:
+
+```ts title="tasks/deploy.ts"
+import { getAddress } from "@zetachain/protocol-contracts";
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  if (hre.network.name !== "zeta_testnet") {
+    throw new Error(
+      '🚨 Please use the "zeta_testnet" network to deploy to ZetaChain.'
+    );
+  }
+
+  const [signer] = await hre.ethers.getSigners();
+  console.log(`🔑 Using account: ${signer.address}\n`);
+
+  const systemContract = getAddress("systemContract", "zeta_testnet");
+
+  const factory = await hre.ethers.getContractFactory("MyContract");
+  const contract = await factory.deploy(systemContract);
+  await contract.deployed();
+
+  console.log(`🚀 Successfully deployed contract on ZetaChain.
+📜 Contract address: ${contract.address}
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/${contract.address}
+`);
+};
+
+task("deploy", "Deploy the contract", main);
+```
+
+Omnichain contracts are supposed to be deployed to ZetaChain, so the task checks
+that the `--network` flag value is always `zeta_testnet`.
+
+The task uses the `getAddress` function from `@zetachain/protocol-contracts` to
+get the address of the system contract on ZetaChain.
+
+The task then uses Ethers.js to deploy the contract to ZetaChain.
+
+### Interact Task
+
+The `omnichain` task has also created a Hardhat task to interact with the
+contract:
+
+```ts title="tasks/interact.ts"
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { parseEther } from "@ethersproject/units";
+import { getAddress } from "@zetachain/protocol-contracts";
+import { prepareData, trackCCTX } from "@zetachain/toolkit/helpers";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+  console.log(`🔑 Using account: ${signer.address}\n`);
+
+  const data = prepareData(args.contract, [], []);
+  const to = getAddress("tss", hre.network.name);
+  const value = parseEther(args.amount);
+
+  const tx = await signer.sendTransaction({ data, to, value });
+
+  console.log(`
+🚀 Successfully broadcasted a token transfer transaction on ${hre.network.name} network.
+📝 Transaction hash: ${tx.hash}
+`);
+  await trackCCTX(tx.hash);
+};
+
+task("interact", "Interact with the contract", main)
+  .addParam("contract", "The address of the withdraw contract on ZetaChain")
+  .addParam("amount", "Amount of tokens to send");
+```
+
+The task uses the `prepareData` function from `@zetachain/toolkit/helpers` to
+prepare the `data` field of the token transfer transaction. `prepareData`
+accepts an omnichain contract address on ZetaChain, a list of argument types,
+and a list of argument names. The `data` field contains the following
+information:
+
+- the address of the contract on ZetaChain
+- the arguments to pass to the `onCrossChainCall` function in the `message`
+  parameter
+
+In the code generated above there are no arguments, so the `data` field is
+simply the address of the contract on ZetaChain.
+
+`getAddress` retrieves the address of the TSS on the current network.
+
+The task then uses Ethers.js to send a token transfer transaction to the TSS
+address. The transaction contains the following information:
+
+- `data`: the `data` field prepared by `prepareData`
+- `to`: the address of the TSS
+- `value`: the amount of tokens to transfer
+
+Finally, the task uses the `trackCCTX` function from
+`@zetachain/toolkit/helpers` to track the token transfer transaction. The
+function waits for the transaction to appear on ZetaChain and tracks the status
+of the transaction. Transaction tracking is optional, but helpful to know when
+the transaction has been processed by ZetaChain.
+
+## Create a Account
+
+To deploy and interact with the contract you will need a wallet with tokens.
+
+Create a new wallet account:
+
+```
+npx hardhat account --save
+```
+
+This command generates a random wallet, prints information about the wallet to
+the terminal, and saves the private key to a `.env` file to make it accessible
+to Hardhat.
+
+## Use the Faucet to Request Tokens
+
+Request testnet ZETA tokens from the ZetaChain faucet:
+
+```
+npx hardhat faucet
+```
+
+This command requests tokens from the faucet for the account address derived
+from the private key specified in the `.env`. Tokens sent to the address on
 ZetaChain.
 
-```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/hello/tasks/deploy.ts
+Using the `faucet` task you can get ZETA tokens on ZetaChain as well as ZETA
+tokens on connected chains.
+
+You will, however, need to request native tokens on connected chains from one of
+the
+[publicly available faucets](http://localhost:3001/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
+
+## Check Token Balances
+
+Check token balances to ensure you have tokens on ZetaChain and at least one of
+the connected chains (Goerli in this example):
+
+```
+npx hardhat balances
 ```
 
-Don't forget to import the deployment task in your `hardhat.config.ts` file.
-
-```ts title="hardhat.config.ts"
-import "./tasks/deploy";
-```
-
-The deployment task defines an asynchronous function called `main` that will
-execute the deployment process. Inside this function, the code first retrieves
-the deployer's address by getting a signer, which is an entity capable of
-signing transactions on the blockchain.
-
-Once the deployer's address is obtained, the script proceeds to deploy the
-"HelloZeta" smart contract. It does so by first getting a contract factory for
-the "HelloZeta" contract using the `ethers` object. Then, it deploys the
-contract using the `deploy` method on the factory object, and waits for the
-deployment to complete. After the deployment is successful, the address of the
-deployed contract is logged to the console.
-
-### Deploy the contract to the ZetaChain testnet
+## Deploy the Contract
 
 Clear the cache and artifacts, then compile the contract:
 
@@ -124,20 +251,59 @@ Clear the cache and artifacts, then compile the contract:
 npx hardhat compile --force
 ```
 
-Execute the following command to deploy `HelloZeta` contract to the
-`zeta_testnet` testnet:
+Deploy the contract to ZetaChain:
 
 ```
 npx hardhat deploy --network zeta_testnet
 ```
 
 ```
-Deploying contracts with the account: 0x4bc06EAA43CA52BAaa857B21df6F49939a78274E
-HelloZeta contract deployed to: 0xff4bB2F0F2F947320e1Aa09e14789E62cc429e9c
+🔑 Using account: 0x1bE17D79b60182D7F3573576B7807F6C20Ae7C99
+
+🚀 Successfully deployed contract on ZetaChain.
+📜 Contract address: 0xE26F2e102E2f3267777F288389435d3037D14bb3
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xE26F2e102E2f3267777F288389435d3037D14bb3
 ```
 
-### Source Code
+## Interact with the Contract
 
-You can find the source code for the example in this tutorial here:
+Call the `interact` task to interact with the contract:
 
-https://github.com/zeta-chain/example-contracts/tree/feat/import-toolkit/omnichain/hello
+```
+npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amount 0.1 --network goerli_testnet
+```
+
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
+📝 Transaction hash: 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
+
+✔ CCTX hash found: 0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
+
+ℹ Status updated to "OutboundMined": Remote omnichain contract call completed
+
+✔ CCTX has been finalized on ZetaChain
+```
+
+Once the transaction is finalized on ZetaChain, you should be able to review the
+transaction on the ZetaChain explorer:
+
+https://athens3.explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
+
+The `interact` task has sent a token transfer transaction to the TSS address on
+Goerli. The transaction contains the address of the contract on ZetaChain in the
+`data` field. ZetaChain detects the transaction and triggers the
+`onCrossChainCall` function of the contract. The `onCrossChainCall` function
+does nothing in this example, but you can modify it to implement your own logic.
+
+Congratulations! 🎉 In this tutorial you have:
+
+- cloned the Hardhat contract template
+- used `npx hardhat omnichain` to create a new omnichain contract
+- reviewed the contents of the generated contract and the tasks to deploy and
+  interact with the contract
+- successfully deployed the contract to ZetaChain
+- interacted with the contract by sending a token transfer transaction to the
+  TSS address on a connected chain and triggering the `onCrossChainCall`
+  function of the omnichain contract on ZetaChain
