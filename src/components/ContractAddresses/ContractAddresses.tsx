@@ -18,13 +18,14 @@ const edgeCases: { [key: string]: string } = {
   bsc: "BSC",
 };
 
+const addressesURL =
+  "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.json";
+
 const DataFetch: React.FC = () => {
   const [data, setData] = useState<FetchedData | null>(null);
 
   useEffect(() => {
-    fetch(
-      "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.json"
-    )
+    fetch(addressesURL)
       .then((response) => response.json())
       .then((jsonData) => setData(jsonData as FetchedData))
       .catch((error) => console.error("Error:", error));
@@ -58,8 +59,8 @@ const DataFetch: React.FC = () => {
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Value</th>
+              <th>Label</th>
+              <th>Contract address</th>
             </tr>
           </thead>
           <tbody>
