@@ -68,6 +68,12 @@ the other chain to the list of available chains.
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value/tasks/deploy.ts
 ```
 
+Clear the cache and artifacts, then compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Run the following command to deploy the contract to two networks:
 
 ```

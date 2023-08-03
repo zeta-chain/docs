@@ -140,6 +140,12 @@ Getting weth9 address from mainnet: eth-mainnet.
 
 ## Deploying the contract
 
+Clear the cache and artifacts, then compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Use the standard deploy task to deploy the contract to ZetaChain:
 
 ```

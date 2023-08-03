@@ -76,6 +76,12 @@ contract address. If deploying to more than two chains, you must call
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/message/tasks/deploy.ts
 ```
 
+Clear the cache and artifacts, then compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Run the following command to deploy the contract to two networks:
 
 ```

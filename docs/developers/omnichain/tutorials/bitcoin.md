@@ -47,6 +47,12 @@ the Bitcoin Testnet.
 import "./tasks/deploy";
 ```
 
+Clear the cache and artifacts, then compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Deploy the contract to ZetaChain.
 
 ```

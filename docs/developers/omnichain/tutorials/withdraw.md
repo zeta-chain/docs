@@ -115,6 +115,12 @@ who might not have enough funds to cover the gas fee.
 
 ## Deploying the contract
 
+Clear the cache and artifacts, then compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Use the standard deploy task to deploy the contract to ZetaChain:
 
 ```
@@ -150,9 +156,9 @@ Getting tss address from athens: goerli.
 📝 Transaction hash: 0xc6b72c5cc7b7ec68e0853827eab8cead9664b951bfe66340bd2711e2abdf0013
 ```
 
-You should be able to see the progress of the transaction being tracked on ZetaChain. Once the
-transaction is finalized on ZetaChain, you should see a token transaction to the
-recipient address on the target network.
+You should be able to see the progress of the transaction being tracked on
+ZetaChain. Once the transaction is finalized on ZetaChain, you should see a
+token transaction to the recipient address on the target network.
 
 Congratulations! You have successfully created and deployed the Withdraw
 contract to ZetaChain, and executed a cross-chain transaction by sending tokens
