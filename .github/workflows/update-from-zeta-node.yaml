@@ -28,7 +28,7 @@ jobs:
       - name: Replace OpenAPI specs
         run: |
           mkdir -p static/data
-          rm static/data/openapi.swagger.yaml
+          rm -rf static/data/openapi.swagger.yaml
           cp -r node/docs/openapi/openapi.swagger.yaml static/data/
           echo "\nhost: zetachain-athens.blockpi.network/lcd/v1/public" >> static/data/openapi.swagger.yaml
           rm -rf node
