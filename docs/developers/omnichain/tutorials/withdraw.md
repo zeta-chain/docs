@@ -115,7 +115,7 @@ who might not have enough funds to cover the gas fee.
 
 ## Deploying the contract
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force

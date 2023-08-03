@@ -140,7 +140,7 @@ Getting weth9 address from mainnet: eth-mainnet.
 
 ## Deploying the contract
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force

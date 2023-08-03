@@ -68,7 +68,7 @@ the other chain to the list of available chains.
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/value/tasks/deploy.ts
 ```
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force

@@ -129,7 +129,7 @@ contract MultiOutput is zContract, Ownable {
 
 ## Deploy the Contract
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force

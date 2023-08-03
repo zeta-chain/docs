@@ -58,7 +58,7 @@ chains and set the interactors for all chains.
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/deploy.ts
 ```
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force

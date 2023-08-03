@@ -47,7 +47,7 @@ the Bitcoin Testnet.
 import "./tasks/deploy";
 ```
 
-Compile the contract:
+Clear the cache and artifacts, then compile the contract:
 
 ```
 npx hardhat compile --force
