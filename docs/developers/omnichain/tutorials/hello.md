@@ -118,6 +118,12 @@ deployed contract is logged to the console.
 
 ### Deploy the contract to the ZetaChain testnet
 
+Clear the cache and artifacts, then compile the contract:
+
+```
+npx hardhat compile --force
+```
+
 Execute the following command to deploy `HelloZeta` contract to the
 `zeta_testnet` testnet:
 
