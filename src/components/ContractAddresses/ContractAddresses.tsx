@@ -12,6 +12,12 @@ interface FetchedData {
   [key: string]: NestedObject;
 }
 
+const edgeCases: { [key: string]: string } = {
+  ccm: "CCM",
+  zevm: "zEVM",
+  bsc: "BSC",
+};
+
 const DataFetch: React.FC = () => {
   const [data, setData] = useState<FetchedData | null>(null);
 
@@ -29,20 +35,12 @@ const DataFetch: React.FC = () => {
   }
 
   const formatTitle = (title: string) => {
-    return title
-      .split("_")
-      .join(" ")
-      .split(" ")
-      .map((word) =>
-        word.toLowerCase() === "ccm"
-          ? "CCM"
-          : word.toLowerCase() === "bsc"
-          ? "BSC"
-          : word.toLowerCase() === "zevm"
-          ? "zEVM"
-          : word.charAt(0).toUpperCase() + word.slice(1)
-      )
-      .join(" ");
+    const handleEdgeCases = (word: string) => {
+      const upper = word.charAt(0).toUpperCase() + word.slice(1);
+      const edgeCase = edgeCases[word.toLowerCase()];
+      return edgeCase ? edgeCase : upper;
+    };
+    return title.replace(/_/g, " ").split(" ").map(handleEdgeCases).join(" ");
   };
 
   const renderTable = (tableData: DataObject, title: string): ReactNode => {
