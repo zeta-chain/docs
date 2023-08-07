@@ -11,14 +11,80 @@ Overview:
 - ZetaChain detects the transaction and calls the `onCrossChainCall` function of
   the omnichain contract.
 - The `onCrossChainCall`
+
   - checks if the cross-chain call was made from Bitcoin. If not, it reverts.
   - mints ERC-20 tokens (the same amount as tBTC sent in the first step) on
     ZetaChain and sends them to the recipient.
 
-## Create the contract
+## Set Up Your Environment
 
-```solidity title="contracts/Minter.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/minter/contracts/Minter.sol
+Clone the Hardhat contract template:
+
+```
+git clone https://github.com/zeta-chain/template
+```
+
+Install dependencies:
+
+```
+cd template
+yarn add --dev @openzeppelin/contracts
+```
+
+## Create the Contract
+
+Create a new omnichain contract `Minter` that expects to see a `recipient`
+address in the message:
+
+```
+npx hardhat omnichain Minter recipient:address
+```
+
+```solidity title="contracts/Minter.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+// highlight-next-line
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+// highlight-next-line
+contract Minter is zContract, ERC20 {
+    // highlight-next-line
+    error WrongChain();
+
+    SystemContract public immutable systemContract;
+    // highlight-next-line
+    uint256 public immutable chain;
+
+    // highlight-start
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 chainID,
+        address systemContractAddress
+    ) ERC20(name, symbol) {
+      // highlight-end
+        systemContract = SystemContract(systemContractAddress);
+        // highlight-next-line
+        chain = chainID;
+    }
+
+    function onCrossChainCall(
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        address recipient = abi.decode(message, (address));
+        // highlight-start
+        address acceptedZRC20 = systemContract.gasCoinZRC20ByChainId(chain);
+        if (zrc20 != acceptedZRC20) revert WrongChain();
+
+        _mint(recipient, amount);
+        // highlight-end
+    }
+}
 ```
 
 Contract's constructor accepts a name of the token, a symbol, a chain ID of the
@@ -30,22 +96,26 @@ the allowed chain. If not, it reverts. If the call was made from the allowed
 chain, the contract converts the `message` from bytes into the `recipient`
 address and mints new ERC-20 tokens to that address.
 
-## Create a deployment task
+## Modify the Deploy Task
 
-```ts title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/omnichain/minter/tasks/deploy.ts
+```ts title="tasks/deploy.ts"
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  // ...
+  // highlight-start
+  const contract = await factory.deploy(
+    "Wrapped tBTC",
+    "WTBTC",
+    18332,
+    systemContract
+  );
+  // highlight-end
+  // ...
+};
+
+task("deploy", "Deploy the contract", main);
 ```
 
-The deployment task deploys the contract to ZetaChain and returns the contract
-address.
-
-We're using the `getAddress` helper to get the system contract address and we
-pass it to the contract's deploy function. We also pass 18332 as the chain ID of
-the Bitcoin Testnet.
-
-```ts title="hardhat.config.ts"
-import "./tasks/deploy";
-```
+## Deploy the Contract
 
 Clear the cache and artifacts, then compile the contract:
 
@@ -53,19 +123,18 @@ Clear the cache and artifacts, then compile the contract:
 npx hardhat compile --force
 ```
 
-Deploy the contract to ZetaChain.
+Deploy the contract to ZetaChain:
 
 ```
 npx hardhat deploy --network zeta_testnet
 ```
 
 ```
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+🔑 Using account: 0x1bE17D79b60182D7F3573576B7807F6C20Ae7C99
 
 🚀 Successfully deployed contract on ZetaChain.
-📜 Contract address: 0x629eEe97B95Bd6e04B0885De58eF016177a709Ae
-
-🌍 Explorer: https://athens3.explorer.zetachain.com/address/0x629eEe97B95Bd6e04B0885De58eF016177a709Ae
+📜 Contract address: 0xE26F2e102E2f3267777F288389435d3037D14bb3
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xE26F2e102E2f3267777F288389435d3037D14bb3
 ```
 
 ## Calling the contract from Bitcoin Testnet

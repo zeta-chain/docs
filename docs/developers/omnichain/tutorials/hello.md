@@ -201,7 +201,7 @@ function waits for the transaction to appear on ZetaChain and tracks the status
 of the transaction. Transaction tracking is optional, but helpful to know when
 the transaction has been processed by ZetaChain.
 
-## Create a Account
+## Create an Account
 
 To deploy and interact with the contract you will need a wallet with tokens.
 
