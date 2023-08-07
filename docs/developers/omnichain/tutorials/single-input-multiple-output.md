@@ -32,6 +32,15 @@ yarn add --dev @openzeppelin/contracts
 
 ## Create the contract
 
+Run the following command to create a new omnichain contract called
+`MultiOutput` with one parameter in the message:
+
+```
+npx hardhat omnichain MultiOutput recipient:address
+```
+
+Modify the `onCrossChainCall` function to perform a swap:
+
 ```solidity title="contracts/MultiOutput.sol"
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
