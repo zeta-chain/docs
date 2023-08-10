@@ -22,3 +22,30 @@ For a list of RPC endpoints, refer to the [API endpoints page](/reference/api).
 :::
 
 <ContractAddresses />
+
+## Transition from Athens-2 to Athens-3
+
+Apps that were deployed to Athens-2 are or will transition to Athens-3 as a
+long-term testnet. If you need to upgrade your wallet to use this new network
+instead of Athens-2, please follow these instructions.
+
+1. In your wallet, remove the ZetaChain network that you are currently using.
+
+- For Metamask, you can use this tutorial:
+  https://support.metamask.io/hc/en-us/articles/4502810252059-How-to-remove-networks
+- For Coinbase Wallet, go to Settings > Networks > Custom, and find your current
+  ZetaChain network. At the bottom of this network’s page, press the Delete
+  button.
+
+2. Add the new network. Network information for the testnet looks like this:
+
+| Network Name    | ZetaChain Athens-3 Testnet                                 |
+| --------------- | ---------------------------------------------------------- |
+| RPC URL         | https://zetachain-athens-evm.blockpi.network/v1/rpc/public |
+| Currency Symbol | aZETA                                                      |
+| Block Explorer  | https://zetachain-athens-3.blockscout.com/                 |
+| Chain ID        | 7001                                                       |
+
+> By moving to the new RPC/network, you will not keep assets or any data from
+> Athens-2. No assets on any testnet should be worth any value, but if you want
+> to keep anything, you can transfer it to a different chain from ZetaChain.
