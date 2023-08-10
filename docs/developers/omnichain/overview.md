@@ -20,6 +20,7 @@ import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
 contract YourContract is zContract {
     function onCrossChainCall(
+        zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message

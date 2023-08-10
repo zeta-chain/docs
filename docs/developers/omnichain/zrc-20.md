@@ -56,19 +56,15 @@ may be called by `zetacore` after receiving a deposit into a TSS address
 ZetaChain network.
 
 ```solidity
-contract SystemContract {
-  address public constant FUNGIBLE_MODULE_ADDRESS;
-  // ...
-  constructor(address fungibleModule) {
-      FUNGIBLE_MODULE_ADDRESS = fungibleModule;
-  }
-  // ...
-  function DepositAndCall(address zrc20, uint256 amount, address target, bytes calldata message) external {
-      require(msg.sender == FUNGIBLE_MODULE_ADDRESS);
-      require(target != FUNGIBLE_MODULE_ADDRESS && target != address(this));
-      IZRC20(zrc20).deposit(target, amount);
-      zContract(target).onCrossChainCall(zrc20, amount, message);
-  }
+contract SystemContract is SystemContractErrors {
+    address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6226aB;
+    // ...
+    function depositAndCall(Context calldata context, address zrc20, uint256 amount, address target, bytes calldata message) external {
+        if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
+        if (target == FUNGIBLE_MODULE_ADDRESS || target == address(this)) revert InvalidTarget();
+        IZRC20(zrc20).deposit(target, amount);
+        zContract(target).onCrossChainCall(context, zrc20, amount, message);
+    }
 ```
 
 A contract that implements this interface may be called by a ZRC-20 deposit
@@ -160,16 +156,53 @@ ZRC-20 token and withdraws it to an address on a native chain.
 
 ```solidity title="TestSwap.sol"
 contract ZEVMSwapApp is zContract {
-  address public router02;
-    constructor(address router02_) {
+    error InvalidSender();
+    error LowAmount();
+
+    uint256 private constant _DEADLINE = 1 << 64;
+    address public immutable router02;
+    address public immutable systemContract;
+
+    constructor(address router02_, address systemContract_) {
         router02 = router02_;
+        systemContract = systemContract_;
     }
+
+    function encodeMemo(
+        address targetZRC20,
+        bytes calldata recipient
+    ) external pure returns (bytes memory) {
+        //        return abi.encode(targetZRC20, recipient, minAmountOut);
+        return abi.encodePacked(targetZRC20, recipient);
+    }
+
+    // data
+    function decodeMemo(
+        bytes calldata data
+    ) public pure returns (address, bytes memory) {
+        bytes memory decodedBytes;
+        uint256 size;
+        size = data.length;
+        address addr;
+        addr = address(uint160(bytes20(data[0:20])));
+        decodedBytes = data[20:];
+
+        return (addr, decodedBytes);
+    }
+
     // Call this function to perform a cross-chain swap
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external override {
+    function onCrossChainCall(
+        Context calldata,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external override {
+        if (msg.sender != systemContract) {
+            revert InvalidSender();
+        }
         address targetZRC20;
-        address receipient;
-        uint256 minAmountOut;
-        (targetZRC20, receipient,minAmountOut) = abi.decode(message, (address,address,uint256));
+        bytes memory recipient;
+        (targetZRC20, recipient) = decodeMemo(message);
         address[] memory path;
         path = new address[](2);
         path[0] = zrc20;
@@ -177,9 +210,21 @@ contract ZEVMSwapApp is zContract {
         // Approve the usage of this token by router02
         IZRC20(zrc20).approve(address(router02), amount);
         // Swap for your target token
-        uint256[] memory amounts = IUniswapV2Router01(router02).swapExactTokensForTokens(amount, minAmountOut, path, address(this), block.timestamp);
-        // Withdraw amount to target recipient
-        IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amounts[1]);
+        uint256[] memory amounts = IUniswapV2Router02(router02)
+            .swapExactTokensForTokens(
+                amount,
+                0,
+                path,
+                address(this),
+                _DEADLINE
+            );
+
+        // this contract subsides withdraw gas fee
+        (address gasZRC20Addr, uint256 gasFee) = IZRC20(targetZRC20)
+            .withdrawGasFee();
+        IZRC20(gasZRC20Addr).approve(address(targetZRC20), gasFee);
+        IZRC20(targetZRC20).approve(address(targetZRC20), amounts[1]); // this does not seem to be necessary
+        IZRC20(targetZRC20).withdraw(recipient, amounts[1] - gasFee);
     }
 }
 ```

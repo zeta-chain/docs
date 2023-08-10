@@ -88,6 +88,7 @@ contract MultiOutput is zContract, Ownable {
     // highlight-end
 
     function onCrossChainCall(
+        zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
