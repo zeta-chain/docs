@@ -1,3 +1,7 @@
+---
+sidebar_position: 7
+---
+
 # Call a Contract From Bitcoin
 
 In this tutorial you will create an omnichain contract for minting ERC-20 tokens
