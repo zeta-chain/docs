@@ -19,6 +19,8 @@ For the purposes of this tutorial we will be using the
   [one of the faucets](https://coinfaucet.eu/en/btc-testnet/) available)
 - [Node.js](https://nodejs.org/en/) installed on your machine with `npm` or
   `yarn`
+- Learn how to
+  [Deposit and call zEVM contracts from Bitcoin](https://www.zetachain.com/docs/developers/omnichain/bitcoin/).
 
 # Create a new project
 
