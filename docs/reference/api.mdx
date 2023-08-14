@@ -1,0 +1,64 @@
+---
+sidebar_position: 0
+---
+
+import EndpointList from "@site/src/components/EndpointList/EndpointList";
+
+# API/RPC endpoints
+
+Below is a list of public API endpoints that can be used to interact with the
+ZetaChain testnet.
+
+<EndpointList />
+
+## EVM RPC
+
+ZetaChain is an EVM-compatible blockchain. EVM RPC allows you to connect to the
+ZetaChain blockchain and interact with the EVM. This gives you direct access to
+reading Ethereum-formatted transactions or sending them to the network
+
+For example, querying the latest block number:
+
+```
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' https://api.athens2.zetachain.com/evm
+```
+
+## Tendermint HTTP
+
+ZetaChain is powered by the Tendermint Core BFT consensus engine. The Tendermint
+HTTP API allows you to query blocks, information about validators, genesis file,
+etc.
+
+For example, querying a genesis file:
+
+https://rpc.ankr.com/http/zetachain_tendermint_athens_testnet/genesis
+
+## Tendermint RPC
+
+Tendermint RPC API allows broadcasting transactions and querying the blockchain
+through an JSON RPC interface.
+
+For example, requesting a specific block:
+
+```
+curl --header "Content-Type: application/json" --request POST --data '{"method": "block", "params": ["1187434"], "id": 1}' https://rpc.ankr.com/zetachain_tendermint_athens_testnet
+```
+
+## Tendermint WebSocket
+
+Tendermint WebSocket API provides access to JSON RPC via WebSockets.
+
+For example, connecting to the WebSocket with `wscat`
+
+```
+wscat -c wss://zetachain-athens.blockpi.network/rpc/v1/public/websocket
+```
+
+## Cosmos SDK HTTP
+
+ZetaChain is built with Cosmos SDK. Cosmos SDK HTTP API allows querying the
+state of the ZetaChain blockchain and broadcast transactions.
+
+For example, querying the latest block:
+
+https://zetachain-testnet.nodejumper.io:1317/cosmos/base/tendermint/v1beta1/blocks/latest
