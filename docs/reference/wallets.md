@@ -1,15 +1,11 @@
 ---
-sidebar_label: Wallets
-hide_title: true
-id: wallets
-title: Wallets
 sidebar_position: 4
 ---
 
 import { AddressConverter } from
 "@site/src/components/AddressConverter/AddressConverter";
 
-# Overview
+# Wallets
 
 ZetaChain is an EVM-compatible Cosmos SDK-based blockchain that features
 interoperability with Bitcoin. This means that many EVM and Cosmos wallets can
@@ -49,12 +45,6 @@ meets certain criteria. You can learn more about it in the
 [XDEFI Wallet](https://xdefi.io) is a popular wallet that will meet those
 criteria and you will be able to use it to interact with ZetaChain.
 
-:::tip
-
-As of July 17th, 2023, XDEFI compatibility is still work in progress.
-
-:::
-
 To test ZetaChain's interoperability with Bitcoin, you can use the
 `npx hardhat send-btc` available in the smart contract template. Learn more
 about it in the [Bitcoin tutorial](/developers/omnichain/tutorials/bitcoin/).
@@ -67,18 +57,28 @@ Cosmos wallet. We recommend using a Cosmos wallet if you're interacting with the
 Cosmos side of ZetaChain: native token transfers, governance, groups, staking
 tokens, authz.
 
-### Keplr Wallet
+### Keplr
 
 [Keplr](https://keplr.app/) is a popular extension and mobile wallet for
 Cosmos-based chains. It can be used to interact with ZetaChain.
 
 Add ZetaChain to the Keplr browser extension: https://chains.keplr.app/
 
+### Leap
+
+[Leap](https://www.leapwallet.io/) is an extension and mobile wallet for
+Cosmos-based chains. Leap lets users view balances, transaction history, send
+tokens between accounts, view and vote on governance proposals, view
+delegations, and delegate to validators.
+
+Add ZetaChain to the Leap browser extension:
+https://developers.leapwallet.io/chain-store
+
 ## Address converter
 
 ZetaChain is both a Cosmos chain and an EVM chain, so it's useful to be able to
 convert between a bech32 address (`zeta***`, used by Cosmos) and a hex address
-(`0x***`, used by EVM-based chains). You can use the address converter below to
-convert between the two formats.
+(`0x***`, used by EVM). You can use the address converter below to convert
+between the two formats.
 
 <AddressConverter />
