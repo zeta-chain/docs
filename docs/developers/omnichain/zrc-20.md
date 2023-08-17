@@ -172,7 +172,6 @@ contract ZEVMSwapApp is zContract {
         address targetZRC20,
         bytes calldata recipient
     ) external pure returns (bytes memory) {
-        //        return abi.encode(targetZRC20, recipient, minAmountOut);
         return abi.encodePacked(targetZRC20, recipient);
     }
 
