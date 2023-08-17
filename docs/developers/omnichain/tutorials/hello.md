@@ -108,7 +108,19 @@ function receives the following inputs:
 - `amount`: the amount of tokens that were transferred to the TSS address.
 - `message`: the contents of the `data` field of the token transfer transaction.
 
-By default, the `onCrossChainCall` function is empty and does nothing. You will
+The `onCrossChainCall` function should only be called by the system contract (in
+other words, by the ZetaChain protocol) to prevent a caller from supplying
+arbitrary values in `context`. The following check ensures that the function is
+called only as a response to a token transfer transaction sent to the TSS
+address:
+
+```solidity
+if (msg.sender != address(systemContract)) {
+    revert SenderNotSystemContract();
+}
+```
+
+By default, the `onCrossChainCall` function doesn't do anything else. You will
 implement the logic yourself based on your use case.
 
 ### Deploy Task
