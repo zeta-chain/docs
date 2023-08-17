@@ -51,6 +51,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 // highlight-next-line
 contract Minter is zContract, ERC20 {
+    error SenderNotSystemContract();
     // highlight-next-line
     error WrongChain();
 
@@ -77,6 +78,9 @@ contract Minter is zContract, ERC20 {
         uint256 amount,
         bytes calldata message
     ) external virtual override {
+        if (msg.sender != address(systemContract)) {
+            revert SenderNotSystemContract();
+        }
         address recipient = abi.decode(message, (address));
         // highlight-start
         address acceptedZRC20 = systemContract.gasCoinZRC20ByChainId(chain);

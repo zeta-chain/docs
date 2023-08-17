@@ -65,6 +65,9 @@ contract Swap is zContract {
         uint256 amount,
         bytes calldata message
     ) external virtual override {
+        if (msg.sender != address(systemContract)) {
+            revert SenderNotSystemContract();
+        }
         (address targetZRC20, bytes32 recipient, uint256 minAmountOut) = abi
             .decode(message, (address, bytes32, uint256));
         // highlight-start
