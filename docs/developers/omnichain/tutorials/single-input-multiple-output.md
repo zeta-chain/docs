@@ -55,6 +55,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // highlight-start
 contract MultiOutput is zContract, Ownable {
+    error SenderNotSystemContract();
     error NoAvailableTransfers();
 
     event DestinationRegistered(address);
@@ -88,10 +89,14 @@ contract MultiOutput is zContract, Ownable {
     // highlight-end
 
     function onCrossChainCall(
+        zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
     ) external virtual override {
+        if (msg.sender != address(systemContract)) {
+            revert SenderNotSystemContract();
+        }
         address recipient = abi.decode(message, (address));
         // highlight-start
         if (_getTotalTransfers(zrc20) == 0) revert NoAvailableTransfers();

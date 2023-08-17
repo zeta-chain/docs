@@ -55,6 +55,7 @@ npx hardhat omnichain Withdraw recipient
 Modify the `onCrossChainCall` function to withdraw the tokens to the recipient:
 
 ```solidity title="contracts/Withdraw.sol"
+    error SenderNotSystemContract();
     // highlight-start
     error WrongGasContract();
     error NotEnoughToPayGasFee();
@@ -67,6 +68,9 @@ Modify the `onCrossChainCall` function to withdraw the tokens to the recipient:
         uint256 amount,
         bytes calldata message
     ) external virtual override {
+        if (msg.sender != address(systemContract)) {
+            revert SenderNotSystemContract();
+        }
         bytes32 recipient = abi.decode(message, (bytes32));
         // highlight-start
         if (zrc20 == address(0)) revert InvalidZRC20Address();

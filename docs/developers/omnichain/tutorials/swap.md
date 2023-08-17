@@ -60,10 +60,14 @@ import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
 contract Swap is zContract {
     //...
     function onCrossChainCall(
+        zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
     ) external virtual override {
+        if (msg.sender != address(systemContract)) {
+            revert SenderNotSystemContract();
+        }
         (address targetZRC20, bytes32 recipient, uint256 minAmountOut) = abi
             .decode(message, (address, bytes32, uint256));
         // highlight-start

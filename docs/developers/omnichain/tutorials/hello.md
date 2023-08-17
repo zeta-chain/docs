@@ -60,6 +60,8 @@ import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
 contract MyContract is zContract {
+    error SenderNotSystemContract();
+
     SystemContract public immutable systemContract;
 
     constructor(address systemContractAddress) {
@@ -67,10 +69,14 @@ contract MyContract is zContract {
     }
 
     function onCrossChainCall(
+        zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
     ) external virtual override {
+        if (msg.sender != address(systemContract)) {
+            revert SenderNotSystemContract();
+        }
         // TODO: implement the logic
     }
 }
@@ -89,12 +95,32 @@ it in the `systemContract` state variable.
 a token transfer transaction sent to the TSS address on a connected chain. The
 function receives the following inputs:
 
+- `context`: is a struct of type
+  [`zContext`](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol)
+  that contains the following values:
+  - `origin`: EOA address that sent the token transfer transaction to the TSS
+    address (triggering the omnichain contract)
+  - `chainID`: interger ID of the connected chain from which the omnichain
+    contract was triggered.
+  - `sender` (reserved for future use, currently empty)
 - `zrc20`: the address of the ZRC-20 token contract that represents an asset
   from a connected chain on ZetaChain.
 - `amount`: the amount of tokens that were transferred to the TSS address.
 - `message`: the contents of the `data` field of the token transfer transaction.
 
-By default, the `onCrossChainCall` function is empty and does nothing. You will
+The `onCrossChainCall` function should only be called by the system contract (in
+other words, by the ZetaChain protocol) to prevent a caller from supplying
+arbitrary values in `context`. The following check ensures that the function is
+called only as a response to a token transfer transaction sent to the TSS
+address:
+
+```solidity
+if (msg.sender != address(systemContract)) {
+    revert SenderNotSystemContract();
+}
+```
+
+By default, the `onCrossChainCall` function doesn't do anything else. You will
 implement the logic yourself based on your use case.
 
 ### Deploy Task
