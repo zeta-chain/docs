@@ -125,7 +125,7 @@ Adjust the amount of tokens accordingly to reach the minimum required bonded
 tokens.
 
 ```bash
-zetacored tx staking delegate $(zetacored keys show operator --bech operator -a) 1000000azeta --from operator
+zetacored tx staking delegate $(zetacored keys show operator --bech=val -a) 1000000azeta --from operator
 ```
 
 Once your validator receives sufficient bonded tokens it automatically join the
