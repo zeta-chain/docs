@@ -109,7 +109,7 @@ To confirm your validator is created, run this command which shows the current
 status of your validator.
 
 ```bash
-zetacored query staking validator $(zetacored keys show operator --bech operator -a)
+zetacored query staking validator $(zetacored keys show operator --bech val -a)
 ```
 
 It's possible that you don’t have enough **_azeta_** tokens to be part of the
@@ -125,7 +125,7 @@ Adjust the amount of tokens accordingly to reach the minimum required bonded
 tokens.
 
 ```bash
-zetacored tx staking delegate $(zetacored keys show operator --bech=val -a) 1000000azeta --from operator
+zetacored tx staking delegate $(zetacored keys show operator --bech val -a) 1000000azeta --from operator
 ```
 
 Once your validator receives sufficient bonded tokens it automatically join the
