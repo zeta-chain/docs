@@ -86,6 +86,47 @@ contract Swap is zContract {
 }
 ```
 
+## Modify the Interact Task
+
+```ts title="tasks/interact.ts"
+// highlight-next-line
+import { BigNumber } from "@ethersproject/bignumber";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  //...
+  // highlight-start
+  const targetZRC20 = getAddress("zrc20" as any, args.destination as any);
+  const minAmountOut = BigNumber.from("0");
+  // highlight-end
+
+  const data = prepareData(
+    args.contract,
+    ["address", "bytes32", "uint256"],
+    // highlight-next-line
+    [targetZRC20, args.recipient, minAmountOut]
+  );
+  //...
+};
+
+task("interact", "Interact with the contract", main)
+  .addParam("contract", "The address of the withdraw contract on ZetaChain")
+  .addParam("amount", "Amount of tokens to send")
+  .addParam("recipient")
+  // remove-start
+  .addParam("minAmountOut")
+  .addParam("targetZRC20")
+  // remove-end
+  // highlight-next-line
+  .addParam("destination");
+```
+
+The code generation command automatically created all three parameters for the
+`interact` task. Instead of asking the user to provide the `targetZRC20` and the
+`minAmountOut` parameters, you can define them in the task itself. Use the
+`getAddress` to fetch the right ZRC-20 address for the destination chain and add
+a `"destination"` parameter. Use a hard-coded value of 0 for the `minAmountOut`
+parameter.
+
 ## Write a test for the contract
 
 ```ts title="test/swap.ts" reference
@@ -142,6 +183,12 @@ Getting weth9 address from mainnet: eth-mainnet.
   1 passing (9s)
 ```
 
+## Create an Account and Request Tokens from the Faucet
+
+Before proceeding with the next steps, make sure you have
+[created an account and requested ZETA tokens](/developers/omnichain/tutorials/hello#create-an-account)
+from the faucet.
+
 ## Deploying the contract
 
 Clear the cache and artifacts, then compile the contract:
@@ -150,7 +197,7 @@ Clear the cache and artifacts, then compile the contract:
 npx hardhat compile --force
 ```
 
-Use the standard deploy task to deploy the contract to ZetaChain:
+Use the `deploy` task to deploy the contract to ZetaChain:
 
 ```
 npx hardhat deploy --network zeta_testnet
@@ -166,44 +213,8 @@ npx hardhat deploy --network zeta_testnet
 
 ## Execute a swap
 
-```ts title="tasks/interact.ts"
-// highlight-next-line
-import { BigNumber } from "@ethersproject/bignumber";
-
-const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
-  //...
-  // highlight-start
-  const targetZRC20 = getAddress("zrc20" as any, args.destination as any);
-  const minAmountOut = BigNumber.from("0");
-  // highlight-end
-
-  const data = prepareData(
-    args.contract,
-    ["address", "bytes32", "uint256"],
-    // highlight-next-line
-    [targetZRC20, args.recipient, minAmountOut]
-  );
-  //...
-};
-
-task("interact", "Interact with the contract", main)
-  .addParam("contract", "The address of the withdraw contract on ZetaChain")
-  .addParam("amount", "Amount of tokens to send")
-  .addParam("recipient")
-  // remove-start
-  .addParam("minAmountOut")
-  .addParam("targetZRC20")
-  // remove-end
-  // highlight-next-line
-  .addParam("destination");
-```
-
-The code generation command automatically created all three parameters for the
-`interact` task. Instead of asking the user to provide the `targetZRC20` and the
-`minAmountOut` parameters, you can define them in the task itself. Use the
-`getAddress` to fetch the right ZRC-20 address for the destination chain and add
-a `"destination"` parameter. Use a hard-coded value of 0 for the `minAmountOut`
-parameter.
+Use the `interact` task to swap 30 tMATIC from Mumbai for an amount of gETH and
+withdraw the tokens to Goerli transferring them to a specific recipient address:
 
 ```
 npx hardhat interact --contract 0xd6FB957c64f5197C2e630Cb5D995C0845505957C --amount 30 --network mumbai_testnet --destination goerli_testnet --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1

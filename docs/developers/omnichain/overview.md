@@ -36,8 +36,8 @@ contract YourContract is zContract {
 ```
 
 The contract above is a very simple example of an omnichain contract. Check out
-the [Withdraw tutorial](/developers/omnichain/tutorials/withdraw) for a more
-in-depth example.
+the [introductory omnichain tutorial](/developers/omnichain/tutorials/hello) for
+a more in-depth example.
 
 An omnichain contract is deployed on ZetaChain and can be called from any
 connected chain.
