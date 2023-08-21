@@ -154,7 +154,7 @@ tx. In this example, it uses an existing Uniswap deployment with a pool for 2
 given tokens. When `onCrossChainCall` is called, it performs a swap to a target
 ZRC-20 token and withdraws it to an address on a native chain.
 
-Check out the [Withdraw tutorial](/develolpers/omnichain/tutorials/withdraw) to
+Check out the [Withdraw tutorial](/developers/omnichain/tutorials/withdraw) to
 see how to deposit tokens to ZetaChain as ZRC-20 and use the `withdraw` function
 to withdraw them back to their native chain.
 
