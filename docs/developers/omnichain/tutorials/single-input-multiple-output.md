@@ -141,6 +141,12 @@ contract MultiOutput is zContract, Ownable {
 }
 ```
 
+## Create an Account and Request Tokens from the Faucet
+
+Before proceeding with the next steps, make sure you have
+[created an account and requested ZETA tokens](/developers/omnichain/tutorials/hello#create-an-account)
+from the faucet.
+
 ## Deploy the Contract
 
 Clear the cache and artifacts, then compile the contract:

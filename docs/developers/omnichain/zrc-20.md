@@ -146,100 +146,27 @@ the ZetaChain network in order to allow zEVM to interact with them.
 
 ### `withdraw`
 
-The `withdraw` function can be called by any Externally Owned Account (EOA) or
-smart contract. This function is like transfer(), except that the amount is
-burned, and leaves a Withdrawal() event. This event will trigger a CCTX in
+The `withdraw` function can be called by any Externally Owned Account (EOA) or a
+smart contract. This function is like `transfer()`, except that the amount is
+burned, and leaves a `Withdrawal()` event. This event will trigger a CCTX in
 `zetacore` module, which the `zetaclient` will pick up and process the outbound
 tx. In this example, it uses an existing Uniswap deployment with a pool for 2
 given tokens. When `onCrossChainCall` is called, it performs a swap to a target
 ZRC-20 token and withdraws it to an address on a native chain.
 
-```solidity title="TestSwap.sol"
-contract ZEVMSwapApp is zContract {
-    error InvalidSender();
-    error LowAmount();
+Check out the [Withdraw tutorial](/develolpers/omnichain/tutorials/withdraw) to
+see how to deposit tokens to ZetaChain as ZRC-20 and use the `withdraw` function
+to withdraw them back to their native chain.
 
-    uint256 private constant _DEADLINE = 1 << 64;
-    address public immutable router02;
-    address public immutable systemContract;
-
-    constructor(address router02_, address systemContract_) {
-        router02 = router02_;
-        systemContract = systemContract_;
-    }
-
-    function encodeMemo(
-        address targetZRC20,
-        bytes calldata recipient
-    ) external pure returns (bytes memory) {
-        return abi.encodePacked(targetZRC20, recipient);
-    }
-
-    // data
-    function decodeMemo(
-        bytes calldata data
-    ) public pure returns (address, bytes memory) {
-        bytes memory decodedBytes;
-        uint256 size;
-        size = data.length;
-        address addr;
-        addr = address(uint160(bytes20(data[0:20])));
-        decodedBytes = data[20:];
-
-        return (addr, decodedBytes);
-    }
-
-    // Call this function to perform a cross-chain swap
-    function onCrossChainCall(
-        Context calldata,
-        address zrc20,
-        uint256 amount,
-        bytes calldata message
-    ) external override {
-        if (msg.sender != systemContract) {
-            revert InvalidSender();
-        }
-        address targetZRC20;
-        bytes memory recipient;
-        (targetZRC20, recipient) = decodeMemo(message);
-        address[] memory path;
-        path = new address[](2);
-        path[0] = zrc20;
-        path[1] = targetZRC20;
-        // Approve the usage of this token by router02
-        IZRC20(zrc20).approve(address(router02), amount);
-        // Swap for your target token
-        uint256[] memory amounts = IUniswapV2Router02(router02)
-            .swapExactTokensForTokens(
-                amount,
-                0,
-                path,
-                address(this),
-                _DEADLINE
-            );
-
-        // this contract subsides withdraw gas fee
-        (address gasZRC20Addr, uint256 gasFee) = IZRC20(targetZRC20)
-            .withdrawGasFee();
-        IZRC20(gasZRC20Addr).approve(address(targetZRC20), gasFee);
-        IZRC20(targetZRC20).approve(address(targetZRC20), amounts[1]); // this does not seem to be necessary
-        IZRC20(targetZRC20).withdraw(recipient, amounts[1] - gasFee);
-    }
-}
-```
-
-Note how simple this example is. With ~20 lines of code — much of which is
-generic code — one is able to create a cross-chain swap dApp where users can
-trade native assets for other native assets. `withdraw` may be used in any
-situation where a user needs to get assets back onto one's native wallet, while
-`deposit` from above allows you to deposit and orchestrate any assets via zEVM
-smart contract calls. Together, these simple functions unlock powerful yet
-simple solutions for omnichain application building.
+Or check out a more advanced
+[Swap tutorial](/developers/omnichain/tutorials/swap) to see how to deposit
+tokens (like tMATIC), swap them to another token (like gETH) using the internal
+liquidity pools on ZetaChain, and withdraw them to their native chain (like
+Goerli).
 
 ## Building on ZRC-20
 
 With ZRC-20, developers have the power to build seamless, omnichain applications
 while also leveraging the entire EVM ecosystem to-date and plethora of
 contracts/protocols to build on top of. To start building with ZRC-20, check out
-some examples in the
-[tutorials section](/developers/omnichain/tutorials/withdraw).
+some examples in the [tutorials section](/developers/omnichain/tutorials/hello).
