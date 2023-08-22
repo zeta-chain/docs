@@ -41,7 +41,7 @@ const constants = {
   athensChainId: 7001,
   athensNetworkName: "ZetaChain Athens 2",
   athensGasTokenName: "ZETA",
-  athensEVMRPCEndpoint: "https://api.athens2.zetachain.com/evm",
+  athensEVMRPCEndpoint: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
   athensExplorer: "https://explorer.zetachain.com",
   athensSystemContractAddress: "0x239e96c8f17C85c30100AC26F635Ea15f23E9c67",
 
