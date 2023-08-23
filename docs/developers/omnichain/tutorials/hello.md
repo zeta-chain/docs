@@ -42,13 +42,16 @@ to create a contract that accepts specific data from a connected chain. You can
 learn more about passing arguments in the following tutorials. In this tutorial
 you will create a contract that does not accept any arguments.
 
-This `omnichain` task has created:
+The `omnichain` task has created:
 
 - `contracts/MyContract.sol`: a Solidity omnichain smart contract
 - `tasks/deploy.ts`: a Hardhat task to deploy the contract
 - `tasks/interact.ts`: a Hardhat task to interact with the contract
 
-### Omnichain Contract
+It also modified `hardhat.config.ts` to import both `deploy` and `interact`
+tasks.
+
+## Omnichain Contract
 
 Let's review the contents of the `MyContract` contract:
 
@@ -123,7 +126,7 @@ if (msg.sender != address(systemContract)) {
 By default, the `onCrossChainCall` function doesn't do anything else. You will
 implement the logic yourself based on your use case.
 
-### Deploy Task
+## Deploy Task
 
 The `omnichain` task has created a Hardhat task to deploy the contract:
 
@@ -165,7 +168,7 @@ get the address of the system contract on ZetaChain.
 
 The task then uses Ethers.js to deploy the contract to ZetaChain.
 
-### Interact Task
+## Interact Task
 
 The `omnichain` task has also created a Hardhat task to interact with the
 contract:
@@ -263,7 +266,7 @@ the
 ## Check Token Balances
 
 Check token balances to ensure you have tokens on ZetaChain and at least one of
-the connected chains (Goerli in this example):
+the connected chains:
 
 ```
 npx hardhat balances
