@@ -46,10 +46,10 @@ yarn
 Run the following command to create a new omnichain contract called `Withdraw`.
 
 ```
-npx hardhat omnichain Withdraw recipient
+npx hardhat omnichain Withdraw recipient:bytes32
 ```
 
-You're passing a `recipient` parameter (`bytes32` by default) to the command to
+You're passing a `recipient` parameter of type `bytes32` to the command to
 specify the arguments to the cross-chain call. These parameters will be used to
 generate the `onCrossChainCall` function and the `interact` task.
 

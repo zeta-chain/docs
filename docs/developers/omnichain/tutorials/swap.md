@@ -48,7 +48,7 @@ yarn add --dev @uniswap/v2-periphery @uniswap/v2-core
 Run the following command to create a new omnichain contract called `Swap`.
 
 ```
-npx hardhat omnichain Swap targetZRC20:address recipient minAmountOut:uint256
+npx hardhat omnichain Swap targetZRC20:address recipient:bytes32 minAmountOut:uint256
 ```
 
 Modify the `onCrossChainCall` function to perform a swap:
