@@ -26,8 +26,8 @@ Let's say we already deployed a tri-token pool (if you don't know how to deploy
 it take a look to official script, does all the work for you out of the box
 [deployment script](https://github.com/curvefi/curve-contract/blob/master/scripts/deploy.py)),
 using the address of three ZRC-2020 tokens. You can find the ZetaChain addresses
-of ZRC-20 tokens supported right now on the Athens-2 testnet using this
-[endpoint](DOES NOT WORK https://api.athens2.zetachain.com/#/Query/ZetachainZetacoreFungibleForeignCoinsAll).
+of ZRC-20 tokens supported right now on the ZetaChain testnet using this
+[endpoint](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/zetacore/fungible/foreign_coins).
 
 ## Implement a cross-chain stableswap
 
@@ -48,4 +48,4 @@ function simply extracts params from the message, calls the Curve pool's
 logic remains in the core Curve contract deployment. Users can interact by
 depositing and calling this zEVM contract from an external chain. You can see
 how you'd call this for a user programmatically
-[here](https://www.zetachain.com/docs/developers/omnichain-smart-contracts/zrc-20#how-to-deposit-and-call-zevm-contracts-from-a-smart-contract-chain).
+[here](https://www.zetachain.com/docs/developers/omnichain/zrc-20/).
