@@ -5,5 +5,11 @@ sidebar_label: ZetaChain HTTP API
 
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
-<SwaggerUI url="/data/openapi.swagger.yaml" />
+export const OpenAPI = () => {
+  const { siteConfig } = useDocusaurusContext();
+  return <SwaggerUI url={siteConfig.baseUrl + "data/openapi.swagger.yaml"} />;
+};
+
+<OpenAPI />
