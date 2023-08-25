@@ -109,7 +109,10 @@ contract CrossChainWarriors is
     function sendMessage(
         uint256 destinationChainId,
         uint256 token,
+        // remove-next-line
+        address sender,
         address to
+
     ) external payable {
         if (!_isValidChainId(destinationChainId))
             revert InvalidDestinationChainId();
@@ -173,7 +176,7 @@ contract CrossChainWarriors is
 }
 ```
 
-## Create a mint task
+## Create a Mint Task
 
 The mint task accepts a contract address as an argument, calls the `mint`
 function on it, searches the events for a "Transfer" event and prints out the
@@ -181,6 +184,10 @@ token ID.
 
 ```ts title="tasks/mint.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/mint.ts
+```
+
+```ts title="hardhat.config.ts"
+import "./tasks/mint";
 ```
 
 ## Update the Interact Task
