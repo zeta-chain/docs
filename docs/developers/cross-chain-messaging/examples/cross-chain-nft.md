@@ -29,9 +29,17 @@ yarn add --dev @openzeppelin/contracts
 
 ## Create a new contract
 
+To create a new cross-chain messaging contract, use the `messaging` command:
+
 ```
 npx hardhat messaging CrossChainWarriors token:uint256 sender:address to:address
 ```
+
+- `token` - NFT ID
+- `sender`: address of the sender
+- `to`: address of the recipient
+
+Modify the contract to implement NFT logic:
 
 ```solidity title="contracts/CrossChainWarriors.sol"
 // SPDX-License-Identifier: MIT
@@ -53,10 +61,9 @@ interface CrossChainWarriorsErrors {
 contract CrossChainWarriors is
     ZetaInteractor,
     ZetaReceiver,
-    // highlight-start
     CrossChainWarriorsErrors,
+    // highlight-next-line
     ERC721("CrossChainWarriors", "CCWAR")
-    // highlight-end
 {
     // highlight-next-line
     using Counters for Counters.Counter;
@@ -176,6 +183,55 @@ contract CrossChainWarriors is
 }
 ```
 
+Firstly, import the `ERC721` contract from the OpenZeppelin library. This will
+enable the contract to adopt the ERC721 NFT standard. Import the `Counters`
+utility from the OpenZeppelin library. The `Counters` utility provides a secure
+mechanism to increment or decrement a counter.
+
+Next, ensure that the contract also inherits from ERC721 and initializes it with
+the name "CrossChainWarriors" and the symbol "CCWAR". You can choose your own
+name and symbol.
+
+Introduce a new state variable by leveraging the `Counters.Counter` data
+structure. Name this variable `tokenIds`. This state variable will be used to
+manage unique IDs for the ERC721 tokens that the contract will mint.
+
+Modify the constructor of the contract to incorporate the changes. It's
+important that the `tokenIds` counter is incremented twice when the contract is
+deployed. This action guarantees unique IDs for the initial tokens.
+
+Furthermore, incorporate a series of new functions to extend the contract's
+functionalities:
+
+- Introduce a mint(address to) function, a public-facing method that allows
+  minting a new ERC721 token to a specified address and returns the ID of the
+  newly minted token. Remember to increment the tokenIds counter twice within
+  this function to ensure unique IDs.
+- Add an internal function `_mintId(address to, uint256 tokenId)`. This function
+  should be designed to mint a specific ERC721 token with a pre-determined ID to
+  a specified address.
+- Introduce another internal function `_burnWarrior(uint256 burnedWarriorId)`.
+  This function should facilitate the burning (destruction) of a specific ERC721
+  token using its provided ID.
+
+Having done that, make necessary modifications to existing functions:
+
+- Amend the `sendMessage(...)` function. As part of its operations, ensure that
+  the function burns an ERC721 token using the `_burnWarrior(token)` method.
+  This change ties the act of sending a message to burning an ERC721 token.
+  Within the `sendMessage` function, you should notice that the address sender
+  argument has been removed from the function's signature. Also, ensure that the
+  message encoding captures `msg.sender` as part of its structure.
+- Update the `onZetaMessage(...)` function. When a Zeta message is received and
+  validated, the contract should now mint an ERC721 token to a specified address
+  using the `_mintId(to, token)` function.
+- Similarly, modify the `onZetaRevert(...)` function. On the reception and
+  validation of a Zeta revert message, the contract should mint an ERC721 token
+  to a specific address.
+
+After thsese change the `CrossChainWarriors` contract is now able to mint and
+burn non-fungible tokens using the ERC721 standard.
+
 ## Create a Mint Task
 
 The mint task accepts a contract address as an argument, calls the `mint`
@@ -284,4 +340,4 @@ the recipient address page on the destination chain.
 
 You can find the source code for the example in this tutorial here:
 
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors
+https://github.com/zeta-chain/example-contracts/tree/main/messaging/warriors
