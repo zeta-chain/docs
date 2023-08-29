@@ -48,7 +48,7 @@ chain.
 ## Wrapped ZETA on ZetaChain
 
 ZETA can exists on ZetaChain in a wrapped form (WZETA) as a
-[WETH9 token](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/wzeta.sol).
+[WETH9 token](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/WZETA.sol).
 WZETA is primarily used in internal liquidity pools on ZetaChain paired with
 native gas tokens of connected blockchains (for example, gETH/WZETA pair).
 
