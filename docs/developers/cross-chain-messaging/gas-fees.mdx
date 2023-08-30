@@ -6,6 +6,8 @@ id: gas-fees
 title: Gas Fees
 ---
 
+import Fees from "@site/src/components/Fees/Fees";
+
 # Cross-Chain Messaging Fees
 
 A user (wallet, contract) must pay fees in order to send data and value across
@@ -21,22 +23,21 @@ When sending a cross-chain message you're paying two types of fees:
   the liquidity pools on ZetaChain.
 - Protocol fee: currently, a fixed value defined in the ZetaChain source code.
 
-You can use ZetaChain's HTTP API to get the cross-chain messaging fees:
+### Current Cross-Chain Messaging Fees
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/convertGasToZeta?chain=bsc_testnet&gasLimit=500000
+In the table below you can see the current fees. The fees are defined in ZETA
+tokens and are calculated for the destination chain (the chain where the message
+is sent to). The fees are calculated with the gas limit of 500000.
 
-```json
-{
-  "outboundGasInZeta": "19433380636221748",
-  "protocolFeeInZeta": "2000000000000000000",
-  "ZetaBlockHeight": "1202557"
-}
+<Fees type="ccm" />
+
+To calculate fees for a different gas limit, please, check out the `fees`
+command in the smart-contract
+[template](https://github.com/zeta-chain/template):
+
 ```
-
-Both `outboundGasInZeta` and `protocolFeeInZeta` are in `azeta`.
-
-In the example above, a user would have to pay 2.019 ZETA to send a cross-chain
-message to the BSC testnet.
+npx hardhat fees
+```
 
 ## Different Approaches to Paying the Fees
 

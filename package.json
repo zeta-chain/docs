@@ -35,6 +35,7 @@
     "@sentry/integrations": "7.12.1",
     "@sentry/react": "7.12.1",
     "@sentry/tracing": "7.12.1",
+    "@zetachain/toolkit": "^2.1.1",
     "@zetachain/ui-toolkit": "1.0.1",
     "autoprefixer": "10.4.7",
     "bech32": "^2.0.0",
