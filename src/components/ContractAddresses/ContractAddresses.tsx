@@ -44,12 +44,18 @@ const DataFetch: React.FC = () => {
     return title.replace(/_/g, " ").split(" ").map(handleEdgeCases).join(" ");
   };
 
-  const renderTable = (tableData: DataObject, title: string): ReactNode => {
-    const validEntries = Object.entries(tableData).filter(
-      ([key, value]) => value && value.trim() !== ""
-    );
+  const renderTable = (
+    blockchainData: NestedObject[],
+    title: string
+  ): ReactNode => {
+    const allEntries = blockchainData.reduce((acc, tableData) => {
+      const validEntries = Object.entries(tableData).filter(
+        ([key, value]) => value && value.trim() !== ""
+      );
+      return [...acc, ...validEntries];
+    }, [] as [string, string][]);
 
-    if (validEntries.length === 0) {
+    if (allEntries.length === 0) {
       return null;
     }
 
@@ -64,8 +70,8 @@ const DataFetch: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {validEntries.map(([key, value]) => (
-              <tr key={key}>
+            {allEntries.map(([key, value], index) => (
+              <tr key={index}>
                 <td>{key}</td>
                 <td>{value}</td>
               </tr>
@@ -76,13 +82,22 @@ const DataFetch: React.FC = () => {
     );
   };
 
+  // Generate a mapping of blockchain to all its categories' data
+  const blockchainMapping: { [key: string]: NestedObject[] } = {};
+  Object.values(data).forEach((nestedObject) => {
+    Object.entries(nestedObject).forEach(([blockchain, blockchainData]) => {
+      if (!blockchainMapping[blockchain]) {
+        blockchainMapping[blockchain] = [];
+      }
+      blockchainMapping[blockchain].push(blockchainData);
+    });
+  });
+
   return (
     <div>
-      {Object.entries(data).map(([key, value]) => {
-        return Object.entries(value).map(([subKey, subValue]) =>
-          renderTable(subValue, `${key} - ${subKey}`)
-        );
-      })}
+      {Object.entries(blockchainMapping).map(([blockchain, blockchainData]) =>
+        renderTable(blockchainData, blockchain)
+      )}
     </div>
   );
 };
