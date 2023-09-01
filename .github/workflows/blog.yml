@@ -37,7 +37,8 @@ jobs:
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         run: |
           echo "Publishing to Telegram..."
-          for file in ${{ steps.files.outputs.markdown_files }}; do
+          IFS=' ' read -ra files <<< "${{ steps.files.outputs.markdown_files }}"
+          for file in "${files[@]}"; do
             echo "Processing file: $file"
             content=$(cat "$file")
             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
