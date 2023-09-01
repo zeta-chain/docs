@@ -37,7 +37,7 @@ jobs:
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         run: |
           echo "Publishing to Telegram..."
-          IFS=' ' read -ra files <<< "${{ steps.files.outputs.markdown_files }}"
+          IFS=$'\n' read -rd '' -a files <<< "${{ steps.files.outputs.markdown_files }}"
           for file in "${files[@]}"; do
             echo "Processing file: $file"
             content=$(cat "$file")
