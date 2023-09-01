@@ -25,6 +25,8 @@ jobs:
         run: |
           base_sha=${{ github.event.pull_request.base.sha }}
           head_sha=${{ github.event.pull_request.head.sha }}
+          git fetch origin ${{ github.event.pull_request.base.sha }}
+          git fetch origin ${{ github.event.pull_request.head.sha }}
           files=$(git diff --name-only "$base_sha" "$head_sha" -- 'announcements/*.md')
           echo "Changed Markdown Files: $files"
           echo "::set-output name=markdown_files::$files"
