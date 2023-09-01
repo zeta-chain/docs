@@ -3,7 +3,7 @@ on: [workflow_dispatch, push]
 jobs:
   publish_to_telegram:
     # if: github.event.pull_request.merged == true
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
