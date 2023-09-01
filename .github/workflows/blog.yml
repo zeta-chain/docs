@@ -1,0 +1,14 @@
+name: Post Announcement to Telegram
+on: [workflow_dispatch]
+jobs:
+  build:
+    name: Post Message
+    runs-on: ubuntu-latest
+    steps:
+      - name: send telegram message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            hello
