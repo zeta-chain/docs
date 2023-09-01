@@ -38,9 +38,10 @@ jobs:
         run: |
           echo "Publishing to Telegram..."
           changed_files="${{ steps.files.outputs.markdown_files }}"
-          while IFS= read -r file; do
+          IFS=$'\n' read -ra files_arr <<< "${{ steps.files.outputs.markdown_files }}"
+          for file in "${files_arr[@]}"; do
             echo "Processing file: $file"
             content=$(cat "$file")
             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
               -d chat_id="${TELEGRAM_TO}" -d text="$content" -d parse_mode="MarkdownV2"
-          done <<< "$changed_files"
+          done
