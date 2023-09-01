@@ -1,5 +1,10 @@
 name: Publish Blog Post to Telegram
-on: [workflow_dispatch, push]
+on:
+  pull_request:
+    branches: announcements
+    types: closed
+    paths:
+      - "announcements/*.md"
 jobs:
   publish_to_telegram:
     # if: github.event.pull_request.merged == true
@@ -33,9 +38,3 @@ jobs:
               -d chat_id="${TELEGRAM_TO}" \
               -d text="$content"
           done
-
-  # pull_request:
-  #   branches: main
-  #   types: closed
-  #   paths:
-  #     - "blog/**/*.md"
