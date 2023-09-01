@@ -1,5 +1,5 @@
 name: Publish Blog Post to Telegram
-on: [push]
+on: [workflow_dispatch, push]
 jobs:
   publish_to_telegram:
     # if: github.event.pull_request.merged == true
