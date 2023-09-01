@@ -1,5 +1,5 @@
 name: Post Announcement to Telegram
-on: [workflow_dispatch]
+on: [workflow_dispatch, push]
 jobs:
   build:
     name: Post Message
