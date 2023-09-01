@@ -41,6 +41,5 @@ jobs:
             echo "Processing file: $file"
             content=$(cat "$file")
             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-              -d chat_id="${TELEGRAM_TO}" \
-              -d text="$content"
+              -d chat_id="${TELEGRAM_TO}" -d text="$content" -d parse_mode="MarkdownV2"
           done
