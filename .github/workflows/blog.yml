@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.base.sha }}
 
       - name: Install Dependencies
         run: |
@@ -23,7 +23,9 @@ jobs:
       - name: Identify Markdown Files
         id: files
         run: |
-          files=$(git diff --name-only "${{ github.event.before }}" "${{ github.event.after }}" -- 'announcements/*.md')
+          base_sha=${{ github.event.pull_request.base.sha }}
+          head_sha=${{ github.event.pull_request.head.sha }}
+          files=$(git diff --name-only "$base_sha" "$head_sha" -- 'announcements/*.md')
           echo "Changed Markdown Files: $files"
           echo "::set-output name=markdown_files::$files"
 
