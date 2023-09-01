@@ -1,14 +1,41 @@
-name: Post Announcement to Telegram
-on: [workflow_dispatch, push]
+name: Publish Blog Post to Telegram
+on: [push]
 jobs:
-  build:
-    name: Post Message
-    runs-on: ubuntu-latest
+  publish_to_telegram:
+    # if: github.event.pull_request.merged == true
+    runs_on: ubuntu-latest
     steps:
-      - name: send telegram message
-        uses: appleboy/telegram-action@master
+      - name: Checkout Code
+        uses: actions/checkout@v2
         with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            hello
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Identify Markdown Files
+        id: files
+        run: |
+          files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} -- 'announcements/*.md')
+          echo "Changed Markdown Files: $files"
+          echo "::set-output name=markdown_files::${files}"
+
+      - name: Publish to Telegram
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+        run: |
+          for file in ${{ steps.files.outputs.markdown_files }}; do
+            content=$(cat $file)
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_TO}" \
+              -d text="$content"
+          done
+
+  # pull_request:
+  #   branches: main
+  #   types: closed
+  #   paths:
+  #     - "blog/**/*.md"
