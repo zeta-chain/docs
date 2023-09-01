@@ -30,7 +30,7 @@ jobs:
           mkdir -p static/data
           rm -rf static/data/openapi.swagger.yaml
           cp -r node/docs/openapi/openapi.swagger.yaml static/data/
-          echo "\nhost: zetachain-athens.blockpi.network/lcd/v1/public" >> static/data/openapi.swagger.yaml
+          echo -e "\nhost: zetachain-athens.blockpi.network/lcd/v1/public" >> static/data/openapi.swagger.yaml
           rm -rf node
 
       - name: Check for changes
