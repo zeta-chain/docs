@@ -25,10 +25,9 @@ jobs:
         run: |
           base_sha=${{ github.event.pull_request.base.sha }}
           head_sha=${{ github.event.pull_request.head.sha }}
-          git fetch origin ${{ github.event.pull_request.base.sha }}
-          git fetch origin ${{ github.event.pull_request.head.sha }}
-          files=$(git diff --name-only "$base_sha" "$head_sha" -- 'announcements/*.md')
-          # Replace newline with comma
+          git fetch origin $base_sha
+          git fetch origin $head_sha
+          files=$(git diff --name-only --diff-filter=A "$base_sha" "$head_sha" -- 'announcements/*.md')
           files_comma_separated=$(echo "$files" | tr '\n' ',')
           echo "Changed Markdown Files: $files_comma_separated"
           echo "::set-output name=markdown_files::$files_comma_separated"
