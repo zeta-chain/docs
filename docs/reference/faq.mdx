@@ -18,11 +18,12 @@ and ecosystem is always online and ready to discuss new ideas and questions.
 
 ### What is ZetaChain?
 
-ZetaChain is the world's first and only blockchain that connects everything. It
+An EVM-compatible L1 blockchain that connects everything. ZetaChain make it easy
+to build interoperable dApps that span any chain including Bitcoin. It
 facilitates cross-chain and cross-layer value transfer, message delivery, and
-smart contract calls — thus enabling for the first time omnichain dApps
-(odApps) which can leverage liquidity on multiple networks and read and update
-states on all connected networks.
+smart contract calls — thus enabling for the first time omnichain dApps (odApps)
+which can leverage liquidity on multiple networks and read and update states on
+all connected networks.
 
 Read more about ZetaChain [here](/about/zetachain).
 
@@ -101,8 +102,11 @@ compare to ZetaChain in the [whitepaper](https://zetachain.com/whitepaper.pdf).
 
 ### How do I develop on ZetaChain?
 
-You can start building now, and add powerful cross-chain capabilities to your
-dApp using ZetaChain's [Connector](/developers/cross-chain-messaging/connector).
+You can start building now, and add powerful cross-chain messaging capabilities
+to your dApp using ZetaChain's
+[Connector](/developers/cross-chain-messaging/overview/) or build an
+[omnichain dapp](/developers/omnichain/overview/) that can manage assets on
+different chain from a single contract.
 
 Stay tuned on our <a href={constants.twitterLink}>Twitter</a> and <a
 href={constants.discordLink}>Discord</a> for the latest updates in our protocol.
@@ -132,23 +136,13 @@ Dogecoin.
 
 ## Security
 
-### How many block confirmations are needed on a source chain transaction before ZetaChain observes and processes it?
-
-You can configure it by passing a parameter to ZetaChain's
-[Connector](/developers/cross-chain-messaging/connector).
-
 ### How does ZetaChain handle a case where a source TX is reverted (e. g. on a PoW chain due to an attack)?
 
 Upon detection of the very deep re-organization, ZetaChain will halt and the
 recovery would be a social process between various stakeholders including
 ZetaChain validators and team, dApps developers, and end users. The dApps
 developers should build in the capability to resolve inconsistent states due to
-the very deep re-organization. The dApps should also configure the confirmation
-count accordingly to strike balance between transaction speed and finality---for
-example, a multi-chain NFT dApp should use a high confirmation number (such as
-30 confirmation on Ethereum), whereas a cross-chain DEX could use a smaller
-value (such as 12 confirmations on Ethereum) because DEX deals with fungible
-tokens therefore the loss can be socialized.
+the very deep re-organization.
 
 ### What happens if a TX on the destination chain doesn't have enough gas?
 
@@ -159,7 +153,7 @@ handle reverts easily with the
 
 ### Is there an interface where we can run a PoS validator?
 
-We'll provide more details for node operators soon.
+Check out the validator docs [here](/validators/requirements).
 
 ## Testnet and Mainnet
 
@@ -171,9 +165,11 @@ current testnet is live, and you can develop dApps with that.
 
 ### How do I get ZETA?
 
-You can request testnet ZETA in the #zeta-faucet channel on our discord. This
-testnet ZETA does not and will never have any monetary value. It is solely for
-testing purposes, so that people can experience the use and power of ZetaChain.
+You can request testnet ZETA in the faucet channel on our Discord server or use
+the faucet on the command line, learn more in the
+[faucet docs](/reference/get-testnet-zeta/). This testnet ZETA does not and will
+never have any monetary value. It is solely for testing purposes, so that people
+can experience the use and power of ZetaChain.
 
 ### Does testnet ZETA have any value?
 
