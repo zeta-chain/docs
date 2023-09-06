@@ -320,16 +320,22 @@ mark {
   text-decoration: line-through;
 }
 
-html[data-theme="dark"] {
-  @media (prefers-color-scheme: dark) {
-    .swagger-ui {
-      filter: invert(88%) hue-rotate(180deg);
-    }
-    .swagger-ui .microlight {
-      filter: invert(100%) hue-rotate(180deg);
-    }
-    .markdown pre.base-url {
-      background: #fff !important;
-    }
-  }
+html[data-theme="dark"] .swagger-ui {
+  filter: invert(88%) hue-rotate(180deg);
+}
+
+html[data-theme="dark"] .swagger-ui .microlight {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+html[data-theme="dark"] .markdown pre.base-url {
+  background: #fff !important;
+}
+
+.markdown code {
+  background: none !important;
+}
+
+html[data-theme="dark"] .swagger-ui .opblock-body pre.microlight {
+  background: black !important;
 }
