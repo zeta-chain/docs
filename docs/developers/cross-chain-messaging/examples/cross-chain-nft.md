@@ -81,14 +81,15 @@ contract CrossChainWarriors is
     constructor(
         address connectorAddress,
         address zetaTokenAddress,
-        address zetaConsumerAddress
+        address zetaConsumerAddress,
+        bool useEven
     ) ZetaInteractor(connectorAddress) {
         _zetaToken = IERC20(zetaTokenAddress);
         _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
 
         // highlight-start
         tokenIds.increment();
-        tokenIds.increment();
+        if (useEven) tokenIds.increment();
         // highlight-end
     }
 
@@ -203,7 +204,7 @@ deployed. This action guarantees unique IDs for the initial tokens.
 Furthermore, incorporate a series of new functions to extend the contract's
 functionalities:
 
-- Introduce a mint(address to) function, a public-facing method that allows
+- Introduce a `mint(address to)`` function, a public-facing method that allows
   minting a new ERC721 token to a specified address and returns the ID of the
   newly minted token. Remember to increment the tokenIds counter twice within
   this function to ensure unique IDs.
@@ -276,6 +277,49 @@ task("interact", "Sends a message from one chain to another.", main)
 
 ```
 npx hardhat transfer --network goerli --contract 0xFeAF74733B6f046F3d609e663F667Ba61B19A148 --address 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --destination 97 --token 2 --amount 0.4
+```
+
+## Update the Deploy Task
+
+Modify the deploy task by adding a new argument `parity` and passing it to the
+`deployContract` function. The `parity` argument is used to determine the parity
+of NFT IDs on different chains: even IDs on one chain and odd IDs on another.
+
+```ts title="tasks/deploy.ts"
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const networks = args.networks.split(",");
+  // A mapping between network names and deployed contract addresses.
+  const contracts: { [key: string]: string } = {};
+  await Promise.all(
+    // highlight-start
+    networks.map(async (networkName: string, i: number) => {
+      const parity = i % 2 == 0;
+      contracts[networkName] = await deployContract(hre, networkName, parity);
+    })
+    // highlight-end
+  );
+
+  for (const source in contracts) {
+    await setInteractors(hre, source, contracts);
+  }
+};
+
+const deployContract = async (
+  hre: HardhatRuntimeEnvironment,
+  networkName: string,
+  // highlight-next-line
+  parity: boolean
+) => {
+  //...
+  const contract = await factory.deploy(
+    connector,
+    zetaToken,
+    zetaTokenConsumerUniV2 || zetaTokenConsumerUniV3,
+    // highlight-next-line
+    parity
+  );
+  //...
+};
 ```
 
 ## Deploy the Contract
