@@ -122,7 +122,7 @@ contract Staking is ERC20, zContract {
         address staker = BytesHelperLib.bytesToAddress(context.origin, 0);
         address beneficiary;
 
-        if (context.chainID == 18832) {
+        if (context.chainID == 18332) {
             beneficiary = BytesHelperLib.bytesToAddress(message, 0);
         } else {
             beneficiary = abi.decode(message, (address));
@@ -163,16 +163,18 @@ Next, decode the `message` parameter to get the beneficiary address. The
 beneficiary address is passed to the `onCrossChainCall` function by the user
 calling the omnichain contract from the connected chain. The `message` parameter
 is a bytes array that contains the beneficiary address encoded as bytes.
-ZetaChain uses `18832` to represent Bitcoin's chain ID, so use this value to
+ZetaChain uses `18332` to represent Bitcoin's chain ID, so use this value to
 check if the connected chain is Bitcoin. Use the `BytesHelperLib.bytesToAddress`
 function to decode the beneficiary address from the `message` parameter if the
 connected chain is Bitcoin. If the connected chain is an EVM-based chain, use
 the `abi.decode` function.
 
-Finally, call the `stakeZRC` function to stake the deposited tokens. The
-`stakeZRC` function is defined in the next section.
+Finally, call the `stakeZRC` function to stake the deposited tokens.
 
 ### Stake ZRC-20 Tokens
+
+`stakeZRC` is a function that will be called by the `onCrossChainCall` function
+to stake the deposited tokens.
 
 ```solidity title="contracts/Staking.sol"
     mapping(address => uint256) public stakes;
@@ -203,7 +205,20 @@ Finally, call the `stakeZRC` function to stake the deposited tokens. The
     }
 ```
 
+`stakeZRC` increases the staker's balance in the contract and sets the
+beneficiary address if it is not set yet. The function also updates the
+timestamp of when the staking happened last, and calls the `updateRewards`
+function to update the rewards for the staker.
+
+`updateRewards` calculates the rewards for the staker and mints them to the
+beneficiary address. The function also updates the timestamp of when the staking
+happened last.
+
 ### Claim Rewards
+
+`claimRewards` is a function that will be called by the beneficiary to claim the
+rewards. The function checks that the caller is the beneficiary and calls the
+`updateRewards` function to send rewards to the beneficiary.
 
 ```solidity title="contracts/Staking.sol"
     error NotAuthorizedToClaim();
@@ -218,6 +233,17 @@ Finally, call the `stakeZRC` function to stake the deposited tokens. The
 ```
 
 ### Unstake ZRC-20 Tokens
+
+The `unstakeZRC` function begins by updating any outstanding rewards due to the
+user. It then checks that the user has a sufficient staked balance.
+Subsequently, it identifies the ZRC20 token associated with the contract's
+`chainID` and determines the gas fee for the unstaking operation. This fee is
+then approved. The recipient's address is encoded differently based on the
+chainID: for a `chainID` of `18332` (which is Bitcoin), `addressToBytes`
+function is used to convert the address to bytes, otherwise, for EVM-based
+chains it's directly packed. The user's tokens, minus the gas fee, are withdrawn
+to the encoded recipient address. Finally, the contract updates the user's
+staking balance and the timestamp of their last stake action.
 
 ```solidity title="contracts/Staking.sol"
     function unstakeZRC(uint256 amount) external {
@@ -249,6 +275,11 @@ Finally, call the `stakeZRC` function to stake the deposited tokens. The
 ```
 
 ### Query Rewards
+
+`queryRewards` is a function that queries the pending rewards for a given staker
+address. The function calculates the rewards based on the time difference
+between the current time and the last time the staker staked tokens similarly to
+the `updateRewards` function.
 
 ```solidity title="contracts/Staking.sol"
     function queryRewards(address account) public view returns (uint256) {
