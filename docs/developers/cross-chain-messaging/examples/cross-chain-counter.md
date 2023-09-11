@@ -31,7 +31,7 @@ yarn add --dev @openzeppelin/contracts
 npx hardhat messaging CrossChainCounter messageFrom:address
 ```
 
-- `sender`: address of the sender
+- `messageFrom`: address of the sender
 
 ```solidity title="contracts/CrossChainCounter.sol"
 // SPDX-License-Identifier: MIT
