@@ -27,8 +27,140 @@ yarn add --dev @openzeppelin/contracts
 
 ## Create a new contract
 
-```solidity title="contracts/CrossChainCounter.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aecc471cea4a2ad7/messaging/counter/contracts/CrossChainCounter.sol
+```
+npx hardhat messaging CrossChainCounter messageFrom:address
+```
+
+- `sender`: address of the sender
+
+```solidity title="contracts/CrossChainCounter.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+
+interface CrossChainCounterErrors {
+    error InvalidMessageType();
+
+    // highlight-next-line
+    error DecrementOverflow();
+}
+
+contract CrossChainCounter is
+    ZetaInteractor,
+    ZetaReceiver,
+    CrossChainCounterErrors
+{
+    // highlight-start
+    bytes32 public constant CROSS_CHAIN_INCREMENT_MESSAGE =
+        keccak256("CROSS_CHAIN_INCREMENT");
+
+    mapping(address => uint256) public counter;
+
+    event CrossChainCounterEvent(address);
+    event CrossChainCounterRevertedEvent(address);
+    // highlight-end
+
+    ZetaTokenConsumer private immutable _zetaConsumer;
+    IERC20 internal immutable _zetaToken;
+
+    constructor(
+        address connectorAddress,
+        address zetaTokenAddress,
+        address zetaConsumerAddress
+    ) ZetaInteractor(connectorAddress) {
+        _zetaToken = IERC20(zetaTokenAddress);
+        _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
+    }
+
+    //remove-start
+    function sendMessage(uint256 destinationChainId, address sender) external payable {
+        if (!_isValidChainId(destinationChainId))
+            revert InvalidDestinationChainId();
+
+        uint256 crossChainGas = 2 * (10 ** 18);
+        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{
+            value: msg.value
+        }(address(this), crossChainGas);
+        _zetaToken.approve(address(connector), zetaValueAndGas);
+
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
+                destinationGasLimit: 300000,
+                message: abi.encode(CROSS_CHAIN_COUNTER_MESSAGE_TYPE, sender),
+                zetaValueAndGas: zetaValueAndGas,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+    //remove-end
+
+    // highlight-start
+    function crossChainCount(uint256 destinationChainId) external payable {
+        if (!_isValidChainId(destinationChainId))
+            revert InvalidDestinationChainId();
+
+        uint256 crossChainGas = 2 * (10 ** 18);
+        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{
+            value: msg.value
+        }(address(this), crossChainGas);
+        _zetaToken.approve(address(connector), zetaValueAndGas);
+
+        counter[msg.sender]++;
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
+                destinationGasLimit: 300000,
+                //highlight-next-line
+                message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
+                zetaValueAndGas: zetaValueAndGas,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+    // highlight-end
+
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
+        (bytes32 messageType, address messageFrom) = abi.decode(
+            zetaMessage.message,
+            (bytes32, address)
+        );
+
+        if (messageType != CROSS_CHAIN_INCREMENT_MESSAGE)
+            revert InvalidMessageType();
+
+        // highlight-start
+        counter[messageFrom]++;
+        emit CrossChainCounterEvent(messageFrom);
+        // highlight-end
+
+    }
+
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
+        (bytes32 messageType, address messageFrom) = abi.decode(
+            zetaRevert.message,
+            (bytes32, address)
+        );
+
+        if (messageType != CROSS_CHAIN_INCREMENT_MESSAGE)
+            revert InvalidMessageType();
+        //highlight-start
+        if (counter[messageFrom] <= 0) revert DecrementOverflow();
+        counter[messageFrom]--;
+        //highlight-end
+
+    }
+}
 ```
 
 ## Create a deployment task
