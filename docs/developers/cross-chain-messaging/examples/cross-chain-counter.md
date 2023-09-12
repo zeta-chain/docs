@@ -27,11 +27,117 @@ yarn add --dev @openzeppelin/contracts
 
 ## Create a new contract
 
-```solidity title="contracts/CrossChainCounter.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aecc471cea4a2ad7/messaging/counter/contracts/CrossChainCounter.sol
+```
+npx hardhat messaging counter from:address
 ```
 
-## Create a deployment task
+- `from`: address of the sender
+
+```solidity title="contracts/CrossChainCounter.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+
+interface CrossChainCounterErrors {
+    error InvalidMessageType();
+
+    // highlight-next-line
+    error DecrementOverflow();
+}
+
+contract CrossChainCounter is
+    ZetaInteractor,
+    ZetaReceiver,
+    CrossChainCounterErrors
+{
+    // highlight-start
+    bytes32 public constant COUNTER_MESSAGE_TYPE = keccak256("CROSS_CHAIN_COUNTER");
+
+    mapping(address => uint256) public counter;
+
+    event CrossChainCounterEvent(address);
+    event CrossChainCounterRevertedEvent(address);
+    // highlight-end
+
+    ZetaTokenConsumer private immutable _zetaConsumer;
+    IERC20 internal immutable _zetaToken;
+
+    constructor(
+        address connectorAddress,
+        address zetaTokenAddress,
+        address zetaConsumerAddress
+    ) ZetaInteractor(connectorAddress) {
+        _zetaToken = IERC20(zetaTokenAddress);
+        _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
+    }
+
+
+    // highlight-next-line
+    function sendMessage(uint256 destinationChainId) external payable { //remove "address sender"
+        if (!_isValidChainId(destinationChainId))
+            revert InvalidDestinationChainId();
+
+        uint256 crossChainGas = 2 * (10 ** 18);
+        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{
+            value: msg.value
+        }(address(this), crossChainGas);
+        _zetaToken.approve(address(connector), zetaValueAndGas);
+
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
+                destinationGasLimit: 300000,
+                //highlight-next-line
+                message: abi.encode(COUNTER_MESSAGE_TYPE, msg.sender), // sender --> msg.sender
+                zetaValueAndGas: zetaValueAndGas,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
+        (bytes32 messageType, address from) = abi.decode(
+            zetaMessage.message,
+            (bytes32, address)
+        );
+
+        if (messageType != COUNTER_MESSAGE_TYPE)
+            revert InvalidMessageType();
+
+        // highlight-start
+        counter[from]++;
+        emit CrossChainCounterEvent(from);
+        // highlight-end
+
+    }
+
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
+        (bytes32 messageType, address from) = abi.decode(
+            zetaRevert.message,
+            (bytes32, address)
+        );
+
+        if (messageType != COUNTER_MESSAGE_TYPE)
+            revert InvalidMessageType();
+        //highlight-start
+        if (counter[from] <= 0) revert DecrementOverflow();
+        counter[from]--;
+        //highlight-end
+
+    }
+}
+```
+
+<!-- ## Create a deployment task
 
 ```solidity title="tasks/deploy.ts" reference
 https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aecc471cea4a2ad7/messaging/counter/tasks/deploy.ts
@@ -39,7 +145,7 @@ https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aec
 
 ```ts title="hardhat.config.ts"
 import "./tasks/deploy.ts";
-```
+``` -->
 
 ## Create a task to get the counter value
 
@@ -53,8 +159,27 @@ import "./tasks/counter_show.ts";
 
 ## Create a task to increment the counter value
 
-```solidity title="tasks/counter_increment.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aecc471cea4a2ad7/messaging/counter/tasks/counter_increment.ts
+```ts title="tasks/interact.ts"
+  //remove-next-line
+  const paramSender = hre.ethers.utils.getAddress(args.sender);
+
+  const tx = await contract
+    .connect(signer)
+    .sendMessage(destination, paramSender, { value: parseEther(args.amount) });
+
+  const receipt = await tx.wait();
+  console.log(`✅ The transaction has been broadcasted to ${hre.network.name}
+📝 Transaction hash: ${receipt.transactionHash}
+`);
+  await trackCCTX(tx.hash);
+};
+
+task("interact", "Sends a message from one chain to another.", main)
+  .addParam("contract", "Contract address")
+  .addParam("amount", "Token amount to send")
+  .addParam("destination", "Destination chain")
+  //remove-next-line
+  .addParam("sender", "address");
 ```
 
 ```ts title="hardhat.config.ts"
