@@ -28,7 +28,7 @@ yarn add --dev @openzeppelin/contracts
 ## Create a new contract
 
 ```
-npx hardhat messaging CrossChainCounter from:address
+npx hardhat messaging counter from:address
 ```
 
 - `from`: address of the sender
@@ -55,7 +55,7 @@ contract CrossChainCounter is
     CrossChainCounterErrors
 {
     // highlight-start
-    bytes32 public constant CROSS_CHAIN_COUNTER_MESSAGE_TYPE =
+    bytes32 public constant COUNTER_MESSAGE_TYPE =
         keccak256("CROSS_CHAIN_COUNTER");
 
     mapping(address => uint256) public counter;
@@ -77,7 +77,8 @@ contract CrossChainCounter is
     }
 
 
-    function sendMessage(uint256 destinationChainId, address sender) external payable {
+    // highlight-next-line
+    function sendMessage(uint256 destinationChainId) external payable { //remove "address sender"
         if (!_isValidChainId(destinationChainId))
             revert InvalidDestinationChainId();
 
@@ -93,39 +94,12 @@ contract CrossChainCounter is
                 destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: 300000,
                 //highlight-next-line
-                message: abi.encode(CROSS_CHAIN_COUNTER_MESSAGE_TYPE, msg.sender), // sender --> msg.sender
+                message: abi.encode(COUNTER_MESSAGE_TYPE, msg.sender), // sender --> msg.sender
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );
     }
-
-
-    // highlight-start
-    function crossChainCount(uint256 destinationChainId) external payable {
-        if (!_isValidChainId(destinationChainId))
-            revert InvalidDestinationChainId();
-
-        uint256 crossChainGas = 2 * (10 ** 18);
-        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{
-            value: msg.value
-        }(address(this), crossChainGas);
-        _zetaToken.approve(address(connector), zetaValueAndGas);
-
-        counter[msg.sender]++;
-        connector.send(
-            ZetaInterfaces.SendInput({
-                destinationChainId: destinationChainId,
-                destinationAddress: interactorsByChainId[destinationChainId],
-                destinationGasLimit: 300000,
-                //highlight-next-line
-                message: abi.encode(CROSS_CHAIN_COUNTER_MESSAGE_TYPE, msg.sender),
-                zetaValueAndGas: zetaValueAndGas,
-                zetaParams: abi.encode("")
-            })
-        );
-    }
-    // highlight-end
 
     function onZetaMessage(
         ZetaInterfaces.ZetaMessage calldata zetaMessage
@@ -135,7 +109,7 @@ contract CrossChainCounter is
             (bytes32, address)
         );
 
-        if (messageType != CROSS_CHAIN_COUNTER_MESSAGE_TYPE)
+        if (messageType != COUNTER_MESSAGE_TYPE)
             revert InvalidMessageType();
 
         // highlight-start
@@ -153,7 +127,7 @@ contract CrossChainCounter is
             (bytes32, address)
         );
 
-        if (messageType != CROSS_CHAIN_COUNTER_MESSAGE_TYPE)
+        if (messageType != COUNTER_MESSAGE_TYPE)
             revert InvalidMessageType();
         //highlight-start
         if (counter[from] <= 0) revert DecrementOverflow();
