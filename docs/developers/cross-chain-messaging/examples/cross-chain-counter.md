@@ -79,6 +79,7 @@ contract Counter is ZetaInteractor, ZetaReceiver, CounterErrors {
         }(address(this), crossChainGas);
         _zetaToken.approve(address(connector), zetaValueAndGas);
 
+        counter[msg.sender]++;
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
@@ -193,19 +194,19 @@ npx hardhat compile --force
 ```
 
 ```
-npx hardhat deploy --networks mumbai_testnet,bsc_testnet
+npx hardhat deploy --networks goerli_testnet,mumbai_testnet
 
 🚀 Successfully deployed contract on mumbai_testnet.
-📜 Contract address: 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69
+📜 Contract address: 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
 
-🚀 Successfully deployed contract on bsc_testnet.
-📜 Contract address: 0x2A5831b69EbBD6941e68A17bAD34184B7c4a7628
+🚀 Successfully deployed contract on goerli_testnet.
+📜 Contract address: 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 
 🔗 Setting interactors for a contract on mumbai_testnet
-✅ Interactor address for 97 (bsc_testnet) is set to 0x2a5831b69ebbd6941e68a17bad34184b7c4a7628
+✅ Interactor address for 5 (goerli_testnet) is set to 0x0e10df07dca39ae5e09bc37897e846b281a68a6c
 
-🔗 Setting interactors for a contract on bsc_testnet
-✅ Interactor address for 80001 (mumbai_testnet) is set to 0xb10bd8b51b433079e960ec91beadcdc4434e3e69
+🔗 Setting interactors for a contract on goerli_testnet
+✅ Interactor address for 80001 (mumbai_testnet) is set to 0xbe58130dcd7db27f7b79ae27f91d2d74324c5999
 ```
 
 ## Increment the counter value
@@ -213,7 +214,7 @@ npx hardhat deploy --networks mumbai_testnet,bsc_testnet
 ### Show initial counter value on both chains
 
 ```
-npx hardhat counter:show --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69 --network mumbai_testnet
+npx hardhat counter:show --network goerli_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
@@ -221,26 +222,37 @@ npx hardhat counter:show --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69 -
 ```
 
 ```
-npx hardhat counter:show --contract 0x2A5831b69EbBD6941e68A17bAD34184B7c4a7628 --network bsc_testnet
+npx hardhat counter:show --network mumbai_testnet --contract 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
+
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🔢 The counter for 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 is: 0
+```
+
+### Increment the counter value
+
+```
+npx hardhat interact --network goerli_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
+--amount 0.3 --destination mumbai_testnet
+
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+✅ The transaction has been broadcasted to goerli_testnet
+📝 Transaction hash: 0xd0e5adadda20236fd1f50c2e3290e823744015e3227242fb22c78f27b46a63db
+```
+
+### Show the counter value after increment
+
+```
+npx hardhat counter:show --network mumbai_testnet --contract 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
 🔢 The counter for 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 is: 1
 ```
 
-### Increment the counter value
-
-```
-npx hardhat counter:increment --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69 --amount 100 --destination 97 --network mumbai_testnet
-
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
-
-✅ "crossChainCount" transaction has been broadcasted to mumbai_testnet
-📝 Transaction hash: 0xf569119f06ddac13093ba97c2dea9932036ee7ad51ac8d3ac9379dd22c48dd94
-```
-
 ## Source Code
 
 You can find the source code for the example in this tutorial here:
 
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/counter
+https://github.com/zeta-chain/example-contracts/tree/main/messaging/counter
