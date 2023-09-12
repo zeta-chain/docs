@@ -55,8 +55,7 @@ contract CrossChainCounter is
     CrossChainCounterErrors
 {
     // highlight-start
-    bytes32 public constant COUNTER_MESSAGE_TYPE =
-        keccak256("CROSS_CHAIN_COUNTER");
+    bytes32 public constant COUNTER_MESSAGE_TYPE = keccak256("CROSS_CHAIN_COUNTER");
 
     mapping(address => uint256) public counter;
 
