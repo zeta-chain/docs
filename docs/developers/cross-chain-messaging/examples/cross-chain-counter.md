@@ -129,7 +129,7 @@ contract Counter is ZetaInteractor, ZetaReceiver, CounterErrors {
 
 ## Create a task to get the counter value
 
-```solidity title="tasks/counter_show.ts" reference
+```solidity title="tasks/counter_show.ts"
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
