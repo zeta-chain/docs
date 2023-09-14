@@ -28,12 +28,12 @@ yarn add --dev @openzeppelin/contracts
 ## Create a new contract
 
 ```
-npx hardhat messaging counter from:address
+npx hardhat messaging Counter from:address
 ```
 
 - `from`: address of the sender
 
-```solidity title="contracts/CrossChainCounter.sol"
+```solidity title="contracts/Counter.sol"
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -42,26 +42,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 
-interface CrossChainCounterErrors {
+interface CounterErrors {
     error InvalidMessageType();
-
     // highlight-next-line
     error DecrementOverflow();
 }
 
-contract CrossChainCounter is
-    ZetaInteractor,
-    ZetaReceiver,
-    CrossChainCounterErrors
-{
-    // highlight-start
-    bytes32 public constant COUNTER_MESSAGE_TYPE = keccak256("CROSS_CHAIN_COUNTER");
+contract Counter is ZetaInteractor, ZetaReceiver, CounterErrors {
+    bytes32 public constant COUNTER_MESSAGE_TYPE =
+        keccak256("CROSS_CHAIN_COUNTER");
 
+    event CounterEvent(address);
+    event CounterRevertedEvent(address);
     mapping(address => uint256) public counter;
-
-    event CrossChainCounterEvent(address);
-    event CrossChainCounterRevertedEvent(address);
-    // highlight-end
 
     ZetaTokenConsumer private immutable _zetaConsumer;
     IERC20 internal immutable _zetaToken;
@@ -75,9 +68,8 @@ contract CrossChainCounter is
         _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
     }
 
-
     // highlight-next-line
-    function sendMessage(uint256 destinationChainId) external payable { //remove "address sender"
+    function sendMessage(uint256 destinationChainId) external payable {
         if (!_isValidChainId(destinationChainId))
             revert InvalidDestinationChainId();
 
@@ -87,13 +79,14 @@ contract CrossChainCounter is
         }(address(this), crossChainGas);
         _zetaToken.approve(address(connector), zetaValueAndGas);
 
+        counter[msg.sender]++;
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: 300000,
-                //highlight-next-line
-                message: abi.encode(COUNTER_MESSAGE_TYPE, msg.sender), // sender --> msg.sender
+                // highlight-next-line
+                message: abi.encode(COUNTER_MESSAGE_TYPE, msg.sender),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
@@ -108,14 +101,11 @@ contract CrossChainCounter is
             (bytes32, address)
         );
 
-        if (messageType != COUNTER_MESSAGE_TYPE)
-            revert InvalidMessageType();
+        if (messageType != COUNTER_MESSAGE_TYPE) revert InvalidMessageType();
 
-        // highlight-start
+        // highlight-next-line
         counter[from]++;
-        emit CrossChainCounterEvent(from);
-        // highlight-end
-
+        emit CounterEvent(from);
     }
 
     function onZetaRevert(
@@ -126,31 +116,43 @@ contract CrossChainCounter is
             (bytes32, address)
         );
 
-        if (messageType != COUNTER_MESSAGE_TYPE)
-            revert InvalidMessageType();
-        //highlight-start
+        if (messageType != COUNTER_MESSAGE_TYPE) revert InvalidMessageType();
+
+        // highlight-start
         if (counter[from] <= 0) revert DecrementOverflow();
         counter[from]--;
-        //highlight-end
-
+        // highlight-end
+        emit CounterRevertedEvent(from);
     }
 }
 ```
 
-<!-- ## Create a deployment task
-
-```solidity title="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aecc471cea4a2ad7/messaging/counter/tasks/deploy.ts
-```
-
-```ts title="hardhat.config.ts"
-import "./tasks/deploy.ts";
-``` -->
-
 ## Create a task to get the counter value
 
-```solidity title="tasks/counter_show.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/3e79d006239bb9cbe0120e36aecc471cea4a2ad7/messaging/counter/tasks/counter_show.ts
+```solidity title="tasks/counter_show.ts"
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+
+const contractName = "CrossChainCounter";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+  console.log(`🔑 Using account: ${signer.address}\n`);
+
+  const factory = await hre.ethers.getContractFactory(contractName);
+  const contract = factory.attach(args.contract);
+
+  const counter = await contract.counter(signer.address);
+
+  console.log(`🔢 The counter for ${signer.address} is: ${counter.toString()}
+`);
+};
+
+task(
+  "counter:show",
+  "Sends a message from one chain to another.",
+  main
+).addParam("contract", "Contract address");
 ```
 
 ```ts title="hardhat.config.ts"
@@ -160,12 +162,13 @@ import "./tasks/counter_show.ts";
 ## Create a task to increment the counter value
 
 ```ts title="tasks/interact.ts"
-  //remove-next-line
-  const paramSender = hre.ethers.utils.getAddress(args.sender);
+  // remove-next-line
+  const paramFrom = hre.ethers.utils.getAddress(args.from);
 
   const tx = await contract
     .connect(signer)
-    .sendMessage(destination, paramSender, { value: parseEther(args.amount) });
+    // highlight-next-line
+    .sendMessage(destination, { value: parseEther(args.amount) });
 
   const receipt = await tx.wait();
   console.log(`✅ The transaction has been broadcasted to ${hre.network.name}
@@ -178,12 +181,8 @@ task("interact", "Sends a message from one chain to another.", main)
   .addParam("contract", "Contract address")
   .addParam("amount", "Token amount to send")
   .addParam("destination", "Destination chain")
-  //remove-next-line
-  .addParam("sender", "address");
-```
-
-```ts title="hardhat.config.ts"
-import "./tasks/counter_increment.ts";
+  // remove-next-line
+  .addParam("from", "address");
 ```
 
 ## Deploy the contract
@@ -195,19 +194,19 @@ npx hardhat compile --force
 ```
 
 ```
-npx hardhat deploy --networks mumbai_testnet,bsc_testnet
+npx hardhat deploy --networks goerli_testnet,mumbai_testnet
 
 🚀 Successfully deployed contract on mumbai_testnet.
-📜 Contract address: 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69
+📜 Contract address: 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
 
-🚀 Successfully deployed contract on bsc_testnet.
-📜 Contract address: 0x2A5831b69EbBD6941e68A17bAD34184B7c4a7628
+🚀 Successfully deployed contract on goerli_testnet.
+📜 Contract address: 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 
 🔗 Setting interactors for a contract on mumbai_testnet
-✅ Interactor address for 97 (bsc_testnet) is set to 0x2a5831b69ebbd6941e68a17bad34184b7c4a7628
+✅ Interactor address for 5 (goerli_testnet) is set to 0x0e10df07dca39ae5e09bc37897e846b281a68a6c
 
-🔗 Setting interactors for a contract on bsc_testnet
-✅ Interactor address for 80001 (mumbai_testnet) is set to 0xb10bd8b51b433079e960ec91beadcdc4434e3e69
+🔗 Setting interactors for a contract on goerli_testnet
+✅ Interactor address for 80001 (mumbai_testnet) is set to 0xbe58130dcd7db27f7b79ae27f91d2d74324c5999
 ```
 
 ## Increment the counter value
@@ -215,7 +214,7 @@ npx hardhat deploy --networks mumbai_testnet,bsc_testnet
 ### Show initial counter value on both chains
 
 ```
-npx hardhat counter:show --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69 --network mumbai_testnet
+npx hardhat counter:show --network goerli_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
@@ -223,26 +222,37 @@ npx hardhat counter:show --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69 -
 ```
 
 ```
-npx hardhat counter:show --contract 0x2A5831b69EbBD6941e68A17bAD34184B7c4a7628 --network bsc_testnet
+npx hardhat counter:show --network mumbai_testnet --contract 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
+
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🔢 The counter for 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 is: 0
+```
+
+### Increment the counter value
+
+```
+npx hardhat interact --network goerli_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
+--amount 0.3 --destination mumbai_testnet
+
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+✅ The transaction has been broadcasted to goerli_testnet
+📝 Transaction hash: 0xd0e5adadda20236fd1f50c2e3290e823744015e3227242fb22c78f27b46a63db
+```
+
+### Show the counter value after increment
+
+```
+npx hardhat counter:show --network mumbai_testnet --contract 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
 🔢 The counter for 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 is: 1
 ```
 
-### Increment the counter value
-
-```
-npx hardhat counter:increment --contract 0xb10bD8b51B433079e960ec91BEADCDc4434e3E69 --amount 100 --destination 97 --network mumbai_testnet
-
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
-
-✅ "crossChainCount" transaction has been broadcasted to mumbai_testnet
-📝 Transaction hash: 0xf569119f06ddac13093ba97c2dea9932036ee7ad51ac8d3ac9379dd22c48dd94
-```
-
 ## Source Code
 
 You can find the source code for the example in this tutorial here:
 
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/counter
+https://github.com/zeta-chain/example-contracts/tree/main/messaging/counter
