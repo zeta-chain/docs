@@ -424,6 +424,11 @@ connected chain and pass it as an argument to the constructor.
 It is also used to get the symbol of the ZRC-20 token on the connected chain.
 
 ```ts title="tasks/deploy.ts"
+// highlight-next-line
+import ZRC20 from "@zetachain/protocol-contracts/abi/zevm/ZRC20.sol/ZRC20.json";
+
+// ...
+
 const factory = await hre.ethers.getContractFactory("Staking");
 
 // highlight-start
