@@ -109,14 +109,21 @@ contract Staking is ERC20, zContract {
     SystemContract public immutable systemContract;
     uint256 public immutable chainID;
     uint256 constant BITCOIN = 18332;
+
     uint256 public rewardRate = 1;
 
-    error WrongChain();
-    error UnknownAction();
+    error SenderNotSystemContract();
+    error WrongChain(uint256 chainID);
+    error UnknownAction(uint8 action);
+    error Overflow();
+    error Underflow();
+    error WrongAmount();
+    error NotAuthorized();
+    error NoRewardsToClaim();
 
-    mapping(address => uint256) public stakes;
-    mapping(address => bytes) public withdrawAddresses;
-    mapping(address => address) public beneficiaries;
+    mapping(address => uint256) public stake;
+    mapping(address => bytes) public withdraw;
+    mapping(address => address) public beneficiary;
     mapping(address => uint256) public lastStakeTime;
 
     constructor(
@@ -146,7 +153,7 @@ contract Staking is ERC20, zContract {
     ) external virtual override onlySystem {
         // highlight-start
         if (chainID != context.chainID) {
-            revert WrongChain();
+            revert WrongChain(context.chainID);
         }
 
         address staker = BytesHelperLib.bytesToAddress(context.origin, 0);
@@ -164,7 +171,7 @@ contract Staking is ERC20, zContract {
         } else if (action == 4) {
             setWithdraw(staker, message, context.origin);
         } else {
-            revert UnknownAction();
+            revert UnknownAction(action);
         }
         // highlight-end
     }
@@ -185,9 +192,9 @@ Add the `BITCOIN` constant to store the chain ID of Bitcoin. ZetaChain uses
 The contract needs to be able to store the staker's staked balance, withdraw
 address and beneficiary address. To do this, add the following mappings:
 
-- `stakes` - stores the staker's staked balance
-- `withdrawAddresses` - stores the staker's withdraw address
-- `beneficiaries` - stores the staker's beneficiary address
+- `stake` - stores the staker's staked balance
+- `withdraw` - stores the staker's withdraw address
+- `beneficiary` - stores the staker's beneficiary address
 
 Modify the constructor to accept three additional arguments: `name_`, `symbol_`,
 and `chainID_`. The `name_` and `symbol_` arguments will be used to initialize
@@ -238,8 +245,8 @@ identify the account that broadcasted the transaction.
 
 Use `BytesHelperLib.bytesToAddress` to decode the staker's identifier from the
 `context.origin` bytes. We will be using `staker` as a key in the `stakes`,
-`withdrawAddresses` and `beneficiaries` mappings to store the staker's staked
-balance, withdraw address and the beneficiary address.
+`withdraw` and `beneficiary` mappings to store the staker's staked balance,
+withdraw address and the beneficiary address.
 
 The `message` parameter contains the data that was passed to the omnichain
 contract when it was called from the connected chain. In our design the first
@@ -264,8 +271,8 @@ deposited tokens.
 
 ```solidity title="contracts/Staking.sol"
     function stakeZRC(address staker, uint256 amount) internal {
-        stakes[staker] += amount;
-        require(stakes[staker] >= amount, "Overflow detected");
+        stake[staker] += amount;
+        if (stake[staker] < amount) revert Overflow();
 
         lastStakeTime[staker] = block.timestamp;
         updateRewards(staker);
@@ -274,13 +281,13 @@ deposited tokens.
     function updateRewards(address staker) internal {
         uint256 rewardAmount = queryRewards(staker);
 
-        _mint(beneficiaries[staker], rewardAmount);
+        _mint(beneficiary[staker], rewardAmount);
         lastStakeTime[staker] = block.timestamp;
     }
 
-    function queryRewards(address account) public view returns (uint256) {
-        uint256 timeDifference = block.timestamp - lastStakeTime[account];
-        uint256 rewardAmount = timeDifference * stakes[account] * rewardRate;
+    function queryRewards(address staker) public view returns (uint256) {
+        uint256 timeDifference = block.timestamp - lastStakeTime[staker];
+        uint256 rewardAmount = timeDifference * stake[staker] * rewardRate;
         return rewardAmount;
     }
 ```
@@ -305,22 +312,23 @@ balance and the timestamp of their last stake action.
 
 ```solidity title="contracts/Staking.sol"
     function unstakeZRC(address staker) internal {
-        uint256 amount = stakes[staker];
+        uint256 amount = stake[staker];
 
         updateRewards(staker);
 
         address zrc20 = systemContract.gasCoinZRC20ByChainId(chainID);
         (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
 
-        require(amount >= gasFee, "Amount should be greater than the gas fee");
+        if (amount < gasFee) revert WrongAmount();
 
-        bytes memory recipient = withdrawAddresses[staker];
+        bytes memory recipient = withdraw[staker];
+
+        stake[staker] = 0;
 
         IZRC20(zrc20).approve(zrc20, gasFee);
         IZRC20(zrc20).withdraw(recipient, amount - gasFee);
 
-        stakes[staker] = 0;
-        require(stakes[staker] <= amount, "Underflow detected");
+        if (stake[staker] > amount) revert Underflow();
 
         lastStakeTime[staker] = block.timestamp;
     }
@@ -341,13 +349,13 @@ For EVM-based chains, use `abi.decode` to get the beneficiary address from the
 
 ```solidity title="contracts/Staking.sol"
     function setBeneficiary(address staker, bytes calldata message) internal {
-        address beneficiary;
+        address beneficiaryAddress;
         if (chainID == BITCOIN) {
-            beneficiary = BytesHelperLib.bytesToAddress(message, 1);
+            beneficiaryAddress = BytesHelperLib.bytesToAddress(message, 1);
         } else {
-            (, beneficiary) = abi.decode(message, (uint8, address));
+            (, beneficiaryAddress) = abi.decode(message, (uint8, address));
         }
-        beneficiaries[staker] = beneficiary;
+        beneficiary[staker] = beneficiaryAddress;
     }
 ```
 
@@ -375,19 +383,19 @@ connected chain.
         bytes calldata message,
         bytes memory origin
     ) internal {
-        bytes memory withdraw;
+        bytes memory withdrawAddress;
         if (chainID == BITCOIN) {
-            withdraw = bytesToBech32Bytes(message, 1);
+            withdrawAddress = bytesToBech32Bytes(message, 1);
         } else {
-            withdraw = origin;
+            withdrawAddress = origin;
         }
-        withdrawAddresses[staker] = withdraw;
+        withdraw[staker] = withdrawAddress;
     }
 
     function bytesToBech32Bytes(
         bytes calldata data,
         uint256 offset
-    ) public pure returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         bytes memory bech32Bytes = new bytes(42);
         for (uint i = 0; i < 42; i++) {
             bech32Bytes[i] = data[i + offset];
@@ -404,13 +412,10 @@ rewards. The function checks that the caller is the beneficiary and calls the
 `updateRewards` function to send rewards to the beneficiary.
 
 ```solidity title="contracts/Staking.sol"
-    function claimRewards(address staker) public {
-        require(
-            beneficiaries[staker] == msg.sender,
-            "Not authorized to claim rewards"
-        );
+    function claimRewards(address staker) external {
+        if (beneficiary[staker] != msg.sender) revert NotAuthorized();
         uint256 rewardAmount = queryRewards(staker);
-        require(rewardAmount > 0, "No rewards to claim");
+        if (rewardAmount <= 0) revert NoRewardsToClaim();
         updateRewards(staker);
     }
 ```
