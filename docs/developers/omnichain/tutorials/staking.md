@@ -692,3 +692,9 @@ Congratulations! 🎉 You have created an omnichain staking contract and learned
   an address.
 - how to implement and use `bytesToBech32Bytes` to take the bytes corresponding
   to the hexidecimal representation of the Bitcoin address from the `message`.
+
+## Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/tree/main/omnichain/staking
