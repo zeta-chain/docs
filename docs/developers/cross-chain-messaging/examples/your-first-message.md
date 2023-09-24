@@ -37,7 +37,7 @@ To create a new cross-chain messaging contract you will use the `messaging`
 Hardhat task available by default in the template.
 
 ```
-npx hardhat messaging CrossChainMessage message
+npx hardhat messaging CrossChainMessage message:string
 ```
 
 The `messaging` task accepts one or more arguments: the name of the contract and
@@ -45,7 +45,7 @@ a list of arguments (optionally with types). The arguments define the contents
 of the message that will be sent across chains.
 
 In the example above the message will have only one field: `message` of type
-`bytes32`. If the type is not specified it is assumed to be `bytes32`.
+`string`. If the type is not specified it is assumed to be `string`.
 
 The `messaging` task has created:
 
