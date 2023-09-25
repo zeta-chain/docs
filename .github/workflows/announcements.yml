@@ -44,10 +44,12 @@ jobs:
             echo "Processing file: $file"
 
             pandoc -f markdown -t plain "$file" -o "$file.txt"
+            pandoc -f markdown -t html "$file" -o "$file.html"
             content=$(cat "$file.txt")
+            content_html=$(cat "$file.html")
 
             response=$(curl -s -w "HTTPSTATUS:%{http_code}" -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-              -d chat_id="${TELEGRAM_TO}" -d text="$content" -d parse_mode="Markdown")
+              -d chat_id="${TELEGRAM_TO}" -d text="$content_html" -d parse_mode="HTML")
             http_status=$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
             if [ "$http_status" -ne 200 ] && [ "$http_status" -ne 204 ]; then
               echo "Error sending to Telegram. HTTP Status: $http_status"
