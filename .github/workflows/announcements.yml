@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq curl
+          sudo apt-get install -y jq curl pandoc
 
       - name: Identify Markdown Files
         id: files
@@ -32,7 +32,7 @@ jobs:
           echo "Changed Markdown Files: $files_comma_separated"
           echo "::set-output name=markdown_files::$files_comma_separated"
 
-      - name: Publish to Telegram
+      - name: Publish to Discord/Telegram
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
@@ -43,9 +43,14 @@ jobs:
             # Skip empty strings which may occur if there's a trailing comma
             [ -z "$file" ] && continue
             echo "Processing file: $file"
-            content=$(cat "$file")
+
+            # Convert markdown to plain text using pandoc
+            pandoc -f markdown -t plain "$file" -o "$file.txt"
+            content=$(cat "$file.txt")
+
             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
               -d chat_id="${TELEGRAM_TO}" -d text="$content" -d parse_mode="MarkdownV2"
+              
             curl -X POST -H "Content-Type: application/json" \
-              -d '{"content": "$content"}' https://discord.com/api/webhooks/1155501986532307056/POOHKkxip-2n4NA3Fe7ye1iPhrKeEwZOHiU2CSWCRt7TYv1uxvriNhZ0mat1JvLKpEsI
+              -d "{\"content\": \"${content}\"}" https://discord.com/api/webhooks/1155501986532307056/POOHKkxip-2n4NA3Fe7ye1iPhrKeEwZOHiU2CSWCRt7TYv1uxvriNhZ0mat1JvLKpEsI
           done
