@@ -1,4 +1,4 @@
-name: Publish Blog Post to Telegram
+name: Publish Blog Post to Telegram/Discord
 on:
   pull_request:
     branches: [announcements]
@@ -6,7 +6,7 @@ on:
     paths:
       - "announcements/*.md"
 jobs:
-  publish_to_telegram:
+  publish:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -32,12 +32,11 @@ jobs:
           echo "Changed Markdown Files: $files_comma_separated"
           echo "::set-output name=markdown_files::$files_comma_separated"
 
-      - name: Publish to Discord/Telegram
+      - name: Publish to Telegram/Discord
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         run: |
-          echo "Publishing to Telegram..."
           IFS=',' read -ra files_arr <<< "${{ steps.files.outputs.markdown_files }}"
           for file in "${files_arr[@]}"; do
             # Skip empty strings which may occur if there's a trailing comma
