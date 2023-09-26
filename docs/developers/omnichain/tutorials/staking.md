@@ -575,13 +575,13 @@ npx hardhat deploy --network zeta_testnet --chain goerli_testnet
 The beneficiary address has to be set before staking tokens.
 
 ```
-npx hardhat set-beneficiary --beneficiary ADDRESS --contract ADDRESS --network goerli_testnet
+npx hardhat set-beneficiary ADDRESS --contract ADDRESS --network goerli_testnet
 ```
 
 ### Set Withdraw Address
 
 ```
-npx hardhat set-withdraw --withdraw ADDRESS --contract ADDRESS --network goerli_testnet
+npx hardhat set-withdraw --contract ADDRESS --network goerli_testnet
 ```
 
 ### Stake Tokens
