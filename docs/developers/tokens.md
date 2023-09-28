@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Sending and Depositing Tokens
 
 This document describes different kinds of tokens that exist in the ZetaChain
