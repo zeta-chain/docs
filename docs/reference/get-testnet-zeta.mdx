@@ -35,21 +35,23 @@ The easiest way to get testnet ZETA is to use the ZetaChain CLI faucet. You can
 install the CLI by following the instructions (you may need `sudo` priveleges):
 
 ```
-npm install -g @zetachain/faucet-cli@athens3
+npm install -g @zetachain/faucet-cli
 ```
 
-Once installed, you can use the faucet to get ZETA tokens on any EVM-compatible
-network. For example, to get ZETA on the Goerli testnet, you can run:
+Once installed, you can use the faucet to get ZETA tokens on ZetaChain:
 
 ```
-zetafaucet --drip --address 0x4bB9089ee3B86e97b171838205483362966f9dE8 --chain goerli_testnet
+zetafaucet --drip --address 0x4bB9089ee3B86e97b171838205483362966f9dE8
 ```
 
 You will be prompted to authenticate with your GitHub account to use the faucet.
 
-Please note that using this faucet you can get only ZETA tokens, not the native
-gas assets of the respective networks. If you need more gas assets, you can use
-the other faucets listed below.
+Please note that using this faucet you can get only ZETA tokens on ZetaChain. If
+you want to transfer ZETA tokens between connected chain or to/from ZetaChain,
+use the built-in [`send-zeta`](/developers/tokens) command.
+
+If you need gas assets on connected chains (like Bitcoin, Goerli, Mumbai or BSC
+testnet), you can use the other faucets listed below.
 
 ### Swapping Native Gas Assets for ZETA
 
@@ -85,7 +87,7 @@ If you're using [a Hardhat template](https://github.com/zeta-chain/template),
 you can get ZETA tokens by running the following command:
 
 ```
-npx hardhat faucet --chain goerli_testnet
+npx hardhat faucet
 ```
 
 Under the hood this command uses the ZetaChain CLI faucet.
