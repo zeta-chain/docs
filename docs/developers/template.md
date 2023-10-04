@@ -88,13 +88,9 @@ npx hardhat faucet
 
 This command requests tokens from the faucet for the account address derived
 from the private key specified in the `.env`. Tokens sent to the address on
-ZetaChain. To specify a different chain use a flag:
+ZetaChain.
 
-```
-npx hardhat faucet --chain goerli_testnet
-```
-
-You can also specify a different address to send the tokens to:
+You can specify a different address to send the tokens to:
 
 ```
 npx hardhat faucet --address ADDRESS
