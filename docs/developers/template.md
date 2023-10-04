@@ -1,0 +1,247 @@
+---
+sidebar_position: 2
+---
+
+# Smart Contract Template
+
+ZetaChain comes with
+[a smart contract template](https://github.com/zeta-chain/template) that makes
+it easy to get started building dapps.
+
+```
+git clone https://github.com/zeta-chain/template
+```
+
+Both [omnichain tutorials](/developers/omnichain/tutorials/hello) and
+[cross-chain messaging tutorials](/developers/cross-chain-messaging/examples/hello-world)
+use this template.
+
+The template uses [Hardhat](https://hardhat.org/) to compile, test, and deploy
+contracts. It also imports
+[`@zetachain/toolkit`](https://github.com/zeta-chain/toolkit/) that provides a
+useful set of utilities for creating contracts, querying balances, tracking
+cross-chain transactions, accessing the faucet, and more. The template exposes
+most of the features available in the toolkit through Hardhat tasks.
+
+## Generating a Random Wallet
+
+To generate a random wallet:
+
+```
+npx hardhat account --save
+```
+
+This command generates a random wallet, prints information about the wallet to
+the terminal, and saves the private key to a `.env` file to make it accessible
+to Hardhat. If you don't want to save the wallet (for example, if you just need
+an address to send tokens to for testing purposes), you can run the command
+without the `--save` flag.
+
+If you already have a private key or a mnemonic you want to import, you can use
+the `--recover` flag:
+
+```
+npx hardhat account --save --recover
+```
+
+The `account` command will prompt you for a private key or a mnemonic, print the
+derived addresses and save the private key into the `.env` file.
+
+The `account` command shows derived addresses in hexacecimal (for EVM-based
+chains), bech32 with `zeta` prefix for ZetaChain, and bech32 for Bitcoin.
+
+## Querying for Token Balances
+
+To query for token balances:
+
+```
+npx hardhat balances
+```
+
+This command queries token balances for the account address derived from the
+private key specified in the `.env`.
+
+If you need to query for balances as part of a script, you can also use a
+`--json` flag to output the balances in JSON format:
+
+```
+npx hardhat balances --json
+```
+
+If you want to query for token balances for a different account, you can use the
+`--address` flag:
+
+```
+npx hardhat balances --address ADDRESS
+```
+
+The `balances` command supports querying for native gas tokens, wrapped ZETA on
+all connected chains as well as ZetaChain, ZRC-20 tokens, and BTC on Bitcoin.
+
+## Requesting Tokens from the Faucet
+
+To request ZETA tokens from the faucet:
+
+```
+npx hardhat faucet
+```
+
+This command requests tokens from the faucet for the account address derived
+from the private key specified in the `.env`. Tokens sent to the address on
+ZetaChain.
+
+You can specify a different address to send the tokens to:
+
+```
+npx hardhat faucet --address ADDRESS
+```
+
+Alternatively, you can install a standalone faucet CLI:
+
+```
+yarn global add @zetachain/faucet-cli
+```
+
+You can then use it with the following command:
+
+```
+zetafaucet -h
+```
+
+## Creating an Omnichain Contract
+
+The template includes a set of commands for generating code for smart contracts
+and helper tasks.
+
+To create a new omnichain contract:
+
+```
+npx hardhat omnichain MyContract
+```
+
+This command creates a new omnichain contract in `contracts/MyContract.sol`, a
+task to deploy the contract in `tasks/deploy.ts`, and a task to interact with
+the contract in `tasks/interact.ts`.
+
+When an omnichain contract is called, it can receive data in the `data` field of
+a transaction. This data is passed to the `message` parameter of the contract's
+`onCrossChainCall` function. To specify the fields of the `message` parameter,
+use positional arguments:
+
+```
+npx hardhat omnichain MyContract recepient:address description quantity:uint256
+```
+
+A field may have a type specified after the field name, separated by a colon. If
+no type is specified, the type defaults to `string`.
+
+Supported types are: `address`, `bool`, `bytes32`, `string`,
+`int`,`int8`,`int16`,`int128`,`int256`,`uint`,`uint8`,`uint16`,`uint128`,`uint256`.
+
+Learn more about omnichain contracts by following the
+[tutorials](/developers/omnichain/tutorials/hello/).
+
+## Creating a Cross-Chain Messaging Contract
+
+To create a new cross-chain messaging contract:
+
+```
+npx hardhat messaging MyContract
+```
+
+This command creates a new cross-chain messaging contract in
+`contracts/MyContract.sol`, a task to deploy the contract in `tasks/deploy.ts`,
+and a task to interact with the contract in `tasks/interact.ts`.
+
+You can pass additional optional arguments to the `messaging` command to specify
+the data that will be sent in the message.
+
+```
+npx hardhat messaging MyContract token:uint256 sender:address to:address description
+```
+
+A field may have a type specified after the field name, separated by a colon. If
+no type is specified, the type defaults to `string`.
+
+The list of supported types is the same as for omnichain contracts.
+
+Learn more about cross-chain messaging by following the
+[tutorials](/developers/cross-chain-messaging/examples/hello-world/).
+
+## Tracking a Cross-Chain Transaction
+
+After broadcasting a cross-chain transaction on a connected chain either to a
+cross-chain messaging contract or to trigger an omnichain contract, you can
+track its status:
+
+```
+npx hardhat cctx TX_HASH
+```
+
+## Verifying a Contract
+
+To verify a contract deployed on ZetaChain:
+
+```
+npx hardhat verify:zeta --contract ADDRESS
+```
+
+Select the contract to verify:
+
+```
+? Select a contract to verify: (Use arrow keys)
+  @zetachain/zevm-protocol-contracts/contracts/interfaces/IZRC20.sol:IZRC20
+  @zetachain/zevm-protocol-contracts/contracts/interfaces/zContract.sol:zContract
+❯ contracts/Withdraw.sol:Withdraw
+```
+
+After the confirmation the contract will be verified.
+
+## Sending Tokens
+
+Sending ZETA from ZetaChain to Goerli:
+
+```
+npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_testnet
+```
+
+Sending ZETA from Goerli to ZetaChain:
+
+```
+npx hardhat send-zeta --amount 1 --network goerli_testnet --destination zeta_testnet
+```
+
+Depositing gETH to ZetaChain as ZRC-20:
+
+```
+npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnet
+```
+
+Withdrawing ZRC-20 from ZetaChain go Goerli as gETH:
+
+```
+npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet
+```
+
+Depositing tBTC from the Bitcoin testnet to ZetaChain:
+
+```
+npx hardhat send-btc --amount 1 --recipient TSS_ADDRESS --memo RECIPIENT_ADDRESS_WITHOUT_0x
+```
+
+## Querying Cross-Chain Fees
+
+To query cross-chain fees:
+
+```
+npx hardhat fees
+```
+
+This command will query the latest omnichain withdrawal fees as well as
+cross-chain messaging fees.
+
+To calculate the fees for a different gas limit use the `--gas` flag:
+
+```
+npx hardhat fees --gas 300000
+```
