@@ -485,6 +485,8 @@ project:
 
 https://github.com/zeta-chain/example-contracts/tree/main/omnichain/staking/tasks
 
+When copying these files make sure to also copy the helper function `convertToHexAddress.ts` in the `lib` directory.
+
 To perform the actions above, the tasks simply send transactions to the TSS
 address on the connected chain with the encoded data in the `data` field of the
 transactions.
