@@ -14,10 +14,12 @@ capabilities using
 
 ![Cross-chain NFT transfer](/img/graphs/cross-chain-nft-transfer.svg)
 
-## Set Up Your Environment
+## Set up your environment
 
 ```
 git clone https://github.com/zeta-chain/template
+cd template
+yarn
 ```
 
 ## Create a new contract

@@ -17,6 +17,8 @@ This is an example app of cross-chain counter using
 
 ```
 git clone https://github.com/zeta-chain/template
+cd template
+yarn
 ```
 
 ## Create a new contract

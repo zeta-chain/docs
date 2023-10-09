@@ -18,9 +18,7 @@ message.
 
 ```
 git clone https://github.com/zeta-chain/template
-
 cd template
-
 yarn
 ```
 
