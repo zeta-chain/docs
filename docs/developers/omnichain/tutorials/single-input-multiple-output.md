@@ -18,16 +18,13 @@ This capability may be useful for applications like multichain asset managers or
 DeFi applications that need to distribute or manage assets on many chains from
 one place.
 
+This tutorial also demonstrates how a single inbound cross-chain transactions
+can result in more than one outbound cross-chain transactions.
+
 ## Set up your environment
 
 ```
 git clone https://github.com/zeta-chain/template
-```
-
-Install the dependencies:
-
-```
-yarn add --dev @openzeppelin/contracts
 ```
 
 ## Create the contract
@@ -69,6 +66,14 @@ contract MultiOutput is zContract, Ownable {
         systemContract = SystemContract(systemContractAddress);
     }
 
+    modifier onlySystem() {
+        require(
+            msg.sender == address(systemContract),
+            "Only system contract can call this function"
+        );
+        _;
+    }
+
     // highlight-start
     function registerDestinationToken(
         address destinationToken
@@ -93,10 +98,7 @@ contract MultiOutput is zContract, Ownable {
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external virtual override {
-        if (msg.sender != address(systemContract)) {
-            revert SenderNotSystemContract();
-        }
+    ) external virtual override onlySystem {
         address recipient = abi.decode(message, (address));
         // highlight-start
         if (_getTotalTransfers(zrc20) == 0) revert NoAvailableTransfers();
@@ -147,6 +149,16 @@ Before proceeding with the next steps, make sure you have
 [created an account and requested ZETA tokens](/developers/omnichain/tutorials/hello#create-an-account)
 from the faucet.
 
+## Create a task to set destination chain
+
+```ts title="tasks/destination.ts" reference
+https://github.com/zeta-chain/example-contracts/blob/main/omnichain/multioutput/tasks/destination.ts
+```
+
+```ts title="hardhat.config.ts"
+import "./tasks/destination";
+```
+
 ## Deploy the Contract
 
 Clear the cache and artifacts, then compile the contract:
@@ -165,39 +177,6 @@ npx hardhat deploy --network zeta_testnet
 🚀 Successfully deployed contract on ZetaChain.
 📜 Contract address: 0x040FDDE34d07e1FBA155DCCe829a250317985d83
 🌍 Explorer: https://athens3.explorer.zetachain.com/address/0x040FDDE34d07e1FBA155DCCe829a250317985d83
-```
-
-## Create a task to set destination chain
-
-```ts title="tasks/destination.ts"
-import { task } from "hardhat/config";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { getAddress } from "@zetachain/protocol-contracts";
-
-const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
-  const [signer] = await hre.ethers.getSigners();
-  console.log(`🔑 Using account: ${signer.address}\n`);
-
-  const destinationToken = getAddress("zrc20" as any, args.destination as any);
-  const ZetaMultiOutput = await hre.ethers.getContractAt(
-    "MultiOutput",
-    args.contract
-  );
-
-  const tx = await ZetaMultiOutput.registerDestinationToken(destinationToken);
-
-  await tx.wait();
-
-  console.log(
-    `Registered token ${destinationToken} as a destination in the contract ${args.contract}`
-  );
-};
-
-task("destination", "", main).addParam("contract").addParam("destination");
-```
-
-```ts title="hardhat.config.ts"
-import "./tasks/destination";
 ```
 
 ## Interact with the Contract

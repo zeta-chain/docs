@@ -235,12 +235,6 @@ address. The transaction contains the following information:
 - `to`: the address of the TSS
 - `value`: the amount of tokens to transfer
 
-Finally, the task uses the `trackCCTX` function from
-`@zetachain/toolkit/helpers` to track the token transfer transaction. The
-function waits for the transaction to appear on ZetaChain and tracks the status
-of the transaction. Transaction tracking is optional, but helpful to know when
-the transaction has been processed by ZetaChain.
-
 ## Create an Account
 
 To deploy and interact with the contract you will need a wallet with tokens.
@@ -272,7 +266,7 @@ tokens on connected chains.
 
 You will, however, need to request native tokens on connected chains from one of
 the
-[publicly available faucets](http://localhost:3001/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
+[publicly available faucets](/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
 
 ## Check Token Balances
 
@@ -282,6 +276,9 @@ the connected chains:
 ```
 npx hardhat balances
 ```
+
+Learn more about these and other ZetaChain toolkit commands
+[avaialble in the template](/developers/template/).
 
 ## Deploy the Contract
 
@@ -318,18 +315,12 @@ npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amo
 
 🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
 📝 Transaction hash: 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
-
-✔ CCTX hash found: 0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
-
-ℹ Status updated to "OutboundMined": Remote omnichain contract call completed
-
-✔ CCTX has been finalized on ZetaChain
 ```
 
 Once the transaction is finalized on ZetaChain, you should be able to review the
 transaction on the ZetaChain explorer:
 
-https://athens3.explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
+https://explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
 
 The `interact` task has sent a token transfer transaction to the TSS address on
 Goerli. The transaction contains the address of the contract on ZetaChain in the
