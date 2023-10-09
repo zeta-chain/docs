@@ -47,7 +47,7 @@ criteria and you will be able to use it to interact with ZetaChain.
 
 To test ZetaChain's interoperability with Bitcoin, you can use the
 `npx hardhat send-btc` available in the smart contract template. Learn more
-about it in the [Bitcoin tutorial](/developers/omnichain/tutorials/bitcoin/).
+about it in the [Staking](/developers/omnichain/tutorials/staking).
 
 ## Cosmos Wallets
 
