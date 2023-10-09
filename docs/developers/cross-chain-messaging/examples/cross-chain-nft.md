@@ -47,41 +47,38 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 // highlight-start
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 // highlight-end
-import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
-
-interface CrossChainWarriorsErrors {
-    error InvalidMessageType();
-}
 
 contract CrossChainWarriors is
     ZetaInteractor,
     ZetaReceiver,
-    CrossChainWarriorsErrors,
     // highlight-next-line
     ERC721("CrossChainWarriors", "CCWAR")
 {
-    // highlight-next-line
-    using Counters for Counters.Counter;
-    bytes32 public constant CROSS_CHAIN_WARRIORS_MESSAGE_TYPE =
-        keccak256("CROSS_CHAIN_CROSS_CHAIN_WARRIORS");
+    error InvalidMessageType();
 
     event CrossChainWarriorsEvent(uint256, address, address);
     event CrossChainWarriorsRevertedEvent(uint256, address, address);
 
+    // highlight-start
+    using Counters for Counters.Counter;
+    Counters.Counter public tokenIds;
+    // highlight-end
+    bytes32 public constant CROSS_CHAIN_WARRIORS_MESSAGE_TYPE =
+        keccak256("CROSS_CHAIN_CROSS_CHAIN_WARRIORS");
     ZetaTokenConsumer private immutable _zetaConsumer;
     IERC20 internal immutable _zetaToken;
-    // highlight-next-line
-    Counters.Counter public tokenIds;
 
     constructor(
         address connectorAddress,
         address zetaTokenAddress,
         address zetaConsumerAddress,
+        // highlight-next-line
         bool useEven
     ) ZetaInteractor(connectorAddress) {
         _zetaToken = IERC20(zetaTokenAddress);
@@ -111,16 +108,12 @@ contract CrossChainWarriors is
     function _burnWarrior(uint256 burnedWarriorId) internal {
         _burn(burnedWarriorId);
     }
-
     // highlight-end
 
     function sendMessage(
         uint256 destinationChainId,
         uint256 token,
-        // remove-next-line
-        address sender,
         address to
-
     ) external payable {
         if (!_isValidChainId(destinationChainId))
             revert InvalidDestinationChainId();
@@ -138,7 +131,7 @@ contract CrossChainWarriors is
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: interactorsByChainId[destinationChainId],
-                destinationGasLimit: 500000,
+                destinationGasLimit: 300000,
                 message: abi.encode(
                     CROSS_CHAIN_WARRIORS_MESSAGE_TYPE,
                     token,
@@ -197,14 +190,15 @@ Introduce a new state variable by leveraging the `Counters.Counter` data
 structure. Name this variable `tokenIds`. This state variable will be used to
 manage unique IDs for the ERC721 tokens that the contract will mint.
 
-Modify the constructor of the contract to incorporate the changes. It's
-important that the `tokenIds` counter is incremented twice when the contract is
-deployed. This action guarantees unique IDs for the initial tokens.
+Modify the constructor of the contract to accept a new parameter `bool useEven`.
+This parameter will be used to determine the parity of NFT IDs on different
+chains: even IDs on one chain and odd IDs on another. This action guarantees
+unique IDs for the initial tokens.
 
 Furthermore, incorporate a series of new functions to extend the contract's
 functionalities:
 
-- Introduce a `mint(address to)`` function, a public-facing method that allows
+- Introduce a `mint(address to)` function, a public-facing method that allows
   minting a new ERC721 token to a specified address and returns the ID of the
   newly minted token. Remember to increment the tokenIds counter twice within
   this function to ensure unique IDs.
@@ -240,7 +234,7 @@ function on it, searches the events for a "Transfer" event and prints out the
 token ID.
 
 ```ts title="tasks/mint.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/feat/import-toolkit/messaging/warriors/tasks/mint.ts
+https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/mint.ts
 ```
 
 ```ts title="hardhat.config.ts"
@@ -259,13 +253,12 @@ const paramSender = hre.ethers.utils.getAddress(args.sender);
 const tx = await contract
   .connect(signer)
   // highlight-next-line
-  .sendMessage(destination, paramToken, paramTo, {
-    value: parseEther(args.amount),
-  });
+  .sendMessage(destination, paramToken, paramTo, { value });
 
 //...
 
 task("interact", "Sends a message from one chain to another.", main)
+  .addFlag("json", "Output JSON")
   .addParam("contract", "Contract address")
   .addParam("amount", "Token amount to send")
   .addParam("destination", "Destination chain")
@@ -273,10 +266,6 @@ task("interact", "Sends a message from one chain to another.", main)
   // remove-next-line
   .addParam("sender", "address")
   .addParam("to", "address");
-```
-
-```
-npx hardhat transfer --network goerli --contract 0xFeAF74733B6f046F3d609e663F667Ba61B19A148 --address 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --destination 97 --token 2 --amount 0.4
 ```
 
 ## Update the Deploy Task
@@ -288,27 +277,32 @@ of NFT IDs on different chains: even IDs on one chain and odd IDs on another.
 ```ts title="tasks/deploy.ts"
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const networks = args.networks.split(",");
-  // A mapping between network names and deployed contract addresses.
   const contracts: { [key: string]: string } = {};
   await Promise.all(
     // highlight-start
     networks.map(async (networkName: string, i: number) => {
       const parity = i % 2 == 0;
-      contracts[networkName] = await deployContract(hre, networkName, parity);
+      contracts[networkName] = await deployContract(
+        hre,
+        networkName,
+        parity,
+        args.json,
+        args.gasLimit
+      );
     })
     // highlight-end
   );
 
-  for (const source in contracts) {
-    await setInteractors(hre, source, contracts);
-  }
+  // ...
 };
 
 const deployContract = async (
   hre: HardhatRuntimeEnvironment,
   networkName: string,
   // highlight-next-line
-  parity: boolean
+  parity: boolean,
+  json: boolean = false,
+  gasLimit: number
 ) => {
   //...
   const contract = await factory.deploy(
@@ -316,7 +310,8 @@ const deployContract = async (
     zetaToken,
     zetaTokenConsumerUniV2 || zetaTokenConsumerUniV3,
     // highlight-next-line
-    parity
+    parity,
+    { gasLimit }
   );
   //...
 };

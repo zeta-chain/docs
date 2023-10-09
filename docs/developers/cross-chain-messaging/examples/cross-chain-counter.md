@@ -42,20 +42,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 
-interface CounterErrors {
+contract Counter is ZetaInteractor, ZetaReceiver {
     error InvalidMessageType();
     // highlight-next-line
     error DecrementOverflow();
-}
-
-contract Counter is ZetaInteractor, ZetaReceiver, CounterErrors {
-    bytes32 public constant COUNTER_MESSAGE_TYPE =
-        keccak256("CROSS_CHAIN_COUNTER");
 
     event CounterEvent(address);
     event CounterRevertedEvent(address);
+    // highlight-next-line
     mapping(address => uint256) public counter;
 
+    bytes32 public constant COUNTER_MESSAGE_TYPE =
+        keccak256("CROSS_CHAIN_COUNTER");
     ZetaTokenConsumer private immutable _zetaConsumer;
     IERC20 internal immutable _zetaToken;
 
@@ -79,7 +77,6 @@ contract Counter is ZetaInteractor, ZetaReceiver, CounterErrors {
         }(address(this), crossChainGas);
         _zetaToken.approve(address(connector), zetaValueAndGas);
 
-        counter[msg.sender]++;
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
@@ -129,7 +126,7 @@ contract Counter is ZetaInteractor, ZetaReceiver, CounterErrors {
 
 ## Create a task to get the counter value
 
-```solidity title="tasks/counter_show.ts"
+```ts title="tasks/counter_show.ts"
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -162,22 +159,44 @@ import "./tasks/counter_show.ts";
 ## Create a task to increment the counter value
 
 ```ts title="tasks/interact.ts"
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { parseEther } from "@ethersproject/units";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+
+  const factory = await hre.ethers.getContractFactory("Counter");
+  const contract = factory.attach(args.contract);
+
+  const destination = hre.config.networks[args.destination]?.chainId;
+  if (destination === undefined) {
+    throw new Error(`${args.destination} is not a valid destination chain`);
+  }
+
   // remove-next-line
   const paramFrom = hre.ethers.utils.getAddress(args.from);
+
+  const value = parseEther(args.amount);
 
   const tx = await contract
     .connect(signer)
     // highlight-next-line
-    .sendMessage(destination, { value: parseEther(args.amount) });
+    .sendMessage(destination, { value });
 
   const receipt = await tx.wait();
-  console.log(`✅ The transaction has been broadcasted to ${hre.network.name}
+  if (args.json) {
+    console.log(JSON.stringify(tx, null, 2));
+  } else {
+    console.log(`🔑 Using account: ${signer.address}\n`);
+    console.log(`✅ The transaction has been broadcasted to ${hre.network.name}
 📝 Transaction hash: ${receipt.transactionHash}
 `);
-  await trackCCTX(tx.hash);
+  }
 };
 
 task("interact", "Sends a message from one chain to another.", main)
+  .addFlag("json", "Output JSON")
   .addParam("contract", "Contract address")
   .addParam("amount", "Token amount to send")
   .addParam("destination", "Destination chain")
