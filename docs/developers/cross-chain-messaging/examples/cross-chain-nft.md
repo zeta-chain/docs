@@ -20,13 +20,6 @@ capabilities using
 git clone https://github.com/zeta-chain/template
 ```
 
-Install dependencies:
-
-```
-cd template
-yarn add --dev @openzeppelin/contracts
-```
-
 ## Create a new contract
 
 To create a new cross-chain messaging contract, use the `messaging` command:

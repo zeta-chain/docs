@@ -24,13 +24,6 @@ from one chain to another using the
 git clone https://github.com/zeta-chain/template
 ```
 
-Install dependencies:
-
-```
-cd template
-yarn add --dev @openzeppelin/contracts
-```
-
 ## Create the Contract
 
 To create a new cross-chain messaging contract you will use the `messaging`

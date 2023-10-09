@@ -26,12 +26,6 @@ chain to another using the
 git clone https://github.com/zeta-chain/template
 ```
 
-Install the dependencies:
-
-```
-yarn add --dev @openzeppelin/contracts
-```
-
 ## Create a new contract
 
 ```solidity title="contracts/MultiChainValue.sol" reference

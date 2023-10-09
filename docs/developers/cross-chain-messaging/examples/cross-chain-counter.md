@@ -19,12 +19,6 @@ This is an example app of cross-chain counter using
 git clone https://github.com/zeta-chain/template
 ```
 
-Install the dependencies:
-
-```
-yarn add --dev @openzeppelin/contracts
-```
-
 ## Create a new contract
 
 ```
