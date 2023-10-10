@@ -18,17 +18,12 @@ from one chain to another using the
 - [Yarn](https://yarnpkg.com/) v1 or later
 - [Git](https://git-scm.com/)
 
-## Set Up Your Environment
+## Set up your environment
 
 ```
 git clone https://github.com/zeta-chain/template
-```
-
-Install dependencies:
-
-```
 cd template
-yarn add --dev @openzeppelin/contracts
+yarn
 ```
 
 ## Create the Contract

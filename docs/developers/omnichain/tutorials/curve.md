@@ -35,7 +35,7 @@ Now that you have Curve and the pool you want deployed, swapping would look just
 like this:
 
 ```solidity reference
-https://github.com/zeta-chain/zetachain/blob/main/packages/zevm-example-contracts/contracts/zeta-swap/ZetaCurveSwapDemo.sol
+https://github.com/zeta-chain/zetachain/blob/main/packages/zevm-app-contracts/contracts/zeta-swap/ZetaCurveSwapDemo.sol
 ```
 
 In this example `crvZRC20s` is an array of three ZRC20 tokens, for example gETH,
