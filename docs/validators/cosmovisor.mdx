@@ -1,21 +1,21 @@
 ---
 sidebar_position: 5
-sidebar_label: Setting up Zetavisor
+sidebar_label: Setting up Cosmovisor
 hide_title: false
-id: setting-up-zetavisor
-title: Setting up Zetavisor
+id: setting-up-Cosmovisor
+title: Setting up Cosmovisor
 ---
 
-# Setting up ZetaVisor
+# Setting up Cosmovisor
 
-ZetaVisor is an optional process supervisor for ZetaChain. It is a wrapper
+Cosmovisor is an optional process supervisor for ZetaChain. It is a wrapper
 around the `zetacored` binary that allows for automatic restarts automatic
 upgrades of the ZetaChain binary. It is a fork of the
 [CosmosVisor](https://docs.cosmos.network/main/tooling/cosmovisor) tool.
 
-You can use a prebuilt `zetavisor` binary or build it yourself from source.
+You can use a prebuilt `Cosmovisor` binary or build it yourself from source.
 
-## Installing ZetaVisor
+## Installing Cosmovisor
 
 ### Building From Source
 
@@ -26,61 +26,57 @@ code we recommend using a prebuilt binary as shown in the next step.
 You can build from source by cloning the repository and running the following
 commands.
 
-```bash
-git clone https://github.com/zeta-chain/cosmos-sdk
-cd cosmos-sdk/
-git checkout zetavisor-v0.1.5
-cd cosmovisor
-make zetavisor
-mv $GOPATH/bin/zetavisor /usr/local/bin/zetavisor
+```
+go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
+mv $GOPATH/bin/zetavisor /usr/local/bin/cosmovisor
 ```
 
-### Download Zetavisor Binary
+### Download Cosmovisor Binary
 
 Download the Binary for your system architecture from the following links and
 place it in your $PATH
-amd64: https://zetachain-external-files.s3.amazonaws.com/binaries/zetavisor/latest/zetavisor-amd64
-arm64: https://zetachain-external-files.s3.amazonaws.com/binaries/zetavisor/latest/zetavisor-arm64
+amd64: https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.5.0/cosmovisor-v1.5.0-linux-amd64.tar.gz
+arm64: https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.5.0/cosmovisor-v1.5.0-linux-arm64.tar.gz
 
 This example assumes you are using amd64 architecture. If you are using arm64
 replace amd64 with arm64 in the commands below.
 
 ```bash
-wget https://zetachain-external-files.s3.amazonaws.com/binaries/zetavisor/latest/zetavisor-amd64
-mv zetavisor-amd64 /usr/local/bin/zetavisor
+wget https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.5.0/cosmovisor-v1.5.0-linux-amd64.tar.gz
+mv cosmovisor-amd64 /usr/local/bin/cosmovisor
 ```
 
-## Setting up ZetaVisor
+## Setting up Cosmovisor
 
-### Create `zetavisor` Directories
+### Create `Cosmovisor` Directories
 
 ```bash
 mkdir -p ~/.zetacored/config
-mkdir -p ~/.zetacored/zetavisor/genesis/bin
-mkdir -p ~/.zetacored/zetavisor/upgrades
+mkdir -p ~/.zetacored/cosmovisor/genesis/bin
+mkdir -p ~/.zetacored/cosmovisor/upgrades
 
 ```
 
-### Setup `zetavisor` systemd service
+### Setup `Cosmovisor` systemd service
 
-In this example we'll run zetavisor as a systemd service. You can also run it as
+In this example we'll run Cosmovisor as a systemd service. You can also run it as
 a docker container or as a standalone process. The environment variables are
 explained in the [Environment Variables](#environment-variables) section at the
 end of this document.
 
-Create a file at `/etc/systemd/system/zetavisor.service` with the following
+Create a file at `/etc/systemd/system/cosmovisor.service` with the following
 contents. Make sure to change the `User` and `/home/zetachain/` fields to the
 user you want to run the service as.
 
 ```bash
 [Unit]
-Description=Zetavisor ZetaChain Service
+Description=Cosmovisor ZetaChain Service
 After=multi-user.target
 StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 [Service]
-WorkingDirectory=/home/zetachain/.zetacored/zetavisor
+WorkingDirectory=/home/zetachain/.zetacored/cosmovisor
 Environment="DAEMON_HOME=/home/zetachain/.zetacored"
 Environment="DAEMON_NAME=zetacored"
 Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
@@ -95,7 +91,7 @@ Restart=always
 RestartSec=600
 User=zetachain
 LimitNOFILE=262144
-ExecStart=zetavisor start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
+ExecStart=Cosmovisor start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
 ```
 
 ## Install the `zetacored` Binary
@@ -103,14 +99,14 @@ ExecStart=zetavisor start --home /home/zetachain/.zetacored/ --log_format json  
 ### Download `zetacored` Binary
 
 Download the latest `zetacored` binary for your system architecture from the following
-links and place it in the `zetavisor/genesis/bin/` directory. This example
+links and place it in the `Cosmovisor/genesis/bin/` directory. This example
 assumes you are using ubuntu 22 on amd64 architecture. You may need to make
 adjustments for your system.
 
 ```bash
 wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetacored-ubuntu-22-amd64
-mv zetacored-ubuntu-22-amd64 ~/.zetacored/zetavisor/genesis/bin/zetacored
-chmod +x ~/.zetacored/zetavisor/genesis/bin/zetacored
+mv zetacored-ubuntu-22-amd64 ~/.zetacored/Cosmovisor/genesis/bin/zetacored
+chmod +x ~/.zetacored/Cosmovisor/genesis/bin/zetacored
 
 ```
 
@@ -126,7 +122,7 @@ git clone https://github.com/zeta-chain/network-athens3
 cp network-athens3/network_files/config/* ~/.zetacored/config/
 ```
 
-## Starting ZetaVisor
+## Starting Cosmovisor
 
 ### State Sync
 
@@ -135,24 +131,24 @@ up the time it takes to sync your node. Instructions for syncing from a snapshot
 can be found
 [here](https://docs.zetachain.io/docs/running-a-full-node#state-sync).
 
-### Start the `zetavisor` Service
+### Start the `Cosmovisor` Service
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable zetavisor
-sudo systemctl start zetavisor
+sudo systemctl enable cosmovisor
+sudo systemctl start cosmovisor
 ```
 
-### Check the `zetavisor` Service Status
+### Check the `Cosmovisor` Service Status
 
 ```bash
-sudo systemctl status zetavisor
+sudo systemctl status cosmovisor
 ```
 
-### Check the `zetavisor` Logs
+### Check the `cosmovisor` Logs
 
 ```bash
-journalctl -u zetavisor -f
+journalctl -u cosmovisor -f
 ```
 
 ## Monitoring
@@ -170,13 +166,13 @@ app.toml file. See the [CosmosSDK Telemetry
 Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html) for more
 information.
 
-## ZetaVisor Environment Variables
+## Cosmovisor Environment Variables
 
-Breif explanation of the environment variables used by zetavisor.
+Breif explanation of the environment variables used by Cosmovisor.
 
 - `DAEMON_HOME`
 
-  - The location where the zetavisor/ directory is kept that contains the
+  - The location where the Cosmovisor/ directory is kept that contains the
     genesis binary, the upgrade binaries, and any additional auxiliary files
     associated with each binary (e.g. $HOME/.zetacored, etc.).
 
@@ -188,13 +184,13 @@ Breif explanation of the environment variables used by zetavisor.
 
   - If set to true, enables auto-downloading of new binaries (for security
     reasons, this is intended for full nodes rather than validators). By
-    default, zetavisor will not auto-download new binaries.
+    default, Cosmovisor will not auto-download new binaries.
 
 - `DAEMON_RESTART_AFTER_UPGRADE` (optional, default = true)
 
   - If true, restarts the subprocess with the same command-line arguments and
     flags (but with the new binary) after a successful upgrade. Otherwise
-    (false), zetavisor stops running after an upgrade and requires the system
+    (false), Cosmovisor stops running after an upgrade and requires the system
     administrator to manually restart it. Note that restart is only after the
     upgrade and does not auto-restart the subprocess after an error occurs.
 
