@@ -79,7 +79,7 @@ WantedBy=multi-user.target
 WorkingDirectory=/home/zetachain/.zetacored/cosmovisor
 Environment="DAEMON_HOME=/home/zetachain/.zetacored"
 Environment="DAEMON_NAME=zetacored"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
 Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
 Environment="DAEMON_DATA_BACKUP_DIR=/home/zetachain/.zetacored"
 Environment="CLIENT_DAEMON_NAME=zetaclientd"
@@ -91,7 +91,7 @@ Restart=always
 RestartSec=600
 User=zetachain
 LimitNOFILE=262144
-ExecStart=Cosmovisor start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
+ExecStart=cosmovisor start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
 ```
 
 ## Install the `zetacored` Binary
@@ -99,14 +99,14 @@ ExecStart=Cosmovisor start --home /home/zetachain/.zetacored/ --log_format json 
 ### Download `zetacored` Binary
 
 Download the latest `zetacored` binary for your system architecture from the following
-links and place it in the `Cosmovisor/genesis/bin/` directory. This example
+links and place it in the `cosmovisor/genesis/bin/` directory. This example
 assumes you are using ubuntu 22 on amd64 architecture. You may need to make
 adjustments for your system.
 
 ```bash
 wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetacored-ubuntu-22-amd64
-mv zetacored-ubuntu-22-amd64 ~/.zetacored/Cosmovisor/genesis/bin/zetacored
-chmod +x ~/.zetacored/Cosmovisor/genesis/bin/zetacored
+mv zetacored-ubuntu-22-amd64 ~/.zetacored/cosmovisor/genesis/bin/zetacored
+chmod +x ~/.zetacored/cosmovisor/genesis/bin/zetacored
 
 ```
 
@@ -168,13 +168,9 @@ information.
 
 ## Cosmovisor Environment Variables
 
-Breif explanation of the environment variables used by Cosmovisor.
-
-- `DAEMON_HOME`
-
-  - The location where the Cosmovisor/ directory is kept that contains the
-    genesis binary, the upgrade binaries, and any additional auxiliary files
-    associated with each binary (e.g. $HOME/.zetacored, etc.).
+More Information About Cosmovisor
+For more detailed information about Cosmosvisor you can visit the Cosmos Documentation Here
+https://docs.cosmos.network/main/build/tooling/cosmovisor
 
 - `DAEMON_NAME`
 
