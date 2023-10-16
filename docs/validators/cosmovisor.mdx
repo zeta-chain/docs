@@ -8,23 +8,7 @@ title: Setting up Cosmovisor
 
 # Setting up Cosmovisor
 
-Cosmovisor is an optional process supervisor for ZetaChain. It is a wrapper
-around the `zetacored` binary that allows for automatic restarts automatic
-upgrades of the ZetaChain binary. It is a fork of the
-[CosmosVisor](https://docs.cosmos.network/main/tooling/cosmovisor) tool.
-
-You can use a prebuilt `Cosmovisor` binary or build it yourself from source.
-
 ## Installing Cosmovisor
-
-### Building From Source
-
-You need to have Go 1.19 and other dependencies first but those are outside the
-scope of this document. If you are uncomfortable building the binary from source
-code we recommend using a prebuilt binary as shown in the next step.
-
-You can build from source by cloning the repository and running the following
-commands.
 
 ```
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
