@@ -41,43 +41,6 @@ mkdir -p ~/.zetacored/cosmovisor/upgrades
 
 ```
 
-### Setup `Cosmovisor` systemd service
-
-In this example we'll run Cosmovisor as a systemd service. You can also run it as
-a docker container or as a standalone process. The environment variables are
-explained in the [Environment Variables](#environment-variables) section at the
-end of this document.
-
-Create a file at `/etc/systemd/system/cosmovisor.service` with the following
-contents. Make sure to change the `User` and `/home/zetachain/` fields to the
-user you want to run the service as.
-
-```bash
-[Unit]
-Description=Cosmovisor ZetaChain Service
-After=multi-user.target
-StartLimitIntervalSec=0
-[Install]
-WantedBy=multi-user.target
-[Service]
-WorkingDirectory=/home/zetachain/.zetacored/cosmovisor
-Environment="DAEMON_HOME=/home/zetachain/.zetacored"
-Environment="DAEMON_NAME=zetacored"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
-Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
-Environment="DAEMON_DATA_BACKUP_DIR=/home/zetachain/.zetacored"
-Environment="CLIENT_DAEMON_NAME=zetaclientd"
-Environment="CLIENT_SKIP_UPGRADE=false"
-Environment="CLIENT_START_PROCESS=false"
-Environment="UNSAFE_SKIP_BACKUP=true"
-Type=simple
-Restart=always
-RestartSec=600
-User=zetachain
-LimitNOFILE=262144
-ExecStart=cosmovisor start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
-```
-
 ## Install the `zetacored` Binary
 
 ### Download `zetacored` Binary
