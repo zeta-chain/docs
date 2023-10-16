@@ -32,7 +32,7 @@ mv cosmovisor-amd64 /usr/local/bin/cosmovisor
 
 ## Setting up Cosmovisor
 
-### Create `Cosmovisor` Directories
+### Create `cosmovisor` Directories
 
 ```bash
 mkdir -p ~/.zetacored/config
@@ -41,7 +41,7 @@ mkdir -p ~/.zetacored/cosmovisor/upgrades
 
 ```
 
-### Setup `Cosmovisor` systemd service
+### Setup `cosmovisor` systemd service
 
 In this example we'll run Cosmovisor as a systemd service. You can also run it as
 a docker container or as a standalone process. The environment variables are
@@ -54,7 +54,7 @@ user you want to run the service as.
 
 ```bash
 [Unit]
-Description=Cosmovisor ZetaChain Service
+Description=cosmovisor ZetaChain Service
 After=multi-user.target
 StartLimitIntervalSec=0
 [Install]
@@ -88,7 +88,7 @@ assumes you are using ubuntu 22 on amd64 architecture. You may need to make
 adjustments for your system.
 
 ```bash
-wget https://zetachain-external-files.s3.amazonaws.com/binaries/athens3/latest/zetacored-ubuntu-22-amd64
+wget https://github.com/zeta-chain/node/releases/download/v10.0.7/zetacored-ubuntu-22-amd64
 mv zetacored-ubuntu-22-amd64 ~/.zetacored/cosmovisor/genesis/bin/zetacored
 chmod +x ~/.zetacored/cosmovisor/genesis/bin/zetacored
 
@@ -115,7 +115,7 @@ up the time it takes to sync your node. Instructions for syncing from a snapshot
 can be found
 [here](https://docs.zetachain.io/docs/running-a-full-node#state-sync).
 
-### Start the `Cosmovisor` Service
+### Start the `cosmovisor` Service
 
 ```bash
 sudo systemctl daemon-reload
@@ -123,7 +123,7 @@ sudo systemctl enable cosmovisor
 sudo systemctl start cosmovisor
 ```
 
-### Check the `Cosmovisor` Service Status
+### Check the `cosmovisor` Service Status
 
 ```bash
 sudo systemctl status cosmovisor
