@@ -117,7 +117,7 @@ contract Staking is ERC20, zContract {
     error UnknownAction(uint8 action);
     error Overflow();
     error Underflow();
-    error WrongAmount();
+    error AmountTooLow();
     error NotAuthorized();
     error NoRewardsToClaim();
 
@@ -271,11 +271,10 @@ deposited tokens.
 
 ```solidity title="contracts/Staking.sol"
     function stakeZRC(address staker, uint256 amount) internal {
+        updateRewards(staker);
+
         stake[staker] += amount;
         if (stake[staker] < amount) revert Overflow();
-
-        lastStakeTime[staker] = block.timestamp;
-        updateRewards(staker);
     }
 
     function updateRewards(address staker) internal {
@@ -286,15 +285,17 @@ deposited tokens.
     }
 
     function queryRewards(address staker) public view returns (uint256) {
+        if (lastStakeTime[staker] == 0) {
+            return 0;
+        }
         uint256 timeDifference = block.timestamp - lastStakeTime[staker];
         uint256 rewardAmount = timeDifference * stake[staker] * rewardRate;
         return rewardAmount;
     }
 ```
 
-`stakeZRC` increases the staker's balance in the contract. The function also
-updates the timestamp of when the staking happened last, and calls the
-`updateRewards` function to update the rewards for the staker.
+The calls the `updateRewards` function to update the rewards for the staker.
+`stakeZRC` increases the staker's balance in the contract.
 
 `updateRewards` calculates the rewards for the staker and mints them to the
 beneficiary address. The function also updates the timestamp of when the staking
@@ -306,20 +307,18 @@ The `unstakeZRC` function begins by updating any outstanding rewards due to the
 user. It then checks that the user has a sufficient staked balance.
 Subsequently, it identifies the ZRC20 token associated with the contract's
 `chainID` and determines the gas fee for the unstaking operation. This fee is
-then approved. The user's tokens, minus the gas fee, are withdrawn to the
-encoded recipient address. Finally, the contract updates the user's staking
-balance and the timestamp of their last stake action.
+then approved. The function sets the staked balance to 0. Finally, the user's
+tokens, minus the gas fee, are withdrawn to the encoded recipient address.
 
 ```solidity title="contracts/Staking.sol"
     function unstakeZRC(address staker) internal {
-        uint256 amount = stake[staker];
-
         updateRewards(staker);
 
         address zrc20 = systemContract.gasCoinZRC20ByChainId(chainID);
         (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
 
-        if (amount < gasFee) revert WrongAmount();
+        uint256 amount = stake[staker];
+        if (amount < gasFee) revert AmountTooLow();
 
         bytes memory recipient = withdraw[staker];
 
@@ -327,10 +326,6 @@ balance and the timestamp of their last stake action.
 
         IZRC20(zrc20).approve(zrc20, gasFee);
         IZRC20(zrc20).withdraw(recipient, amount - gasFee);
-
-        if (stake[staker] > amount) revert Underflow();
-
-        lastStakeTime[staker] = block.timestamp;
     }
 ```
 
@@ -485,7 +480,8 @@ project:
 
 https://github.com/zeta-chain/example-contracts/tree/main/omnichain/staking/tasks
 
-When copying these files make sure to also copy the helper function `convertToHexAddress.ts` in the `lib` directory.
+When copying these files make sure to also copy the helper function
+`convertToHexAddress.ts` in the `lib` directory.
 
 To perform the actions above, the tasks simply send transactions to the TSS
 address on the connected chain with the encoded data in the `data` field of the
