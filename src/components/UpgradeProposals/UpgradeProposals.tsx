@@ -77,9 +77,9 @@ const UpgradeProposals = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // if (!latestProposal) {
-  //   return <div>There are no planned upgrade proposals.</div>;
-  // }
+  if (!latestProposal) {
+    return <div>There are no planned upgrade proposals.</div>;
+  }
 
   return (
     <div>
