@@ -6,6 +6,9 @@ id: running-a-full-node
 title: Running a Full Node
 ---
 
+import AppInfo from "@site/src/components/AppInfo/AppInfo";
+import UpgradeProposals from "@site/src/components/UpgradeProposals/UpgradeProposals";
+
 # Running a Full Node
 
 This document outlines the process for running a full ZetaChain node. It is
@@ -16,6 +19,12 @@ Please refer to [Technical Requirements](/validators/requirements) for more
 details on the technical requirements for running a ZetaChain node.
 
 ## Getting Started
+
+Validators and full nodes are running the following version of `zetacored`:
+
+<AppInfo />
+
+<UpgradeProposals />
 
 ### Set Limits on Open Files and Number of Processes
 
@@ -59,8 +68,9 @@ mkdir /home/zetachain/.zetacored/config
 
 ### Download and Install the zetacored binary
 
-Binaries are built based on OS version and CPU architecture. You can download the latest binaries from our [ZetaChain Node GitHub Repo](https://github.com/zeta-chain/node/releases)
-
+Binaries are built based on OS version and CPU architecture. You can download
+the latest binaries from our
+[ZetaChain Node GitHub Repo](https://github.com/zeta-chain/node/releases)
 
 Install it in your PATH:
 
@@ -139,10 +149,10 @@ for more information.
 
 ## Testnet
 
-| Region                      | IP             |
-| :-------------------------- | :------------- |
-| N. Virginia (US East)       | 52.3.196.71    |
-| Singapore (APAC South East) | 3.0.80.230     |
+| Region                      | IP          |
+| :-------------------------- | :---------- |
+| N. Virginia (US East)       | 52.3.196.71 |
+| Singapore (APAC South East) | 3.0.80.230  |
 
 ## Mainnet
 
