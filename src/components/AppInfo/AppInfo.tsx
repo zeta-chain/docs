@@ -47,6 +47,7 @@ const AppInfo = () => {
               <a
                 href={`https://github.com/zeta-chain/node/releases/tag/${appInfo.version}`}
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 {appInfo.version}
               </a>
