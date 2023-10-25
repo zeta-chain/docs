@@ -9,6 +9,7 @@ developers.
 | RPC                 | Ankr             | https://ankr.com                           |
 | API                 | Covalent         | https://www.covalenthq.com/                |
 | Wallet as a Service | Particle Network | https://particle.network                   |
+| Wallet as a Service | Magic            | https://magic.link/                        |
 | Subgraph            | Goldsky          | https://goldsky.com/                       |
 | Explorer            | Blockscout       | https://zetachain-athens-3.blockscout.com/ |
 | Explorer            | Explorer Guru    | https://zetachain.explorers.guru/          |
