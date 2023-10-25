@@ -36,6 +36,11 @@ To add ZetaChain to the Metamask extension wallet follow these steps:
   - Currency Symbol: `tZETA`
   - Block explorer URL: `https://athens3.explorer.zetachain.com/`
 
+### Particle Network
+
+Additionally, Particle Network, a Wallet-as-a-Service provider, has native support for ZetaChain.
+[Particle Network](https://particle.network) facilitates interaction with ZetaChain via social logins leveraging MPC-TSS.
+
 ## Bitcoin Wallets
 
 In order to interact with ZetaChain from Bitcoin, you'll need a wallet that
