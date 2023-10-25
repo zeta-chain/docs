@@ -53,10 +53,12 @@ const AppInfo = () => {
               </a>
             </td>
           </tr>
-          <tr>
-            <td>Git Commit Hash</td>
-            <td>{appInfo.gitCommit}</td>
-          </tr>
+          {appInfo.gitCommit && (
+            <tr>
+              <td>Git Commit Hash</td>
+              <td>{appInfo.gitCommit}</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

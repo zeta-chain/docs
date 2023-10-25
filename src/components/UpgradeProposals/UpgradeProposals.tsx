@@ -6,6 +6,14 @@ const UpgradeProposals = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<any>(null);
 
+  const calculateUpgradeDate = () => {
+    const blocksUntilUpgrade =
+      latestProposal.content.plan.height - latestHeight;
+    const millisecondsUntilUpgrade = blocksUntilUpgrade * 5 * 1000;
+    const upgradeDate = new Date(Date.now() + millisecondsUntilUpgrade);
+    return upgradeDate.toLocaleString();
+  };
+
   useEffect(() => {
     const fetchLatestHeight = async () => {
       try {
@@ -20,14 +28,6 @@ const UpgradeProposals = () => {
       } catch (error) {
         setError(error);
       }
-    };
-
-    const calculateUpgradeTime = () => {
-      const blocksUntilUpgrade =
-        latestProposal.content.plan.height - latestHeight;
-      const secondsUntilUpgrade = blocksUntilUpgrade * 7;
-      const daysUntilUpgrade = secondsUntilUpgrade / (24 * 60 * 60);
-      return daysUntilUpgrade.toFixed(2);
     };
 
     const fetchProposals = async () => {
@@ -98,7 +98,11 @@ const UpgradeProposals = () => {
           </tr>
           <tr>
             <td>Upgrade Height</td>
-            <td>{latestProposal.content.plan.height} </td>
+            <td>{latestProposal.content.plan.height}</td>
+          </tr>
+          <tr>
+            <td>Estimated Upgrade Date</td>
+            <td>{calculateUpgradeDate()}</td>
           </tr>
         </tbody>
       </table>
