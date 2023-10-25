@@ -34,7 +34,7 @@ processes (nproc).
 
 Edit `/etc/security/limits.conf` to include or modify the following parameters:
 
-```
+```text title="/etc/security/limits.conf"
 *       soft    nproc   262144
 *       hard    nproc   262144
 *       soft    nofile  262144
@@ -43,11 +43,11 @@ Edit `/etc/security/limits.conf` to include or modify the following parameters:
 
 Edit `/etc/sysctl.conf` to include the following:
 
-```
+```text title="/etc/sysctl.conf"
 fs.file-max=262144
 ```
 
-### Create _zetachain_ User Account
+### Create `zetachain` User Account
 
 We recommend running ZetaChain binary files with a user account rather than as
 root.
@@ -66,13 +66,13 @@ mkdir -p /home/zetachain/.zetacored/bin
 mkdir /home/zetachain/.zetacored/config
 ```
 
-### Download and Install the zetacored binary
+### Download and Install the `zetacored` binary
 
 Binaries are built based on OS version and CPU architecture. You can download
 the latest binaries from our
 [ZetaChain Node GitHub Repo](https://github.com/zeta-chain/node/releases)
 
-Install it in your PATH:
+Install it in your `PATH`:
 
 ```
 /usr/local/bin/zetacored
@@ -83,7 +83,7 @@ Install it in your PATH:
 ### Install ZetaChain Configuration Files
 
 ZetaChain configuration files can be downloaded from the
-[Athens3 Github Repo](https://github.com/zeta-chain/network-athens3/tree/main/network_files/config)
+[Athens 3 GitHub Repo](https://github.com/zeta-chain/network-athens3/tree/main/network_files/config)
 
 Install it as follows:
 
@@ -97,10 +97,9 @@ Install it as follows:
 ### Create a Systemd Unit File
 
 We recommend using Systemd to start and stop ZetaChain binary files and view the
-logs. You can create a Systemd unit file at the following location
-`/etc/systemd/system/zetacored.service`:
+logs. You can create a Systemd unit file:
 
-```bash
+```bash title="/etc/systemd/system/zetacored.service"
 [Unit]
 Description=Zetacored Service
 After=multi-user.target
@@ -122,7 +121,7 @@ You can view the logs with `journalctl -o cat -f -u zetacored`.
 
 ## CLI
 
-ZetaChain Core is built with the Cosmos SDK. There is an `—help` flag that can
+ZetaChain Core is built with the Cosmos SDK. There is an `--help` flag that can
 be used with any subcommand to learn its use and syntax.
 
 ```bash
@@ -142,19 +141,19 @@ instructions above you can view this log with
 Prometheus can be enabled to serve metrics which can be consumed by Prometheus
 collector(s). Telemetry include Prometheus metrics can be enabled in the
 app.toml file. See the
-[CosmosSDK Telemetry Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html)
+[Cosmos SDK Telemetry Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html)
 for more information.
 
-# Syncing from a StateSync node
+## Syncing from a StateSync node
 
-## Testnet
+### Testnet
 
 | Region                      | IP          |
 | :-------------------------- | :---------- |
 | N. Virginia (US East)       | 52.3.196.71 |
 | Singapore (APAC South East) | 3.0.80.230  |
 
-## Mainnet
+### Mainnet
 
 | Region                      | IP  |
 | :-------------------------- | :-- |
@@ -163,39 +162,20 @@ for more information.
 | Ireland (EU West)           | TBD |
 | Singapore (APAC South East) | TBD |
 
-Use the state sync node closer your node. Run the following command to collect
-the `latest block height` and `latest block hash`:
-
-```bash
-curl -s http://<closest StateSync IP>:26657/block | jq -r '.result.block.header.height + "\n" + .result.block_id.hash'
-```
-
-Example Output
+Use the state sync node closer your node. For example, if the closest node is
+`52.3.196.71`, run the following command to collect the latest block height and
+hash:
 
 ```
-$ curl -s http://52.3.196.71:26657/block | jq -r '.result.block.header.height + "\n" + .result.block_id.hash'
-120659
-2554175FC58E5AC01723903971D1153BC1AF5341A51E5EABC22904730085B3CA
+curl -s http://52.3.196.71:26657/block | jq -r '"trust_height = " + .result.block.header.height + "\ntrust_hash = \"" + .result.block_id.hash + "\""'
 ```
 
-Use the return values to edit the following variables in
-`/home/zetachain/.zetacored/config/config.toml`
+Use the return values to edit the following variables in `config.toml`:
 
-```bash
+```text title="/home/zetachain/.zetacored/config/config.toml"
 [statesync]
-# State sync rapidly bootstraps a new node by discovering, fetching, and restoring a state machine
-# snapshot from peers instead of fetching and replaying historical blocks. Requires some peers in
-# the network to take and serve state machine snapshots. State sync is not attempted if the node
-# has any local state (LastBlockHeight > 0). The node will have a truncated block history,
-# starting from the height of the snapshot.
 enable = true
 
-# RPC servers (comma-separated) for light client verification of the synced state machine and
-# retrieval of state data for node bootstrapping. Also needs a trusted height and corresponding
-# header hash obtained from a trusted source, and a period during which validators can be trusted.
-#
-# For Cosmos SDK-based chains, trust_period should usually be about 2/3 of the unbonding time (~2
-# weeks) during which they can be financially punished (slashed) for misbehavior.
 rpc_servers = "<closest StateSync IP>:26657,<closest StateSync IP>:26657"
 trust_height = <return value for the latest block height>
 trust_hash = "<return value for the latest block hash>"
