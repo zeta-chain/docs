@@ -63,12 +63,18 @@ import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
 contract MyContract is zContract {
-    error SenderNotSystemContract();
-
     SystemContract public immutable systemContract;
 
     constructor(address systemContractAddress) {
         systemContract = SystemContract(systemContractAddress);
+    }
+
+    modifier onlySystem() {
+        require(
+            msg.sender == address(systemContract),
+            "Only system contract can call this function"
+        );
+        _;
     }
 
     function onCrossChainCall(
@@ -76,10 +82,7 @@ contract MyContract is zContract {
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external virtual override {
-        if (msg.sender != address(systemContract)) {
-            revert SenderNotSystemContract();
-        }
+    ) external virtual override onlySystem {
         // TODO: implement the logic
     }
 }
@@ -113,15 +116,9 @@ function receives the following inputs:
 
 The `onCrossChainCall` function should only be called by the system contract (in
 other words, by the ZetaChain protocol) to prevent a caller from supplying
-arbitrary values in `context`. The following check ensures that the function is
-called only as a response to a token transfer transaction sent to the TSS
-address:
-
-```solidity
-if (msg.sender != address(systemContract)) {
-    revert SenderNotSystemContract();
-}
-```
+arbitrary values in `context`. The `onlySystem` modifier ensures that the
+function is called only as a response to a token transfer transaction sent to
+the TSS address.
 
 By default, the `onCrossChainCall` function doesn't do anything else. You will
 implement the logic yourself based on your use case.
@@ -143,7 +140,11 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   }
 
   const [signer] = await hre.ethers.getSigners();
-  console.log(`🔑 Using account: ${signer.address}\n`);
+  if (signer === undefined) {
+    throw new Error(
+      `Wallet not found. Please, run "npx hardhat account --save" or set PRIVATE_KEY env variable (for example, in a .env file)`
+    );
+  }
 
   const systemContract = getAddress("systemContract", "zeta_testnet");
 
@@ -151,13 +152,19 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const contract = await factory.deploy(systemContract);
   await contract.deployed();
 
-  console.log(`🚀 Successfully deployed contract on ZetaChain.
+  if (args.json) {
+    console.log(JSON.stringify(contract));
+  } else {
+    console.log(`🔑 Using account: ${signer.address}
+
+🚀 Successfully deployed contract on ZetaChain.
 📜 Contract address: ${contract.address}
 🌍 Explorer: https://athens3.explorer.zetachain.com/address/${contract.address}
 `);
+  }
 };
 
-task("deploy", "Deploy the contract", main);
+task("deploy", "Deploy the contract", main).addFlag("json", "Output in JSON");
 ```
 
 Omnichain contracts are supposed to be deployed to ZetaChain, so the task checks
@@ -178,11 +185,10 @@ import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { parseEther } from "@ethersproject/units";
 import { getAddress } from "@zetachain/protocol-contracts";
-import { prepareData, trackCCTX } from "@zetachain/toolkit/helpers";
+import { prepareData } from "@zetachain/toolkit/helpers";
 
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
-  console.log(`🔑 Using account: ${signer.address}\n`);
 
   const data = prepareData(args.contract, [], []);
   const to = getAddress("tss", hre.network.name);
@@ -190,16 +196,21 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 
   const tx = await signer.sendTransaction({ data, to, value });
 
-  console.log(`
-🚀 Successfully broadcasted a token transfer transaction on ${hre.network.name} network.
+  if (args.json) {
+    console.log(JSON.stringify(tx, null, 2));
+  } else {
+    console.log(`🔑 Using account: ${signer.address}\n`);
+
+    console.log(`🚀 Successfully broadcasted a token transfer transaction on ${hre.network.name} network.
 📝 Transaction hash: ${tx.hash}
 `);
-  await trackCCTX(tx.hash);
+  }
 };
 
 task("interact", "Interact with the contract", main)
   .addParam("contract", "The address of the withdraw contract on ZetaChain")
-  .addParam("amount", "Amount of tokens to send");
+  .addParam("amount", "Amount of tokens to send")
+  .addFlag("json", "Output in JSON");
 ```
 
 The task uses the `prepareData` function from `@zetachain/toolkit/helpers` to
@@ -223,12 +234,6 @@ address. The transaction contains the following information:
 - `data`: the `data` field prepared by `prepareData`
 - `to`: the address of the TSS
 - `value`: the amount of tokens to transfer
-
-Finally, the task uses the `trackCCTX` function from
-`@zetachain/toolkit/helpers` to track the token transfer transaction. The
-function waits for the transaction to appear on ZetaChain and tracks the status
-of the transaction. Transaction tracking is optional, but helpful to know when
-the transaction has been processed by ZetaChain.
 
 ## Create an Account
 
@@ -261,7 +266,7 @@ tokens on connected chains.
 
 You will, however, need to request native tokens on connected chains from one of
 the
-[publicly available faucets](http://localhost:3001/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
+[publicly available faucets](/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
 
 ## Check Token Balances
 
@@ -271,6 +276,9 @@ the connected chains:
 ```
 npx hardhat balances
 ```
+
+Learn more about these and other ZetaChain toolkit commands
+[avaialble in the template](/developers/template/).
 
 ## Deploy the Contract
 
@@ -307,18 +315,12 @@ npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amo
 
 🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
 📝 Transaction hash: 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
-
-✔ CCTX hash found: 0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
-
-ℹ Status updated to "OutboundMined": Remote omnichain contract call completed
-
-✔ CCTX has been finalized on ZetaChain
 ```
 
 Once the transaction is finalized on ZetaChain, you should be able to review the
 transaction on the ZetaChain explorer:
 
-https://athens3.explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
+https://explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
 
 The `interact` task has sent a token transfer transaction to the TSS address on
 Goerli. The transaction contains the address of the contract on ZetaChain in the

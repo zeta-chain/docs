@@ -183,8 +183,8 @@ npx http-server
 Open the page in your browser and fill in the form. You can test functionality
 with your own contract address or follow one of the provided tutorials, for
 example, the
-[Minter](http://localhost:3001/developers/omnichain/tutorials/bitcoin/) tutorial
-to deploy a contract that you can call from Bitcoin.
+[Staking](http://localhost:3001/developers/omnichain/tutorials/staking/)
+tutorial to deploy a contract that you can call from Bitcoin.
 
 Fill out the form and click the "Send transaction" button. You will be prompted
 to confirm the transaction in XDEFI. If you filled out the "contract" field,
