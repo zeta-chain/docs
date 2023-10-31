@@ -1,11 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 
-import {
-  IconDiscord,
-  IconTelegram,
-  IconTwitter,
-} from "../Icons";
+import { IconDiscord, IconTelegram, IconTwitter } from "../Icons";
 import { IconZetaDocsLogo } from "../Icons/components/IconZetaDocsLogo";
 
 type ZetaAppsFooterProps = {
@@ -94,7 +90,7 @@ export const ZetaAppsFooter = ({
         <section className="flex gap-10 md:gap-5 flex-col md:flex-row md:items-center md:justify-between">
           {/* Logo is always first (top left) */}
           <a className="order-1" href="/" rel="noopener noreferrer">
-            <IconZetaDocsLogo className="text-green-700 dark:text-white" />
+            <IconZetaDocsLogo />
           </a>
 
           {/* Navigation links are second (top center) in desktop and third in mobile */}
