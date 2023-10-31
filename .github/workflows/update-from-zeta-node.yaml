@@ -19,13 +19,19 @@ jobs:
           repository: zeta-chain/node
           path: node
 
-      - name: Replace contents of docs/modules
+      - name: Update module docs
         run: |
           mkdir -p docs/architecture/modules
           rm -rf docs/architecture/modules/*
           cp -r node/docs/spec/* docs/architecture/modules/
 
-      - name: Replace OpenAPI specs
+      - name: Update zetacored CLI docs
+        run: |
+          mkdir -p docs/architecture/zetacored
+          rm -rf docs/architecture/zetacored/*
+          cp -r node/docs/cli/zetacored/* docs/architecture/zetacored/
+
+      - name: Update OpenAPI specs
         run: |
           mkdir -p static/data
           rm -rf static/data/openapi.swagger.yaml
