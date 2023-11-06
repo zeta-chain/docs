@@ -141,7 +141,7 @@ for more information.
 
 | Region                      | IP             |
 | :-------------------------- | :------------- |
-| N. Virginia (US East)       | 52.3.196.71    |
+| N. Virginia (US East)       | 35.224.160.108 |
 | Singapore (APAC South East) | 3.0.80.230     |
 
 ## Mainnet
@@ -163,7 +163,7 @@ curl -s http://<closest StateSync IP>:26657/block | jq -r '.result.block.header.
 Example Output
 
 ```
-$ curl -s http://52.3.196.71:26657/block | jq -r '.result.block.header.height + "\n" + .result.block_id.hash'
+$ curl -s http://35.224.160.108:26657/block | jq -r '.result.block.header.height + "\n" + .result.block_id.hash'
 120659
 2554175FC58E5AC01723903971D1153BC1AF5341A51E5EABC22904730085B3CA
 ```
