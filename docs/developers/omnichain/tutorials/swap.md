@@ -75,15 +75,17 @@ contract Swap is zContract {
     ) external virtual override onlySystem {
         // highlight-start
         address targetTokenAddress;
-        address recipientAddress;
+        bytes memory recipientAddress;
 
         if (context.chainID == BITCOIN) {
             targetTokenAddress = BytesHelperLib.bytesToAddress(message, 0);
-            recipientAddress = BytesHelperLib.bytesToAddress(message, 20);
+            recipientAddress = abi.encodePacked(
+                BytesHelperLib.bytesToAddress(message, 20)
+            );
         } else {
-            (address targetToken, address recipient) = abi.decode(
+            (address targetToken, bytes memory recipient) = abi.decode(
                 message,
-                (address, address)
+                (address, bytes)
             );
             targetTokenAddress = targetToken;
             recipientAddress = recipient;
@@ -107,7 +109,7 @@ contract Swap is zContract {
 
         IZRC20(targetTokenAddress).approve(targetTokenAddress, gasFee);
         IZRC20(targetTokenAddress).withdraw(
-            abi.encodePacked(recipientAddress),
+            recipientAddress,
             outputAmount - gasFee
         );
         // highlight-end
@@ -117,8 +119,11 @@ contract Swap is zContract {
 
 The contract expects to receive two values in the `message`:
 
-- `targetChainID`: the ID of the destination chain
-- `recipient`: the recipient address on the destination chain
+- `address targetTokenAddress`: the address of the ZRC-20 version of the
+  destination token.
+- `bytes memory recipientAddress`: the recipient address on the destination
+  chain. We're using `bytes`, because the recipient address can be either on an
+  EVM chain or Bitcoin.
 
 When the contract is called from an EVM chain, the `message` is encoded as a
 `bytes` array using the ABI encoding.
@@ -132,7 +137,8 @@ is called.
 If it's Bitcoin, the first 20 bytes of the `message` are the
 `targetTokenAddress` encoded as an `address`. Use `bytesToAddress` helper method
 to get the target token address. To get the recipient address, use the same
-helper method with an offset of 20 bytes.
+helper method with an offset of 20 bytes and then use `abi.encodePacked` to
+convert the address to `bytes`.
 
 If it's an EVM chain, use `abi.decode` to decode the `message` into the
 `targetToken` and `recipient` variables.
@@ -173,27 +179,27 @@ of the `--target-token` find the ZRC-20 contract address of the destination
 token in the [docs](https://www.zetachain.com/docs/reference/testnet/).
 
 ```
-npx hardhat interact --contract 0x65eD17bdD941E12f5aDe26DC8cc244B3d70Ee3C9 --amount 0.05 --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+npx hardhat interact --contract 0xcC02751bAA435E9A5cF3bd22F96a21d7C002E150 --amount 0.1 --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --network goerli_testnet
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
 🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
-📝 Transaction hash: 0x2c0245e7c717469a90f640813ef677fa880e085c0c4d30f66a318e5cbc07d9d2
+📝 Transaction hash: 0x7ebd2bff64cbc530c145a60e4830ba2ddc536bc62cf8c5566c900143b0e08baf
 ```
 
 Track your cross-chain transaction:
 
 ```
- npx hardhat cctx 0x2c0245e7c717469a90f640813ef677fa880e085c0c4d30f66a318e5cbc07d9d2
+ npx hardhat cctx 0x7ebd2bff64cbc530c145a60e4830ba2ddc536bc62cf8c5566c900143b0e08baf
 ```
 
 ```
 ✓ CCTXs on ZetaChain found.
 
-✓ 0xc30aaa72b7d944f591cbdb2ac55292503618554d193a0eecc11f75e027ad0c72: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
-✓ 0xc33cc2f5417c2dd278b872e2359cf751f87ce4adb16f23a3d1045e8c090c20ee: 7001 → 80001: PendingOutbound  → OutboundMined
+✓ 0x5082897440218490193a724a22b7ed3f8744760956d857199e76bf2453f901b2: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0x3aebbba04cd284d2e87b9c8414f6946bdf933efad45076aba7c691e5a32895ba: 7001 → 80001: PendingOutbound  → OutboundMined
 ```
 
 ## Swap from Bitcoin
@@ -202,12 +208,12 @@ Use the `send-btc` task to send Bitcoin to the TSS address with a memo. The memo
 should contain the following:
 
 - Omnichain contract address on ZetaChain:
-  `458bCAF5d95025cdd00f946f1C5F09623E856579`
+  `cC02751bAA435E9A5cF3bd22F96a21d7C002E150`
 - Target token address: `48f80608B672DC30DC7e3dbBd0343c5F02C738Eb`
 - Recipient address: `2cD3D070aE1BD365909dD859d29F387AA96911e1`
 
 ```
-npx hardhat send-btc --amount 0.001 --memo 458bCAF5d95025cdd00f946f1C5F09623E85657948f80608B672DC30DC7e3dbBd0343c5F02C738Eb2cD3D070aE1BD365909dD859d29F387AA96911e1 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
+npx hardhat send-btc --amount 0.001 --memo cC02751bAA435E9A5cF3bd22F96a21d7C002E15048f80608B672DC30DC7e3dbBd0343c5F02C738Eb2cD3D070aE1BD365909dD859d29F387AA96911e1 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
 ```
 
 ## Source Code
