@@ -485,7 +485,8 @@ project:
 
 https://github.com/zeta-chain/example-contracts/tree/main/omnichain/staking/tasks
 
-When copying these files make sure to also copy the helper function `convertToHexAddress.ts` in the `lib` directory.
+When copying these files make sure to also copy the helper function
+`convertToHexAddress.ts` in the `lib` directory.
 
 To perform the actions above, the tasks simply send transactions to the TSS
 address on the connected chain with the encoded data in the `data` field of the
@@ -638,12 +639,12 @@ context.origin: 0x7462317132647238356435373435307877646536
 ### Set Beneficiary Address
 
 The beneficiary address has to be set before staking tokens. Pass your contract
-address (without the `0x` prefix) and the action code for setting the
-beneficiary address (`03`) to the memo flag. Pass the Bitcoin TSS address as the
-recipient address.
+address (without the `0x` prefix), the action code for setting the beneficiary
+address (`03`) and the beneficiary address (without `0x`) to the memo flag. Pass
+the Bitcoin TSS address as the recipient address.
 
 ```
-npx hardhat send-btc --memo 57cafCe6802c45F682201b93529B09EfB9A492C303 --amount 0.0 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
+npx hardhat send-btc --memo 57cafCe6802c45F682201b93529B09EfB9A492C3032cD3D070aE1BD365909dD859d29F387AA96911e1 --amount 0.0 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
 ```
 
 Ensure that the transaction was confirmed on Bitcoin testnet and processed by
