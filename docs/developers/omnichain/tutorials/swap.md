@@ -31,7 +31,7 @@ yarn
 Run the following command to create a new omnichain contract called `Swap`.
 
 ```
-npx hardhat omnichain Swap targetToken:address recipient:address
+npx hardhat omnichain Swap targetToken:address recipient
 ```
 
 ## Omnichain Contract
@@ -149,6 +149,81 @@ all connected chains. The `SwapHelperLib._doSwap` helper method to swap the
 tokens.
 
 Finally, withdraw the tokens to the recipient address on the destination chain.
+
+## Update the Interact Task
+
+In the `interact` task generated for us by the contract template the recipient
+is encoded as string. Our contract, however, expects the recipient to be encoded
+as `bytes` to ensure that both EVM and Bitcoin addresses are supported.
+
+To support both EVM and Bitcoin addresses, we need to check if the recipient is
+a valid Bitcoin address. If it is, we need to encode it as `bytes` using
+`utils.solidityPack`.
+
+If it's not a valid bech32 address, then we assume it's an EVM address and use
+`args.recipient` as the value for the recipient.
+
+Finally, update the `prepareData` function call to use the `bytes` type for the
+recipient.
+
+```ts title="tasks/interact.ts"
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { parseEther } from "@ethersproject/units";
+import { getAddress } from "@zetachain/protocol-contracts";
+import { prepareData } from "@zetachain/toolkit/helpers";
+// highlight-start
+import bech32 from "bech32";
+import { utils } from "ethers";
+// highlight-end
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+
+  // highlight-start
+  let recipient;
+  try {
+    if (bech32.decode(args.recipient)) {
+      recipient = utils.solidityPack(
+        ["bytes"],
+        [utils.toUtf8Bytes(args.recipient)]
+      );
+    }
+  } catch (e) {
+    recipient = args.recipient;
+  }
+  // highlight-end
+
+  const data = prepareData(
+    args.contract,
+    // highlight-start
+    ["address", "bytes"],
+    [args.targetToken, recipient]
+    // highlight-end
+  );
+  const to = getAddress("tss", hre.network.name);
+  const value = parseEther(args.amount);
+
+  const tx = await signer.sendTransaction({ data, to, value });
+
+  if (args.json) {
+    console.log(JSON.stringify(tx, null, 2));
+  } else {
+    console.log(`🔑 Using account: ${signer.address}\n`);
+
+    console.log(`🚀 Successfully broadcasted a token transfer transaction on ${hre.network.name} network.
+📝 Transaction hash: ${tx.hash}
+  `);
+  }
+};
+
+task("interact", "Interact with the contract", main)
+  .addParam("contract", "The address of the withdraw contract on ZetaChain")
+  .addParam("amount", "Amount of tokens to send")
+  .addFlag("json", "Output in JSON")
+  .addParam("targetToken")
+  .addParam("recipient");
+```
 
 ## Create an Account and Request Tokens from the Faucet
 
