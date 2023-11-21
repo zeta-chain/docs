@@ -34,8 +34,8 @@ This tutorial shows how to:
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) v12 or later
-- [Yarn](https://yarnpkg.com/) v1 or later
+- [Node.js](https://nodejs.org/en/) (version 18 or above)
+- [Yarn](https://yarnpkg.com/)
 - [Git](https://git-scm.com/)
 
 ## Set Up Your Environment
@@ -90,6 +90,26 @@ encode the action code into the `message` parameter of the `onCrossChainCall`.
 Even though the `message` value will be encoded differently in EVM-based chains
 and Bitcoin, the first bytes of the `message` will always be the action code
 encoded as `uint8`.
+
+```mermaid
+flowchart LR
+  subgraph zetachain ["ZetaChain"]
+    contract("Staking contract")
+    system_contract("System contract")
+  end
+  subgraph connected_chain ["Connected chain"]
+    tss("TSS address")
+  end
+    user("User")
+    user -- stake --> tss
+    user -- unstake --> tss
+    user -- set beneficiary --> tss
+    user -- set withdraw --> tss
+    tss --> system_contract
+    system_contract -- calls --> contract
+    user -- claim rewards --> contract
+    user -- query rewards --> contract
+```
 
 ### Handle the Omnichain Contract Call
 

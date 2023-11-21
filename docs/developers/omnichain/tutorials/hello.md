@@ -9,8 +9,8 @@ ZetaChain and make a contract call from a connected chain.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) v12 or later
-- [Yarn](https://yarnpkg.com/) v1 or later
+- [Node.js](https://nodejs.org/en/) (version 18 or above)
+- [Yarn](https://yarnpkg.com/)
 - [Git](https://git-scm.com/)
 
 ## Set Up Your Environment
