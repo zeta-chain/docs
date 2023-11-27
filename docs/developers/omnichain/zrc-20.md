@@ -5,6 +5,8 @@ title: ZRC-20 Tokens
 sidebar_position: 3
 ---
 
+import ForeignCoinsTable from "@site/src/components/ForeignCoins/ForeignCoins";
+
 # ZRC-20
 
 ZRC-20 is a token standard integrated into ZetaChain's omnichain smart contract
@@ -15,6 +17,17 @@ anything else that involves fungible tokens on multiple chains from a single
 place extremely simple — as if they were all on a single chain.
 
 ![zeta-evm](/img/graphs/zrc-20-header.svg)
+
+## Supported Assets
+
+I list of currently supported assets is stored on-chain:
+
+<ForeignCoinsTable />
+
+New assets can be added or removed by broadcasting a transaction with a
+corresponding message of the
+[`fungible` module](http://localhost:3001/architecture/modules/fungible/messages/)
+on ZetaChain.
 
 ## Introduction
 
