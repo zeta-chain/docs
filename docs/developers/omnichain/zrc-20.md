@@ -26,8 +26,7 @@ I list of currently supported assets is stored on-chain:
 
 New assets can be added or removed by broadcasting a transaction with a
 corresponding message of the
-[`fungible` module](http://localhost:3001/architecture/modules/fungible/messages/)
-on ZetaChain.
+[`fungible` module](/architecture/modules/fungible/messages/) on ZetaChain.
 
 ## Introduction
 
