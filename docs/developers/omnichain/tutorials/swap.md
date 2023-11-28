@@ -11,6 +11,10 @@ transfer native tokens from one of the connected chains to ZetaChain, swap them
 for a ZRC-20 representation of a token on another chain, and withdraw the tokens
 to the recipient address on the target chain.
 
+<div style={{width: "100%", height: "auto", "aspect-ratio": "16 / 10"}}>
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/t59EtsBequI?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
 ## Set Up Your Environment
 
 Clone the Hardhat contract template:
