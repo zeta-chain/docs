@@ -11,6 +11,25 @@ Code blocks with `hardhat` commands show helpful utilities for sending tokens
 available with the
 [smart contract template](https://github.com/zeta-chain/template).
 
+```mermaid
+flowchart
+  subgraph connected_chain ["Connected Chain"]
+    gas("Gas token or ERC-20")
+    evm_wzeta("Wrapped ZETA")
+  end
+  subgraph zetachain ["ZetaChain"]
+    zeta("Native ZETA")
+    zrc20("ZRC-20")
+    zevm_wzeta("Wrapped ZETA")
+  end
+  gas -- TSS: deposit --> zrc20
+  zrc20 -- TSS: withdraw --> gas
+  zeta -- wrap --> zevm_wzeta
+  zevm_wzeta -- unwrap --> zeta
+  zevm_wzeta -- connector: send --> evm_wzeta
+  evm_wzeta -- connector: send  --> zeta
+```
+
 ## Native ZETA Token on ZetaChain
 
 The native token of the ZetaChain is called ZETA. It is a staking token, and is
@@ -107,7 +126,7 @@ Depositing gETH to ZetaChain as ZRC-20:
 npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnet
 ```
 
-Withdrawing ZRC-20 from ZetaChain go Goerli as gETH:
+Withdrawing ZRC-20 from ZetaChain to Goerli as gETH:
 
 ```
 npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet

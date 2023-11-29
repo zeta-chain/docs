@@ -9,6 +9,41 @@ orchestrate assets on connected chains, as well as on ZetaChain. With omnichain
 smart contracts you are able to have a single place of logic that can maintain
 the state of assets and data across all connected chains.
 
+```mermaid
+flowchart LR
+  subgraph Ethereum ["Ethereum (Polygon or BSC)"]
+    direction LR
+    subgraph send ["Transaction"]
+      direction LR
+      Data -- contains --- Message("Message")
+      Data((Data)) -- contains --- address("Omnichain contract address")
+      Value((Value)) -- contains --- eth("1 ETH")
+    end
+    account("Account") -- sends --- send
+    send --> TSS("TSS Address")
+  end
+  subgraph ZetaChain
+    SystemContract("System Contract")
+    subgraph contract ["Omnichain contract"]
+      addr("Contract address")
+      subgraph onCrossChainCall
+        msg("bytes calldata message")
+        zrc20("address zrc20")
+        amount("uint256 amount")
+        context("zContext calldata context")
+      end
+    end
+  end
+  TSS --> SystemContract
+  SystemContract -- calls --> contract
+  address -.- addr
+  eth -. ETH ZRC-20 contract address .- zrc20
+  eth -. deposited amount .- amount
+  Ethereum -. chainID .- context
+  Message -.- msg
+  account -. "origin" .- context
+```
+
 For a contract to be considered omnichain it must inherit from the `zContract`
 interface and implement the `onCrossChainCall` function:
 
