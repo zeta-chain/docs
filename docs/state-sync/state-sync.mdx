@@ -89,6 +89,7 @@ zetacored keys add ${MONIKER} --keyring-backend test
 ```bash
 zetacored start --home ~/.zetacored/ --log_level info --moniker ${MONIKER} --rpc.laddr tcp://0.0.0.0:26657 --minimum-gas-prices 1.0azeta "--grpc.enable=true"
 ```
+The node will fetch a snapshot and start applying chunks. Once it gets to the last chunk, it will take a few more minutes to finish the state-sync and start commiting new blocks.
 
 ## Common errors
 ### Port error
