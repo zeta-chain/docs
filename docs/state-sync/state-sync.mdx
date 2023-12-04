@@ -54,8 +54,7 @@ wget https://zetachain-external-files.s3.amazonaws.com/config/athens3-docker/cli
 ```
 
 ## State sync
-1. Fetch the height and hash from our state-sync servers:
-
+1. Fetch the height and hash from our state-sync servers (make sure to replace <closest StateSync IP> with the IP from our state-sync node):
 ```bash
 STATE_SYNC_SERVER="<closest StateSync IP>:26657"
 TRUST_HEIGHT=$(curl -s http://${STATE_SYNC_SERVER}/block | jq -r '.result.block.header.height')
@@ -66,6 +65,7 @@ TRUST_HASH=$(curl -s "http://${STATE_SYNC_SERVER}/block?height=${HEIGHT}" | jq -
 NOTE: You need to sync from LATEST_HEIGHT - 40000 to make sure that the node will fetch an existing state-sync snapshot.
 
 ## Replace config values
+1. Make sure to replace <closest StateSync IP> with the IP from our state-sync node and run this block of code:
 ```bash
 RPC_STATE_SYNC_SERVERS="<closest StateSync IP>:26657,<closest StateSync IP>:26657"
 SEED="5aaa51a3b9465a32f7f6c9df1d46d4bfcc16aecb@34.30.34.119:26656"
