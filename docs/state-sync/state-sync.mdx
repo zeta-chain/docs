@@ -39,6 +39,7 @@ chmod a+x /usr/local/bin/zetacored
 1. Initialize the base folder and config with the following command:
 
 ```bash
+MONIKER=$(hostname)
 zetacored init ${MONIKER} --chain-id athens_7001-1
 ```
 
@@ -69,7 +70,6 @@ NOTE: You need to sync from LATEST_HEIGHT - 40000 to make sure that the node wil
 RPC_STATE_SYNC_SERVERS="<closest StateSync IP>:26657,<closest StateSync IP>:26657"
 SEED="5aaa51a3b9465a32f7f6c9df1d46d4bfcc16aecb@34.30.34.119:26656"
 EXTERNAL_IP=$(curl -4 icanhazip.com)
-MONIKER=$(hostname)
 sed -i "" -e "s/-=RPC_SERVERS=-/${RPC_STATE_SYNC_SERVERS}/g" ~/.zetacored/config/config.toml &&
 sed -i "" -e "s/-=SYNC_HEIGHT=-/${HEIGHT}/g" ~/.zetacored/config/config.toml &&
 sed -i "" -e "s/-=TRUST_HASH=-/${TRUST_HASH}/g" ~/.zetacored/config/config.toml &&
