@@ -1,0 +1,107 @@
+---
+sidebar_position: 1
+sidebar_label: Syncing a node using state-sync
+hide_title: false
+id: running-a-rpc-node
+title: Syncing a node using state-sync
+---
+
+# Syncing a node using state-sync
+
+Follow this guide to setup a RPC node using state-sync.
+This guide was created and tested in MacOS.
+
+## State-sync nodes
+### Testnet
+
+| Region                      | IP             |
+| :-------------------------- | :------------- |
+| US                          | 35.224.160.108 |
+
+### Mainnet
+
+| Region                      | IP  |
+| :-------------------------- | :-- |
+|                             | TBD |
+
+## Download binary
+Make sure you are downloading the same version as our network is using.
+You can find the available `zetacored` versions here: https://github.com/zeta-chain/node/tags
+
+1. Download the binary and give execution perms to the binary:
+
+```bash
+wget https://github.com/zeta-chain/node/releases/download/v10.1.0/zetacored_testnet-darwin-amd64 -O /usr/local/bin/zetacored
+chmod a+x /usr/local/bin/zetacored
+```
+
+## Init base config
+1. Initialize the base folder and config with the following command:
+
+```bash
+zetacored init ${MONIKER} --chain-id athens_7001-1
+```
+
+## Download config files
+1. Download the genesis.json file and *.toml configuration files:
+
+```bash
+wget https://raw.githubusercontent.com/zeta-chain/network-athens3/main/network_files/config/genesis.json -O ~/.zetacored/config/genesis.json
+wget https://zetachain-external-files.s3.amazonaws.com/config/athens3-docker/config.toml -O ~/.zetacored/config/config.toml
+wget https://zetachain-external-files.s3.amazonaws.com/config/athens3-docker/app.toml -O ~/.zetacored/config/app.toml
+wget https://zetachain-external-files.s3.amazonaws.com/config/athens3-docker/client.toml -O ~/.zetacored/config/client.toml
+```
+
+## State sync
+1. Fetch the height and hash from our state-sync servers:
+
+```bash
+STATE_SYNC_SERVER="<closest StateSync IP>:26657"
+TRUST_HEIGHT=$(curl -s http://${STATE_SYNC_SERVER}/block | jq -r '.result.block.header.height')
+HEIGHT=$((TRUST_HEIGHT-40000))
+TRUST_HASH=$(curl -s "http://${STATE_SYNC_SERVER}/block?height=${HEIGHT}" | jq -r '.result.block_id.hash')
+```
+
+NOTE: You need to sync from LATEST_HEIGHT - 40000 to make sure that the node will fetch an existing state-sync snapshot.
+
+## Replace config values
+```bash
+RPC_STATE_SYNC_SERVERS="<closest StateSync IP>:26657,<closest StateSync IP>:26657"
+SEED="5aaa51a3b9465a32f7f6c9df1d46d4bfcc16aecb@34.30.34.119:26656"
+EXTERNAL_IP=$(curl -4 icanhazip.com)
+MONIKER=$(hostname)
+sed -i "" -e "s/-=RPC_SERVERS=-/${RPC_STATE_SYNC_SERVERS}/g" ~/.zetacored/config/config.toml &&
+sed -i "" -e "s/-=SYNC_HEIGHT=-/${HEIGHT}/g" ~/.zetacored/config/config.toml &&
+sed -i "" -e "s/-=TRUST_HASH=-/${TRUST_HASH}/g" ~/.zetacored/config/config.toml &&
+sed -i "" -e "s/-=MONIKER=-/${MONIKER}/g" ~/.zetacored/config/config.toml &&
+sed -i "" -e "s/-=external_ip_address=-/${EXTERNAL_IP}/g" ~/.zetacored/config/config.toml
+sed -i "" -e "s/^seeds = .*/seeds = \"${SEED}\"/" ~/.zetacored/config/config.toml
+sed -i "" -e 's/^max_num_inbound_peers = .*/max_num_inbound_peers = 120/' ~/.zetacored/config/config.toml
+sed -i "" -e 's/^max_num_outbound_peers = .*/max_num_outbound_peers = 60/' ~/.zetacored/config/config.toml
+```
+
+## Generate keys
+```bash
+zetacored keys add ${MONIKER} --keyring-backend test
+```
+
+## Start node
+```bash
+zetacored start --home ~/.zetacored/ --log_level info --moniker rpc-0 --rpc.laddr tcp://0.0.0.0:26657 --minimum-gas-prices 1.0azeta "--grpc.enable=true"
+```
+
+## Common errors
+### Port error
+```bash
+accept tcp [::]:26657: use of closed network connection
+```
+
+1. Check if something is running on port 26657 
+```bash
+sudo lsof -i :26657
+```
+
+2. Kill any process running on that port 
+```bash
+kill -9 PID
+```
