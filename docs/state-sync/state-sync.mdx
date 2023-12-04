@@ -87,7 +87,7 @@ zetacored keys add ${MONIKER} --keyring-backend test
 
 ## Start node
 ```bash
-zetacored start --home ~/.zetacored/ --log_level info --moniker rpc-0 --rpc.laddr tcp://0.0.0.0:26657 --minimum-gas-prices 1.0azeta "--grpc.enable=true"
+zetacored start --home ~/.zetacored/ --log_level info --moniker ${MONIKER} --rpc.laddr tcp://0.0.0.0:26657 --minimum-gas-prices 1.0azeta "--grpc.enable=true"
 ```
 
 ## Common errors
