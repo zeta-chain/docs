@@ -51,7 +51,7 @@ zetacored gentx [key_name] [amount] [flags]
       --gas string                          gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically. Note: "auto" option doesn't always report accurate results. Set a valid coin value to adjust the result. Can be used instead of "fees". (default 200000)
       --gas-adjustment float                adjustment factor to be multiplied against the estimate returned by the tx simulation; if the gas limit is set manually this flag is ignored  (default 1)
       --gas-prices string                   Gas prices in decimal format to determine the transaction fee (e.g. 0.1uatom)
-      --generate-only                       Build an unsigned transaction and write it to STDOUT (when enabled, the local Keybase only accessed when providing a key name)
+      --generate-only                       Build an unsigned transaction and write it to STDOUT (when enabled, the local Keybase is only accessed when providing a key name)
   -h, --help                                help for gentx
       --home string                         The application home directory 
       --identity string                     The (optional) identity signature (ex. UPort or Keybase)
