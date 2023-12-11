@@ -34,4 +34,4 @@ Stay updated on the latest ZetaChain news and participate in discussions on the 
 ## Need Help?
 
 Can’t find what you’re looking for? Feel free to ask a question on our <a href={constants.discordLink}>Discord</a>.
-Our team and community is on there and ready to help.
+Our team and community are on there and ready to help.

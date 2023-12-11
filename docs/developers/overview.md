@@ -95,7 +95,7 @@ you deploy **CCM-enabled contracts on connected chains** that can pass arbitrary
 message data and value between each other.
 
 On a connected chain a user can call a CCM-enabled contract. The contract calls
-the Connector API and sends a message. ZetaChain acts as relayer and transmits
+the Connector API and sends a message. ZetaChain acts as a relayer and transmits
 the message to the destination chain. On the destination chain a CCM-enabled
 contract uses the Connector API to receive the message and handles it.
 
