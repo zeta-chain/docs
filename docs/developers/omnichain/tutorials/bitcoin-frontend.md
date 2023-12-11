@@ -183,7 +183,7 @@ npx http-server
 Open the page in your browser and fill in the form. You can test functionality
 with your own contract address or follow one of the provided tutorials, for
 example, the
-[Staking](http://localhost:3001/developers/omnichain/tutorials/staking/)
+[Staking](https://www.zetachain.com/docs/developers/omnichain/tutorials/staking/)
 tutorial to deploy a contract that you can call from Bitcoin.
 
 Fill out the form and click the "Send transaction" button. You will be prompted
