@@ -12,6 +12,10 @@ In this tutorial we will create a simple contract that allows sending a message
 from one chain to another using the
 [Connector API](/developers/cross-chain-messaging/connector/).
 
+<div style={{width: "100%", height: "auto", "aspect-ratio": "16 / 10"}}>
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qkB-X8gfuTY?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en/) (version 18 or above)
