@@ -258,7 +258,7 @@ of the `--target-token` find the ZRC-20 contract address of the destination
 token in the [docs](https://www.zetachain.com/docs/reference/testnet/).
 
 ```
-npx hardhat interact --contract 0xcC02751bAA435E9A5cF3bd22F96a21d7C002E150 --amount 0.1 --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --network goerli_testnet
+npx hardhat interact --contract 0x458bCAF5d95025cdd00f946f1C5F09623E856579 --amount 0.1 --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --network goerli_testnet
 ```
 
 ```
