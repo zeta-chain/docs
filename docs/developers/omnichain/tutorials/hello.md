@@ -98,27 +98,31 @@ The constructor function accepts the address of the system contract and stores
 it in the `systemContract` state variable.
 
 `onCrossChainCall` is a function that is called when the contract gets called by
-a token transfer transaction sent to the TSS address on a connected chain. The
-function receives the following inputs:
+a token transfer transaction sent to the TSS address on a connected chain (when
+a gas token is deposited) or a `deposit` method call on the ERC-20 custody
+contract (when an ERC-20 token is deposited). The function receives the
+following inputs:
 
 - `context`: is a struct of type
   [`zContext`](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol)
   that contains the following values:
   - `origin`: EOA address that sent the token transfer transaction to the TSS
-    address (triggering the omnichain contract)
+    address (triggering the omnichain contract) or the value passed to the
+    `deposit` method call on the ERC-20 custody contract.
   - `chainID`: interger ID of the connected chain from which the omnichain
     contract was triggered.
   - `sender` (reserved for future use, currently empty)
 - `zrc20`: the address of the ZRC-20 token contract that represents an asset
   from a connected chain on ZetaChain.
-- `amount`: the amount of tokens that were transferred to the TSS address.
+- `amount`: the amount of tokens that were transferred to the TSS address or an
+  amount of tokens that were deposited to the ERC-20 custody contract.
 - `message`: the contents of the `data` field of the token transfer transaction.
 
 The `onCrossChainCall` function should only be called by the system contract (in
 other words, by the ZetaChain protocol) to prevent a caller from supplying
 arbitrary values in `context`. The `onlySystem` modifier ensures that the
 function is called only as a response to a token transfer transaction sent to
-the TSS address.
+the TSS address or an ERC-20 custody contract.
 
 By default, the `onCrossChainCall` function doesn't do anything else. You will
 implement the logic yourself based on your use case.
@@ -183,18 +187,40 @@ contract:
 ```ts title="tasks/interact.ts"
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { parseEther } from "@ethersproject/units";
+import { parseUnits } from "@ethersproject/units";
 import { getAddress } from "@zetachain/protocol-contracts";
+import ERC20Custody from "@zetachain/protocol-contracts/abi/evm/ERC20Custody.sol/ERC20Custody.json";
 import { prepareData } from "@zetachain/toolkit/helpers";
+import { utils, ethers } from "ethers";
+import ERC20 from "@openzeppelin/contracts/build/contracts/ERC20.json";
 
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
 
   const data = prepareData(args.contract, [], []);
-  const to = getAddress("tss", hre.network.name);
-  const value = parseEther(args.amount);
 
-  const tx = await signer.sendTransaction({ data, to, value });
+  let tx;
+
+  if (args.token) {
+    const custodyAddress = getAddress("erc20Custody", hre.network.name as any);
+    const custodyContract = new ethers.Contract(
+      custodyAddress,
+      ERC20Custody.abi,
+      signer
+    );
+    const tokenContract = new ethers.Contract(args.token, ERC20.abi, signer);
+    const decimals = await tokenContract.decimals();
+    const value = parseUnits(args.amount, decimals);
+    const approve = await tokenContract.approve(custodyAddress, value);
+    await approve.wait();
+
+    tx = await custodyContract.deposit(signer.address, args.token, value, data);
+    tx.wait();
+  } else {
+    const value = parseUnits(args.amount, 18);
+    const to = getAddress("tss", hre.network.name as any);
+    tx = await signer.sendTransaction({ data, to, value });
+  }
 
   if (args.json) {
     console.log(JSON.stringify(tx, null, 2));
@@ -203,13 +229,14 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 
     console.log(`🚀 Successfully broadcasted a token transfer transaction on ${hre.network.name} network.
 📝 Transaction hash: ${tx.hash}
-`);
+  `);
   }
 };
 
 task("interact", "Interact with the contract", main)
   .addParam("contract", "The address of the withdraw contract on ZetaChain")
   .addParam("amount", "Amount of tokens to send")
+  .addOptionalParam("token", "The address of the token to send")
   .addFlag("json", "Output in JSON");
 ```
 
@@ -225,6 +252,30 @@ information:
 
 In the code generated above there are no arguments, so the `data` field is
 simply the address of the contract on ZetaChain.
+
+Calling omnichain contracts is differs depending on whether a gas token is being
+deposited or an ERC-20 token.
+
+If an ERC-20 token address is passed to the `--token` optional parameter, the
+interact task assumes you want to deposit an ERC-20 token in an omnichain
+contract.
+
+To deposit an ERC-20 token into an omnichain contract you need to call the
+`deposit` method of the ERC-20 custody contract. The task first gets the address
+of the custody contract on the current network, creates an instance of a token
+contract, gets the number of decimals of the token, and approves the custody
+contract to spend the specified amount of ERC-20 tokens. The task then calls the
+`deposit` method of the custody contract, passing the following information:
+
+- `signer.address`: the sender address that will be available in the `origin`
+  field of the `context` parameter of the `onCrossChainCall` function
+- `args.token`: the address of the ERC-20 token being deposited
+- `value`: the amount of tokens being deposited
+- `data`: the contents of the `message`
+
+If the `--token` optional parameter is not used, the interact task assumes you
+want to deposit a gas token. To deposit a gas token you need to send a token
+transfer transaction to the TSS address on a connected chain.
 
 `getAddress` retrieves the address of the TSS on the current network.
 
