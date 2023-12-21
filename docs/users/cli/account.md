@@ -36,6 +36,11 @@ It is the only way to recover your account if you ever forget your password.
 fade sunset wink lonely seek glass load group shove scan tape shop rather connect enhance absurd illness patch void save skirt fee code mushroom
 ```
 
+In this and following guides we'll be using `alice` as an example account name.
+When a command requires an address, we'll be using the following command
+`$(zetacored keys show alice -a)` which simply returns an address of a given
+key. Please, replace `alice` in the following examples with your own key name.
+
 ## Importing an Account
 
 If you have an existing account, you can import it using the mnemonic phrase:

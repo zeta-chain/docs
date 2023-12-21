@@ -4,10 +4,10 @@ sidebar_position: 3
 
 # Querying Balances
 
-To query accounts balances, use the `q bank balances` command:
+To query accounts balances for the `alice` account, run the following command:
 
 ```
-zetacored q bank balances zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+zetacored q bank balances $(zetacored keys show alice -a) --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
 ```
 
 Provide a valid node RPC URL with the `--node` flag. You can use one of the
