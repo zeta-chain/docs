@@ -7,13 +7,17 @@ sidebar_position: 4
 ## Overview
 
 In this tutorial you will write a cross-chain swap contract that allows users to
-transfer native tokens from one of the connected chains to ZetaChain, swap them
-for a ZRC-20 representation of a token on another chain, and withdraw the tokens
-to the recipient address on the target chain.
+swap a native gas or ERC-20 token from one of the connected chains for a token
+on another chain.
 
-<div style={{width: "100%", height: "auto", "aspect-ratio": "16 / 10"}}>
+The swap process involves depositing a token from a connected chain to
+ZetaChain, triggering a swap omnichain contract to swap between ZRC-20
+representations of the tokens and then withdrawing the swapped token to the
+recipient address on the destination chain.
+
+<!-- <div style={{width: "100%", height: "auto", "aspect-ratio": "16 / 10"}}>
   <iframe width="100%" height="100%" src="https://www.youtube.com/embed/t59EtsBequI?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+</div> -->
 
 ## Set Up Your Environment
 
@@ -53,11 +57,8 @@ import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
 
 contract Swap is zContract {
     SystemContract public immutable systemContract;
-    // highlight-start
+    // highlight-next-line
     uint256 constant BITCOIN = 18332;
-    error WrongGasContract();
-    error NotEnoughToPayGasFee();
-    // highlight-end
 
     constructor(address systemContractAddress) {
         systemContract = SystemContract(systemContractAddress);
@@ -95,27 +96,31 @@ contract Swap is zContract {
             recipientAddress = recipient;
         }
 
+        (address gasZRC20, uint256 gasFee) = IZRC20(targetTokenAddress)
+            .withdrawGasFee();
+
+        uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(
+            systemContract.wZetaContractAddress(),
+            systemContract.uniswapv2FactoryAddress(),
+            systemContract.uniswapv2Router02Address(),
+            zrc20,
+            gasFee,
+            gasZRC20,
+            amount
+        );
+
         uint256 outputAmount = SwapHelperLib._doSwap(
             systemContract.wZetaContractAddress(),
             systemContract.uniswapv2FactoryAddress(),
             systemContract.uniswapv2Router02Address(),
             zrc20,
-            amount,
+            amount - inputForGas,
             targetTokenAddress,
             0
         );
 
-        (address gasZRC20, uint256 gasFee) = IZRC20(targetTokenAddress)
-            .withdrawGasFee();
-
-        if (gasZRC20 != targetTokenAddress) revert WrongGasContract();
-        if (gasFee >= outputAmount) revert NotEnoughToPayGasFee();
-
-        IZRC20(targetTokenAddress).approve(targetTokenAddress, gasFee);
-        IZRC20(targetTokenAddress).withdraw(
-            recipientAddress,
-            outputAmount - gasFee
-        );
+        IZRC20(gasZRC20).approve(targetTokenAddress, gasFee);
+        IZRC20(targetTokenAddress).withdraw(recipientAddress, outputAmount);
         // highlight-end
     }
 }
@@ -147,10 +152,16 @@ convert the address to `bytes`.
 If it's an EVM chain, use `abi.decode` to decode the `message` into the
 `targetToken` and `recipient` variables.
 
-Next, swap the incoming token for the gas coin on the destination chain.
-ZetaChain has liquidity pools with the ZRC-20 representation of the gas coin on
-all connected chains. The `SwapHelperLib._doSwap` helper method to swap the
-tokens.
+Next, get the gas fee and the gas coin address from the target token. The gas
+coin is the token that will be used to pay for the gas on the destination chain.
+
+Use the `SwapHelperLib.swapTokensForExactTokens` helper method to swap the
+incoming token for the gas coin using the internal liquidity pools. The method
+returns the amount of the incoming token that was used to pay for the gas.
+
+Next, swap the incoming amount minus the amount spent swapping for a gas fee for
+the target token on the destination chain using the `SwapHelperLib._doSwap`
+helper method.
 
 Finally, withdraw the tokens to the recipient address on the destination chain.
 
@@ -176,10 +187,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { parseEther } from "@ethersproject/units";
 import { getAddress } from "@zetachain/protocol-contracts";
 import { prepareData } from "@zetachain/toolkit/helpers";
-// highlight-start
+// highlight-next-line
 import bech32 from "bech32";
-import { utils } from "ethers";
-// highlight-end
 
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
@@ -205,10 +214,29 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
     [args.targetToken, recipient]
     // highlight-end
   );
-  const to = getAddress("tss", hre.network.name);
-  const value = parseEther(args.amount);
 
-  const tx = await signer.sendTransaction({ data, to, value });
+  let tx;
+
+  if (args.token) {
+    const custodyAddress = getAddress("erc20Custody", hre.network.name as any);
+    const custodyContract = new ethers.Contract(
+      custodyAddress,
+      ERC20Custody.abi,
+      signer
+    );
+    const tokenContract = new ethers.Contract(args.token, ERC20.abi, signer);
+    const decimals = await tokenContract.decimals();
+    const value = parseUnits(args.amount, decimals);
+    const approve = await tokenContract.approve(custodyAddress, value);
+    await approve.wait();
+
+    tx = await custodyContract.deposit(signer.address, args.token, value, data);
+    tx.wait();
+  } else {
+    const value = parseUnits(args.amount, 18);
+    const to = getAddress("tss", hre.network.name as any);
+    tx = await signer.sendTransaction({ data, to, value });
+  }
 
   if (args.json) {
     console.log(JSON.stringify(tx, null, 2));
@@ -224,6 +252,7 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 task("interact", "Interact with the contract", main)
   .addParam("contract", "The address of the withdraw contract on ZetaChain")
   .addParam("amount", "Amount of tokens to send")
+  .addOptionalParam("token", "The address of the token to send")
   .addFlag("json", "Output in JSON")
   .addParam("targetToken")
   .addParam("recipient");
@@ -235,7 +264,11 @@ Before proceeding with the next steps, make sure you have
 [created an account and requested ZETA tokens](/developers/omnichain/tutorials/hello#create-an-account)
 from the faucet.
 
-## Deploy the Contract
+## Compile and Deploy the Contract
+
+```
+npx hardhat compile --force
+```
 
 ```
 npx hardhat deploy --network zeta_testnet
@@ -245,40 +278,72 @@ npx hardhat deploy --network zeta_testnet
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
 🚀 Successfully deployed contract on ZetaChain.
-📜 Contract address: 0x458bCAF5d95025cdd00f946f1C5F09623E856579
-🌍 Explorer: https://athens3.explorer.zetachain.com/address/0x458bCAF5d95025cdd00f946f1C5F09623E856579
+📜 Contract address: 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E
 ```
 
-## Swap from an EVM Chain
+## Swap Native Gas Tokens Between EVM Chains
 
 Use the `interact` task to perform a cross-chain swap. In this example, we're
-swapping native gETH for for a ZRC-20 representation of tMATIC. The contract
-will perform a swap and then withdraw tMATIC to Polygon Mumbai. To get the value
-of the `--target-token` find the ZRC-20 contract address of the destination
-token in the [docs](https://www.zetachain.com/docs/reference/testnet/).
+swapping native gETH from Goerli for tMATIC on Polygon Mumbai. The contract will
+deposit gETH to ZetaChain as ZRC-20, swap it for ZRC-20 tMATIC and then withdraw
+native tMATIC Polygon Mumbai. To get the value of the `--target-token` find the
+ZRC-20 contract address of the destination token in the
+[ZRC-20 section of the docs](/developers/omnichain/zrc-20).
 
 ```
-npx hardhat interact --contract 0x458bCAF5d95025cdd00f946f1C5F09623E856579 --amount 0.1 --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --network goerli_testnet
+npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 0.01 --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
 🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
-📝 Transaction hash: 0x7ebd2bff64cbc530c145a60e4830ba2ddc536bc62cf8c5566c900143b0e08baf
+📝 Transaction hash: 0x6b4156c195d955d1325a5e6275214db63ff2e3642838607333e74abd74b8fc13
 ```
 
 Track your cross-chain transaction:
 
 ```
- npx hardhat cctx 0x7ebd2bff64cbc530c145a60e4830ba2ddc536bc62cf8c5566c900143b0e08baf
+npx hardhat cctx 0x6b4156c195d955d1325a5e6275214db63ff2e3642838607333e74abd74b8fc13
 ```
 
 ```
 ✓ CCTXs on ZetaChain found.
 
-✓ 0x5082897440218490193a724a22b7ed3f8744760956d857199e76bf2453f901b2: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
-✓ 0x3aebbba04cd284d2e87b9c8414f6946bdf933efad45076aba7c691e5a32895ba: 7001 → 80001: PendingOutbound  → OutboundMined
+✓ 0xb263483d61d0b1c89685364324c32438a3546b3f732a3d37840e6042e4837357: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0xcad3a0b8949b1bd39c51e80ff6be9a5c6d337df8a04b39a48667d2c688172e35: 7001 → 80001: PendingOutbound → OutboundMined
+```
+
+## Swap ERC-20 Tokens Between EVM Chains
+
+Now let's swap USDC from Goerli to MATIC on Polygon Mumbai. To send USDC specify
+the ERC-20 token contract address (on Goerli) in the `--token` parameter. You
+can find the address of the token in the
+[ZRC-20 section of the docs](/developers/omnichain/zrc-20).
+
+```
+npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 10 --token 0x07865c6e87b9f70255377e024ace6630c1eaa37f --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+```
+
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🚀 Successfully broadcasted a token transfer transaction on goerli_testnet
+network. 📝 Transaction hash:
+0xff32dd2391c4f62694cc99afd0da1c2a1352c8caf29846cc366aab54a631e8f8
+```
+
+```
+npx hardhat cctx
+0xff32dd2391c4f62694cc99afd0da1c2a1352c8caf29846cc366aab54a631e8f8
+```
+
+```npx hardhat cctx 0xff32dd2391c4f62694cc99afd0da1c2a1352c8caf29846cc366aab54a631e8f8
+✓ CCTXs on ZetaChain found.
+
+✓ 0xa4cb698122916f10c932e146c45517b4f47de1e16be493ea66f28b5a34c7bfb5: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0xad18c759713ce5604683aeb389fc9a1a91f537c0abbb8d9f9fc6cfc11e55fdc7: 7001 → 80001: PendingOutbound  → OutboundMined
 ```
 
 ## Swap from Bitcoin
@@ -287,12 +352,23 @@ Use the `send-btc` task to send Bitcoin to the TSS address with a memo. The memo
 should contain the following:
 
 - Omnichain contract address on ZetaChain:
-  `cC02751bAA435E9A5cF3bd22F96a21d7C002E150`
+  `f6CDd83AB44E4d947FE52c2637ee4A04F330328E`
 - Target token address: `48f80608B672DC30DC7e3dbBd0343c5F02C738Eb`
 - Recipient address: `2cD3D070aE1BD365909dD859d29F387AA96911e1`
 
 ```
-npx hardhat send-btc --amount 0.001 --memo cC02751bAA435E9A5cF3bd22F96a21d7C002E15048f80608B672DC30DC7e3dbBd0343c5F02C738Eb2cD3D070aE1BD365909dD859d29F387AA96911e1 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
+npx hardhat send-btc --amount 0.001 --memo f6CDd83AB44E4d947FE52c2637ee4A04F330328E48f80608B672DC30DC7e3dbBd0343c5F02C738Eb2cD3D070aE1BD365909dD859d29F387AA96911e1 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
+```
+
+```
+npx hardhat cctx 3c2eeee38fafbfbcdceca0d595c1433c48c738aaa6e1df407a681aeeeb1da3d6
+```
+
+```
+✓ CCTXs on ZetaChain found.
+
+✓ 0xa7d4a46545806a5aff4d4fc20cb37295f426b70f0f6b2a123f67cbdb3014c995: 18332 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0x963cf8890b3da9e84379eca06a2e4835aba3a027bca6560e76d19945b75b2c39: 7001 → 80001: PendingOutbound  → OutboundMined
 ```
 
 ## Source Code

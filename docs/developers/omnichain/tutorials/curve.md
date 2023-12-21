@@ -27,7 +27,7 @@ it take a look to official script, does all the work for you out of the box
 [deployment script](https://github.com/curvefi/curve-contract/blob/master/scripts/deploy.py)),
 using the address of three ZRC-2020 tokens. You can find the ZetaChain addresses
 of ZRC-20 tokens supported right now on the ZetaChain testnet using this
-[endpoint](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/zetacore/fungible/foreign_coins).
+[endpoint](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins).
 
 ## Implement a cross-chain stableswap
 

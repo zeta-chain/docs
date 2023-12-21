@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const COINS_URL =
-  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/zetacore/fungible/foreign_coins";
+  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins";
 const CHAINS_URL =
   "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/supportedChains";
 
@@ -64,10 +64,11 @@ const ForeignCoinsTable = () => {
       <table>
         <thead>
           <tr>
-            <th>Chain Name</th>
+            <th>Chain</th>
             <th>Symbol</th>
-            <th>Coin Type</th>
-            <th>ZRC-20 Contract Address</th>
+            <th>Type</th>
+            <th>ZRC-20 on ZetaChain</th>
+            <th>ERC-20 on Connected Chain</th>
           </tr>
         </thead>
         <tbody>
@@ -77,6 +78,7 @@ const ForeignCoinsTable = () => {
               <td>{coin.symbol}</td>
               <td>{coin.coin_type}</td>
               <td>{coin.zrc20_contract_address}</td>
+              <td>{coin.asset}</td>
             </tr>
           ))}
         </tbody>

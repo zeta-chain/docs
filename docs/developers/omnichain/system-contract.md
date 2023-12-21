@@ -12,7 +12,7 @@ information you may need in your protocol. You can import this code into your
 project and instance with the deployed address. You can find the up-to-date
 address of the system contract using the ZetaChain's API:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/zetacore/fungible/system_contract
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/system_contract
 
 In this contract you will find:
 
