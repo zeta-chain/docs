@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const COINS_URL =
-  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/zetacore/fungible/foreign_coins";
+  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins";
 const CHAINS_URL =
   "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/supportedChains";
 
