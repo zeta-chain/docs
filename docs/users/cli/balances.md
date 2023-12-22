@@ -4,6 +4,13 @@ sidebar_position: 3
 
 # Querying Balances
 
+## Prerequisites
+
+This tutorial requires `zetacored` CLI to be installed. Please, check out the
+docs [on installing the CLI](/users/cli/setup).
+
+## Querying Balances
+
 To query accounts balances for the `alice` account, run the following command:
 
 ```

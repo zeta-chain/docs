@@ -1,5 +1,10 @@
 # Withdrawing Rewards
 
+## Prerequisites
+
+This tutorial requires `zetacored` CLI to be installed. Please, check out the
+docs [on installing the CLI](/users/cli/setup).
+
 ## Calculating Rewards
 
 To calculate the rewards you have earned, you can use the following command:

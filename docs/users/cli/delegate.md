@@ -4,6 +4,13 @@ sidebar_position: 4
 
 # Delegating to a Validator
 
+## Prerequisites
+
+This tutorial requires `zetacored` CLI to be installed. Please, check out the
+docs [on installing the CLI](/users/cli/setup).
+
+## Delegating to a Validator
+
 ZetaChain is a proof of stake blockchain network. Validators are responsible for
 producing new blocks and securing the network. You can delegate your ZETA to a
 validator to participate in the network and earn rewards.

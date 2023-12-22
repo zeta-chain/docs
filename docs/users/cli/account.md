@@ -4,6 +4,11 @@ sidebar_position: 2
 
 # Adding an Account
 
+## Prerequisites
+
+This tutorial requires `zetacored` CLI to be installed. Please, check out the
+docs [on installing the CLI](/users/cli/setup).
+
 :::warning
 
 This guide is using the test keyring, which is not secure. Do not use it in for
