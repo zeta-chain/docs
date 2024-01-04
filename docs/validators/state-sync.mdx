@@ -71,11 +71,12 @@ NOTE: You need to sync from LATEST_HEIGHT - 40000 to make sure that the node wil
 RPC_STATE_SYNC_SERVERS="[closest StateSync IP]:26657,[closest StateSync IP]:26657"
 SEED="5aaa51a3b9465a32f7f6c9df1d46d4bfcc16aecb@34.30.34.119:26656"
 EXTERNAL_IP=$(curl -4 icanhazip.com)
+sed -i '' 's/enable = [^ ]*/enable = true/' ~/.zetacored/config/config.toml &&
 sed -i "" -e "s/-=RPC_SERVERS=-/${RPC_STATE_SYNC_SERVERS}/g" ~/.zetacored/config/config.toml &&
-sed -i "" -e "s/-=SYNC_HEIGHT=-/${HEIGHT}/g" ~/.zetacored/config/config.toml &&
+sed -i "" -e "s/-=TRUST_HEIGHT=-/${HEIGHT}/g" ~/.zetacored/config/config.toml &&
 sed -i "" -e "s/-=TRUST_HASH=-/${TRUST_HASH}/g" ~/.zetacored/config/config.toml &&
 sed -i "" -e "s/-=MONIKER=-/${MONIKER}/g" ~/.zetacored/config/config.toml &&
-sed -i "" -e "s/-=external_ip_address=-/${EXTERNAL_IP}/g" ~/.zetacored/config/config.toml
+sed -i "" -e "s/-=external_address=-/${EXTERNAL_IP}:26657/g" ~/.zetacored/config/config.toml
 sed -i "" -e "s/^seeds = .*/seeds = \"${SEED}\"/" ~/.zetacored/config/config.toml
 sed -i "" -e 's/^max_num_inbound_peers = .*/max_num_inbound_peers = 120/' ~/.zetacored/config/config.toml
 sed -i "" -e 's/^max_num_outbound_peers = .*/max_num_outbound_peers = 60/' ~/.zetacored/config/config.toml
