@@ -302,3 +302,9 @@ You will see the event details with all the data we emitted from the contract:
 Well done! You have successfully queried for omnichain contract events using the
 Goldsky subgraph indexer. To learn more about using Goldsky, check out the
 [Goldsky docs](https://docs.goldsky.com/).
+
+## Common Issues
+
+### Events Are Not Being Indexed
+
+Please, wait for an email from Goldsky that your subgraph has been indexed.
