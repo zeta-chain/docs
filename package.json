@@ -43,6 +43,7 @@
     "docusaurus-theme-github-codeblock": "1.1.4",
     "esbuild-loader": "2.21.0",
     "framer-motion": "6.4.3",
+    "lodash": "^4.17.21",
     "lodash-es": "4.17.21",
     "lunr": "2.3.9",
     "postcss": "8.4.21",
