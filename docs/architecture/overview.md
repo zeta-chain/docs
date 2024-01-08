@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Overview
 
 At a high level, ZetaChain is a Proof of Stake (PoS) blockchain built on the
