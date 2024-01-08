@@ -89,7 +89,7 @@ const ObserverList = () => {
         <tbody>
           {sortObserversByMoniker().map((observer: any, index: number) => (
             <tr key={index}>
-              <td style={{ fontSize: "0.75rem" }}>
+              <td>
                 {observer.operator}
                 <br />
                 {observer.valoperAddress}
