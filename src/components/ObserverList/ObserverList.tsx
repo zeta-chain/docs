@@ -15,7 +15,7 @@ const ObserverList = () => {
   }, []);
 
   const fetchObservers = async () => {
-    setIsLoadingObservers(true); // Start loading
+    setIsLoadingObservers(true);
     try {
       const response = await fetch(`${api}/zeta-chain/observer/nodeAccount`);
       const data = await response.json();
@@ -27,12 +27,12 @@ const ObserverList = () => {
     } catch (error) {
       console.error("Error fetching observer validators:", error);
     } finally {
-      setIsLoadingObservers(false); // End loading
+      setIsLoadingObservers(false);
     }
   };
 
   const fetchValidators = async (key = "") => {
-    setIsLoadingValidators(true); // Start loading
+    setIsLoadingValidators(true);
     try {
       const endpoint = "/cosmos/staking/v1beta1/validators";
       const query = key ? `pagination.key=${encodeURIComponent(key)}` : "";
@@ -51,7 +51,7 @@ const ObserverList = () => {
     } catch (error) {
       console.error("Error fetching validators:", error);
     } finally {
-      setIsLoadingValidators(false); // End loading
+      setIsLoadingValidators(false);
     }
   };
 
@@ -64,7 +64,7 @@ const ObserverList = () => {
     } catch (error) {
       console.error("Error converting address:", error);
     }
-    return address; // return the original address if conversion fails
+    return address;
   };
 
   const findMoniker = (valoperAddress: any) => {
