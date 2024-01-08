@@ -4,6 +4,8 @@ import { bech32 } from "bech32";
 const ObserverList = () => {
   const [observers, setObservers] = useState<any>([]);
   const [validators, setValidators] = useState<any>([]);
+  const [isLoadingObservers, setIsLoadingObservers] = useState(true);
+  const [isLoadingValidators, setIsLoadingValidators] = useState(true);
 
   const api = "https://zetachain-athens.blockpi.network/lcd/v1/public";
 
@@ -13,6 +15,7 @@ const ObserverList = () => {
   }, []);
 
   const fetchObservers = async () => {
+    setIsLoadingObservers(true); // Start loading
     try {
       const response = await fetch(`${api}/zeta-chain/observer/nodeAccount`);
       const data = await response.json();
@@ -23,10 +26,13 @@ const ObserverList = () => {
       setObservers(processedData || []);
     } catch (error) {
       console.error("Error fetching observer validators:", error);
+    } finally {
+      setIsLoadingObservers(false); // End loading
     }
   };
 
   const fetchValidators = async (key = "") => {
+    setIsLoadingValidators(true); // Start loading
     try {
       const endpoint = "/cosmos/staking/v1beta1/validators";
       const query = key ? `pagination.key=${encodeURIComponent(key)}` : "";
@@ -44,6 +50,8 @@ const ObserverList = () => {
       }
     } catch (error) {
       console.error("Error fetching validators:", error);
+    } finally {
+      setIsLoadingValidators(false); // End loading
     }
   };
 
@@ -79,26 +87,30 @@ const ObserverList = () => {
 
   return (
     <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Validator</th>
-            <th>Moniker</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortObserversByMoniker().map((observer: any, index: number) => (
-            <tr key={index}>
-              <td>
-                {observer.operator}
-                <br />
-                {observer.valoperAddress}
-              </td>
-              <td>{findMoniker(observer.valoperAddress).moniker}</td>
+      {isLoadingObservers || isLoadingValidators ? (
+        <p>Loading...</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Observer</th>
+              <th>Moniker</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sortObserversByMoniker().map((observer: any, index: number) => (
+              <tr key={index}>
+                <td>
+                  {observer.operator}
+                  <br />
+                  {observer.valoperAddress}
+                </td>
+                <td>{findMoniker(observer.valoperAddress).moniker}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
