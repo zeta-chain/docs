@@ -70,6 +70,10 @@ const config = {
             from: "/reference/using-zetascan/",
             to: "/reference/explorers/",
           },
+          {
+            from: "/about/zeta/",
+            to: "/about/token-utility/overview",
+          },
         ],
       },
     ],
