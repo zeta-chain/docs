@@ -54,12 +54,7 @@ validators will receive block rewards and transaction fees.
 Another set of important participants for ZetaChain consensus are the observers
 who reach consensus on external chain events and states. The observers watch
 externally connected chains for certain relevant transactions/events/states at
-particular addresses via their full nodes of external chains. Observers will
-divide into two roles: sequencer and verifier. The sequencer discovers relevant
-external trans-actions/events/states and reports to verifiers; the verifiers
-verify and vote on ZetaChain to reach consensus. The system requires at least
-one sequencer and multiple verifiers. The sequencer does not need to be trusted,
-but at least one honest sequencer is needed for liveness.
+particular addresses via their full nodes of external chains.
 
 ### TSS Signers
 
