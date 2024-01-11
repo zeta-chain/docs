@@ -23,7 +23,7 @@ secure.
 > to being an Observer-Signer (Observer-Signers will run all 3 roles,
 > technically). Observer-Signers receive 25% of block rewards and Core
 > Validators receive the other 75%. At launch, it is planned such that the top
-> 42 Core Validators on total stake will be eligible to participate in
+> 100 Core Validators on total stake will be eligible to participate in
 > consensus. 9 validators will comprise the initial Observer-Signer set. These
 > numbers will increase over time further the decentralization of the network._
 
