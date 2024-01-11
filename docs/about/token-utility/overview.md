@@ -50,7 +50,7 @@ more.
 
 ## Primary Participants
 
-There are 3 primary participants
+There are 4 primary participants
 
 - ZetaChain Core Validators: who secure and maintain the network.
 - ZetaChain Observer-Signers: who secure and maintain observation of external
