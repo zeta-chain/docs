@@ -1,9 +1,9 @@
-# query crosschain get-tss-address
+# query fungible code-hash
 
-Query current tss address
+shows the code hash of an account
 
 ```
-zetacored query crosschain get-tss-address [tss-pubkey] [flags]
+zetacored query fungible code-hash [address] [flags]
 ```
 
 ### Options
@@ -12,7 +12,7 @@ zetacored query crosschain get-tss-address [tss-pubkey] [flags]
       --grpc-addr string   the gRPC endpoint to use for this chain
       --grpc-insecure      allow gRPC over insecure channels, if not TLS the server must use TLS
       --height int         Use a specific height to query state at (this can error if the node is pruning state)
-  -h, --help               help for get-tss-address
+  -h, --help               help for code-hash
       --node string        [host]:[port] to Tendermint RPC interface for this chain 
   -o, --output string      Output format (text|json) 
 ```
@@ -29,5 +29,5 @@ zetacored query crosschain get-tss-address [tss-pubkey] [flags]
 
 ### SEE ALSO
 
-* [zetacored query crosschain](zetacored_query_crosschain.md)	 - Querying commands for the crosschain module
+* [zetacored query fungible](zetacored_query_fungible.md)	 - Querying commands for the fungible module
 

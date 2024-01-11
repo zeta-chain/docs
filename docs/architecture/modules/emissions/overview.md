@@ -6,7 +6,7 @@ sidebar_position: 1
 
 The `emissions` module is responsible for orchestrating rewards distribution for
 observers, validators and TSS signers. Currently, it only distributes rewards to
-validators for every block. The undistributed amount for TSS and observers is stored
+validators every block. The undistributed amount for TSS and observers is stored
 in their respective pools.
 
 The distribution of rewards is implemented in the begin blocker.

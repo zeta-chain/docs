@@ -1,9 +1,9 @@
-# query crosschain list-tss-history
+# query observer list-observer-set
 
-show historical list of TSS
+Query observer set
 
 ```
-zetacored query crosschain list-tss-history [flags]
+zetacored query observer list-observer-set [flags]
 ```
 
 ### Options
@@ -12,7 +12,7 @@ zetacored query crosschain list-tss-history [flags]
       --grpc-addr string   the gRPC endpoint to use for this chain
       --grpc-insecure      allow gRPC over insecure channels, if not TLS the server must use TLS
       --height int         Use a specific height to query state at (this can error if the node is pruning state)
-  -h, --help               help for list-tss-history
+  -h, --help               help for list-observer-set
       --node string        [host]:[port] to Tendermint RPC interface for this chain 
   -o, --output string      Output format (text|json) 
 ```
@@ -29,5 +29,5 @@ zetacored query crosschain list-tss-history [flags]
 
 ### SEE ALSO
 
-* [zetacored query crosschain](zetacored_query_crosschain.md)	 - Querying commands for the crosschain module
+* [zetacored query observer](zetacored_query_observer.md)	 - Querying commands for the observer module
 
