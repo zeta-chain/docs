@@ -1,26 +1,20 @@
-# query crosschain list-chain-nonces
+# query observer show-chain-params
 
-list all chainNonces
+Query GetChainParamsForChain
 
 ```
-zetacored query crosschain list-chain-nonces [flags]
+zetacored query observer show-chain-params [chain-id] [flags]
 ```
 
 ### Options
 
 ```
-      --count-total        count total number of records in list-chain-nonces to query for
       --grpc-addr string   the gRPC endpoint to use for this chain
       --grpc-insecure      allow gRPC over insecure channels, if not TLS the server must use TLS
       --height int         Use a specific height to query state at (this can error if the node is pruning state)
-  -h, --help               help for list-chain-nonces
-      --limit uint         pagination limit of list-chain-nonces to query for (default 100)
+  -h, --help               help for show-chain-params
       --node string        [host]:[port] to Tendermint RPC interface for this chain 
-      --offset uint        pagination offset of list-chain-nonces to query for
   -o, --output string      Output format (text|json) 
-      --page uint          pagination page of list-chain-nonces to query for. This sets offset to a multiple of limit (default 1)
-      --page-key string    pagination page-key of list-chain-nonces to query for
-      --reverse            results are sorted in descending order
 ```
 
 ### Options inherited from parent commands
@@ -35,5 +29,5 @@ zetacored query crosschain list-chain-nonces [flags]
 
 ### SEE ALSO
 
-* [zetacored query crosschain](zetacored_query_crosschain.md)	 - Querying commands for the crosschain module
+* [zetacored query observer](zetacored_query_observer.md)	 - Querying commands for the observer module
 

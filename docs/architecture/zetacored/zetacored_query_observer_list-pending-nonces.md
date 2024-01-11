@@ -1,9 +1,9 @@
-# query observer show-core-params
+# query observer list-pending-nonces
 
-Query GetCoreParamsForChain
+shows a chainNonces
 
 ```
-zetacored query observer show-core-params [chain-id] [flags]
+zetacored query observer list-pending-nonces [flags]
 ```
 
 ### Options
@@ -12,7 +12,7 @@ zetacored query observer show-core-params [chain-id] [flags]
       --grpc-addr string   the gRPC endpoint to use for this chain
       --grpc-insecure      allow gRPC over insecure channels, if not TLS the server must use TLS
       --height int         Use a specific height to query state at (this can error if the node is pruning state)
-  -h, --help               help for show-core-params
+  -h, --help               help for list-pending-nonces
       --node string        [host]:[port] to Tendermint RPC interface for this chain 
   -o, --output string      Output format (text|json) 
 ```
