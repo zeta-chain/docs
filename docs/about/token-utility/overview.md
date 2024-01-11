@@ -75,9 +75,9 @@ core pillars:
   and other network participants in the Proof of Stake and protect the network
   from spam and DDOS attacks.
 - For cross-chain messaging, ZETA is burned on the source and minted on the
-  destination, not only used for bundling gas but as the **\*\***medium**\*\***
-  of value transfer between connected chains to facilitate value transfer
-  without the creation of new wrapped assets.
+  destination, not only used for bundling gas but as the **medium** of value
+  transfer between connected chains to facilitate value transfer without the
+  creation of new wrapped assets.
 - Core Liquidity Pools comprised of ZETA and other external chain assets let
   users transact on ZetaChain and between connected chains (for gas on outbound
   transactions) through ZetaChain. The liquidity providers (LPs) receive trading
