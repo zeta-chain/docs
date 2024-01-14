@@ -6,7 +6,8 @@
 <details>
 <summary>What is ZetaChain?</summary>
 <br>
-ZetaChain is the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain. It solves the problems of “cross-chain” and “multi-chain” and aims to open the crypto and global financial ecosystem to anyone. ZetaChain envisions and supports a truly fluid, multi-chain crypto ecosystem, where users and developers can move between and appreciate the benefits of any blockchain: payments, DeFi, liquidity, games, art, social graphs, performance, security, privacy, and so on.
+ZetaChain is the foundational, chain-agnostic backbone of the decentralized internet. It acts as a convergence point for various blockchains, including Ethereum and Bitcoin. ZetaChain enables omnichain functionality, supporting generic smart contracts and seamless messaging between different blockchains. By addressing the challenges of cross-chain interactions, it opens up the crypto and global financial ecosystem to a broader audience. ZetaChain envisions a fluid, multi-chain crypto ecosystem where users and developers can easily navigate and leverage the unique advantages of different blockchains for payments, DeFi, gaming, art, and more.
+At its core, ZetaChain is a public omnichain blockchain that supports real, native cross-blockchain transactions with a complete toolkit for cross-chain messaging and general Omnichain Smart Contracts.
 </details>
 
 <details>
@@ -14,42 +15,59 @@ ZetaChain is the foundational, public blockchain that enables omnichain, generic
 <br>
 
 1. Decentralized and public
-ZetaChain is a decentralized and public blockchain network. It is built on Cosmos SDK and Tendermint Consensus. While many cross-chain solutions like bridges have to vary, often centralized trust models that have a track record for being susceptible to exploits and hacks, ZetaChain is a Proof-of-Stake blockchain, where all transactions and activity on the platform -- even cross-chain transactions -- are fully transparent, verifiable, and function in a trust-minimized manner.
+ZetaChain is a decentralized and public blockchain network. It is built on the Cosmos SDK and Tendermint Consensus. Unlike many cross-chain solutions that rely on centralized trust models prone to exploits and hacks, ZetaChain operates as a Proof-of-Stake blockchain. This means that all transactions and activities on the platform, including cross-chain transactions, are fully transparent, verifiable, and operate in a trust-minimized manner.
 
 2. Hyper-connected nodes
-ZetaChain's nodes have observers that monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on every connected chain as a wallet can. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless omnichain environment for developers to build novel and powerful cross-chain applications on top of.
+ZetaChain's nodes have observers that monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on each connected chain, similar to how a wallet operates. These hyper-connected nodes provide a seamless omnichain environment, allowing developers to build novel and powerful cross-chain applications.
 
 3. Omnichain smart contracts
-Smart contracts can be deployed natively on ZetaChain that can read/write to connected chains. ZetaChain is the only public blockchain to support smart contracts with this capability, enabling a new paradigm of app development.
+ZetaChain supports the native deployment of smart contracts that can read from and write to connected chains. It is the only public blockchain that offers this capability, opening up new possibilities for app development.
 
 4. Cross-chain message passing
-A developer can pass messages (data and value) between chains and layers with simple function calls. Through message passing, a dApp developer can build powerful cross-chain applications by simply implementing a few functions within their existing smart contracts.
+Developers can easily pass messages (data and value) between chains and layers using simple function calls. By leveraging message passing, dApp developers can create robust cross-chain applications by implementing a few functions within their existing smart contracts.
 
 5. Managed external assets
-ZetaChain's network and dApps built on top of ZetaChain can manage assets and vaults of externally connected chains. This allows assets on any chain to be managed just as a smart contract on a single chain can manage assets on its respective chain. A dApp on ZetaChain can thus orchestrate and bring smart contract logic to any connected chain. This property applies to all chains, including non-smart-contract chains, like Bitcoin and Dogecoin.
+ZetaChain's network and dApps built on top of it can manage assets and vaults of externally connected chains. This allows for the management of assets on any chain, similar to how a smart contract on a single chain manages assets. As a result, a dApp on ZetaChain can orchestrate and bring smart contract logic to any connected chain, including non-smart-contract chains like Bitcoin.
 </details>
 
 
 <details>
 <summary>What is ZETA token?</summary>
 <br>
+ZetaChain's coin, ZETA, serves multiple purposes within the ZetaChain ecosystem.
   
-ZetaChain's coin ZETA is used to pay the gas fees for ZetaChain smart contracts and is additionally used to secure the PoS ZetaChain blockchain by bonding/staking/slashing. ZETA is also at the core of ZetaChain's cross-chain transfer, swaps, message delivery, and security. ZETA is one of the first multi-chain coins that is natively issued across multiple chains and layers.
+- ZETA is used as gas for ZetaChain’s omnichain smart contracts layer and internal transactions. With transactions like EIP 1559, some ZETA is burned over time.
 
-Users can directly move the ZETA coin from any chain A to chain B. The mechanism is a one way peg (i.e. burning X amount on chain A and then minting X amount on chain B).
+- ZETA is used in core pools that the protocol uses to exchange for external ZRC-20 gas assets to pay for and write outbound transactions to external chains. ZRC-20 is a token standard integrated into ZetaChain's omnichain smart contract platform. At a high-level, ZRC-20 tokens are an extension of the standard ERC-20 tokens found in the Ethereum ecosystem, ZRC-20 tokens have the added ability to manage assets on all ZetaChain-connected chains. 
 
-We use our own coin ZETA to represent value cross-chain because:
-
-- Unlike the more common two-way pegging, there is no wrapping and therefore no multiple representations of the same underlying asset.
-- The only (native) value that can go cross-chain is via the ZETA coin, which reduces attack surface substantially, resulting in an easier to understand audit and therefore higher security. For example, we can check the total supply at the contract mint site.
-- Users can pay ZETA for the cross-chain service that ZetaChain provides, and for gas on the destination chain, in a single step/bundle.
+- ZETA is used as a cross-chain intermediary asset through messaging. When a cross-chain message is sent, a dApp/user attaches ZETA in his message to represent value and to pay for all gas and transaction fees in a single bundle. ZETA is also exchanged on the core pools to pay for outbound gas.
+  
+- Users can conveniently pay for ZetaChain's cross-chain service and gas fees on the destination chain using ZETA in a single step or bundle.
 </details>
 
 ## Build with ZetaChain (things common to both CCM and omnichain)
-- Start building dapps
+<details>
+<summary> Start building dapps </summary>
+
+
+ZetaChain is a Proof of Stake (PoS) blockchain developed using the Cosmos SDK and Tendermint Core consensus engine. This design choice allows ZetaChain to benefit from fast block times and instant finality.
+
+ZetaChain includes an Ethereum Virtual Machine (EVM) compatible execution layer called zEVM. In addition to supporting all EVM features and standard interactions (such as contract creation, contract interaction, and contract composition), zEVM offers two unique capabilities:
+
+- Contracts on zEVM can be called from external chains.
+- Contracts on zEVM can generate outbound transactions on external chains.
+
+These two features make zEVM a versatile programmable platform, enabling cross-chain transactions that can modify states across different chains in a single step.
+
+When developing on ZetaChain, you create zEVM contracts. While these contracts can be standard Solidity contracts, to fully utilize ZetaChain's capabilities, they should adhere to specific interfaces. These interfaces, unique to ZetaChain, facilitate interaction with externally connected blockchains.
+
+ZetaChain provides two methods for developing dApps: omnichain contracts and cross-chain message passing.
+
+</details>
+
 - Sending and depositing tokens
 - Smart contract template
-  
+
 ## Omnichain contracts
 - Overview
 - Create a simple omnichain contract
