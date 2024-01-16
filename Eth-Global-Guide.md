@@ -65,8 +65,15 @@ ZetaChain provides two methods for developing dApps: omnichain contracts and cro
 
 </details>
 
+<details>
+<summary> Smart contract template </summary>
+To get started with Zetachain quickly, you can clone this repository which uses Hardhat environment to compile, test and deploy contracts on-chain:
+git clone https://github.com/zeta-chain/template
+
+</details>
+
 - Sending and depositing tokens
-- Smart contract template
+
 
 ## Omnichain contracts
 - Overview
