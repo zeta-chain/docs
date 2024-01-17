@@ -11,6 +11,13 @@ This section is important for wallet and app developers.
 
 :::
 
+:::tip
+All inputs and outputs of Bitcoin transactions sent to TSS address 
+must be a P2WPKH address (SegWit bech32 address, such as bc1xxx on Bitcoin mainnet). 
+Otherwise the transactions will not be observed and there will be no refund, and may
+cause irreversible user fund loss. 
+:::
+
 To deposit BTC into zEVM ZRC-20 contract (and optionally call a smart contract),
 the Bitcoin transaction must conform to this specifications:
 
