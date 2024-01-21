@@ -199,3 +199,61 @@ The function first checks that the caller is the owner of the NFT. It then
 retrieves the gas token ZRC-20 address for the chain that the NFT was minted on.
 It then withdraws the tokens that the NFT represents to the `recipient` address.
 The amount of tokens that the NFT represents minus the gas fee is withdrawn.
+
+## Compile and Deploy the Contract
+
+```
+npx hardhat compile --force
+```
+
+```
+npx hardhat deploy --network zeta_testnet
+```
+
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🚀 Successfully deployed contract on ZetaChain.
+📜 Contract address: 0xb9647Fbb6562A0049CE3b425228dC59218F3b93c
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xb9647Fbb6562A0049CE3b425228dC59218F3b93c
+```
+
+## Mint an NFT
+
+Use the `interact` command to mint an NFT. The `--contract` parameter is the
+address of the contract that you just deployed. The `--amount` parameter is the
+amount of tokens that you want to deposit. The `--recipient` parameter is the
+address that you want to receive the NFT on ZetaChain.
+
+```
+npx hardhat interact --contract 0xb9647Fbb6562A0049CE3b425228dC59218F3b93c --amount 0.01 --network goerli_testnet --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+```
+
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
+📝 Transaction hash: 0x8e0c9edd2a570494b8610c99d9772cefd4fb3a5ebb42bb714f83ef898ff53881
+```
+
+Track the transaction using the `cctx` command:
+
+```
+npx hardhat cctx 0x8e0c9edd2a570494b8610c99d9772cefd4fb3a5ebb42bb714f83ef898ff53881
+
+✓ CCTXs on ZetaChain found.
+
+✓ 0xcd894e7299d80b6bf04c7a0b1589f0e5e1b4bcdbd691eb780429ceb359006d59: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
+```
+
+## Limitations
+
+- Even though the minting process is initiated on connected chains, NFTs will be
+  minted on ZetaChain.
+- During minting and burning only fungible tokens are transferred between
+  blockchains. The NFT itself is not transferred.
+
+## Next Steps
+
+In the next tutorial you will learn how to build a user interface for your NFT
+omnichain contract that allows users to mint, burn and view NFTs.
