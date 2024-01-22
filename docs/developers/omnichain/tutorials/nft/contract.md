@@ -218,6 +218,53 @@ npx hardhat deploy --network zeta_testnet
 🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xb9647Fbb6562A0049CE3b425228dC59218F3b93c
 ```
 
+## Configure Goldsky for Event Indexing
+
+When NFTs are minted, transferred or burned on ZetaChain, the ZetaChain protocol
+emits events. Since the contract cannot return all NFTs that belong to a user,
+you need to index these events to be able to display the NFTs. Goldsky is a
+subgraph indexer that indexes events.
+
+To configure Goldsky to index events for your contract, create a `goldsky.json`
+file in the root of your project:
+
+```json title="goldsky.json
+{
+  "version": "1",
+  "name": "NFT",
+  "abis": {
+    "NFT": {
+      "path": "artifacts/contracts/NFT.sol/NFT.json"
+    }
+  },
+  "chains": ["zetachain-testnet"],
+  "instances": [
+    {
+      "abi": "NFT",
+      "address": "0x7a984BD3ce37257e0124A3c0d25857df5E258Be2", // Your contract address
+      "chain": "zetachain-testnet",
+      "startBlock": 3241788 // The block number that your contract was deployed on
+    }
+  ]
+}
+```
+
+Install Goldsky, login and deploy the subgraph:
+
+```
+curl https://goldsky.com | sh
+
+goldsky login
+
+goldsky subgraph deploy nft/v1 --from-abi goldsky.json
+```
+
+Copy the URL returned by the `goldsky subgraph deploy` command, you will need it
+in the next section when building the frontend.
+
+To learn more about setting up Goldsky, read
+[the guide](/developers/omnichain/tutorials/goldsky).
+
 ## Mint an NFT
 
 Use the `interact` command to mint an NFT. The `--contract` parameter is the
