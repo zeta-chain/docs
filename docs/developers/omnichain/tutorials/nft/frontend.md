@@ -33,7 +33,7 @@ frontend dApp and for broadcasting transactions.
 On component load the `NFTPage` component calls the `fetchNFTs` function to
 fetch the NFTs owned by the connected address.
 
-```tsx reference
+```tsx reference title="app/nft/page.tsx"
 https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/page.tsx
 ```
 
@@ -41,7 +41,7 @@ https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/page.tsx
 
 `useNFT` is a simple component that stores the state of the frontend dApp.
 
-```tsx reference
+```tsx reference title="app/nft/useNFT.tsx"
 https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/useNFT.tsx
 ```
 
@@ -72,8 +72,61 @@ find the decimals and use to correctly format the amounts.
 
 Finally, sort NFTs by ID in descending order.
 
-```tsx reference
+```tsx reference title="app/nft/fetchNFTs.ts"
 https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/fetchNFTs.ts
 ```
 
 ## Minting NFTs
+
+To mint an NFT on ZetaChain you need to deposit native tokens on a connected
+chain to the TSS address.
+
+For Bitcoin use the supported XDEFI wallet. Format the request correctly with
+the recipient (TSS address), amount (in sats) and memo (the address that will
+receive the NFT on ZetaChain), and call the `request` method.
+
+For EVM chains, just use `sendTransaction` to send a token transfer transaction
+to the TSS address with the amount of tokens that you want to deposit and the
+recipient address in the data field.
+
+Next, if the transaction was successful, use the transaction hash to track the
+progress of the cross-chain transaction.
+
+```tsx reference title="app/nft/mint.ts"
+https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/mint.ts
+```
+
+## Burning NFTs
+
+Burning NFTs happens on ZetaChain. To burn an NFT, you need to approve an NFT
+first, then call the `burn` method on the omnichain contract. The `burn` method
+takes the ID of the NFT as an argument.
+
+Due to fluctuating gas prices, a transaction might fail. To make sure that the
+user has best experience possible, implement a recursive check for approval.
+This function will check if a user has approved the omnichain contract to burn
+an NFT. If the user has not approved the contract, the function will ask for an
+approval. Implement a similar function to check for ownership of the NFT.
+
+In the body of the function call the approval function, once the approval is
+received, call burn the NFT and start checking for ownership. As soon as the
+user is no longer the owner of the NFT, update the frontend dApp state.
+
+```tsx reference title="app/nft/burn.ts"
+https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/burn.ts
+```
+
+## Transferring NFTs
+
+Transferring NFTS happens on ZetaChain and does not invlove any cross-chain
+interactions. Simple call the contract's transfer method and pass the recipient,
+the sender and the ID of the NFT.
+
+```tsx reference title="app/nft/transfer.ts"
+https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/transfer.ts
+```
+
+## Congratulations!
+
+You've successfully created a frontend dApp that allows users to mint, burn and
+transfer NFTs on ZetaChain.
