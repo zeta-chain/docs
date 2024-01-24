@@ -74,6 +74,10 @@ const config = {
             from: "/about/zeta/",
             to: "/about/token-utility/overview",
           },
+          {
+            from: "/reference/testnet/",
+            to: "/reference/contracts",
+          },
         ],
       },
     ],
