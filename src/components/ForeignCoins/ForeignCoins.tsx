@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 
-const COINS_URL =
-  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins";
-const CHAINS_URL =
-  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/supportedChains";
+const API: any = {
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
+  mainnet: "https://example.org",
+};
+
+const COINS = "/zeta-chain/fungible/foreign_coins";
+const CHAINS = "/zeta-chain/observer/supportedChains";
 
 const ForeignCoinsTable = () => {
   const [coins, setCoins] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // State to track loading status
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("testnet");
 
   useEffect(() => {
+    setIsLoading(true);
+    setCoins([]);
     const fetchData = async () => {
       try {
+        const COINS_URL = `${API[activeTab]}${COINS}`;
+        const CHAINS_URL = `${API[activeTab]}${CHAINS}`;
+
         const responseCoins = await fetch(COINS_URL);
         const coinsData = await responseCoins.json();
         const responseChains = await fetch(CHAINS_URL);
@@ -42,7 +51,7 @@ const ForeignCoinsTable = () => {
     };
 
     fetchData();
-  }, []);
+  }, [activeTab]);
 
   const formatString = (str: any) => {
     return str
@@ -55,38 +64,60 @@ const ForeignCoinsTable = () => {
       .join(" ");
   };
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  const active = { fontWeight: "bold", textDecoration: "underline" };
+  const inactive = { fontWeight: "normal", textDecoration: "none" };
 
   return (
     <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Chain</th>
-            <th>Symbol</th>
-            <th>Type</th>
-            <th>ZRC-20 on ZetaChain</th>
-            <th>ERC-20 on Connected Chain</th>
-          </tr>
-        </thead>
-        <tbody>
-          {coins.map((coin: any, index) => (
-            <tr key={index}>
-              <td>{coin.chainName}</td>
-              <td>{coin.symbol}</td>
-              <td>{coin.coin_type}</td>
-              <td>{coin.zrc20_contract_address}</td>
-              <td>{coin.asset}</td>
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <button
+          style={activeTab == "testnet" ? active : {}}
+          onClick={() => setActiveTab("testnet")}
+        >
+          Testnet
+        </button>
+        <button
+          style={activeTab == "mainnet" ? active : {}}
+          onClick={() => setActiveTab("mainnet")}
+        >
+          Mainnet
+        </button>
+      </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Chain</th>
+              <th>Symbol</th>
+              <th>Type</th>
+              <th>ZRC-20 on ZetaChain</th>
+              <th>ERC-20 on Connected Chain</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {coins.map((coin: any, index) => (
+              <tr key={index}>
+                <td>{coin.chainName}</td>
+                <td>{coin.symbol}</td>
+                <td>{coin.coin_type}</td>
+                <td>{coin.zrc20_contract_address}</td>
+                <td>{coin.asset}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
       <p style={{ marginBottom: "1rem" }}>
-        Source:{" "}
-        <a href={COINS_URL} target="_blank" rel="noopener noreferrer">
-          {COINS_URL}
+        Source:&nbsp;
+        <a
+          href={`${API[activeTab]}${COINS}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {API[activeTab]}
+          {COINS}
         </a>
       </p>
     </div>
