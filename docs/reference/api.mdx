@@ -22,7 +22,7 @@ reading Ethereum-formatted transactions or sending them to the network
 For example, querying the latest block number:
 
 ```
-curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' https://rpc.ankr.com/zetachain_evm_athens_testnet
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' https://zetachain-athens-evm.blockpi.network/v1/rpc/public
 ```
 
 ## Tendermint HTTP
@@ -33,7 +33,7 @@ etc.
 
 For example, querying a genesis file:
 
-https://rpc.ankr.com/http/zetachain_tendermint_athens_testnet/genesis
+https://zetachain-athens.blockpi.network/rpc/v1/public/genesis
 
 ## Tendermint RPC
 
@@ -43,7 +43,7 @@ through an JSON RPC interface.
 For example, requesting a specific block:
 
 ```
-curl --header "Content-Type: application/json" --request POST --data '{"method": "block", "params": ["1187434"], "id": 1}' https://rpc.ankr.com/zetachain_tendermint_athens_testnet
+curl --header "Content-Type: application/json" --request POST --data '{"method": "block", "params": ["3336883"], "id": 1}' https://rpc.ankr.com/zetachain_tendermint_athens_testnet
 ```
 
 ## Tendermint WebSocket
@@ -63,4 +63,4 @@ state of the ZetaChain blockchain and broadcast transactions.
 
 For example, querying the latest block:
 
-https://zetachain-testnet.nodejumper.io:1317/cosmos/base/tendermint/v1beta1/blocks/latest
+https://zetachain-athens.blockpi.network/lcd/v1/public//cosmos/base/tendermint/v1beta1/blocks/latest
