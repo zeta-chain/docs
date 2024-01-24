@@ -4,9 +4,11 @@ const networksURL =
   "https://raw.githubusercontent.com/zeta-chain/networks/main/data/networks.json";
 
 const NetworkDataFetch: React.FC = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("testnet");
+  const [isLoading, setIsLoading] = useState(true);
 
-  const typeMapping = {
+  const typeMapping: any = {
     evm: "EVM RPC",
     "evm-ws": "EVM WebSocket",
     "tendermint-rpc": "Tendermint RPC",
@@ -17,10 +19,14 @@ const NetworkDataFetch: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch(networksURL)
-      .then((response) => response.json())
-      .then((jsonData) => {
-        let sortedData = jsonData["zeta_testnet"].api.sort((a, b) => {
+    setIsLoading(true);
+    setData(null);
+    const fetchData = async () => {
+      try {
+        const res = await fetch(networksURL);
+        const data = await res.json();
+        let networkData = data[`zeta_${activeTab}`];
+        let sortedData = networkData?.api?.sort((a: any, b: any) => {
           const providerA = extractProvider(a.url);
           const providerB = extractProvider(b.url);
           if (providerA < providerB) return -1;
@@ -28,40 +34,62 @@ const NetworkDataFetch: React.FC = () => {
           return 0;
         });
         setData({ api: sortedData });
-      })
-      .catch((error) => console.error("Error:", error));
-  }, []);
+      } catch (e) {
+        console.error("Error fetching data:", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [activeTab]);
 
-  const extractProvider = (url) => {
+  const extractProvider = (url: any) => {
     let domain = new URL(url).hostname.split(".");
     let providerName = domain[domain.length - 2];
     return providerName.charAt(0).toUpperCase() + providerName.slice(1);
   };
 
-  if (!data) {
-    return <div>Loading...</div>;
-  }
+  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
+  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
 
   return (
     <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Provider</th>
-            <th>Endpoint</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.api.map((endpoint) => (
-            <tr key={endpoint.url}>
-              <td>{typeMapping[endpoint.type] || endpoint.type}</td>
-              <td>{extractProvider(endpoint.url)}</td>
-              <td>{endpoint.url}</td>
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <button
+          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
+          onClick={() => setActiveTab("testnet")}
+        >
+          Testnet
+        </button>
+        <button
+          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
+          onClick={() => setActiveTab("mainnet")}
+        >
+          Mainnet
+        </button>
+      </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Provider</th>
+              <th>Endpoint</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data?.api?.map((endpoint: any) => (
+              <tr key={endpoint.url}>
+                <td>{typeMapping[endpoint.type] || endpoint.type}</td>
+                <td>{extractProvider(endpoint.url)}</td>
+                <td>{endpoint.url}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
