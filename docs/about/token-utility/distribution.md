@@ -45,11 +45,15 @@ This portion is allocated towards partners and developers contributing to the
 ZetaChain ecosystem. For example, incentives to help dApp developers get started
 through a grant program or for wallet partners to support ZetaChain natively.
 
-## Protocol Treasury
+## Validator Incentives
 
-The treasury pool is allocated towards ecosystem and community initiatives aimed
-at improving the ZetaChain ecosystem such as network insurance, bug bounties,
-protocol development and bounties, and operations.
+A portion of the total initial supply (10%) is allocated to the initial
+emissions pool on ZetaChain. This pool allows for block rewards targeted to
+sustain and secure the network over the first 4 years of network growth. After
+this pools is depleted, the protocol will introduce a planned 2.5% inflation
+through validator rewards, separate from the emission curve. You can read more
+about Validator Incentives and distributions
+[here](/about/token-utility/validators/).
 
 ## Liquidity Incentives
 
@@ -63,20 +67,16 @@ To incentivize liquidity in pools such as the Core ZRC-20 pools, this pool will
 be used to provide on-chain incentives for them to help bootstrap a seamless
 transaction experience for users and developers.
 
+## Protocol Treasury
+
+The treasury pool is allocated towards ecosystem and community initiatives aimed
+at improving the ZetaChain ecosystem such as network insurance, bug bounties,
+protocol development and bounties, and operations.
+
 ## Core Contributors, Advisors, and Purchasers
 
 ZETA are allocated to Purchasers as well as Core Contributors and Advisors who
 earned tokens for their contributions to the ZetaChain network.
-
-## Validator Incentives
-
-A portion of the total initial supply (10%) is allocated to the initial
-emissions pool on ZetaChain. This pool allows for block rewards targeted to
-sustain and secure the network over the first 4 years of network growth. After
-this pools is depleted, the protocol will introduce a planned 2.5% inflation
-through validator rewards, separate from the emission curve. You can read more
-about Validator Incentives and distributions
-[here](/about/token-utility/validators/).
 
 :::note
 
