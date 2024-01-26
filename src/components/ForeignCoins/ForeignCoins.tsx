@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 const API: any = {
   testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
-  mainnet: "https://example.org",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
 };
 
 const COINS = "/zeta-chain/fungible/foreign_coins";

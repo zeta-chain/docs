@@ -15,7 +15,7 @@ function formatDate(dateString: string) {
 
 const API: any = {
   testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
-  mainnet: "https://example.org",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
 };
 
 const AdminPolicy = () => {
