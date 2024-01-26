@@ -54,18 +54,17 @@ extremely simple interface to also function in an omnichain way.
 
 ### `deposit`
 
-When a user sends/deposits assets to the ZetaChain TSS address
-([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)) on a connected
-chain, `deposit` is called by `zetacore` and made available to the address that
-deposited. If there is data on the TX `message`, the system contract
-`DepositAndCall` is called, forwarding that data in a call to `onCrossChainCall`
-on the target zEVM contract. The `deposit` and `DepositAndCall` functions are
-only callable by the CCTX module (`zetacore` module) address.
+When a user sends/deposits assets to the ZetaChain
+[TSS address](/reference/contracts) on a connected chain, `deposit` is called by
+`zetacore` and made available to the address that deposited. If there is data on
+the TX `message`, the system contract `DepositAndCall` is called, forwarding
+that data in a call to `onCrossChainCall` on the target zEVM contract. The
+`deposit` and `DepositAndCall` functions are only callable by the CCTX module
+(`zetacore` module) address.
 
 This is a snippet of what the system contract looks like, where `DepositAndCall`
-may be called by `zetacore` after receiving a deposit into a TSS address
-([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)) managed by the
-ZetaChain network.
+may be called by `zetacore` after receiving a deposit into a
+[TSS address](/reference/contracts) managed by the ZetaChain network.
 
 ```solidity
 contract SystemContract is SystemContractErrors {

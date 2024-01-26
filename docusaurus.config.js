@@ -78,6 +78,10 @@ const config = {
             from: "/reference/testnet/",
             to: "/reference/contracts",
           },
+          {
+            from: "/reference/mainnet/",
+            to: "/reference/contracts",
+          },
         ],
       },
     ],

@@ -11,12 +11,10 @@ This section is important for wallet and app developers.
 
 :::
 
-:::tip
-All inputs and outputs of Bitcoin transactions sent to TSS address 
-must be a P2WPKH address (SegWit bech32 address, such as bc1xxx on Bitcoin mainnet). 
-Otherwise the transactions will not be observed and there will be no refund, and may
-cause irreversible user fund loss. 
-:::
+:::tip All inputs and outputs of Bitcoin transactions sent to TSS address must
+be a P2WPKH address (SegWit bech32 address, such as bc1xxx on Bitcoin mainnet).
+Otherwise the transactions will not be observed and there will be no refund, and
+may cause irreversible user fund loss. :::
 
 To deposit BTC into zEVM ZRC-20 contract (and optionally call a smart contract),
 the Bitcoin transaction must conform to this specifications:
@@ -77,14 +75,14 @@ and not recoverable.
 
 In summary, a zEVM BTC transaction would look like this:
 
-1. A user sends 1 BTC on Bitcoin network to the Bitcoin TSS address
-   ([Testnet](/reference/testnet), [Mainnet](/reference/mainnet)), adding a memo
-   (via `OP_RETURN`) in the tx saying (colloquially) “deposit to 0x1337”.
+1. A user sends 1 BTC on Bitcoin network to the Bitcoin
+   [TSS address](/reference/contracts) , adding a memo (via `OP_RETURN`) in the
+   tx saying (colloquially) “deposit to 0x1337”.
 2. Upon receiving this tx, the ZetaCore state machine calls the deposit (0x1337,
    1e8) to mint and credit 0x1337 with 1 zBTC minus fees.
 3. If 0x1337 is an Externally Owned Account (EOA), that's it. If it's a
    contract, ZetaCore will call the `onCrossChainMessage` function sending the
    message that was specified in the `OP_RETURN` memo.
 
-The TSS address ([Testnet](/reference/testnet), [Mainnet](/reference/mainnet))
-holds the BTC, where ownerships are tracked inside this BTC ZRC-20 contract.
+The TSS address holds the BTC, where ownerships are tracked inside this BTC
+ZRC-20 contract.
