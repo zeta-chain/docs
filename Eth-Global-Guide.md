@@ -14,19 +14,24 @@ At its core, ZetaChain is a public omnichain blockchain that supports real, nati
 <summary>Why build dApps on Zeta ?</summary>
 <br>
 
-1. Decentralized and public
-ZetaChain is a decentralized and public blockchain network. It is built on the Cosmos SDK and Tendermint Consensus. Unlike many cross-chain solutions that rely on centralized trust models prone to exploits and hacks, ZetaChain operates as a Proof-of-Stake blockchain. This means that all transactions and activities on the platform, including cross-chain transactions, are fully transparent, verifiable, and operate in a trust-minimized manner.
+**1. Decentralized and public blockchain network:**
 
-2. Hyper-connected nodes
+ZetaChain is built on the Cosmos SDK and Tendermint Consensus. Unlike many cross-chain solutions that rely on centralized trust models prone to exploits and hacks, ZetaChain operates as a Proof-of-Stake blockchain. This means that all transactions and activities on the chain, including cross-chain transactions, are fully transparent, verifiable, and operate in a trust-minimized manner.
+
+**2. Hyper-connected nodes:**
+
 ZetaChain's nodes have observers that monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on each connected chain, similar to how a wallet operates. These hyper-connected nodes provide a seamless omnichain environment, allowing developers to build novel and powerful cross-chain applications.
 
-3. Omnichain smart contracts
+**3. Omnichain smart contracts:**
+
 ZetaChain supports the native deployment of smart contracts that can read from and write to connected chains. It is the only public blockchain that offers this capability, opening up new possibilities for app development.
 
-4. Cross-chain message passing
+**4. Cross-chain message passing:**
+
 Developers can easily pass messages (data and value) between chains and layers using simple function calls. By leveraging message passing, dApp developers can create robust cross-chain applications by implementing a few functions within their existing smart contracts.
 
-5. Managed external assets
+**5. Managed external assets:**
+
 ZetaChain's network and dApps built on top of it can manage assets and vaults of externally connected chains. This allows for the management of assets on any chain, similar to how a smart contract on a single chain manages assets. As a result, a dApp on ZetaChain can orchestrate and bring smart contract logic to any connected chain, including non-smart-contract chains like Bitcoin.
 </details>
 
