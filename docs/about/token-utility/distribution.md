@@ -24,11 +24,11 @@ of long-term sustainability.
 | ----------------------- | ---------- | ----------- |
 | User Growth Pool        | 10.00%     | 210,000,000 |
 | Ecosystem Growth Fund   | 12.00%     | 252,000,000 |
-| Core Contributors       | 22.50%     | 472,500,000 |
-| Purchasers and Advisors | 16.00%     | 336,000,000 |
+| Validator Incentives    | 10.00%     | 210,000,000 |
 | Liquidity Incentives    | 5.50%      | 115,500,000 |
 | Protocol Treasury       | 24.00%     | 504,000,000 |
-| Validator Incentives    | 10.00%     | 210,000,000 |
+| Core Contributors       | 22.50%     | 472,500,000 |
+| Purchasers and Advisors | 16.00%     | 336,000,000 |
 
 ## User Growth Pool
 
