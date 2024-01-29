@@ -9,6 +9,20 @@ import EndpointList from "@site/src/components/EndpointList/EndpointList";
 Below is a list of public API endpoints that can be used to interact with the
 ZetaChain testnet.
 
+Temporary table of mainnet beta API/RPC. Remove when endpoints are added to
+`zeta-chain/networks` repo.
+
+| Name                  | Provider      | URL                                                             |
+| --------------------- | ------------- | --------------------------------------------------------------- |
+| Cosmos SDK HTTP API   | BlockPI       | https://zetachain.blockpi.network:443/lcd/v1/public             |
+| Comet BFT HTTP API    | BlockPI       | https://zetachain.blockpi.network:443/rpc/v1/public             |
+| EVM RPC               | BlockPI       | https://zetachain-evm.blockpi.network:443/v1/rpc/public         |
+| EVM JSON RPC          | All That Node | https://zetachain-mainnet-archive.allthatnode.com:8545          |
+| EVM WebSocket         | All That Node | wss://zetachain-mainnet-archive.allthatnode.com:8546            |
+| Cosmos SDK HTTP API   | All That Node | https://zetachain-mainnet-archive.allthatnode.com:1317          |
+| Comet BFT JSON RPC    | All That Node | https://zetachain-mainnet-archive.allthatnode.com:26657         |
+| Tendermint WebSocket: | All That Node | wss://zetachain-mainnet-archive.allthatnode.com:26657/websocket |
+
 <EndpointList />
 
 ## EVM RPC
