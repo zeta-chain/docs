@@ -16,7 +16,7 @@ https://github.com/zeta-chain/node/tags
 Download the binary and give execution perms to the binary:
 
 ```bash
-wget https://github.com/zeta-chain/node/releases/download/v10.1.0/zetacored_testnet-darwin-amd64 -O /usr/local/bin/zetacored
+wget https://github.com/zeta-chain/node/releases/download/v12.1.0/zetacored-darwin-amd64 -O /usr/local/bin/zetacored
 chmod a+x /usr/local/bin/zetacored
 ```
 
