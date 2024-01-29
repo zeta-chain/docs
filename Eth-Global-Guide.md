@@ -288,6 +288,7 @@ tBTC is represented on ZetaChain as ZRC-20 as well. To deposit tBTC to ZetaChain
 ## Build using Omnichain contracts
 <details>
 <Summary> Overview </Summary>
+<br>
 Omnichain Smart Contracts are contracts deployed on ZetaChain that can use and orchestrate assets on connected chains, as well as on ZetaChain. With omnichain smart contracts you are able to have a single place of logic that can maintain the state of assets and data across all connected chains.
 
 For a contract to be considered omnichain it must inherit from the zContract interface and implement the onCrossChainCall function:
@@ -616,8 +617,447 @@ Clear the cache and artifacts, then compile the contract:
 
   
 ## Using Cross-chain messaging contracts
-- Overview
-- Create a simple cross-chain messaging contract
+<details>
+<summary>Overview</summary>
+<br>
+
+Cross-chain messaging (CCM) lets you send messages from any connected chain to any connected chain, including ZetaChain. Cross-chain messaging makes the most sense for applications that generally need minimal logic or state to maintain across all chains, and where data that needs only to be passed between different chains one way.
+
+```
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+
+contract YourContract is ZetaInteractor, ZetaReceiver {
+    constructor(address connectorAddress)
+        ZetaInteractor(connectorAddress)
+    {}
+
+    function sendMessage(uint256 destinationChainId) external payable {
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
+                destinationGasLimit: 300000,
+                message: abi.encode("Hello, Cross-Chain World!"),
+                zetaValueAndGas: msg.value,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override isValidMessageCall(zetaMessage) {
+        // Handle the message
+    }
+
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override isValidRevertCall(zetaRevert) {
+        // Handle the revert
+    }
+}
+```
+CCM contracts are deployed on two or more connected chains. ZetaChain acts as a relayer transferring the messages between blockchains.
+
+- To send a message a user calls a function that executes connector.send(). ZetaChain picks up the message and sends it to the destination chain. The message is then received by a CCM contract passed to the onZetaMessage function.
+
+A good use-case of CCM is an application that needs only to call a contract or send value to an address on a different chain. After the message is received and processed on the destination, the application ideally doesn't have to broadcast anything back to synchronize state for anything, and the sender doesn't care about the results.
+
+Cross-chain messaging works to build a variety of applications and primitives such as:
+
+- Omnichain NFTs that can be sent between different chains, and that don't need to know about the state of the collection on other chains
+- “Simple” swap or bridge apps that use liquidity pools on existing chains
+- Proving ownership of NFTs or simple action-calls to a different chain
+
+
+</details>
+
+<details>
+<summary>Create a simple cross-chain messaging contract</summary>
+<br>
+In this tutorial we will create a simple contract that allows sending a message from one chain to another using the [Connector API](https://www.zetachain.com/docs/developers/cross-chain-messaging/connector/).
+
+<h3>Prerequisites</h3>
+<br>
+
+- Node.js (version 18 or above)
+- Yarn
+- Git
+  
+<h3> Set up your environment </h3>
+
+```git clone https://github.com/zeta-chain/template
+cd template
+yarn
+```
+
+- Create the Contract
+To create a new cross-chain messaging contract you will use the messaging Hardhat task available by default in the template.
+
+```npx hardhat messaging CrossChainMessage message:string```
+
+The messaging task accepts one or more arguments: the name of the contract and a list of arguments (optionally with types). The arguments define the contents of the message that will be sent across chains.
+
+In the example above the message will have only one field: message of type string. If the type is not specified it is assumed to be string.
+
+The messaging task has created:
+
+- ```contracts/CrossChainMessage.sol```: a Solidity cross-chain messaging contract
+- ```tasks/deploy.ts```: a Hardhat task to deploy the contract on one or more chains
+- ```tasks/interact.ts```: a Hardhat task to interact with the contract
+- It also modified ```hardhat.config.ts``` to import both deploy and interact tasks.
+
+- Cross-Chain Messaging Contract
+Let's review the contents of the CrossChainMessage contract:
+
+```
+contracts/CrossChainMessage.sol
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+
+contract CrossChainMessage is ZetaInteractor, ZetaReceiver {
+    error InvalidMessageType();
+
+    event CrossChainMessageEvent(string);
+    event CrossChainMessageRevertedEvent(string);
+
+    bytes32 public constant CROSS_CHAIN_MESSAGE_MESSAGE_TYPE =
+        keccak256("CROSS_CHAIN_CROSS_CHAIN_MESSAGE");
+    ZetaTokenConsumer private immutable _zetaConsumer;
+    IERC20 internal immutable _zetaToken;
+
+    constructor(
+        address connectorAddress,
+        address zetaTokenAddress,
+        address zetaConsumerAddress
+    ) ZetaInteractor(connectorAddress) {
+        _zetaToken = IERC20(zetaTokenAddress);
+        _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
+    }
+
+    function sendMessage(
+        uint256 destinationChainId,
+        string memory message
+    ) external payable {
+        if (!_isValidChainId(destinationChainId))
+            revert InvalidDestinationChainId();
+
+        uint256 crossChainGas = 2 * (10 ** 18);
+        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{
+            value: msg.value
+        }(address(this), crossChainGas);
+        _zetaToken.approve(address(connector), zetaValueAndGas);
+
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
+                destinationGasLimit: 300000,
+                message: abi.encode(CROSS_CHAIN_MESSAGE_MESSAGE_TYPE, message),
+                zetaValueAndGas: zetaValueAndGas,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
+        (bytes32 messageType, string memory message) = abi.decode(
+            zetaMessage.message,
+            (bytes32, string)
+        );
+
+        if (messageType != CROSS_CHAIN_MESSAGE_MESSAGE_TYPE)
+            revert InvalidMessageType();
+
+        emit CrossChainMessageEvent(message);
+    }
+
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
+        (bytes32 messageType, string memory message) = abi.decode(
+            zetaRevert.message,
+            (bytes32, string)
+        );
+
+        if (messageType != CROSS_CHAIN_MESSAGE_MESSAGE_TYPE)
+            revert InvalidMessageType();
+
+        emit CrossChainMessageRevertedEvent(message);
+    }
+}
+```
+The above contract:
+
+- inherits from ```ZetaInteractor```, which provides two modifiers that are used to validate the message and revert calls: ```isValidMessageCall``` and ```isValidRevertCall.```
+- implements ```ZetaReceiver```, which defines two functions: ```onZetaMessage``` and ```onZetaRevert```.
+  
+<h4>State Variables:</h4>
+<br>
+
+- ```CROSS_CHAIN_MESSAGE_MESSAGE_TYPE```: a public constant state variable which defines the message type. If your contract supports more than one message type, it's useful to define a constant for each one.
+- ```_zetaConsumer```: a private immutable state variable that stores the address of ZetaTokenConsumer, which is used amond other things for getting ZETA tokens from native tokens to pay for gas when sending a message.
+- ```_zetaToken```: an internal immutable state variable that stores the address of the ZETA token contract.
+The contract defines two events: ```CrossChainMessageEvent``` emitted when a message is processed on the destination chain and ```CrossChainMessageRevertedEvent``` emitted when a message is reverted on the destination chain.
+
+The constructor passes ```connectorAddress``` to the ```ZetaInteractor``` constructor and initializes both ```_zetaToken``` and ```_zetaConsumer``` state variables.
+
+The ```sendMessage``` function is used to send a message to a recipient contract on the destination chain. It first checks that the destination chain ID is valid. Then it uses ZETA consumer to get the needed amount of ZETA tokens from the provided ```msg.value``` (amount of native gas assets sent with the function call), and approves the ```ZetaConnector``` to spend the ```zetaValueAndGas``` amount of ZETA tokens.
+
+The ```sendMessagev function uses ```connector.send``` to send a crosss-chain message with the following arguments wrapped in a struct:
+
+- ```destinationChainId```: chain ID of the destination chain
+- ```destinationAddress```: address of the contract receiving the message on the destination chain (expressed in bytes since it can be non-EVM)
+- ```destinationGasLimit```: gas limit for the destination chain's transaction
+- ```message```: arbitrary message to be parsed by the receiving contract on the destination chain
+- ```zetaValueAndGas```: amount of ZETA tokens to be sent to the destination chain, ZetaChain gas fees, and destination chain gas fees (expressed in ZETA tokens)
+```zetaParams```: optional ZetaChain parameters.
+- The ```onZetaMessage``` function processes incoming cross-chain messages. The function decodes the message to identify its type and content.
+
+- If the message type matches a predefined constant, the message's reception is logged through the CrossChainMessageEvent. However, if the type is unrecognized, the function reverts to ensure that only specific message types are handled. The function also uses a ```isValidMessageCall``` modifier to verify the message's authenticity, ensuring it comes from a trusted source.
+
+The ```onZetaRevert``` function handles the reversal of cross-chain messages. Taking in a ```ZetaInterfaces.ZetaRevert``` parameter, the function decodes this reverted message to identify its type and content. If the message type aligns with a predefined constant, the function logs the reversal through the ```CrossChainMessageRevertedEvent```. On the other hand, if the type is not recognized, the function reverts the transaction. The function also uses the ```isValidRevertCall``` modifier to ensure that the revert message is genuine and originates from the trusted source.
+
+<h3>Deploy Task</h3>
+<br>
+The messaging task has created a Hardhat task to deploy the contract.
+
+```tasks/deploy.ts```
+
+```
+import { getAddress } from "@zetachain/protocol-contracts";
+import { ethers } from "ethers";
+import { task, types } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { getSupportedNetworks } from "@zetachain/networks";
+
+const contractName = "CrossChainMessage";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const networks = args.networks.split(",");
+  const contracts: { [key: string]: string } = {};
+  await Promise.all(
+    networks.map(async (networkName: string) => {
+      contracts[networkName] = await deployContract(
+        hre,
+        networkName,
+        args.json,
+        args.gasLimit
+      );
+    })
+  );
+
+  for (const source in contracts) {
+    await setInteractors(hre, source, contracts, args.json, args.gasLimit);
+  }
+
+  if (args.json) {
+    console.log(JSON.stringify(contracts, null, 2));
+  }
+};
+
+const initWallet = (hre: HardhatRuntimeEnvironment, networkName: string) => {
+  const { url } = hre.config.networks[networkName] as any;
+  const provider = new ethers.providers.JsonRpcProvider(url);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider);
+
+  return wallet;
+};
+
+const deployContract = async (
+  hre: HardhatRuntimeEnvironment,
+  networkName: string,
+  json: boolean = false,
+  gasLimit: number
+) => {
+  const wallet = initWallet(hre, networkName);
+
+  const connector = getAddress("connector", networkName as any);
+  const zetaToken = getAddress("zetaToken", networkName as any);
+  const zetaTokenConsumerUniV2 = getAddress(
+    "zetaTokenConsumerUniV2",
+    networkName as any
+  );
+  const zetaTokenConsumerUniV3 = getAddress(
+    "zetaTokenConsumerUniV3",
+    networkName as any
+  );
+
+  const { abi, bytecode } = await hre.artifacts.readArtifact(contractName);
+  const factory = new ethers.ContractFactory(abi, bytecode, wallet);
+  const contract = await factory.deploy(
+    connector,
+    zetaToken,
+    zetaTokenConsumerUniV2 || zetaTokenConsumerUniV3,
+    { gasLimit }
+  );
+
+  await contract.deployed();
+  if (!json) {
+    console.log(`
+🚀 Successfully deployed contract on ${networkName}.
+📜 Contract address: ${contract.address}`);
+  }
+  return contract.address;
+};
+
+const setInteractors = async (
+  hre: HardhatRuntimeEnvironment,
+  source: string,
+  contracts: { [key: string]: string },
+  json: boolean = false,
+  gasLimit: number
+) => {
+  if (!json) {
+    console.log(`
+🔗 Setting interactors for a contract on ${source}`);
+  }
+  const wallet = initWallet(hre, source);
+
+  const { abi, bytecode } = await hre.artifacts.readArtifact(contractName);
+  const factory = new ethers.ContractFactory(abi, bytecode, wallet);
+  const contract = factory.attach(contracts[source]);
+
+  for (const counterparty in contracts) {
+    if (counterparty === source) continue;
+
+    const counterpartyContract = hre.ethers.utils.solidityPack(
+      ["address"],
+      [contracts[counterparty]]
+    );
+    const chainId = hre.config.networks[counterparty].chainId;
+    await (
+      await contract.setInteractorByChainId(chainId, counterpartyContract, {
+        gasLimit,
+      })
+    ).wait();
+    if (!json) {
+      console.log(
+        `✅ Interactor address for ${chainId} (${counterparty}) is set to ${counterpartyContract}`
+      );
+    }
+  }
+};
+
+task("deploy", "Deploy the contract", main)
+  .addParam(
+    "networks",
+    `Comma separated list of networks to deploy to (e.g. ${getSupportedNetworks(
+      "ccm"
+    )})`
+  )
+  .addOptionalParam("gasLimit", "Gas limit", 10000000, types.int)
+  .addFlag("json", "Output JSON");
+```
+
+To establish cross-chain messaging between blockchains via ZetaChain, you need to deploy contracts capable of sending and receiving cross-chain messages to two or more blockchains connected to ZetaChain.
+
+You can specify the desired chains by using a --networks parameter of the deploy task, which accepts a list of network names separated by commas. For instance, ```--networks goerli_testnet,bsc_testnet```.
+
+The main function maintains a mapping of network names to their corresponding deployed contract addresses, iterating over the networks to deploy the contract on each one.
+
+The contract's constructor requires three arguments: 
+- the connector contract's address,
+- the ZETA token's address, and
+- the ZETA token consumer contract's address.
+These addresses are obtained using ZetaChain's ```getAddress```.
+
+The main function subsequently sets interactors for each contract. An interactor is a mapping between a chain ID of the destination and the contract address on that chain.
+
+When deploying to two chains (like Goerli and BSC testnet), you will invoke ```setInteractorByChainId``` on a Goerli contract and pass the BSC testnet chain ID (97) and the BSC testnet contract address. You then perform the same operation on a BSC testnet contract, passing the Goerli chain ID (5) and the Goerli contract address. If deploying to more than two chains, you must call ```setInteractorByChainId``` for each link between the chains.
+
+<h3>Interact Task</h3>
+<br>
+
+The messaging task has also created a Hardhat task to interact with the contract:
+
+```tasks/interact.ts```
+
+```https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/interact.ts```
+
+
+The task accepts the following arguments:
+
+- ```contract```: address of the contract on the source chain
+- ```amount```: amount of native tokens to send with the transaction
+- ```destination```: name of the destination chain
+- ```message```: message to be sent to the destination chain
+  
+The main function uses the contract argument to attach to the contract on the source chain. It then uses the destination argument to obtain the destination chain's chain ID. The function subsequently converts the message argument to bytes and sends a transaction to the contract's sendMessage function, passing the destination chain ID and the message.
+
+Finally, the task uses the trackCCTX function from ```@zetachain/toolkit/helpers``` to track the token transfer transaction. The function waits for the transaction to appear on ZetaChain and tracks the status of the transaction. Transaction tracking is optional, but helpful to know when the transaction has been processed by ZetaChain.
+
+<h3>Create an Account</h3>
+<br>
+
+To deploy and interact with the contract you will need a wallet with tokens.
+
+- Create a new wallet account:
+
+```npx hardhat account --save```
+
+This command generates a random wallet, prints information about the wallet to the terminal, and saves the private key to a .env file to make it accessible to Hardhat.
+
+- Use the Faucet to Request Tokens
+To pay for the transaction fees to deploy and interact with the cross-chain messaging contracts you will need native gas tokens on the connected chains you are deploying contracts to. You can find a list of recommended faucets [here](https://www.zetachain.com/docs/reference/get-testnet-zeta/)
+
+- Check Token Balances
+```npx hardhat balances```
+
+- Deploy the Contract
+Clear the cache and artifacts, then compile the contract:
+
+```npx hardhat compile --force```
+
+Run the following command to deploy the contract to two networks:
+
+```npx hardhat deploy --networks bsc_testnet,goerli_testnet```
+
+```
+
+🚀 Successfully deployed contract on bsc_testnet
+📜 Contract address: 0x6Fd784c16219026Ab0349A1a8A6e99B6eE579C93
+
+🚀 Successfully deployed contract on goerli_testnet.
+📜 Contract address: 0xf1907bb130feb28D6e1305C53A4bfdb32140d8E6
+
+🔗 Setting interactors for a contract on bsc_testnet
+✅ Interactor address for 5 (goerli_testnet) is set to 0xf1907bb130feb28d6e1305c53a4bfdb32140d8e6
+
+🔗 Setting interactors for a contract on goerli_testnet
+✅ Interactor address for 97 (bsc_testnet) is set to 0x6fd784c16219026ab0349a1a8a6e99b6ee579c93
+```
+
+- Interact with the Contract
+Send a message from BSC testnet to Goerli using the contract address (see the output of the deploy task). Make sure to submit enough native tokens with ```--amount``` to pay for the transaction fees.
+
+```
+npx hardhat interact --message hello --network bsc_testnet --destination goerli_testnet --contract 0x6Fd784c16219026Ab0349A1a8A6e99B6eE579C93 --amount 2
+```
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+✅ "sendHelloWorld" transaction has been broadcasted to bsc_testnet
+📝 Transaction hash: 0xa3a507d34056f4c00b753e7d0b47b16eb6d35b3c5016efa0323beb274725b1a1
+```
+
+After the cross-chain transaction is processed on ZetaChain, look up the contract on the Goerli explorer by the contract address ```(0xf1907bb130feb28D6e1305C53A4bfdb32140d8E6)``` and you should be able to see the emitted ```HelloWorldEvent``` event.
+
+<h3>Source Code</h3>
+
+You can find the source code for the example in this tutorial here:
+
+```https://github.com/zeta-chain/example-contracts/tree/main/messaging/message```
+
+</details>
+
+
 
 ## Developer resources
 
