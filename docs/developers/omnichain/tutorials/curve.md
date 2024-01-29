@@ -48,4 +48,4 @@ function simply extracts params from the message, calls the Curve pool's
 logic remains in the core Curve contract deployment. Users can interact by
 depositing and calling this zEVM contract from an external chain. You can see
 how you'd call this for a user programmatically
-[here](https://www.zetachain.com/docs/developers/omnichain/zrc-20/).
+[here](/developers/omnichain/zrc-20/).

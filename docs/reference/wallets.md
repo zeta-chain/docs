@@ -31,7 +31,7 @@ To add ZetaChain to the Metamask extension wallet follow these steps:
   - Network Name: `ZetaChain Testnet` (or choose another name)
   - New RPC URL: `https://zetachain-athens-evm.blockpi.network/v1/rpc/public`
     (or choose another one from
-    [the list](https://www.zetachain.com/docs/reference/api/))
+    [the list](/reference/api/))
   - Chain ID: `7001`
   - Currency Symbol: `tZETA`
   - Block explorer URL: `https://athens3.explorer.zetachain.com/`

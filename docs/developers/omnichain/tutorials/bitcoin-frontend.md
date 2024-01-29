@@ -20,7 +20,7 @@ For the purposes of this tutorial we will be using the
 - [Node.js](https://nodejs.org/en/) installed on your machine with `npm` or
   `yarn`
 - Learn how to
-  [Deposit and call zEVM contracts from Bitcoin](https://www.zetachain.com/docs/developers/omnichain/bitcoin/).
+  [Deposit and call zEVM contracts from Bitcoin](/developers/omnichain/bitcoin/).
 
 # Create a new project
 
@@ -117,7 +117,7 @@ To call an omnichain contract from Bitcoin you need to send a token transfer
 transaction to the ZetaChain's
 [TSS address](https://zetachain.com/docs/reference/testnet) on Bitcoin with a
 memo that conforms to
-[the required format](https://www.zetachain.com/docs/developers/omnichain/bitcoin).
+[the required format](/developers/omnichain/bitcoin).
 
 The memo is composed of two parts:
 
@@ -183,7 +183,7 @@ npx http-server
 Open the page in your browser and fill in the form. You can test functionality
 with your own contract address or follow one of the provided tutorials, for
 example, the
-[Staking](https://www.zetachain.com/docs/developers/omnichain/tutorials/staking/)
+[Staking](/developers/omnichain/tutorials/staking/)
 tutorial to deploy a contract that you can call from Bitcoin.
 
 Fill out the form and click the "Send transaction" button. You will be prompted

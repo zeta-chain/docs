@@ -210,7 +210,7 @@ to Hardhat.
 To pay for the transaction fees to deploy and interact with the cross-chain
 messaging contracts you will need native gas tokens on the connected chains you
 are deploying contracts to. You can find a list of recommended faucets
-[in the docs](https://www.zetachain.com/docs/reference/get-testnet-zeta/).
+[in the docs](/reference/get-testnet-zeta/).
 
 ## Check Token Balances
 
