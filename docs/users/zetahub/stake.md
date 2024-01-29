@@ -1,0 +1,36 @@
+---
+sidebar_position: 5
+---
+
+# How to Delegate/Stake ZETA
+
+You will be able to view a list of all potential validators on the Stake page,
+as well as details like their voting power, commission, and uptime.
+
+![](/img/docs/zetahub/stake-1.png)
+
+Once you have selected a validator to delegate ZETA to, you’ll need to ensure
+you have a sufficient balance of ZETA on the ZetaChain network. Once you get
+more assets and send them to ZetaChain, or you send your existing ZETA from
+another network to the ZetaChain network, you’re ready to start staking. Follow
+ZetaHub’s step-by-step flow to delegate your assets to your validator of choice.
+
+Once you’ve delegated your ZETA, you’ll be able to view all previous delegations
+in the right hand sidebar. You can also see and claim the rewards you’ve
+accumulated by clicking “Claim rewards” on a delegation card, or the “Claim all
+rewards” button at the bottom of the sidebar.
+
+![](/img/docs/zetahub/stake-2.png)
+
+If you decide to undelegate your ZETA, you can head to the “Undelegate” tab
+within a validator’s page and input the amount of ZETA (and associated rewards)
+you’d like to take out. Note that you will have to wait 21 days before ZETA is
+liquid upon withdrawal.
+
+![](/img/docs/zetahub/stake-3.png)
+
+The Redelegate tab is for if you’d like to take out ZETA delegated to one
+validator and easily delegate it to another validator of your choice. Select the
+desired new validator and start the delegation process as normal.
+
+![](/img/docs/zetahub/stake-4.png)

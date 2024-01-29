@@ -1,0 +1,21 @@
+---
+sidebar_position: 3
+---
+
+# How to Get ZETA
+
+In order to get more ZETA, you can head to the top navigation in ZetaHub and
+select “Get ZETA”.
+
+![](/img/docs/zetahub/get-zeta-1.png)
+
+This will open up a modal where you can select an exchange from which you will
+be able to get ZETA. Once you decide on where you’d like to go, an external site
+will open, and you will be able to follow the CEX/DEX’s instructions on how to
+proceed.
+
+![](/img/docs/zetahub/get-zeta-2.png)
+
+You will also be able to access this modal within most ZetaHub pages where
+having a ZETA balance is necessary to transact. If you don’t have sufficient
+balance, you will come across a button that prompts you to “Get ZETA.”
