@@ -8,6 +8,19 @@
 <br>
 ZetaChain is the foundational, chain-agnostic backbone of the decentralized internet. It acts as a convergence point for various blockchains, including Ethereum and Bitcoin. ZetaChain enables omnichain functionality, supporting generic smart contracts and seamless messaging between different blockchains. By addressing the challenges of cross-chain interactions, it opens up the crypto and global financial ecosystem to a broader audience. ZetaChain envisions a fluid, multi-chain crypto ecosystem where users and developers can easily navigate and leverage the unique advantages of different blockchains for payments, DeFi, gaming, art, and more.
 At its core, ZetaChain is a public omnichain blockchain that supports real, native cross-blockchain transactions with a complete toolkit for cross-chain messaging and general Omnichain Smart Contracts.
+  
+------
+<h3>MCQs</h3>
+
+**Question:What is the primary role of ZetaChain in the context of the decentralized internet?**
+
+◻  A. Providing exclusive support for Ethereum transactions <br>
+◻  B. Acting as a specialized gaming blockchain <br>
+✅ C. Enabling omnichain functionality for cross-blockchain transactions <br>
+◻  D. Focusing solely on Bitcoin-related smart contracts
+
+
+-------
 </details>
 
 <details>
@@ -33,6 +46,29 @@ Developers can easily pass messages (data and value) between chains and layers u
 **5. Managed external assets:**
 
 ZetaChain's network and dApps built on top of it can manage assets and vaults of externally connected chains. This allows for the management of assets on any chain, similar to how a smart contract on a single chain manages assets. As a result, a dApp on ZetaChain can orchestrate and bring smart contract logic to any connected chain, including non-smart-contract chains like Bitcoin.
+
+
+-------
+<h3>MCQs</h3>
+
+**Question:How does ZetaChain's use of the Tendermint Consensus and Proof-of-Stake differ from some cross-chain solutions?**
+
+◻  A. It introduces a centralized trust model. <br>
+◻  B. It relies on a Proof-of-Work blockchain <br>
+◻  C. It minimizes hyper-connected nodes <br>
+✅  D. It ensures fully transparent and verifiable transactions
+
+
+<br>
+
+**Question:What distinguishes ZetaChain's approach to cross-chain applications through hyper-connected nodes?**
+
+◻  A. Limited connectivity with external chains <br>
+✅ B. Utilization of TSS architecture for transaction signing <br>
+◻  C. Exclusively supporting single-chain applications <br>
+◻  D. Reliance on a centralized node model <br>
+
+----------
 </details>
 
 
@@ -48,6 +84,18 @@ ZetaChain's coin, ZETA, serves multiple purposes within the ZetaChain ecosystem.
 - ZETA is used as a cross-chain intermediary asset through messaging. When a cross-chain message is sent, a dApp/user attaches ZETA in his message to represent value and to pay for all gas and transaction fees in a single bundle. ZETA is also exchanged on the core pools to pay for outbound gas.
   
 - Users can conveniently pay for ZetaChain's cross-chain service and gas fees on the destination chain using ZETA in a single step or bundle.
+
+-------
+<h3>MCQs</h3>
+<br>
+**Question: What are the primary use cases of ZETA within the ZetaChain ecosystem?**
+
+◻  A. Solely used for gas in external transactions <br>
+◻  B. Exclusively burned over time in internal transactions <br>
+✅ C. Multi-purpose, including gas for smart contracts, exchange in core pools, and as a cross-chain intermediary asset <br>
+◻  D. Limited to managing assets on ZetaChain-connected chains
+-------
+
 </details>
 
 ## Build with ZetaChain (things common to both CCM and omnichain)
