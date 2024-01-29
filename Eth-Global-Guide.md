@@ -123,21 +123,21 @@ ZetaChain provides two methods for developing dApps: omnichain contracts and cro
 
 This ZetaChain smart contract template will help you to setup your dApp quickly. In order to begin, git clone the below repository.
 
-```git clone https://github.com/zeta-chain/template```
+`git clone https://github.com/zeta-chain/template`
 
 
-This template uses Hardhat to compile, test, and deploy contracts. It also imports @zetachain/toolkit that provides a useful set of utilities for creating contracts, querying balances, tracking cross-chain transactions, accessing the faucet, and more. The template exposes most of the features available in the toolkit through Hardhat tasks.
+This template uses Hardhat to compile, test, and deploy contracts. It also imports `@zetachain/toolkit` that provides a useful set of utilities for creating contracts, querying balances, tracking cross-chain transactions, accessing the faucet, and more. The template exposes most of the features available in the toolkit through Hardhat tasks.
 
 1. Generating a Random Wallet
 To generate a random wallet:
 
-```npx hardhat account --save```
+`npx hardhat account --save`
 
 This command generates a random wallet, prints information about the wallet to the terminal, and saves the private key to a .env file to make it accessible to Hardhat. If you don't want to save the wallet (for example, if you just need an address to send tokens to for testing purposes), you can run the command without the --save flag.
 
-If you already have a private key or a mnemonic you want to import, you can use the --recover flag:
+If you already have a private key or a mnemonic you want to import, you can use the `--recover` flag:
 
-```npx hardhat account --save --recover``` 
+`npx hardhat account --save --recover`
 
 The account command will prompt you for a private key or a mnemonic, print the derived addresses and save the private key into the .env file.
 
@@ -146,49 +146,49 @@ The account command shows derived addresses in hexacecimal (for EVM-based chains
 2. Querying for Token Balances
 To query for token balances:
 
-```npx hardhat balances```
+`npx hardhat balances`
 
-This command queries token balances for the account address derived from the private key specified in the ```.env```. If you need to query for balances as part of a script, you can also use a --json flag to output the balances in JSON format:
+This command queries token balances for the account address derived from the private key specified in the `.env`. If you need to query for balances as part of a script, you can also use a `--json` flag to output the balances in JSON format:
 
-```npx hardhat balances --json```
+`npx hardhat balances --json`
 
-If you want to query for token balances for a different account, you can use the --address flag:
+If you want to query for token balances for a different account, you can use the `--address` flag:
 
-```npx hardhat balances --address ADDRESS```
+`npx hardhat balances --address ADDRESS`
 
 The balances command supports querying for native gas tokens, wrapped ZETA on all connected chains as well as ZetaChain, ZRC-20 tokens, and BTC on Bitcoin.
 
 3. Requesting Tokens from the Faucet
 To request ZETA tokens from the faucet:
 
-```npx hardhat faucet```
+`npx hardhat faucet`
 
 This command requests tokens from the faucet for the account address derived from the private key specified in the .env. Tokens sent to the address on ZetaChain.
 
 You can specify a different address to send the tokens to:
 
-```npx hardhat faucet --address ADDRESS```
+`npx hardhat faucet --address ADDRESS`
 
 Alternatively, you can install a standalone faucet CLI:
 
-```yarn global add @zetachain/faucet-cli```
+`yarn global add @zetachain/faucet-cli`
 
 You can then use it with the following command:
 
-```zetafaucet -h```
+`zetafaucet -h`
 
 4. Creating an Omnichain Contract
 The template includes a set of commands for generating code for smart contracts and helper tasks.
 
 To create a new omnichain contract:
 
-```npx hardhat omnichain MyContract```
+`npx hardhat omnichain MyContract`
 
-This command creates a new omnichain contract in contracts/MyContract.sol, a task to deploy the contract in tasks/deploy.ts, and a task to interact with the contract in tasks/interact.ts.
+This command creates a new omnichain contract in `contracts/MyContract.sol`, a task to deploy the contract in `tasks/deploy.ts`, and a task to interact with the contract in `tasks/interact.ts`.
 
 When an omnichain contract is called, it can receive data in the data field of a transaction. This data is passed to the message parameter of the contract's onCrossChainCall function. To specify the fields of the message parameter, use positional arguments:
 
-```npx hardhat omnichain MyContract recepient:address description quantity:uint256```
+`npx hardhat omnichain MyContract recepient:address description quantity:uint256`
 
 A field may have a type specified after the field name, separated by a colon. If no type is specified, the type defaults to string.
 
@@ -199,7 +199,7 @@ Learn more about omnichain contracts by following the tutorials.
 5. Creating a Cross-Chain Messaging Contract
 To create a new cross-chain messaging contract:
 
-```npx hardhat messaging MyContract```
+`npx hardhat messaging MyContract`
 
 This command creates a new cross-chain messaging contract in contracts/MyContract.sol, a task to deploy the contract in tasks/deploy.ts, and a task to interact with the contract in tasks/interact.ts.
 
@@ -215,12 +215,12 @@ The list of supported types is the same as for omnichain contracts.
 6. Tracking a Cross-Chain Transaction
 After broadcasting a cross-chain transaction on a connected chain either to a cross-chain messaging contract or to trigger an omnichain contract, you can track its status:
 
-```npx hardhat cctx TX_HASH```
+`npx hardhat cctx TX_HASH`
 
 7. Verifying a Contract
 To verify a contract deployed on ZetaChain:
 
-```npx hardhat verify:zeta --contract ADDRESS```
+`npx hardhat verify:zeta --contract ADDRESS`
 
 Select the contract to verify:
 ```
@@ -235,35 +235,35 @@ After the confirmation the contract will be verified.
 8. Sending Tokens
 Sending ZETA from ZetaChain to Goerli:
 
-```npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_testnet```
+`npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_testnet`
 
 9. Sending ZETA from Goerli to ZetaChain:
 
-```npx hardhat send-zeta --amount 1 --network goerli_testnet --destination zeta_testnet```
+`npx hardhat send-zeta --amount 1 --network goerli_testnet --destination zeta_testnet`
 
 10. Depositing gETH to ZetaChain as ZRC-20:
 
-```npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnetv```
+`npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnetv`
 
 11. Withdrawing ZRC-20 from ZetaChain go Goerli as gETH:
 
-```npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet```
+`npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet`
 
 12. Depositing tBTC from the Bitcoin testnet to ZetaChain:
 
-```npx hardhat send-btc --amount 1 --recipient TSS_ADDRESS --memo RECIPIENT_ADDRESS_WITHOUT_0x```
+`npx hardhat send-btc --amount 1 --recipient TSS_ADDRESS --memo RECIPIENT_ADDRESS_WITHOUT_0x`
 
 
 13. Querying Cross-Chain Fees
 
 
-```npx hardhat fees```
+`npx hardhat fees`
 
 This command will query the latest omnichain withdrawal fees as well as cross-chain messaging fees.
 
 14. To calculate the fees for a different gas limit use the --gas flag:
 
-```npx hardhat fees --gas 300000```
+`npx hardhat fees --gas 300000`
 
 </details>
 
@@ -277,13 +277,13 @@ The native token of the ZetaChain ZETA is a staking token, and is used to pay fo
 
 To query for account balance you can use the Cosmos HTTP API balances endpoint:
 
-```https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um```
+`https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um`
 - To convert the value amount from azeta to ZETA, divide it by 10¹⁸. In the example above the balance is 10 ZETA.
   
 
 > Sending ZETA from ZetaChain to Goerli:
 
-```npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_testnet```
+`npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_testnet`
 
 - send-zeta sends native ZETA to the wrapped ZETA contract on ZetaChain, approves the wrapped ZETA to be spent by the connector contract, then finally calls the connector's send method to send the wrapped ZETA to the connected chain.
 
@@ -298,13 +298,13 @@ ZETA tokens on EVM-compatible connected blockchains (like Ethereum, Polygon and 
 
 > Sending ZETA from Goerli to ZetaChain:
 
-```npx hardhat send-zeta --amount 1 --network goerli_testnet --destination zeta_testnet```
+`npx hardhat send-zeta --amount 1 --network goerli_testnet --destination zeta_testnet`
 
  When you use the send-zeta command above, you will receive unwrapped native ZETA on ZetaChain.
 
 > Sending ZETA from Goerli to BSC testnet:
 
-```npx hardhat send-zeta --amount 1 --network goerli_testnet --destination bsc_testnet```
+`npx hardhat send-zeta --amount 1 --network goerli_testnet --destination bsc_testnet`
 
 > Acquiring ZETA on ZetaChain
 
@@ -318,17 +318,17 @@ To deposit tokens to ZetaChain, send them to the TSS address on a connected chai
 
 - Depositing gETH to ZetaChain as ZRC-20:
 
-```npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnet```
+`npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnet`
 
 - Withdrawing ZRC-20 from ZetaChain to Goerli as gETH:
 
-```npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet```
+`npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet`
 
 tBTC is represented on ZetaChain as ZRC-20 as well. To deposit tBTC to ZetaChain you need to send it to the tss address on the Bitcoin testnet with the recipient's address encoded in the memo.
 
 - Depositing tBTC from the Bitcoin testnet to ZetaChain:
 
-```npx hardhat send-btc --amount 1 --recipient <TSS_ADDRESS> --memo <RECIPIENT_ADDRESS>```
+`npx hardhat send-btc --amount 1 --recipient <TSS_ADDRESS> --memo <RECIPIENT_ADDRESS>`
 
 </details>
 
@@ -396,7 +396,7 @@ In this tutorial you will create a simple omnnichain contract, deploy it on Zeta
   
 You can start from cloning the Hardhat contract template using the following command :
 
-```git clone https://github.com/zeta-chain/template```
+`git clone https://github.com/zeta-chain/template`
 
 - Install dependencies:
 
@@ -410,16 +410,16 @@ yarn
   
 To create a new omnichain contract you will use the omnichain Hardhat task available by default in the template.
 
-```npx hardhat omnichain MyContract```
+`npx hardhat omnichain MyContract`
 
 The omnichain task can also accept a list of arguments (optionally with types) to create a contract that accepts specific data from a connected chain.In this tutorial, you will create a contract that does not accept any arguments.
 
 The omnichain task has created:
 
-- ```contracts/MyContract.sol```: a Solidity omnichain smart contract
-- ```tasks/deploy.ts```: a Hardhat task to deploy the contract
-- ```tasks/interact.ts```: a Hardhat task to interact with the contract
-- It also modified ```hardhat.config.ts``` to import both deploy and interact tasks.
+- `contracts/MyContract.sol`: a Solidity omnichain smart contract
+- `tasks/deploy.ts`: a Hardhat task to deploy the contract
+- `tasks/interact.ts`: a Hardhat task to interact with the contract
+- It also modified `hardhat.config.ts` to import both deploy and interact tasks.
 
 <h3>Omnichain Contract</h3>
 
@@ -465,7 +465,7 @@ MyContract is a simple contract that inherits from the zContract interface.
 
 - The constructor function accepts the address of the system contract and stores it in the systemContract state variable.
 
-- ```onCrossChainCall``` is a function that is called when the contract gets called by a token transfer transaction sent to the TSS address on a connected chain (when a gas token is deposited) or a deposit method call on the ERC-20 custody contract (when an ERC-20 token is deposited). The function receives the following inputs:
+- `onCrossChainCall` is a function that is called when the contract gets called by a token transfer transaction sent to the TSS address on a connected chain (when a gas token is deposited) or a deposit method call on the ERC-20 custody contract (when an ERC-20 token is deposited). The function receives the following inputs:
 
 - context: is a struct of type zContext that contains the following values:
 - origin: EOA address that sent the token transfer transaction to the TSS address (triggering the omnichain contract) or the value passed to the deposit method call on the ERC-20 custody contract.
@@ -475,9 +475,9 @@ MyContract is a simple contract that inherits from the zContract interface.
 - amount: the amount of tokens that were transferred to the TSS address or an amount of tokens that were deposited to the ERC-20 custody contract.
 - message: the contents of the data field of the token transfer transaction.
 
-The ```onCrossChainCall``` function should only be called by the system contract (in other words, by the ZetaChain protocol) to prevent a caller from supplying arbitrary values in context. The onlySystem modifier ensures that the function is called only as a response to a token transfer transaction sent to the TSS address or an ERC-20 custody contract.
+The `onCrossChainCall` function should only be called by the system contract (in other words, by the ZetaChain protocol) to prevent a caller from supplying arbitrary values in context. The onlySystem modifier ensures that the function is called only as a response to a token transfer transaction sent to the TSS address or an ERC-20 custody contract.
 
-By default, the ```onCrossChainCall``` function doesn't do anything else. Based on usecase, you can implement the logic for the same.
+By default, the `onCrossChainCall` function doesn't do anything else. Based on usecase, you can implement the logic for the same.
 
 <h3>Deploy Task</h3>
 <br>
@@ -485,7 +485,7 @@ By default, the ```onCrossChainCall``` function doesn't do anything else. Based 
 The omnichain task has created a Hardhat task to deploy the contract:
 
 
-```tasks/deploy.ts```
+`tasks/deploy.ts`
 
 ```
 import { getAddress } from "@zetachain/protocol-contracts";
@@ -527,11 +527,11 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 task("deploy", "Deploy the contract", main).addFlag("json", "Output in JSON");
 ```
 
-- Omnichain contracts are supposed to be deployed to ZetaChain, so the task checks that the ```--network``` flag value is always zeta_testnet.
+- Omnichain contracts are supposed to be deployed to ZetaChain, so the task checks that the `--network` flag value is always zeta_testnet.
 
-- The task uses the ```getAddress``` function from @zetachain/protocol-contracts to get the address of the system contract on ZetaChain.
+- The task uses the `getAddress` function from @zetachain/protocol-contracts to get the address of the system contract on ZetaChain.
 
-- The task then uses ```Ethers.js``` to deploy the contract to ZetaChain.
+- The task then uses `Ethers.js` to deploy the contract to ZetaChain.
 
 
 <h3>Interact Task</h3>
@@ -539,7 +539,7 @@ task("deploy", "Deploy the contract", main).addFlag("json", "Output in JSON");
 
 The omnichain task has also created a Hardhat task to interact with the contract:
 
-```tasks/interact.ts```
+`tasks/interact.ts`
 ```
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -604,7 +604,7 @@ The task uses the prepareData function from @zetachain/toolkit/helpers to prepar
 
 Calling omnichain contracts is differs depending on whether a gas token is being deposited or an ERC-20 token.
 
-If an ERC-20 token address is passed to the ```--token``` optional parameter, the interact task assumes you want to deposit an ERC-20 token in an omnichain contract.
+If an ERC-20 token address is passed to the `--token` optional parameter, the interact task assumes you want to deposit an ERC-20 token in an omnichain contract.
 
 To deposit an ERC-20 token into an omnichain contract you need to call the deposit method of the ERC-20 custody contract. The task first gets the address of the custody contract on the current network, creates an instance of a token contract, gets the number of decimals of the token, and approves the custody contract to spend the specified amount of ERC-20 tokens. The task then calls the deposit method of the custody contract, passing the following information:
 
@@ -614,7 +614,7 @@ To deposit an ERC-20 token into an omnichain contract you need to call the depos
 - data: the contents of the message
 - If the --token optional parameter is not used, the interact task assumes you want to deposit a gas token. To deposit a gas token you need to send a token transfer transaction to the TSS address on a connected chain.
 
-```getAddress``` retrieves the address of the TSS on the current network.
+`getAddress` retrieves the address of the TSS on the current network.
 
 The task then uses Ethers.js to send a token transfer transaction to the TSS address. The transaction contains the following information:
 
@@ -630,14 +630,14 @@ To deploy and interact with the contract you will need a wallet with tokens.
 
 - Create a new wallet account:
 
-```npx hardhat account --save```
+`npx hardhat account --save`
 
 This command generates a random wallet, prints information about the wallet to the terminal, and saves the private key to a .env file to make it accessible to Hardhat.
 
 - Use the Faucet to Request Tokens
 Request testnet ZETA tokens from the ZetaChain faucet:
 
-```npx hardhat faucet```
+`npx hardhat faucet`
 
 This command requests tokens from the faucet for the account address derived from the private key specified in the .env. Tokens sent to the address on ZetaChain.
 
@@ -648,18 +648,18 @@ You will, however, need to request native tokens on connected chains from one of
 - Check Token Balances
 Check token balances to ensure you have tokens on ZetaChain and at least one of the connected chains:
 
-```npx hardhat balances```
+`npx hardhat balances`
 
 Learn more about these and other ZetaChain toolkit commands avaialble in the [template](https://www.zetachain.com/docs/developers/template/).
 
 - Deploy the Contract
 Clear the cache and artifacts, then compile the contract:
 
-```npx hardhat compile --force```
+`npx hardhat compile --force`
 
 - Deploy the contract to ZetaChain:
 
-```npx hardhat deploy --network zeta_testnet```
+`npx hardhat deploy --network zeta_testnet`
 
 </details>
 
@@ -733,7 +733,8 @@ In this tutorial we will create a simple contract that allows sending a message 
   
 <h3> Set up your environment </h3>
 
-```git clone https://github.com/zeta-chain/template
+`git clone https://github.com/zeta-chain/template`
+```
 cd template
 yarn
 ```
@@ -741,7 +742,7 @@ yarn
 - Create the Contract
 To create a new cross-chain messaging contract you will use the messaging Hardhat task available by default in the template.
 
-```npx hardhat messaging CrossChainMessage message:string```
+`npx hardhat messaging CrossChainMessage message:string`
 
 The messaging task accepts one or more arguments: the name of the contract and a list of arguments (optionally with types). The arguments define the contents of the message that will be sent across chains.
 
@@ -749,10 +750,10 @@ In the example above the message will have only one field: message of type strin
 
 The messaging task has created:
 
-- ```contracts/CrossChainMessage.sol```: a Solidity cross-chain messaging contract
-- ```tasks/deploy.ts```: a Hardhat task to deploy the contract on one or more chains
-- ```tasks/interact.ts```: a Hardhat task to interact with the contract
-- It also modified ```hardhat.config.ts``` to import both deploy and interact tasks.
+- `contracts/CrossChainMessage.sol`: a Solidity cross-chain messaging contract
+- `tasks/deploy.ts`: a Hardhat task to deploy the contract on one or more chains
+- `tasks/interact.ts`: a Hardhat task to interact with the contract
+- It also modified `hardhat.config.ts` to import both deploy and interact tasks.
 
 - Cross-Chain Messaging Contract
 Let's review the contents of the CrossChainMessage contract:
@@ -843,40 +844,40 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver {
 ```
 The above contract:
 
-- inherits from ```ZetaInteractor```, which provides two modifiers that are used to validate the message and revert calls: ```isValidMessageCall``` and ```isValidRevertCall.```
-- implements ```ZetaReceiver```, which defines two functions: ```onZetaMessage``` and ```onZetaRevert```.
+- inherits from `ZetaInteractor`, which provides two modifiers that are used to validate the message and revert calls: `isValidMessageCall` and `isValidRevertCall.`
+- implements `ZetaReceiver`, which defines two functions: `onZetaMessage` and `onZetaRevert`.
   
 <h4>State Variables:</h4>
 <br>
 
-- ```CROSS_CHAIN_MESSAGE_MESSAGE_TYPE```: a public constant state variable which defines the message type. If your contract supports more than one message type, it's useful to define a constant for each one.
-- ```_zetaConsumer```: a private immutable state variable that stores the address of ZetaTokenConsumer, which is used amond other things for getting ZETA tokens from native tokens to pay for gas when sending a message.
-- ```_zetaToken```: an internal immutable state variable that stores the address of the ZETA token contract.
-The contract defines two events: ```CrossChainMessageEvent``` emitted when a message is processed on the destination chain and ```CrossChainMessageRevertedEvent``` emitted when a message is reverted on the destination chain.
+- `CROSS_CHAIN_MESSAGE_MESSAGE_TYPE`: a public constant state variable which defines the message type. If your contract supports more than one message type, it's useful to define a constant for each one.
+- `_zetaConsumer`: a private immutable state variable that stores the address of ZetaTokenConsumer, which is used amond other things for getting ZETA tokens from native tokens to pay for gas when sending a message.
+- `_zetaToken`: an internal immutable state variable that stores the address of the ZETA token contract.
+The contract defines two events: `CrossChainMessageEvent` emitted when a message is processed on the destination chain and `CrossChainMessageRevertedEvent` emitted when a message is reverted on the destination chain.
 
-The constructor passes ```connectorAddress``` to the ```ZetaInteractor``` constructor and initializes both ```_zetaToken``` and ```_zetaConsumer``` state variables.
+The constructor passes `connectorAddress` to the `ZetaInteractor` constructor and initializes both `_zetaToken` and `_zetaConsumer` state variables.
 
-The ```sendMessage``` function is used to send a message to a recipient contract on the destination chain. It first checks that the destination chain ID is valid. Then it uses ZETA consumer to get the needed amount of ZETA tokens from the provided ```msg.value``` (amount of native gas assets sent with the function call), and approves the ```ZetaConnector``` to spend the ```zetaValueAndGas``` amount of ZETA tokens.
+The `sendMessage` function is used to send a message to a recipient contract on the destination chain. It first checks that the destination chain ID is valid. Then it uses ZETA consumer to get the needed amount of ZETA tokens from the provided `msg.value` (amount of native gas assets sent with the function call), and approves the `ZetaConnector` to spend the `zetaValueAndGas` amount of ZETA tokens.
 
-The ```sendMessagev function uses ```connector.send``` to send a crosss-chain message with the following arguments wrapped in a struct:
+The ```sendMessagev function uses `connector.send` to send a crosss-chain message with the following arguments wrapped in a struct:
 
-- ```destinationChainId```: chain ID of the destination chain
-- ```destinationAddress```: address of the contract receiving the message on the destination chain (expressed in bytes since it can be non-EVM)
-- ```destinationGasLimit```: gas limit for the destination chain's transaction
-- ```message```: arbitrary message to be parsed by the receiving contract on the destination chain
-- ```zetaValueAndGas```: amount of ZETA tokens to be sent to the destination chain, ZetaChain gas fees, and destination chain gas fees (expressed in ZETA tokens)
-```zetaParams```: optional ZetaChain parameters.
-- The ```onZetaMessage``` function processes incoming cross-chain messages. The function decodes the message to identify its type and content.
+- `destinationChainId`: chain ID of the destination chain
+- `destinationAddress`: address of the contract receiving the message on the destination chain (expressed in bytes since it can be non-EVM)
+- `destinationGasLimit`: gas limit for the destination chain's transaction
+- `message`: arbitrary message to be parsed by the receiving contract on the destination chain
+- `zetaValueAndGas`: amount of ZETA tokens to be sent to the destination chain, ZetaChain gas fees, and destination chain gas fees (expressed in ZETA tokens)
+- `zetaParams`: optional ZetaChain parameters.
+- The `onZetaMessage` function processes incoming cross-chain messages. The function decodes the message to identify its type and content.
 
-- If the message type matches a predefined constant, the message's reception is logged through the CrossChainMessageEvent. However, if the type is unrecognized, the function reverts to ensure that only specific message types are handled. The function also uses a ```isValidMessageCall``` modifier to verify the message's authenticity, ensuring it comes from a trusted source.
+- If the message type matches a predefined constant, the message's reception is logged through the CrossChainMessageEvent. However, if the type is unrecognized, the function reverts to ensure that only specific message types are handled. The function also uses a `isValidMessageCall` modifier to verify the message's authenticity, ensuring it comes from a trusted source.
 
-The ```onZetaRevert``` function handles the reversal of cross-chain messages. Taking in a ```ZetaInterfaces.ZetaRevert``` parameter, the function decodes this reverted message to identify its type and content. If the message type aligns with a predefined constant, the function logs the reversal through the ```CrossChainMessageRevertedEvent```. On the other hand, if the type is not recognized, the function reverts the transaction. The function also uses the ```isValidRevertCall``` modifier to ensure that the revert message is genuine and originates from the trusted source.
+The `onZetaRevert` function handles the reversal of cross-chain messages. Taking in a `ZetaInterfaces.ZetaRevert` parameter, the function decodes this reverted message to identify its type and content. If the message type aligns with a predefined constant, the function logs the reversal through the `CrossChainMessageRevertedEvent`. On the other hand, if the type is not recognized, the function reverts the transaction. The function also uses the `isValidRevertCall` modifier to ensure that the revert message is genuine and originates from the trusted source.
 
 <h3>Deploy Task</h3>
 <br>
 The messaging task has created a Hardhat task to deploy the contract.
 
-```tasks/deploy.ts```
+`tasks/deploy.ts`
 
 ```
 import { getAddress } from "@zetachain/protocol-contracts";
@@ -1006,7 +1007,7 @@ task("deploy", "Deploy the contract", main)
 
 To establish cross-chain messaging between blockchains via ZetaChain, you need to deploy contracts capable of sending and receiving cross-chain messages to two or more blockchains connected to ZetaChain.
 
-You can specify the desired chains by using a --networks parameter of the deploy task, which accepts a list of network names separated by commas. For instance, ```--networks goerli_testnet,bsc_testnet```.
+You can specify the desired chains by using a --networks parameter of the deploy task, which accepts a list of network names separated by commas. For instance, `--networks goerli_testnet,bsc_testnet`.
 
 The main function maintains a mapping of network names to their corresponding deployed contract addresses, iterating over the networks to deploy the contract on each one.
 
@@ -1014,7 +1015,7 @@ The contract's constructor requires three arguments:
 - the connector contract's address,
 - the ZETA token's address, and
 - the ZETA token consumer contract's address.
-These addresses are obtained using ZetaChain's ```getAddress```.
+These addresses are obtained using ZetaChain's `getAddress`.
 
 The main function subsequently sets interactors for each contract. An interactor is a mapping between a chain ID of the destination and the contract address on that chain.
 
@@ -1025,17 +1026,17 @@ When deploying to two chains (like Goerli and BSC testnet), you will invoke ```s
 
 The messaging task has also created a Hardhat task to interact with the contract:
 
-```tasks/interact.ts```
+`tasks/interact.ts`
 
-```https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/interact.ts```
+`https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/interact.ts`
 
 
 The task accepts the following arguments:
 
-- ```contract```: address of the contract on the source chain
-- ```amount```: amount of native tokens to send with the transaction
-- ```destination```: name of the destination chain
-- ```message```: message to be sent to the destination chain
+- `contract`: address of the contract on the source chain
+- `amount`: amount of native tokens to send with the transaction
+- `destination`: name of the destination chain
+- `message`: message to be sent to the destination chain
   
 The main function uses the contract argument to attach to the contract on the source chain. It then uses the destination argument to obtain the destination chain's chain ID. The function subsequently converts the message argument to bytes and sends a transaction to the contract's sendMessage function, passing the destination chain ID and the message.
 
@@ -1048,7 +1049,7 @@ To deploy and interact with the contract you will need a wallet with tokens.
 
 - Create a new wallet account:
 
-```npx hardhat account --save```
+`npx hardhat account --save`
 
 This command generates a random wallet, prints information about the wallet to the terminal, and saves the private key to a .env file to make it accessible to Hardhat.
 
@@ -1056,16 +1057,16 @@ This command generates a random wallet, prints information about the wallet to t
 To pay for the transaction fees to deploy and interact with the cross-chain messaging contracts you will need native gas tokens on the connected chains you are deploying contracts to. You can find a list of recommended faucets [here](https://www.zetachain.com/docs/reference/get-testnet-zeta/)
 
 - Check Token Balances
-```npx hardhat balances```
+`npx hardhat balances`
 
 - Deploy the Contract
 Clear the cache and artifacts, then compile the contract:
 
-```npx hardhat compile --force```
+`npx hardhat compile --force`
 
 Run the following command to deploy the contract to two networks:
 
-```npx hardhat deploy --networks bsc_testnet,goerli_testnet```
+`npx hardhat deploy --networks bsc_testnet,goerli_testnet`
 
 ```
 
@@ -1083,7 +1084,7 @@ Run the following command to deploy the contract to two networks:
 ```
 
 - Interact with the Contract
-Send a message from BSC testnet to Goerli using the contract address (see the output of the deploy task). Make sure to submit enough native tokens with ```--amount``` to pay for the transaction fees.
+Send a message from BSC testnet to Goerli using the contract address (see the output of the deploy task). Make sure to submit enough native tokens with `--amount` to pay for the transaction fees.
 
 ```
 npx hardhat interact --message hello --network bsc_testnet --destination goerli_testnet --contract 0x6Fd784c16219026Ab0349A1a8A6e99B6eE579C93 --amount 2
@@ -1095,13 +1096,13 @@ npx hardhat interact --message hello --network bsc_testnet --destination goerli_
 📝 Transaction hash: 0xa3a507d34056f4c00b753e7d0b47b16eb6d35b3c5016efa0323beb274725b1a1
 ```
 
-After the cross-chain transaction is processed on ZetaChain, look up the contract on the Goerli explorer by the contract address ```(0xf1907bb130feb28D6e1305C53A4bfdb32140d8E6)``` and you should be able to see the emitted ```HelloWorldEvent``` event.
+After the cross-chain transaction is processed on ZetaChain, look up the contract on the Goerli explorer by the contract address `(0xf1907bb130feb28D6e1305C53A4bfdb32140d8E6)` and you should be able to see the emitted `HelloWorldEvent` event.
 
 <h3>Source Code</h3>
 
 You can find the source code for the example in this tutorial here:
 
-```https://github.com/zeta-chain/example-contracts/tree/main/messaging/message```
+`https://github.com/zeta-chain/example-contracts/tree/main/messaging/message`
 
 </details>
 
