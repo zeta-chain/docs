@@ -78,7 +78,7 @@ const AdminPolicy = () => {
           style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
           onClick={() => setActiveTab("mainnet")}
         >
-          Mainnet
+          Mainnet Beta
         </button>
       </div>
       {adminPolicies.length > 0 ? (

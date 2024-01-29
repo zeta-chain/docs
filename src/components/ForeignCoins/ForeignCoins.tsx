@@ -80,7 +80,7 @@ const ForeignCoinsTable = () => {
           style={activeTab == "mainnet" ? active : {}}
           onClick={() => setActiveTab("mainnet")}
         >
-          Mainnet
+          Mainnet Beta
         </button>
       </div>
       {isLoading ? (
