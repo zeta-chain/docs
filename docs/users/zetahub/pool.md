@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# How to Pool your ZETA
+# Pool your ZETA
 
 You can view the full list of ZetaChain liquidity pools on the Pool page and
 select one to begin.

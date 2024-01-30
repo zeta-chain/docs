@@ -2,7 +2,7 @@
 sidebar_position: 6
 ---
 
-# How to Enroll in Zeta XP
+# Enroll in Zeta XP
 
 Zeta XP is ZetaHub’s way to track your activity on the app. To participate in
 the XP program and be able to earn XP for your ZetaHub actions, you will have to

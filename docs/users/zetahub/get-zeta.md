@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# How to Get ZETA
+# Get ZETA
 
 In order to get more ZETA, you can head to the top navigation in ZetaHub and
 select “Get ZETA”.

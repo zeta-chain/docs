@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# How to Connect Wallet on ZetaHub
+# Connect Wallet on ZetaHub
 
 When you enter ZetaHub, you will be prompted to connect your wallet during the
 onboarding steps.

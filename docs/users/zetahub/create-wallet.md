@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# How to Create a Wallet in ZetaChain
+# Create a Wallet in ZetaChain
 
 To start, make sure you have an EVM-compatible wallet, like MetaMask.
 
