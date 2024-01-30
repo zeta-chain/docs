@@ -15,10 +15,10 @@ PEER="e04ee1d6b5cc1aa24f7c1ab55139d1cec9962e39@52.45.59.77:26656"
 You can modify your existing config files or download the files below with these
 values already correctly set:
 
-- [app.toml](https://file.notion.so/f/f/2814268c-c403-4b50-9e50-f2ada7eca9b2/a7ab1ae1-b666-4d39-808e-e307992598f8/app.toml?id=c7ef7211-aa61-4569-b98e-27e61c865854&table=block&spaceId=2814268c-c403-4b50-9e50-f2ada7eca9b2&expirationTimestamp=1706608800000&signature=6kV9k3QQeCk3-BwXVhiEtkqflormDTw4QvX6qnp6Lj8&downloadName=app.toml)
-- [config.toml](https://file.notion.so/f/f/2814268c-c403-4b50-9e50-f2ada7eca9b2/0491c0a8-f277-4276-aea6-2bc84b750086/config.toml?id=e5b8e5f7-798e-4579-9bae-9b9fc1117830&table=block&spaceId=2814268c-c403-4b50-9e50-f2ada7eca9b2&expirationTimestamp=1706608800000&signature=WlXAlzxWpf07eRVQahcFQylTn1fxiXs3FcL_ETU-4Kc&downloadName=config.toml)
-- [client.toml](https://file.notion.so/f/f/2814268c-c403-4b50-9e50-f2ada7eca9b2/3d1b17af-e990-469d-94f6-ae384554f3a6/client.toml?id=dbdd4bc7-b94f-4f8d-919c-b028894a21ac&table=block&spaceId=2814268c-c403-4b50-9e50-f2ada7eca9b2&expirationTimestamp=1706608800000&signature=Ym8Fsk7bZT2jnaCYb4Ybpq8KpT6kcI_jibrptGt3pFg&downloadName=client.toml)
-- [genesis.json](https://file.notion.so/f/f/2814268c-c403-4b50-9e50-f2ada7eca9b2/856c68b6-94a9-4026-b25b-feb927734a42/genesis.json?id=f87e9e19-3d39-4170-990e-41cb38a171f9&table=block&spaceId=2814268c-c403-4b50-9e50-f2ada7eca9b2&expirationTimestamp=1706608800000&signature=oxvYqW_P5WPyZGQxMcRd8JxDxNqt7MqilOiHtfeVl-0&downloadName=genesis.json)
+- [app.toml](https://github.com/zeta-chain/network-mainnet/blob/main/network_files/config/app.toml)
+- [config.toml](https://github.com/zeta-chain/network-mainnet/blob/main/network_files/config/config.toml)
+- [client.toml](https://github.com/zeta-chain/network-mainnet/blob/main/network_files/config/client.toml)
+- [genesis.json](https://github.com/zeta-chain/network-mainnet/blob/main/network_files/config/genesis.json)
 
 ## Syncing
 
