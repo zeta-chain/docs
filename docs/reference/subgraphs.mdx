@@ -1,0 +1,27 @@
+---
+sidebar_label: Subgraphs
+hide_title: true
+id: subgraphs
+title: Subgraphs
+sidebar_position: 10
+---
+
+# Subgraphs
+
+## Overview
+
+Subgraphs are custom APIs built on top of blockchain data that can be queried using GraphQL. Developers can build and deploy subgraphs to transform raw blockchain data into more useful formats to power their applications.
+
+ZetaChain subgraphs can be deployed on [Goldsky](https://goldsky.com); for more information on getting started, visit [Goldsky's documentation](https://docs.goldsky.com/subgraphs/introduction).
+
+## Deploying subgraphs on Goldsky
+
+ZetaChain subgraphs can be deployed on Goldsky in 2 ways:
+- **Via CLI from a local subgraph configuration file**. If you are familiar with developing subgraphs already, you'll be familiar with this approach: after defining a subgraph locally (with a subgraph.yaml file, a schema.graphql file, and the necessary mappings to translate raw event data into the entities defined in the schema), you can codegen + build your subgraph as usual, and then deploy to Goldsky (after installing the CLI) using `goldsky subgraph deploy <name>/<version> --path`.
+- **Via [no-code subgraphs](https://docs.goldsky.com/guides/create-a-no-code-subgraph)**, where you can pass through a contract address and the ABI for that contract. This is a quick-start option that automatically generates the underlying subgraph configuration files on your behalf, making it easy to extract blockchain event data and serve it as an API endpoint without complex setup. Use the `--from-ipfs-hash` flag in the command above instead of `--path`.
+
+Both mainnet and testnet are available on Goldsky, at `zetachain-mainnet` and `zetachain-testnet` respectively.
+
+## Getting support
+
+If you have any issues deploying ZetaChain subgraphs on Goldsky, please reach out to support via [support@goldsky.com](mailto:support@goldsky.com).
