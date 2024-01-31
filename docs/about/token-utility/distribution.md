@@ -16,25 +16,13 @@ The initial supply of ZETA is distributed across the following allocations. The 
 
 | Type | Percentage | Total | Schedule |
 | --- | --- | --- | --- |
-| User Growth Pool | 10.00% | 210,000,000 | 4.5% at launch.
-
-0.2% unlocked per month for 5 months after the first month.
-
-Starting 6 months after launch, 1/36 of the remaining tokens will be unlocked monthly for 36 months. |
-| Ecosystem Growth Fund | 12.00% | 252,000,000 | 1.5% at launch.
-
-Starting 6 months after launch, 1/42 of the remaining tokens unlocked monthly for 42 months. |
+| User Growth Pool | 10.00% | 210,000,000 | 4.5% at launch. 0.2% unlocked per month for 5 months after the first month. Starting 6 months after launch, 1/36 of the remaining tokens will be unlocked monthly for 36 months. |
+| Ecosystem Growth Fund | 12.00% | 252,000,000 | 1.5% at launch. Starting 6 months after launch, 1/42 of the remaining tokens unlocked monthly for 42 months. |
 | Validator Incentives | 10.00% | 210,000,000 | Distributed through block emissions over 4 years. |
 | Liquidity Incentives | 5.50% | 115,500,000 | 3% at launch. 1/48 of remaining unlocked per month beginning at launch. |
-| Protocol Treasury | 24.00% | 504,000,000 | 2% at launch.
-
-After 12 months, 1/36 of the remaining will be unlocked monthly for 36 months. |
-| Core Contributors | 22.50% | 472,500,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month.
-
-After 12 months, 1/36 will be unlocked monthly for 24 months. |
-| Purchasers and Advisors | 16.00% | 336,000,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month.
-
-After 12 months, 1/36 will be unlocked monthly for 24 months. |
+| Protocol Treasury | 24.00% | 504,000,000 | 2% at launch. After 12 months, 1/36 of the remaining will be unlocked monthly for 36 months. |
+| Core Contributors | 22.50% | 472,500,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month. After 12 months, 1/36 will be unlocked monthly for 24 months. |
+| Purchasers and Advisors | 16.00% | 336,000,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month. After 12 months, 1/36 will be unlocked monthly for 24 months. |
 
 Holders who have locked ZETA may use the ZETA to stake to validators in order to provide security to the network and validate transactions.
 
