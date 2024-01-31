@@ -8,7 +8,7 @@ To start, make sure you have an EVM-compatible wallet, like MetaMask.
 
 Once you enter ZetaHub and connect your wallet, if you’re not already connected
 to ZetaChain, you can head to any page that requires you to switch networks,
-such as the Move Assets page. Once prompted to switch to ZetaChain, MetaMask
+such as the Send Assets page. Once prompted to switch to ZetaChain, MetaMask
 will add the ZetaChain network to your wallet.
 
 ![](/img/docs/zetahub/create-wallet-1.png)
