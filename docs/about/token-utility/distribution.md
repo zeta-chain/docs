@@ -4,84 +4,68 @@ sidebar_position: 3
 
 # ZETA Distribution
 
-The initial supply of ZETA is distributed across the following allocations. The
-total initial supply of ZETA is 2,100,000,000. After approximately 4 years based
-on a set curve, the protocol will plan to initiate a target of ~2.5% yearly
-inflation based on the current circulating supply. ZetaChain also has a
-governance model that allows for additional monetary policy to promote its goal
-of long-term sustainability.
+The initial supply of ZETA is distributed across the following allocations. The total initial supply of ZETA is 2,100,000,000. After approximately 4 years based on a set curve, the protocol will plan to initiate a target of ~2.5% yearly inflation based on the current circulating supply. ZetaChain also has a governance model that allows for additional monetary policy to promote its goal of long-term sustainability.
 
 ## Token Information
 
-|                      |               |
-| -------------------- | ------------- |
-| Token Name           | ZETA          |
-| Total Initial Supply | 2,100,000,000 |
+| Token Name | ZETA |
+| --- | --- |
+| Total Supply | 2,100,000,000 |
 
 ## Token Distribution
 
-| Type                    | Percentage | Total       |
-| ----------------------- | ---------- | ----------- |
-| User Growth Pool        | 10.00%     | 210,000,000 |
-| Ecosystem Growth Fund   | 12.00%     | 252,000,000 |
-| Validator Incentives    | 10.00%     | 210,000,000 |
-| Liquidity Incentives    | 5.50%      | 115,500,000 |
-| Protocol Treasury       | 24.00%     | 504,000,000 |
-| Core Contributors       | 22.50%     | 472,500,000 |
-| Purchasers and Advisors | 16.00%     | 336,000,000 |
+| Type | Percentage | Total | Schedule |
+| --- | --- | --- | --- |
+| User Growth Pool | 10.00% | 210,000,000 | 4.5% at launch.
 
-## User Growth Pool
+0.2% unlocked per month for 5 months after the first month.
 
-This portion is allocated towards incentivizing usage and growing the user-base
-of ZetaChain. This will be distributed through various initiatives which are
-based on active, meaningful user behaviors. For example, this portion will be
-used for programs like the ZetaLabs airdrop, wallet campaigns, and other
-community-focused rewards to raise awareness of ZetaChain utility features and
-usage thereof.
+Starting 6 months after launch, 1/36 of the remaining tokens will be unlocked monthly for 36 months. |
+| Ecosystem Growth Fund | 12.00% | 252,000,000 | 1.5% at launch.
 
-## Ecosystem Growth Fund
+Starting 6 months after launch, 1/42 of the remaining tokens unlocked monthly for 42 months. |
+| Validator Incentives | 10.00% | 210,000,000 | Distributed through block emissions over 4 years. |
+| Liquidity Incentives | 5.50% | 115,500,000 | 3% at launch. 1/48 of remaining unlocked per month beginning at launch. |
+| Protocol Treasury | 24.00% | 504,000,000 | 2% at launch.
 
-This portion is allocated towards partners and developers contributing to the
-ZetaChain ecosystem. For example, incentives to help dApp developers get started
-through a grant program or for wallet partners to support ZetaChain natively.
+After 12 months, 1/36 of the remaining will be unlocked monthly for 36 months. |
+| Core Contributors | 22.50% | 472,500,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month.
 
-## Validator Incentives
+After 12 months, 1/36 will be unlocked monthly for 24 months. |
+| Purchasers and Advisors | 16.00% | 336,000,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month.
 
-A portion of the total initial supply (10%) is allocated to the initial
-emissions pool on ZetaChain. This pool allows for block rewards targeted to
-sustain and secure the network over the first 4 years of network growth. After
-this pools is depleted, the protocol will introduce a planned 2.5% inflation
-through validator rewards, separate from the emission curve. You can read more
-about Validator Incentives and distributions
-[here](/about/token-utility/validators/).
+After 12 months, 1/36 will be unlocked monthly for 24 months. |
 
-## Liquidity Incentives
+Holders who have locked ZETA may use the ZETA to stake to validators in order to provide security to the network and validate transactions.
 
-The assets managed by the network's TSS have an allocation of rewards that
-incentivize providing liquidity that is usable on zEVM. This portion is
-allocated towards incentivizing liquidity that is crucial for the protocol and
-ecosystem to function and maintain stability, in order to facilitate
-low-slippage and minimal gas-usage transfers of value through and on ZetaChain.
+# User Growth Pool
 
-To incentivize liquidity in pools such as the Core ZRC-20 pools, this pool will
-be used to provide on-chain incentives for them to help bootstrap a seamless
-transaction experience for users and developers.
+This portion is allocated towards incentivizing usage and growing the user-base of ZetaChain. This will be distributed through various initiatives which are based on active, meaningful user behaviors. For example, this portion will be used for programs like the ZetaLabs airdrop, wallet campaigns, and other community-focused rewards to raise awareness of ZetaChain utility features and usage thereof.
 
-## Protocol Treasury
+# Ecosystem Growth Fund
 
-The treasury pool is allocated towards ecosystem and community initiatives aimed
-at improving the ZetaChain ecosystem such as network insurance, bug bounties,
-protocol development and bounties, and operations.
+This portion is allocated towards partners and developers contributing to the ZetaChain ecosystem. For example, incentives to help dApp developers get started through a grant program or for wallet partners to support ZetaChain natively.
 
-## Core Contributors, Advisors, and Purchasers
+# Validator Incentives
 
-ZETA are allocated to Purchasers as well as Core Contributors and Advisors who
-earned tokens for their contributions to the ZetaChain network.
+A portion of the total initial supply (10%) is allocated to the initial emissions pool on ZetaChain. This pool allows for block rewards targeted to sustain and secure the network over the first 4 years of network growth. After this pools is depleted, the protocol will introduce a planned 2.5% inflation through validator rewards, separate from the emission curve. You can read more about Validator Incentives and distributions [here](https://www.zetachain.com/docs/about/token-utility/validators/).
+
+# Liquidity Incentives
+
+The assets managed by the network’s TSS have an allocation of rewards that incentivize providing liquidity that is usable on zEVM. This portion is allocated towards incentivizing liquidity that is crucial for the protocol and ecosystem to function and maintain stability, in order to facilitate low-slippage and minimal gas-usage transfers of value through and on ZetaChain.
+
+To incentivize liquidity in pools such as the Core ZRC-20 pools, this pool will be used to provide on-chain incentives for them to help bootstrap a seamless transaction experience for users and developers.
+
+# Protocol Treasury
+
+The treasury pool is allocated towards ecosystem and community initiatives aimed at improving the ZetaChain ecosystem such as network insurance, bug bounties, protocol development and bounties, and operations.
+
+# Core Contributors, Advisors, and Purchasers
+
+ZETA are allocated to Purchasers as well as Core Contributors and Advisors who earned tokens for their contributions to the ZetaChain network.
 
 :::note
 
-Disclaimer: The above details are the current thinking and models with regard to
-ZetaChain and ZETA. They are subject to variations for the ZetaChain mainnet and
-further developments thereafter.
+***Disclaimer: The above details are the current thinking and models with regard to ZetaChain and ZETA. They are subject to variations for the ZetaChain mainnet and further developments thereafter.***
 
 :::
