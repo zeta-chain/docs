@@ -177,3 +177,7 @@ With ZRC-20, developers have the power to build seamless, omnichain applications
 while also leveraging the entire EVM ecosystem to-date and plethora of
 contracts/protocols to build on top of. To start building with ZRC-20, check out
 some examples in the [tutorials section](/developers/omnichain/tutorials/hello).
+
+## Liquidity Cap
+
+Each ZRC-20 has a total cap on the number of deposited tokens that the protocol can accept. Any assets beyond this deposited to ZetaChain from external chains will be returned to the sender. You can view the caps on the explorer [here](https://explorer.zetachain.com/liquidity).
