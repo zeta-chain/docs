@@ -14,8 +14,6 @@ be able to get ZETA. Once you decide on where you’d like to go, an external si
 will open, and you will be able to follow the CEX/DEX’s instructions on how to
 proceed.
 
-![](/img/docs/zetahub/get-zeta-2.png)
-
 You will also be able to access this modal within most ZetaHub pages where
 having a ZETA balance is necessary to transact. If you don’t have sufficient
 balance, you will come across a button that prompts you to “Get ZETA.”

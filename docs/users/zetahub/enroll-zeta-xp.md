@@ -16,8 +16,8 @@ XP to start!
 
 Accept Invite: Another way to enroll in XP is to accept an invite from an
 existing user of Zeta XP. If you receive an invite link from a friend (please
-ensure the link is the real [Zetahub.com](http://Zetahub.com) domain), you will
-be able to earn double the XP (2000 XP!) for accepting the invite and enrolling.
+ensure the link is the real https://hub.zetachain.com domain), you will be able
+to earn double the XP (2000 XP!) for accepting the invite and enrolling.
 
 ![](/img/docs/zetahub/enroll-zeta-xp-2.png)
 
