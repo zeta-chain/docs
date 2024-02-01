@@ -16,4 +16,4 @@ chain.
 
 Contracts on zEVM can be called via [ZRC-20](/developers/omnichain/zrc-20) from
 external chains. To connect to zEVM directly, check out the network info
-[here](/reference/testnet).
+[here](/reference/contracts).

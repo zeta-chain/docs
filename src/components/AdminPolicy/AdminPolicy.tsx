@@ -13,20 +13,25 @@ function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
+const API: any = {
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
+};
+
 const AdminPolicy = () => {
   const [adminPolicies, setAdminPolicies] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<any>("testnet");
 
   useEffect(() => {
-    fetch(
-      "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/params"
-    )
+    setAdminPolicies([]);
+    const baseUrl = API[activeTab];
+    fetch(`${baseUrl}/zeta-chain/observer/params`)
       .then((response) => response.json())
       .then((data) => {
         const policies = data.params.admin_policy;
-
         policies.forEach((policy: any) => {
           fetch(
-            `https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/group/v1/group_policy_info/${policy.address}`
+            `${baseUrl}/cosmos/group/v1/group_policy_info/${policy.address}`
           )
             .then((response) => response.json())
             .then((detailData) => {
@@ -55,10 +60,27 @@ const AdminPolicy = () => {
       .catch((error) => {
         console.error("Error fetching admin policies:", error);
       });
-  }, []);
+  }, [activeTab]);
+
+  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
+  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
 
   return (
     <div>
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <button
+          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
+          onClick={() => setActiveTab("testnet")}
+        >
+          Testnet
+        </button>
+        <button
+          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
+          onClick={() => setActiveTab("mainnet")}
+        >
+          Mainnet Beta
+        </button>
+      </div>
       {adminPolicies.length > 0 ? (
         adminPolicies.map((policy: any, index) => (
           <div key={index}>
