@@ -99,3 +99,10 @@ Check out the [Swap tutorial](/developers/omnichain/tutorials/swap) to learn how
 to build omnichain contracts that accept token deposits form connected chains,
 swap between ZRC-20 tokens using the internal liquidity pools on ZetaChain, and
 withdraw them to connected chains.
+
+## Liquidity Cap
+
+Each ZRC-20 has a total cap on the number of deposited tokens that the protocol
+can accept. Any assets beyond this deposited to ZetaChain from external chains
+will be returned to the sender. You can view the caps on the explorer
+[here](https://explorer.zetachain.com/liquidity).
