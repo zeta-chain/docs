@@ -1,0 +1,33 @@
+---
+sidebar_position: 2
+---
+
+# Connect Wallet on ZetaHub
+
+When you enter ZetaHub, you will be prompted to connect your wallet during the
+onboarding steps.
+
+If you decide not to connect your wallet here, you will be able to connect your
+wallet on most other ZetaHub pages before interacting with them by clicking on
+any “Connect Wallet” button. There is also a “Connect Wallet” button on the
+upper right side of the screen.
+
+![](/img/docs/zetahub/connect-wallet-1.png)
+
+![](/img/docs/zetahub/connect-wallet-2.png)
+
+When you click on any “Connect Wallet” button, the above modal will appear.
+
+You will have to have an existing account on the above EVM-compatible wallets -
+if you don’t have one, you will be able to follow the onscreen instructions to
+create one.
+
+If you have an existing account, you will be prompted to log in.
+
+If at any point you’d like to switch wallets, you can click the wallet dropdown
+on the top right. This will take you to a new modal - where you can hit
+“Disconnect” and follow the previous instructions to connect a different wallet.
+
+![](/img/docs/zetahub/connect-wallet-3.png)
+
+![](/img/docs/zetahub/connect-wallet-4.png)

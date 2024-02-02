@@ -9,7 +9,7 @@ title: Connector API
 
 ZetaChain connector lets you send cross-chain messages (data and value) between
 any connected chains. To find up-to-date Connector and ZETA addresses to develop
-with, go [here](/reference/testnet).
+with, go [here](/reference/contracts).
 
 ## Introduction
 

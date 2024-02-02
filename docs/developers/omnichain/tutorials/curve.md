@@ -17,8 +17,7 @@ chain.
 
 Since zEVM is fully EVM compatible, you can download the Curve repo as it is and
 deploy it on zEVM, simply pointing the RPC to zEVM RPC. You can find all the
-ZetaChain RPC information here: [testnet](/reference/testnet) and here
-[mainnet](/reference/mainnet).
+ZetaChain RPC information [here](/reference/api).
 
 ## Deploy a tri-token pool of ZRC-20 tokens
 

@@ -114,9 +114,8 @@ async function sendTransaction() {
 ```
 
 To call an omnichain contract from Bitcoin you need to send a token transfer
-transaction to the ZetaChain's
-[TSS address](https://zetachain.com/docs/reference/testnet) on Bitcoin with a
-memo that conforms to
+transaction to the ZetaChain's [TSS address](/reference/contracts) on Bitcoin
+with a memo that conforms to
 [the required format](/developers/omnichain/bitcoin).
 
 The memo is composed of two parts:
@@ -142,9 +141,8 @@ XDEFI injects itself into the `window` object, so we can access it from the
 `window.xfi` property. Use the `getAccounts` method to get the list of accounts
 and use the first one.
 
-The list of TSS address is available in
-[the docs](https://zetachain.com/docs/reference/testnet), for the purposes of
-this tutorial we will use a hard-coded value.
+The list of TSS address is available in [the docs](/reference/contracts), for
+the purposes of this tutorial we will use a hard-coded value.
 
 Get the contract address and parameters from the form and ensure that the `0x`
 prefix is removed.

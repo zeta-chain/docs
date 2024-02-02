@@ -16,6 +16,13 @@ developers.
 | Explorer            | Exploreme        | https://zetachain.exploreme.pro/           |
 | Explorer            | Ping.Pub         | https://testnet.ping.pub/zetachain         |
 | Explorer            | ZetaScan         | https://explorer.zetachain.com/            |
+| Wallet              | MetaMask         | https://metamask.io/                       |
+| Wallet              | Coinbase Wallet  | https://www.coinbase.com/wallet            |
+| Wallet              | XDEFI Wallet     | https://xdefi.io                           |
+| Wallet              | Keplr            | https://keplr.app/                         |
+| Wallet              | Leap             | https://www.leapwallet.io/                 |
+| Wallet              | Safe             | https://safe.zetachain.com/                |
+| Oracle              | Pyth             | https://pyth.network/                      |
 
 Is this list missing a service for developers that supports ZetaChain? Help us
 keep this list up-to-date by
