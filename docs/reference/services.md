@@ -16,6 +16,7 @@ developers.
 | Explorer            | Exploreme        | https://zetachain.exploreme.pro/           |
 | Explorer            | Ping.Pub         | https://testnet.ping.pub/zetachain         |
 | Explorer            | ZetaScan         | https://explorer.zetachain.com/            |
+| Explorer            | DexGuru          | https://zeta-testnet.dex.guru/             |
 | Wallet              | MetaMask         | https://metamask.io/                       |
 | Wallet              | Coinbase Wallet  | https://www.coinbase.com/wallet            |
 | Wallet              | XDEFI Wallet     | https://xdefi.io                           |
