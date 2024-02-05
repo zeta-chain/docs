@@ -34,7 +34,7 @@ On component load the `NFTPage` component calls the `fetchNFTs` function to
 fetch the NFTs owned by the connected address.
 
 ```tsx reference title="app/nft/page.tsx"
-https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/page.tsx
+https://github.com/zeta-chain/example-frontend/blob/main/app/nft/page.tsx
 ```
 
 ## useNFT Hook
@@ -42,7 +42,7 @@ https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/page.tsx
 `useNFT` is a simple component that stores the state of the frontend dApp.
 
 ```tsx reference title="app/nft/useNFT.tsx"
-https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/useNFT.tsx
+https://github.com/zeta-chain/example-frontend/blob/main/app/nft/useNFT.tsx
 ```
 
 ## Fetching NFTs
@@ -73,7 +73,7 @@ find the decimals and use to correctly format the amounts.
 Finally, sort NFTs by ID in descending order.
 
 ```tsx reference title="app/nft/fetchNFTs.ts"
-https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/fetchNFTs.ts
+https://github.com/zeta-chain/example-frontend/blob/main/app/nft/fetchNFTs.ts
 ```
 
 ## Minting NFTs
@@ -93,7 +93,7 @@ Next, if the transaction was successful, use the transaction hash to track the
 progress of the cross-chain transaction.
 
 ```tsx reference title="app/nft/mint.ts"
-https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/mint.ts
+https://github.com/zeta-chain/example-frontend/blob/main/app/nft/mint.ts
 ```
 
 ## Burning NFTs
@@ -113,7 +113,7 @@ received, call burn the NFT and start checking for ownership. As soon as the
 user is no longer the owner of the NFT, update the frontend dApp state.
 
 ```tsx reference title="app/nft/burn.ts"
-https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/burn.ts
+https://github.com/zeta-chain/example-frontend/blob/main/app/nft/burn.ts
 ```
 
 ## Transferring NFTs
@@ -123,7 +123,7 @@ interactions. Simple call the contract's transfer method and pass the recipient,
 the sender and the ID of the NFT.
 
 ```tsx reference title="app/nft/transfer.ts"
-https://github.com/zeta-chain/example-frontend/blob/nft/app/nft/transfer.ts
+https://github.com/zeta-chain/example-frontend/blob/main/app/nft/transfer.ts
 ```
 
 ## Congratulations!
