@@ -23,6 +23,7 @@ developers.
 | Wallet              | Leap             | https://www.leapwallet.io/                 |
 | Wallet              | Safe             | https://safe.zetachain.com/                |
 | Oracle              | Pyth             | https://pyth.network/                      |
+| Data Provider       | Mobula           | https://mobula.io/                         |
 
 Is this list missing a service for developers that supports ZetaChain? Help us
 keep this list up-to-date by
