@@ -1,105 +1,97 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 
-interface DataObject {
-  [key: string]: string;
-}
-
-interface NestedObject {
-  [key: string]: DataObject;
-}
-
-interface FetchedData {
-  [key: string]: NestedObject;
-}
-
-const edgeCases: { [key: string]: string } = {
-  ccm: "CCM",
-  zevm: "zEVM",
-  bsc: "BSC",
-};
-
-const addressesURL =
-  "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.json";
-
-const DataFetch: React.FC = () => {
-  const [data, setData] = useState<FetchedData | null>(null);
+const ContractAddresses = () => {
+  const [activeTab, setActiveTab] = useState("testnet");
+  const [isLoading, setIsLoading] = useState(true);
+  const [groupedData, setGroupedData] = useState({ testnet: {}, mainnet: {} });
+  const testnetUrl =
+    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/feat/addresses/data/addresses.testnet.json";
+  const mainnetUrl =
+    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/feat/addresses/data/addresses.mainnet.json";
 
   useEffect(() => {
-    fetch(addressesURL)
-      .then((response) => response.json())
-      .then((jsonData) => setData(jsonData as FetchedData))
-      .catch((error) => console.error("Error:", error));
+    const fetchAndGroupAddresses = async () => {
+      setIsLoading(true);
+      const responses = await Promise.all([
+        fetch(testnetUrl),
+        fetch(mainnetUrl),
+      ]);
+      const [testnetData, mainnetData] = await Promise.all(
+        responses.map((res) => res.json())
+      );
+
+      const groupByChainId = (data: any) =>
+        data.reduce((acc: any, item: any) => {
+          (acc[item.chain_name] = acc[item.chain_name] || []).push(item);
+          return acc;
+        }, {});
+
+      setGroupedData({
+        testnet: groupByChainId(testnetData),
+        mainnet: groupByChainId(mainnetData),
+      });
+      setIsLoading(false);
+    };
+
+    fetchAndGroupAddresses();
   }, []);
 
-  if (!data) {
-    return <div>Loading...</div>;
-  }
+  const source = activeTab === "testnet" ? testnetUrl : mainnetUrl;
 
-  const formatTitle = (title: string) => {
-    const handleEdgeCases = (word: string) => {
-      const upper = word.charAt(0).toUpperCase() + word.slice(1);
-      const edgeCase = edgeCases[word.toLowerCase()];
-      return edgeCase ? edgeCase : upper;
-    };
-    return title.replace(/_/g, " ").split(" ").map(handleEdgeCases).join(" ");
-  };
-
-  const renderTable = (
-    blockchainData: NestedObject[],
-    title: string
-  ): ReactNode => {
-    const allEntries = blockchainData.reduce((acc, tableData) => {
-      const validEntries = Object.entries(tableData).filter(
-        ([key, value]) => value && value.trim() !== ""
-      );
-      return [...acc, ...validEntries];
-    }, [] as [string, string][]);
-
-    if (allEntries.length === 0) {
-      return null;
-    }
-
-    return (
-      <div key={title}>
-        <h2>{formatTitle(title)}</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Label</th>
-              <th>Contract address</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allEntries.map(([key, value], index) => (
-              <tr key={index}>
-                <td>{key}</td>
-                <td>{value}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
-  // Generate a mapping of blockchain to all its categories' data
-  const blockchainMapping: { [key: string]: NestedObject[] } = {};
-  Object.values(data).forEach((nestedObject) => {
-    Object.entries(nestedObject).forEach(([blockchain, blockchainData]) => {
-      if (!blockchainMapping[blockchain]) {
-        blockchainMapping[blockchain] = [];
-      }
-      blockchainMapping[blockchain].push(blockchainData);
-    });
-  });
+  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
+  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
 
   return (
     <div>
-      {Object.entries(blockchainMapping).map(([blockchain, blockchainData]) =>
-        renderTable(blockchainData, blockchain)
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <button
+          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
+          onClick={() => setActiveTab("testnet")}
+        >
+          Testnet
+        </button>
+        <button
+          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
+          onClick={() => setActiveTab("mainnet")}
+        >
+          Mainnet Beta
+        </button>
+      </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        Object.entries(groupedData[activeTab]).map(([chainName, contracts]) => (
+          <div key={chainName}>
+            <h3>{chainName}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Symbol</th>
+                  <th>Address</th>
+                </tr>
+              </thead>
+              <tbody>
+                {contracts.map((contract: any, index: any) => (
+                  <tr key={index}>
+                    <td>{contract.type}</td>
+                    <td>{contract.symbol}</td>
+                    <td>{contract.address}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))
       )}
+      <p>
+        Source:&nbsp;
+        <a href={`${source}`} target="_blank" rel="noopener noreferrer">
+          {source}
+        </a>
+      </p>
     </div>
   );
 };
 
-export default DataFetch;
+export default ContractAddresses;
