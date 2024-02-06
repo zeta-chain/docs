@@ -20,15 +20,22 @@ const ContractAddresses = () => {
         responses.map((res) => res.json())
       );
 
-      const groupByChainId = (data: any) =>
-        data.reduce((acc: any, item: any) => {
+      const groupByChainId = (data) =>
+        data.reduce((acc, item) => {
           (acc[item.chain_name] = acc[item.chain_name] || []).push(item);
           return acc;
         }, {});
 
+      const sortGroupedData = (groupedData) => {
+        Object.keys(groupedData).forEach((chainName) => {
+          groupedData[chainName].sort((a, b) => a.type.localeCompare(b.type));
+        });
+        return groupedData;
+      };
+
       setGroupedData({
-        testnet: groupByChainId(testnetData),
-        mainnet: groupByChainId(mainnetData),
+        testnet: sortGroupedData(groupByChainId(testnetData)),
+        mainnet: sortGroupedData(groupByChainId(mainnetData)),
       });
       setIsLoading(false);
     };
@@ -72,7 +79,7 @@ const ContractAddresses = () => {
                 </tr>
               </thead>
               <tbody>
-                {contracts.map((contract: any, index: any) => (
+                {contracts.map((contract, index) => (
                   <tr key={index}>
                     <td>{contract.type}</td>
                     <td>{contract.symbol}</td>
@@ -86,7 +93,7 @@ const ContractAddresses = () => {
       )}
       <p>
         Source:&nbsp;
-        <a href={`${source}`} target="_blank" rel="noopener noreferrer">
+        <a href={source} target="_blank" rel="noopener noreferrer">
           {source}
         </a>
       </p>
