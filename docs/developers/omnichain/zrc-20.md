@@ -65,6 +65,17 @@ correspond to a contract address on ZetaChain, the token will be deposited to
 that contract and the `onCrossChainCall` function of that contract will be
 called with the remaining input data as the `message`.
 
+When depositing native gas tokens from EVM-based connected chains, there is no
+additional cross-chain fee. If you send 1 token to a TSS address, you will
+receive 1 ZRC-20 version of the same token on ZetaChain.
+
+For Bitcoin deposits, which utilize the UTXO (Unspent Transaction Output) model,
+the process incurs additional fees. Unlike EVM-based chains, each deposited
+Bitcoin output incurs a fee when it is spent. To address this, both the
+depositor and the withdrawer share the cost of the spend. This fee is charged in
+advance as a deposit fee. Currently, the rate is set at 20 satoshis per virtual
+byte (sats/vB), but it may vary according to market conditions.
+
 ## Depositing Supported ERC-20 Tokens as ZRC-20
 
 To deposit a supported ERC-20 token to ZetaChain, use the `deposit` method of
