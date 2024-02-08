@@ -36,7 +36,7 @@ const AdminPolicy = () => {
             .then((response) => response.json())
             .then((detailData) => {
               fetch(
-                `https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/group/v1/group_members/${detailData.info.group_id}`
+                `${baseUrl}/cosmos/group/v1/group_members/${detailData.info.group_id}`
               )
                 .then((response) => response.json())
                 .then((membersData) => {
