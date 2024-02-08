@@ -11,6 +11,7 @@ developers.
 | Wallet as a Service | Particle Network | https://particle.network                   |
 | Wallet as a Service | Magic            | https://magic.link/                        |
 | Subgraph            | Goldsky          | https://goldsky.com/                       |
+| Subgraph            | Envio            | https://envio.dev/                         |
 | Explorer            | Blockscout       | https://zetachain-athens-3.blockscout.com/ |
 | Explorer            | Explorer Guru    | https://zetachain.explorers.guru/          |
 | Explorer            | Exploreme        | https://zetachain.exploreme.pro/           |
