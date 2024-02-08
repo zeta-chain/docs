@@ -48,9 +48,9 @@ referred to as a Threshold Signature Scheme (TSS) address.
   contract, and the contract is called with the message data as an argument.
 
 Assets transferred to a TSS address on ZetaChain are represented as
-[ZRC-20](/developers/omnichain/zrc-20) tokens. ZRC-20 is an extension of ERC-20
-that supports additional functionality for deposits from and withdrawals to
-connected chains.
+[ZRC-20](/developers/tokens/zrc20) tokens. ZRC-20 is an extension of ERC-20 that
+supports additional functionality for deposits from and withdrawals to connected
+chains.
 
 The state of your whole dApp can be stored in this omnichain contract.
 

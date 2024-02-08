@@ -7,7 +7,7 @@ sidebar_position: 7
 ## Overview
 
 Assuming you have familiarized yourself with
-[ZRC-20 Tokens](/developers/omnichain/zrc-20) and
+[ZRC-20 Tokens](/developers/tokens/zrc20) and
 [zEVM](/developers/omnichain/zeta-evm), this example walks through how you'd
 create an omnichain Curve pool! This means you can leverage the existing Curve
 contracts and orchestrate external, native assets as if they were all on one
@@ -47,4 +47,4 @@ function simply extracts params from the message, calls the Curve pool's
 logic remains in the core Curve contract deployment. Users can interact by
 depositing and calling this zEVM contract from an external chain. You can see
 how you'd call this for a user programmatically
-[here](/developers/omnichain/zrc-20/).
+[here](/developers/tokens/zrc20/).
