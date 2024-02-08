@@ -51,7 +51,7 @@ const ZetaTokenTable = () => {
           style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
           onClick={() => setActiveTab("mainnet")}
         >
-          Mainnet
+          Mainnet Beta
         </button>
       </div>
       {isLoading ? (
