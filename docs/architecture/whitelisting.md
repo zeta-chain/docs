@@ -61,7 +61,7 @@ whitelisting the fungible token should be raised and passed.
 
 Proposals that are passed will be reviewed, and if a decision is made to go
 ahead with whitelisting the ERC20, according to the above requirements and
-preferences as criteria, the protocol admin group 1 will sign a
+preferences as criteria, the protocol admin group 2 will sign a
 `MsgWhitelistERC20` transaction and broadcast it. The ZetaChain network will do
 the following procedure:
 
