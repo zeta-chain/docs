@@ -12,7 +12,6 @@ const SubspaceKeyTable = () => {
       baseUrl =
         "https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/params/v1beta1/subspaces";
     } else {
-      // Placeholder for mainnet URL, since it's not provided
       baseUrl =
         "https://zetachain.blockpi.network/lcd/v1/public/cosmos/params/v1beta1/subspaces";
     }
