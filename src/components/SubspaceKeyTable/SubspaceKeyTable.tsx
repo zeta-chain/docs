@@ -7,16 +7,13 @@ const SubspaceKeyTable = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    let baseUrl = "";
-    if (activeTab === "testnet") {
-      baseUrl =
-        "https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/params/v1beta1/subspaces";
-    } else {
-      baseUrl =
-        "https://zetachain.blockpi.network/lcd/v1/public/cosmos/params/v1beta1/subspaces";
-    }
+    const baseUrl =
+      activeTab === "testnet"
+        ? "https://zetachain-athens.blockpi.network/lcd/v1/public"
+        : "https://zetachain.blockpi.network/lcd/v1/public";
+    const url = `${baseUrl}/cosmos/params/v1beta1/subspaces`;
     try {
-      const response = await fetch(baseUrl);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
