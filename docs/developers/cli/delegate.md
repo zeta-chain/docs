@@ -7,7 +7,7 @@ sidebar_position: 4
 ## Prerequisites
 
 This tutorial requires `zetacored` CLI to be installed. Please, check out the
-docs [on installing the CLI](/users/cli/setup).
+docs [on installing the CLI](/developers/cli/setup).
 
 ## Delegating to a Validator
 
@@ -28,8 +28,8 @@ ensures that the network remains decentralized.
 Copy the validator's operator address from the explorer. The address should be
 prefixed with `zetavaloper`.
 
-Next, check your [account balance](/users/cli/balances) and decide on the amount
-you want to stake.
+Next, check your [account balance](/developers/cli/balances) and decide on the
+amount you want to stake.
 
 Before delegating it's important to understand that your ZETA will be locked for
 a period of time. You will not be able to transfer or spend it. The amount of
@@ -50,7 +50,7 @@ zetacored tx staking delegate zetavaloper167ns6zwczl9asjs47jwv3uhtkxfjcvx3fg3d4a
 - `--node https://zetachain-athens.blockpi.network:443/rpc/v1/public` is the
   Tendermint RPC URL
 - `--from alice` is they account key name (see
-  [Managing Accounts](/users/cli/account))
+  [Managing Accounts](/developers/cli/account))
 - `--chain-id athens_7001-1` is the chain ID of the ZetaChain testnet
 
 The terminal will ask you to confirm the transaction:

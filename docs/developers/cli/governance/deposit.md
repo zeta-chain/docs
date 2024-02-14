@@ -2,7 +2,7 @@
 
 For a proposal to progress into the voting period, it must meet the minimum
 deposit requirement. The min deposit amount is specified
-[parameters of governance module](/users/cli/governance/overview/). If the
+[parameters of governance module](/developers/cli/governance/overview/). If the
 deposit amount is less than the minimum required deposit amount, the proposal
 will enter the "deposit period" and will wait for the required amount of tokens
 to be deposited within the "max deposit period".
