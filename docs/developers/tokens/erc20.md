@@ -11,6 +11,7 @@ contracts can be deployed to ZetaChain permissionlessly.
 :::note
 
 An ERC-20 token deployed to ZetaChain **does not** have the properties of
-ZRC-20, specifically, it can't be withdrawn from ZetaChain to a connected chain.
+[ZRC-20](/developers/tokens/zrc20), specifically, it can't be withdrawn from
+ZetaChain to a connected chain.
 
 :::
