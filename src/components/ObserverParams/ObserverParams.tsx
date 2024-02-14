@@ -12,14 +12,21 @@ interface ObserverParams {
   min_observer_delegation: string;
 }
 
-const API =
-  "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/params";
+const apis = {
+  testnet:
+    "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/params",
+  mainnet:
+    "https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/observer/params",
+};
 
-const ObserverParams = () => {
+const ObserverParamsComponent = () => {
   const [data, setData] = useState<ObserverParams[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState("testnet");
 
   useEffect(() => {
+    const API = apis[activeTab];
+    setIsLoading(true);
     fetch(API)
       .then((response) => response.json())
       .then((json) => {
@@ -30,10 +37,27 @@ const ObserverParams = () => {
         console.error("Error fetching data: ", error);
         setIsLoading(false);
       });
-  }, []);
+  }, [activeTab]);
+
+  const active = { fontWeight: "bold", textDecoration: "underline" };
+  const inactive = { fontWeight: "normal", textDecoration: "none" };
 
   return (
     <div>
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <button
+          style={activeTab === "testnet" ? active : inactive}
+          onClick={() => setActiveTab("testnet")}
+        >
+          Testnet
+        </button>
+        <button
+          style={activeTab === "mainnet" ? active : inactive}
+          onClick={() => setActiveTab("mainnet")}
+        >
+          Mainnet Beta
+        </button>
+      </div>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -59,8 +83,8 @@ const ObserverParams = () => {
             </tbody>
           </table>
           Source:&nbsp;
-          <a href={API} target="_blank" rel="noopener noreferrer">
-            {API}
+          <a href={apis[activeTab]} target="_blank" rel="noopener noreferrer">
+            {apis[activeTab]}
           </a>
         </div>
       )}
@@ -68,4 +92,4 @@ const ObserverParams = () => {
   );
 };
 
-export default ObserverParams;
+export default ObserverParamsComponent;

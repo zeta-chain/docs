@@ -4,19 +4,25 @@ import { bech32 } from "bech32";
 const ObserverList = () => {
   const [observers, setObservers] = useState<any>([]);
   const [validators, setValidators] = useState<any>([]);
-  const [isLoadingObservers, setIsLoadingObservers] = useState(true);
-  const [isLoadingValidators, setIsLoadingValidators] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("testnet");
 
-  const api = "https://zetachain-athens.blockpi.network/lcd/v1/public";
+  const apis = {
+    testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
+    mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
+  };
 
   useEffect(() => {
+    setObservers([]);
+    setValidators([]);
     fetchObservers();
     fetchValidators();
-  }, []);
+  }, [activeTab]);
 
   const fetchObservers = async () => {
-    setIsLoadingObservers(true);
+    setIsLoading(true);
     try {
+      const api = apis[activeTab];
       const response = await fetch(`${api}/zeta-chain/observer/nodeAccount`);
       const data = await response.json();
       const processedData = data.NodeAccount.map((observer: any) => ({
@@ -27,13 +33,14 @@ const ObserverList = () => {
     } catch (error) {
       console.error("Error fetching observer validators:", error);
     } finally {
-      setIsLoadingObservers(false);
+      setIsLoading(false);
     }
   };
 
   const fetchValidators = async (key = "") => {
-    setIsLoadingValidators(true);
+    setIsLoading(true);
     try {
+      const api = apis[activeTab];
       const endpoint = "/cosmos/staking/v1beta1/validators";
       const query = key ? `pagination.key=${encodeURIComponent(key)}` : "";
       const url = `${api}${endpoint}?${query}`;
@@ -51,7 +58,7 @@ const ObserverList = () => {
     } catch (error) {
       console.error("Error fetching validators:", error);
     } finally {
-      setIsLoadingValidators(false);
+      setIsLoading(false);
     }
   };
 
@@ -85,9 +92,26 @@ const ObserverList = () => {
     });
   };
 
+  const active = { fontWeight: "bold", textDecoration: "underline" };
+  const inactive = { fontWeight: "normal", textDecoration: "none" };
+
   return (
     <div>
-      {isLoadingObservers || isLoadingValidators ? (
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <button
+          style={activeTab === "testnet" ? active : inactive}
+          onClick={() => setActiveTab("testnet")}
+        >
+          Testnet
+        </button>
+        <button
+          style={activeTab === "mainnet" ? active : inactive}
+          onClick={() => setActiveTab("mainnet")}
+        >
+          Mainnet Beta
+        </button>
+      </div>
+      {isLoading ? (
         <p>Loading...</p>
       ) : (
         <table>
