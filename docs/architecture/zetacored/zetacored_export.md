@@ -9,7 +9,7 @@ zetacored export [flags]
 ### Options
 
 ```
-      --for-zero-height              Export state to start at height zero (perform preprocessing)
+      --for-zero-height              Export state to start at height zero (perform preproccessing)
       --height int                   Export state from a particular height (-1 means latest height) (default -1)
   -h, --help                         help for export
       --home string                  The application home directory 

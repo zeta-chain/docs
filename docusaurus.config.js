@@ -2,6 +2,9 @@
 require("dotenv").config();
 const constants = require("./src/constants");
 
+const math = require("remark-math");
+const katex = require("rehype-katex");
+
 const url = process.env.URL || constants.docsLink;
 
 const isNodeEnvProd = process.env.NODE_ENV === "production";
@@ -66,6 +69,18 @@ const config = {
           {
             from: "/reference/using-zetascan/",
             to: "/reference/explorers/",
+          },
+          {
+            from: "/about/zeta/",
+            to: "/about/token-utility/overview",
+          },
+          {
+            from: "/reference/testnet/",
+            to: "/reference/contracts",
+          },
+          {
+            from: "/reference/mainnet/",
+            to: "/reference/contracts",
           },
         ],
       },
@@ -165,6 +180,8 @@ const config = {
           // sidebarPath: require.resolve("./sidebars.js"),
           showLastUpdateTime: true,
           include: ["**/*.md", "**/*.mdx"],
+          remarkPlugins: [math],
+          rehypePlugins: [katex],
         },
         blog: false,
         theme: {
@@ -244,6 +261,15 @@ const config = {
         { name: "twitter:card", content: "summary_large_image" },
       ],
     },
+  stylesheets: [
+    {
+      href: "https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css",
+      type: "text/css",
+      integrity:
+        "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
+      crossorigin: "anonymous",
+    },
+  ],
 };
 
 module.exports = config;

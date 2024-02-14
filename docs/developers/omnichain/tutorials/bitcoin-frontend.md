@@ -20,7 +20,7 @@ For the purposes of this tutorial we will be using the
 - [Node.js](https://nodejs.org/en/) installed on your machine with `npm` or
   `yarn`
 - Learn how to
-  [Deposit and call zEVM contracts from Bitcoin](https://www.zetachain.com/docs/developers/omnichain/bitcoin/).
+  [Deposit and call zEVM contracts from Bitcoin](/developers/omnichain/bitcoin/).
 
 # Create a new project
 
@@ -114,10 +114,9 @@ async function sendTransaction() {
 ```
 
 To call an omnichain contract from Bitcoin you need to send a token transfer
-transaction to the ZetaChain's
-[TSS address](https://zetachain.com/docs/reference/testnet) on Bitcoin with a
-memo that conforms to
-[the required format](https://www.zetachain.com/docs/developers/omnichain/bitcoin).
+transaction to the ZetaChain's [TSS address](/reference/contracts) on Bitcoin
+with a memo that conforms to
+[the required format](/developers/omnichain/bitcoin).
 
 The memo is composed of two parts:
 
@@ -142,9 +141,8 @@ XDEFI injects itself into the `window` object, so we can access it from the
 `window.xfi` property. Use the `getAccounts` method to get the list of accounts
 and use the first one.
 
-The list of TSS address is available in
-[the docs](https://zetachain.com/docs/reference/testnet), for the purposes of
-this tutorial we will use a hard-coded value.
+The list of TSS address is available in [the docs](/reference/contracts), for
+the purposes of this tutorial we will use a hard-coded value.
 
 Get the contract address and parameters from the form and ensure that the `0x`
 prefix is removed.
@@ -183,7 +181,7 @@ npx http-server
 Open the page in your browser and fill in the form. You can test functionality
 with your own contract address or follow one of the provided tutorials, for
 example, the
-[Staking](https://www.zetachain.com/docs/developers/omnichain/tutorials/staking/)
+[Staking](/developers/omnichain/tutorials/staking/)
 tutorial to deploy a contract that you can call from Bitcoin.
 
 Fill out the form and click the "Send transaction" button. You will be prompted

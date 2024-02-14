@@ -21,20 +21,8 @@ We suggest the following wallets (although there are plenty of alternatives!):
 - [Metamask](https://metamask.io)
 - [Coinbase Wallet](https://www.coinbase.com/wallet)
 
-### Adding ZetaChain to Metamask
-
-To add ZetaChain to the Metamask extension wallet follow these steps:
-
-- Learn about
-  [how to add a custom network RPC](https://support.metamask.io/hc/en-us/articles/360043227612-How-to-add-a-custom-network-RPC)
-- Use the following values:
-  - Network Name: `ZetaChain Testnet` (or choose another name)
-  - New RPC URL: `https://zetachain-athens-evm.blockpi.network/v1/rpc/public`
-    (or choose another one from
-    [the list](https://www.zetachain.com/docs/reference/api/))
-  - Chain ID: `7001`
-  - Currency Symbol: `tZETA`
-  - Block explorer URL: `https://athens3.explorer.zetachain.com/`
+To add ZetaChain to your wallet, use the information on the
+[Networks Details page](/reference/details).
 
 ## Bitcoin Wallets
 

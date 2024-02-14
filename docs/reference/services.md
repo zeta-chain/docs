@@ -11,11 +11,20 @@ developers.
 | Wallet as a Service | Particle Network | https://particle.network                   |
 | Wallet as a Service | Magic            | https://magic.link/                        |
 | Subgraph            | Goldsky          | https://goldsky.com/                       |
+| Subgraph            | Envio            | https://envio.dev/                         |
 | Explorer            | Blockscout       | https://zetachain-athens-3.blockscout.com/ |
 | Explorer            | Explorer Guru    | https://zetachain.explorers.guru/          |
 | Explorer            | Exploreme        | https://zetachain.exploreme.pro/           |
 | Explorer            | Ping.Pub         | https://testnet.ping.pub/zetachain         |
 | Explorer            | ZetaScan         | https://explorer.zetachain.com/            |
+| Explorer            | DexGuru          | https://zeta-testnet.dex.guru/             |
+| Wallet              | MetaMask         | https://metamask.io/                       |
+| Wallet              | Coinbase Wallet  | https://www.coinbase.com/wallet            |
+| Wallet              | XDEFI Wallet     | https://xdefi.io                           |
+| Wallet              | Keplr            | https://keplr.app/                         |
+| Wallet              | Leap             | https://www.leapwallet.io/                 |
+| Wallet              | Safe             | https://safe.zetachain.com/                |
+| Oracle              | Pyth             | https://pyth.network/                      |
 
 Is this list missing a service for developers that supports ZetaChain? Help us
 keep this list up-to-date by

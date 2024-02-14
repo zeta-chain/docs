@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
 ---
 
 # Curve on zEVM
@@ -17,8 +17,7 @@ chain.
 
 Since zEVM is fully EVM compatible, you can download the Curve repo as it is and
 deploy it on zEVM, simply pointing the RPC to zEVM RPC. You can find all the
-ZetaChain RPC information here: [testnet](/reference/testnet) and here
-[mainnet](/reference/mainnet).
+ZetaChain RPC information [here](/reference/api).
 
 ## Deploy a tri-token pool of ZRC-20 tokens
 
@@ -48,4 +47,4 @@ function simply extracts params from the message, calls the Curve pool's
 logic remains in the core Curve contract deployment. Users can interact by
 depositing and calling this zEVM contract from an external chain. You can see
 how you'd call this for a user programmatically
-[here](https://www.zetachain.com/docs/developers/omnichain/zrc-20/).
+[here](/developers/omnichain/zrc-20/).
