@@ -36,7 +36,9 @@ export const AddressConverter: React.FC<{}> = () => {
           Convert
         </button>
       </div>
-      <p>Converted address: {convertedAddress}</p>
+      <p style={{ marginBottom: "1rem" }}>
+        Converted address: {convertedAddress}
+      </p>
     </div>
   );
 };
