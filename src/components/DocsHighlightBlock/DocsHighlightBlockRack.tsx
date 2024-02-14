@@ -26,7 +26,7 @@ export const DocsHighlightBlockRack: React.FC = () => {
         />
       </Link>
 
-      <Link href="./about/zeta">
+      <Link href="./about/token-utility/overview/">
         <DocsHighlightBlock
           icon={
             <svg
