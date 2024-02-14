@@ -47,7 +47,8 @@ chmod a+x /usr/local/bin/zetacored
 
 ```bash
 MONIKER=$(hostname)
-zetacored init ${MONIKER} --chain-id CHAIN_ID
+CHAIN_ID="[Replace with desired CHAIN ID]"
+zetacored init ${MONIKER} --chain-id $CHAIN_ID
 ```
 
 ## Download config files
