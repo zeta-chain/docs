@@ -15,7 +15,7 @@ to provide a beneficiary address to which the rewards will be sent (a staker is
 allowed to be its own beneficiary). Only the staker can withdraw the staked
 tokens from the contract and withdraw to the chain from which they originate.
 
-Only the beneficiary can withdraw the rewards from the contract.
+Only the beneficiary can claim the rewards from the contract.
 
 For simplicity this contract will be compatible with one of the connected chains
 at a time. The chain ID of the connected chain will be passed to the contract
@@ -75,7 +75,6 @@ Called from a connected chain by the staker:
   ZetaChain
 - Unstaking tokens by withdrawing them to the chain from which they originate
 - Setting the beneficiary address
-- Setting the withdraw address
 
 Called on ZetaChain:
 
@@ -83,7 +82,7 @@ Called on ZetaChain:
 - Querying the pending rewards
 
 Since the omnichain contract has only one function that gets called when the
-contract is triggerred from a connected chain (`onCrossChainCall`), and you need
+contract is triggered from a connected chain (`onCrossChainCall`), and you need
 to be able to execute different logic depending on the action, you will need to
 encode the action code into the `message` parameter of the `onCrossChainCall`.
 
@@ -104,7 +103,6 @@ flowchart LR
     user -- stake --> tss
     user -- unstake --> tss
     user -- set beneficiary --> tss
-    user -- set withdraw --> tss
     tss --> system_contract
     system_contract -- calls --> contract
     user -- claim rewards --> contract
@@ -119,12 +117,9 @@ pragma solidity 0.8.7;
 
 import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
-//highlight-start
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
-//highlight-end
 
-// highlight-start
 contract Staking is ERC20, zContract {
     SystemContract public immutable systemContract;
     uint256 public immutable chainID;
@@ -132,7 +127,6 @@ contract Staking is ERC20, zContract {
 
     uint256 public rewardRate = 1;
 
-    error SenderNotSystemContract();
     error WrongChain(uint256 chainID);
     error UnknownAction(uint8 action);
     error Overflow();
@@ -141,10 +135,9 @@ contract Staking is ERC20, zContract {
     error NotAuthorized();
     error NoRewardsToClaim();
 
-    mapping(address => uint256) public stake;
-    mapping(address => bytes) public withdraw;
-    mapping(address => address) public beneficiary;
-    mapping(address => uint256) public lastStakeTime;
+    mapping(bytes => uint256) public stakes;
+    mapping(bytes => address) public beneficiary;
+    mapping(bytes => uint256) public lastStakeTime;
 
     constructor(
         string memory name_,
@@ -155,7 +148,6 @@ contract Staking is ERC20, zContract {
         systemContract = SystemContract(systemContractAddress);
         chainID = chainID_;
     }
-    // highlight-end
 
     modifier onlySystem() {
         require(
@@ -171,29 +163,23 @@ contract Staking is ERC20, zContract {
         uint256 amount,
         bytes calldata message
     ) external virtual override onlySystem {
-        // highlight-start
         if (chainID != context.chainID) {
             revert WrongChain(context.chainID);
         }
-
-        address staker = BytesHelperLib.bytesToAddress(context.origin, 0);
 
         uint8 action = chainID == BITCOIN
             ? uint8(message[0])
             : abi.decode(message, (uint8));
 
         if (action == 1) {
-            stakeZRC(staker, amount);
+            stake(context.origin, amount, message);
         } else if (action == 2) {
-            unstakeZRC(staker);
+            unstake(context.origin);
         } else if (action == 3) {
-            setBeneficiary(staker, message);
-        } else if (action == 4) {
-            setWithdraw(staker, message, context.origin);
+            updateBeneficiary(context.origin, message);
         } else {
             revert UnknownAction(action);
         }
-        // highlight-end
     }
 }
 ```
@@ -209,12 +195,11 @@ called from the correct chain.
 Add the `BITCOIN` constant to store the chain ID of Bitcoin. ZetaChain uses
 `18332` to represent Bitcoin's chain ID.
 
-The contract needs to be able to store the staker's staked balance, withdraw
-address and beneficiary address. To do this, add the following mappings:
+The contract needs to store the following mappings:
 
-- `stake` - stores the staker's staked balance
-- `withdraw` - stores the staker's withdraw address
+- `stakes` - stores the staker's staked balance
 - `beneficiary` - stores the staker's beneficiary address
+- `lastStakeTime` - stores the timestamp of the last staking action
 
 Modify the constructor to accept three additional arguments: `name_`, `symbol_`,
 and `chainID_`. The `name_` and `symbol_` arguments will be used to initialize
@@ -239,8 +224,8 @@ which broadcasted the transaction. For example:
 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
-For Bitcoin, `context.origin` is the first 20 bytes of the hexidecimal
-representation of the Bitcoin address. For example, if the Bitcoin address is:
+For Bitcoin, `context.origin` is the hexidecimal representation of the Bitcoin
+address. For example, if the Bitcoin address is:
 
 ```
 tb1q2dr85d57450xwde6560qyhj7zvzw9895hq25tx
@@ -251,22 +236,6 @@ The hexidecimal representation of the address is:
 ```
 0x74623171326472383564353734353078776465363536307179686a377a767a7739383935687132357478
 ```
-
-The first 20 bytes (or 40 characters, excluding the `0x` prefix) and the
-`context.origin` is:
-
-```
-0x7462317132647238356435373435307877646536
-```
-
-For Bitcoin, `context.origin` does not contain all the information about the
-address from which the transaction was broadcasted, but it can be used to
-identify the account that broadcasted the transaction.
-
-Use `BytesHelperLib.bytesToAddress` to decode the staker's identifier from the
-`context.origin` bytes. We will be using `staker` as a key in the `stakes`,
-`withdraw` and `beneficiary` mappings to store the staker's staked balance,
-withdraw address and the beneficiary address.
 
 The `message` parameter contains the data that was passed to the omnichain
 contract when it was called from the connected chain. In our design the first
@@ -280,84 +249,12 @@ Finally, based on the `action` code, call the corresponding function:
 
 `2` - unstake ZRC-20 tokens
 
-`3` - set beneficiary address
+`3` - update beneficiary address
 
-`4` - set withdraw address
+### Update Beneficiary
 
-### Stake ZRC-20 Tokens
-
-`stakeZRC` is a function that will be called by `onCrossChainCall` to stake the
-deposited tokens.
-
-```solidity title="contracts/Staking.sol"
-    function stakeZRC(address staker, uint256 amount) internal {
-        stake[staker] += amount;
-        if (stake[staker] < amount) revert Overflow();
-
-        lastStakeTime[staker] = block.timestamp;
-        updateRewards(staker);
-    }
-
-    function updateRewards(address staker) internal {
-        uint256 rewardAmount = queryRewards(staker);
-
-        _mint(beneficiary[staker], rewardAmount);
-        lastStakeTime[staker] = block.timestamp;
-    }
-
-    function queryRewards(address staker) public view returns (uint256) {
-        uint256 timeDifference = block.timestamp - lastStakeTime[staker];
-        uint256 rewardAmount = timeDifference * stake[staker] * rewardRate;
-        return rewardAmount;
-    }
-```
-
-`stakeZRC` increases the staker's balance in the contract. The function also
-updates the timestamp of when the staking happened last, and calls the
-`updateRewards` function to update the rewards for the staker.
-
-`updateRewards` calculates the rewards for the staker and mints them to the
-beneficiary address. The function also updates the timestamp of when the staking
-happened last.
-
-### Unstake ZRC-20 Tokens
-
-The `unstakeZRC` function begins by updating any outstanding rewards due to the
-user. It then checks that the user has a sufficient staked balance.
-Subsequently, it identifies the ZRC20 token associated with the contract's
-`chainID` and determines the gas fee for the unstaking operation. This fee is
-then approved. The user's tokens, minus the gas fee, are withdrawn to the
-encoded recipient address. Finally, the contract updates the user's staking
-balance and the timestamp of their last stake action.
-
-```solidity title="contracts/Staking.sol"
-    function unstakeZRC(address staker) internal {
-        uint256 amount = stake[staker];
-
-        updateRewards(staker);
-
-        address zrc20 = systemContract.gasCoinZRC20ByChainId(chainID);
-        (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
-
-        if (amount < gasFee) revert WrongAmount();
-
-        bytes memory recipient = withdraw[staker];
-
-        stake[staker] = 0;
-
-        IZRC20(zrc20).approve(zrc20, gasFee);
-        IZRC20(zrc20).withdraw(recipient, amount - gasFee);
-
-        if (stake[staker] > amount) revert Underflow();
-
-        lastStakeTime[staker] = block.timestamp;
-    }
-```
-
-### Set Beneficiary
-
-`setBeneficiary` is a function that will be called by the staker to set the
-beneficiary address.
+`updateBeneficiary` is a function that will be called by the staking function to
+set the beneficiary address or can be optionally called by the staker.
 
 The `message` is encoded differently in EVM-based chains and Bitcoin. For
 Bitcoin, the beneficiary address follows the `uint8` action code (1 byte long)
@@ -368,7 +265,10 @@ For EVM-based chains, use `abi.decode` to get the beneficiary address from the
 `message`.
 
 ```solidity title="contracts/Staking.sol"
-    function setBeneficiary(address staker, bytes calldata message) internal {
+    function updateBeneficiary(
+        bytes memory staker,
+        bytes calldata message
+    ) internal {
         address beneficiaryAddress;
         if (chainID == BITCOIN) {
             beneficiaryAddress = BytesHelperLib.bytesToAddress(message, 1);
@@ -379,49 +279,76 @@ For EVM-based chains, use `abi.decode` to get the beneficiary address from the
     }
 ```
 
-### Set Withdraw Address
+### Stake ZRC-20 Tokens
 
-`setWithdraw` is a function that will be called by the staker to set the
-withdraw address.
-
-For Bitcoin the withdraw address is a hexidecimal representation of a bech32
-Bitcoin address. In the `message` the withdraw address follows the `uint8`
-action code (1 byte long) and is 42 bytes long (longer than a regular EVM
-address).
-
-Add a new helper function `bytesToBech32Bytes` to return the first 42 bytes of
-the `message`. Use `bytesToBech32Bytes` with an offset of `1` (byte) to decode
-the withdraw address.
-
-For EVM-based chains, use the bytes from the `context.origin` parameter as the
-withdraw address. `context.origin` matches the actual sender address on the
-connected chain.
+`stake` is a function that will be called by `onCrossChainCall` to stake the
+deposited tokens.
 
 ```solidity title="contracts/Staking.sol"
-    function setWithdraw(
-        address staker,
-        bytes calldata message,
-        bytes memory origin
+    function stake(
+        bytes memory staker,
+        uint256 amount,
+        bytes calldata message
     ) internal {
-        bytes memory withdrawAddress;
-        if (chainID == BITCOIN) {
-            withdrawAddress = bytesToBech32Bytes(message, 1);
-        } else {
-            withdrawAddress = origin;
-        }
-        withdraw[staker] = withdrawAddress;
+        updateBeneficiary(staker, message);
+
+        stakes[staker] += amount;
+        if (stakes[staker] < amount) revert Overflow();
+
+        updateRewards(staker);
     }
 
-    function bytesToBech32Bytes(
-        bytes calldata data,
-        uint256 offset
-    ) internal pure returns (bytes memory) {
-        bytes memory bech32Bytes = new bytes(42);
-        for (uint i = 0; i < 42; i++) {
-            bech32Bytes[i] = data[i + offset];
-        }
+    function updateRewards(bytes memory staker) internal {
+        if (lastStakeTime[staker] == 0) lastStakeTime[staker] = block.timestamp;
+        uint256 rewardAmount = queryRewards(staker);
 
-        return bech32Bytes;
+        _mint(beneficiary[staker], rewardAmount);
+        lastStakeTime[staker] = block.timestamp;
+    }
+
+    function queryRewards(bytes memory staker) public view returns (uint256) {
+        uint256 timeDifference = block.timestamp - lastStakeTime[staker];
+        uint256 rewardAmount = timeDifference * stakes[staker] * rewardRate;
+        return rewardAmount;
+    }
+```
+
+`stake` increases the staker's balance in the contract. The function also calls
+the `updateRewards` function to update the rewards for the staker.
+
+`updateRewards` calculates the rewards for the staker and mints them to the
+beneficiary address. The function also updates the timestamp of when the staking
+happened last.
+
+### Unstake ZRC-20 Tokens
+
+The `unstake` function begins by updating any outstanding rewards due to the
+user. It then checks that the user has a sufficient staked balance.
+Subsequently, it identifies the ZRC20 token associated with the contract's
+`chainID` and determines the gas fee for the unstaking operation. This fee is
+then approved. The user's tokens, minus the gas fee, are withdrawn to the
+encoded recipient address. Finally, the contract updates the user's staking
+balance and the timestamp of their last stake action.
+
+```solidity title="contracts/Staking.sol"
+    function unstake(bytes memory staker) internal {
+        uint256 amount = stakes[staker];
+
+        updateRewards(staker);
+
+        address zrc20 = systemContract.gasCoinZRC20ByChainId(chainID);
+        (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
+
+        if (amount < gasFee) revert WrongAmount();
+
+        stakes[staker] = 0;
+
+        IZRC20(zrc20).approve(zrc20, gasFee);
+        IZRC20(zrc20).withdraw(staker, amount - gasFee);
+
+        if (stakes[staker] > amount) revert Underflow();
+
+        lastStakeTime[staker] = block.timestamp;
     }
 ```
 
@@ -432,7 +359,7 @@ rewards. The function checks that the caller is the beneficiary and calls the
 `updateRewards` function to send rewards to the beneficiary.
 
 ```solidity title="contracts/Staking.sol"
-    function claimRewards(address staker) external {
+    function claimRewards(bytes memory staker) external {
         if (beneficiary[staker] != msg.sender) revert NotAuthorized();
         uint256 rewardAmount = queryRewards(staker);
         if (rewardAmount <= 0) revert NoRewardsToClaim();
@@ -498,7 +425,6 @@ To make it easier to interact with the contract, create a few tasks that will:
 - stake tokens
 - unstake tokens
 - set beneficiary address
-- set withdraw address
 
 You can find the source code for the tasks in the `tasks` directory of the
 project:
@@ -593,24 +519,10 @@ specifying Goerli testnet:
 npx hardhat deploy --network zeta_testnet --chain goerli_testnet
 ```
 
-### Set Beneficiary Address
-
-The beneficiary address has to be set before staking tokens.
-
-```
-npx hardhat set-beneficiary ADDRESS --contract ADDRESS --network goerli_testnet
-```
-
-### Set Withdraw Address
-
-```
-npx hardhat set-withdraw --contract ADDRESS --network goerli_testnet
-```
-
 ### Stake Tokens
 
 ```
-npx hardhat stake --amount 0.1 --contract ADDRESS --network goerli_testnet
+npx hardhat stake --amount 0.1 --beneficiary ADDRESS --contract ADDRESS --network goerli_testnet
 ```
 
 ### Unstake Tokens
@@ -642,52 +554,15 @@ npx hardhat deploy --network zeta_testnet --chain btc_testnet
 🌍 Explorer: https://athens3.explorer.zetachain.com/address/0x57cafCe6802c45F682201b93529B09EfB9A492C3
 ```
 
-### Convert Bech32 Address to Hex
-
-Your Bitcoin testnet address should start with `tb1`. You can see your Bitcoin
-testnet address by querying for balances with `npx hardhat balances`.
-
-Convert your Bitcoin address to hex:
-
-```
-npx hardhat address tb1q2dr85d57450xwde6560qyhj7zvzw9895hq25tx
-
-Encoded: 0x74623171326472383564353734353078776465363536307179686a377a767a7739383935687132357478
-context.origin: 0x7462317132647238356435373435307877646536
-```
-
-### Set Beneficiary Address
-
-The beneficiary address has to be set before staking tokens. Pass your contract
-address (without the `0x` prefix), the action code for setting the beneficiary
-address (`03`) and the beneficiary address (without `0x`) to the memo flag. Pass
-the Bitcoin TSS address as the recipient address.
-
-```
-npx hardhat send-btc --memo 57cafCe6802c45F682201b93529B09EfB9A492C3032cD3D070aE1BD365909dD859d29F387AA96911e1 --amount 0.0 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
-```
-
-Ensure that the transaction was confirmed on Bitcoin testnet and processed by
-ZetaChain successfully before proceeding.
-
-### Set Withdraw Address
-
-Pass your contract address (without the `0x` prefix), the action code for
-setting the withdraw address (`04`), and the hexidecimal representation of your
-Bitcoin address (without the `0x` prefix) to the memo flag.
-
-```
-npx hardhat send-btc --memo 57cafCe6802c45F682201b93529B09EfB9A492C30474623171326472383564353734353078776465363536307179686a377a767a7739383935687132357478 --amount 0.0 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
-```
-
 ### Stake Tokens
 
-Pass your contract address (without the `0x` prefix) and the action code for
-staking tokens (`01`) to the memo flag. Specify the `--amount` of tBTC you want
-to transfer to your omnichain contract.
+Pass your contract address (without the `0x` prefix), the action code for
+staking tokens (`01`), beneficiary address
+(`2cD3D070aE1BD365909dD859d29F387AA96911e1`) to the memo flag. Specify the
+`--amount` of tBTC you want to transfer to your omnichain contract.
 
 ```
-npx hardhat send-btc --memo 57cafCe6802c45F682201b93529B09EfB9A492C301 --amount 0.01 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
+npx hardhat send-btc --memo 57cafCe6802c45F682201b93529B09EfB9A492C3012cD3D070aE1BD365909dD859d29F387AA96911e1 --amount 0.01 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
 ```
 
 ### Unstake Tokens
