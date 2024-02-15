@@ -7,7 +7,7 @@ sidebar_position: 2
 ## Prerequisites
 
 This tutorial requires `zetacored` CLI to be installed. Please, check out the
-docs [on installing the CLI](/users/cli/setup).
+docs [on installing the CLI](/developers/cli/setup).
 
 :::warning
 
