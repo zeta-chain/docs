@@ -1,3 +1,4 @@
+
 # Whitelisting ERC-20
 
 ## Overview
@@ -53,7 +54,7 @@ _Must_ means necessary conditions; _should_ means strong preference.
     implementation issues.
 11. Should have a source of initial liquidity.
 
-## Procedure
+## High-Level Procedure
 
 First, a non-binding governance proposal that articulates the token and its
 suitability (satisfaction of the above considerations) and benefits of
@@ -75,3 +76,60 @@ the following procedure:
 After these steps are done, the ERC20 whitelisting is finished. Liquidity for
 the given asset should promptly begin deposits in order to provide a smooth
 experience for users interested in interacting with the token.
+
+## Detailed Procedure
+### Prerequisites for Submission
+
+Before initiating a governance proposal to whitelist an ERC-20 token as a ZRC-20, ensure you meet the following prerequisites:
+
+* **Zetacored CLI Installation**: Make sure the zetacored CLI tool is installed on your system. This tool is essential for interacting with the Zetachain network and submitting proposals.
+* **Wallet Setup and Funding**: A wallet must be set up and associated with the zetacored CLI. This wallet should contain a minimum of 1000 ZETA tokens, plus additional ZETA for gas fees, to cover the deposit required for proposal submission.
+
+### **Submitting a Governance Proposal**
+
+To submit a governance proposal for whitelisting an ERC-20 token, follow these steps:
+
+1.  **Prepare the Proposal JSON File**: Draft a `mainnet_proposal.json` file that outlines the details of the token you wish to whitelist. This file must include:
+    
+    -   The proposal title and description, clearly articulating the value and details of the token and how it benefits the Zetachain ecosystem.
+    -   A deposit amount in ZETA to accompany the proposal. Mainnet minimum is currently `1000 Zeta` or `1000000000000000000000azeta`
+    
+    Example `mainnet_proposal.json`:
+```json
+{ "messages": 
+	[ { "@type": "/cosmos.gov.v1.MsgExecLegacyContent", 
+		"content": { 
+					"@type": "/cosmos.gov.v1beta1.TextProposal", 
+					 "title": "Whitelist Token XYZ from XYZ Protocol", 
+					 "description": "The current address is 0xADDRESSONMAINNET on ETH and is fully verified 			https://etherscan.io/token/ADDRESSONMAINNET#code. Whitelisting will allow us to launch our dApp fully and start onboarding users to Zetachain. XYZ's core product is a key component of the Zetachain ecosystem that is yet to be deployed. Whitelisting would mean we could rapidly deploy this." 
+				}, 
+		"authority": "zeta10d07y265gmmuvt4z0w9aw880jnsr700jvxasvr" 
+	} ], 
+	"metadata": "ipfs://YOUR_IPFS_METADATA.json", 
+	"deposit": "1000000000000000000000azeta" 
+}
+```
+2. **Prepare the IPFS Metadata JSON**: Create a metadata file to be uploaded to IPFS. This file should provide additional context and details about the proposal, including the title, authors, summary, detailed description, and a link to a forum or Discord for community discussion.
+
+Example IPFS Metadata JSON:
+```json
+{   
+	"title":  "Whitelist Token XYZ from XYZ Protocol",  
+	"authors":  "Lead XYZ Dev",  
+	"summary":  "We are proposing to enable the whitelisting of the XYZ ecosystem token, the XD token to enable transfers to Zetachain",  
+	"details":  "The current address is 0xADDRESSONMAINNET on ETH and is fully verified https://etherscan.io/token/ADDRESSONMAINNET#code. Whitelisting will allow us to launch our dApp fully and start onboarding users to Zetachain. XYZ's core product is a key component of the Zetachain ecosystem that is yet to be deployed. Whitelisting would mean we could rapidly deploy this.",  
+	"proposal_forum_url":  "FORUM_URL OR PROTOCOL DISCORD",  
+	"vote_option_context":  "YES: Whitelist Token, NO: Do Not Whitelist Token"  
+}
+```
+3. **Submit the Proposal via Command Line**: Use the `zetacored` CLI to submit your proposal to the mainnet. Ensure your wallet is configured correctly and has sufficient balance for the deposit and gas fees.
+
+Command Line Submission:
+
+```sh
+zetacored tx gov submit-proposal mainnet_proposal.json --from YOUR_ZETA_ADDRESS --node https://zeta.rpc.nodeshub.online:443/ --log_format json --chain-id zetachain_7000_1 --trace --gas-prices 10000000000azeta
+```
+
+### **Next Steps After Submission**
+
+After submitting your proposal, it's important to engage with the Zetachain community to discuss and gather support for your proposal. Utilize the provided forum or Discord link in your IPFS metadata to facilitate discussion and address any questions or concerns
