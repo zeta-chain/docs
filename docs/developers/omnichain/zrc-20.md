@@ -73,8 +73,16 @@ For Bitcoin deposits, which utilize the UTXO (Unspent Transaction Output) model,
 the process incurs additional fees. Unlike EVM-based chains, each deposited
 Bitcoin output incurs a fee when it is spent. To address this, both the
 depositor and the withdrawer share the cost of the spend. This fee is charged in
-advance as a deposit fee. Currently, the rate is set at 20 satoshis per virtual
-byte (sats/vB), but it may vary according to market conditions.
+advance as a deposit fee.
+
+The Bitcoin deposit fee is calculated with the following formula:
+
+$$
+DepositFee = AverageFeeRateBlockX * GasPriceMultiplier * DepositIncurredVBytes
+$$
+
+Where `DepositIncurredVBytes` is fixed as `68vB` and the `GasPriceMultiplier`
+defaults to 2 currently.
 
 ## Depositing Supported ERC-20 Tokens as ZRC-20
 
