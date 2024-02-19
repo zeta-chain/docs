@@ -127,7 +127,7 @@ Example IPFS Metadata JSON:
 Command Line Submission:
 
 ```sh
-zetacored tx gov submit-proposal mainnet_proposal.json --from YOUR_ZETA_ADDRESS --node https://zeta.rpc.nodeshub.online:443/ --log_format json --chain-id zetachain_7000_1 --trace --gas-prices 10000000000azeta
+zetacored tx gov submit-proposal mainnet_proposal.json --from YOUR_ZETA_ADDRESS --node https://zeta.rpc.nodeshub.online:443/ --log_format json --chain-id zetachain_7000-1 --trace --gas-prices 10000000000azeta
 ```
 
 ### **Next Steps After Submission**
