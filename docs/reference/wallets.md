@@ -2,16 +2,13 @@
 sidebar_position: 4
 ---
 
-import { AddressConverter } from
-"@site/src/components/AddressConverter/AddressConverter";
-
 # Wallets
 
 ZetaChain is an EVM-compatible Cosmos SDK-based blockchain that features
 interoperability with Bitcoin. This means that many EVM and Cosmos wallets can
 be used to sign transactions and interact with ZetaChain.
 
-To interact with ZetaChain from connected chains, and to interact with Zetachain
+To interact with ZetaChain from connected chains, and to interact with ZetaChain
 directly, we recommend using an EVM wallet.
 
 ## EVM Wallets
@@ -34,8 +31,7 @@ meets certain criteria. You can learn more about it in the
 criteria and you will be able to use it to interact with ZetaChain.
 
 To test ZetaChain's interoperability with Bitcoin, you can use the
-`npx hardhat send-btc` available in the smart contract template. Learn more
-about it in the [Staking](/developers/omnichain/tutorials/staking).
+`npx hardhat send-btc` available in the smart contract template.
 
 ## Cosmos Wallets
 
@@ -61,12 +57,3 @@ delegations, and delegate to validators.
 
 Add ZetaChain to the Leap browser extension:
 https://developers.leapwallet.io/chain-store
-
-## Address converter
-
-ZetaChain is both a Cosmos chain and an EVM chain, so it's useful to be able to
-convert between a bech32 address (`zeta***`, used by Cosmos) and a hex address
-(`0x***`, used by EVM). You can use the address converter below to convert
-between the two formats.
-
-<AddressConverter />
