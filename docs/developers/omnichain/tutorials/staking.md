@@ -224,14 +224,14 @@ which broadcasted the transaction. For example:
 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
-For Bitcoin, `context.origin` is the hexidecimal representation of the Bitcoin
+For Bitcoin, `context.origin` is the hexadecimal representation of the Bitcoin
 address. For example, if the Bitcoin address is:
 
 ```
 tb1q2dr85d57450xwde6560qyhj7zvzw9895hq25tx
 ```
 
-The hexidecimal representation of the address is:
+The hexadecimal representation of the address is:
 
 ```
 0x74623171326472383564353734353078776465363536307179686a377a767a7739383935687132357478
@@ -470,7 +470,7 @@ Other actions do not require you to send tokens, so the `amount` argument can be
 `"0"`.
 
 For Bitcoin, create an `addresses` task that will help you convert between
-bech32 address and a hexidecimal representation of the address.
+bech32 address and a hexadecimal representation of the address.
 
 ```ts title="tasks/addresses.ts"
 import { task } from "hardhat/config";
@@ -582,14 +582,14 @@ Congratulations! 🎉 You have created an omnichain staking contract and learned
 - how use the `context.chainID` to get chain ID and the `context.origin` to get
   an identifier for the sender
 - that the `context.origin` represents the actual sender address on EVM-based
-  chains and the first 20 bytes of the hexidecimal representation of the Bitcoin
+  chains and the first 20 bytes of the hexadecimal representation of the Bitcoin
   address on Bitcoin
 - the pattern for encoding the action code into the `message` parameter of the
   `onCrossChainCall` function to execute different logic from the same function
 - how to use the `BytesHelperLib` from ZetaChain's toolkit to convert bytes into
   an address.
 - how to implement and use `bytesToBech32Bytes` to take the bytes corresponding
-  to the hexidecimal representation of the Bitcoin address from the `message`.
+  to the hexadecimal representation of the Bitcoin address from the `message`.
 
 ## Source Code
 
