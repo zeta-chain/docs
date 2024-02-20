@@ -1,13 +1,10 @@
 ---
-sidebar_label: ZRC-20 Tokens
-hide_title: true
-title: ZRC-20 Tokens
-sidebar_position: 3
+sidebar_position: 2
 ---
 
 import ForeignCoinsTable from "@site/src/components/ForeignCoins/ForeignCoins";
 
-# ZRC-20
+# ZRC-20 on ZetaChain
 
 ZRC-20 is a token standard integrated into ZetaChain's omnichain smart contract
 platform. With ZRC-20, developers can build dApps that orchestrate native assets
@@ -18,9 +15,35 @@ place extremely simple — as if they were all on a single chain.
 
 ![zeta-evm](/img/graphs/zrc-20-header.svg)
 
+## Summary
+
+Native gas tokens of connected blockchains and whitelisted ERC-20 tokens can be
+deposited to ZetaChain as ZRC-20 tokens. During the deposit process, the
+native/ERC-20 tokens are transferred to and locked in the TSS address/ERC-20
+custody contract and ZRC-20 tokens are minted on ZetaChain and deposited to the
+recipient address.
+
+ZRC-20 tokens can be withdrawn from ZetaChain to connected blockchains. During
+the withdrawal process, ZRC-20 tokens are burnt on ZetaChain and native/ERC-20
+tokens are transferred to the recipient address on the connected chain from a
+TSS address/ERC-20 custody contract.
+
+ZRC-20 tokens can only be minted by the ZetaChain protocol. An ERC-20 token
+deployed on ZetaChain does not have the properties of ZRC-20 and can't be
+withdrawn from ZetaChain to a connected chain.
+
+The "same" ERC-20 token from two connected blockchains is represented as two
+different ZRC-20 tokens on ZetaChain. For example, USDT from Ethereum is
+represented as ZRC-20 USDT from Ethereum, and USDT from BSC is represented as
+ZRC-20 USDT from BSC. They are not considered the same asset by ZetaChain, but
+they can be swapped. That's how the transfer of the "same" ERC-20 asset can be
+implemented on ZetaChain: by depositing an ERC-20 (chain A), swapping this
+ZRC-20 (chain A) to an ZRC-20 (chain B), and withdrawing the ZRC-20 (chain B) to
+chain B as ERC-20.
+
 ## Supported Assets
 
-A list of currently supported assets is stored on-chain:
+A list of currently supported assets:
 
 <ForeignCoinsTable />
 

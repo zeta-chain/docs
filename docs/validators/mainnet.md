@@ -46,9 +46,4 @@ wget -O ./latest-snapshot.tar "$(curl -s "https://www.googleapis.com/storage/v1/
 
 ### StateSync:
 
-Follow [these instructions](/validators/state-sync/) but use the IP information
-below:
-
-```bash
-STATE_SYNC_SERVER=”34.69.20.168:26657”
-```
+Follow [these instructions](/validators/state-sync/) using the Mainnet information detailed in that documentation.

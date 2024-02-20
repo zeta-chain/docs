@@ -368,6 +368,16 @@ npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amo
 📝 Transaction hash: 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
 ```
 
+Track the transaction:
+
+```
+npx hardhat cctx 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
+✓ CCTXs on ZetaChain found.
+
+✓ 0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6: 5 → 7001:
+OutboundMined (Remote omnichain contract call completed)
+```
+
 Once the transaction is finalized on ZetaChain, you should be able to review the
 transaction on the ZetaChain explorer:
 

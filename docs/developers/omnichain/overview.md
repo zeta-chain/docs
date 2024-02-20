@@ -80,8 +80,8 @@ connected chain.
 To call on omnichain contract the only thing a user has to do is send a
 transaction to a connected chain to ZetaChain's TSS address. The transaction
 `amount` becomes available to the sender on ZetaChain as
-[ZRC-20](/developers/omnichain/zrc-20) and the `data` byte array (containing an
-the omnichain contract `address` and `message`) is used to call the omnichain
+[ZRC-20](/developers/tokens/zrc20) and the `data` byte array (containing an the
+omnichain contract `address` and `message`) is used to call the omnichain
 contract by `address` and pass arguments from the `message`.
 
 Omnichain Smart Contracts are ideal for more complex applications where state

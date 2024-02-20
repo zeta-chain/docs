@@ -82,6 +82,10 @@ const config = {
             from: "/reference/mainnet/",
             to: "/reference/contracts",
           },
+          {
+            from: "/developers/omnichain/zrc-20",
+            to: "/developers/tokens/zrc20",
+          },
         ],
       },
     ],
