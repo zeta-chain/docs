@@ -289,7 +289,7 @@ swapping native gETH from Goerli for tMATIC on Polygon Mumbai. The contract will
 deposit gETH to ZetaChain as ZRC-20, swap it for ZRC-20 tMATIC and then withdraw
 native tMATIC Polygon Mumbai. To get the value of the `--target-token` find the
 ZRC-20 contract address of the destination token in the
-[ZRC-20 section of the docs](/developers/omnichain/zrc-20).
+[ZRC-20 section of the docs](/developers/tokens/zrc20).
 
 ```
 npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 0.01 --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
@@ -320,7 +320,7 @@ npx hardhat cctx 0x6b4156c195d955d1325a5e6275214db63ff2e3642838607333e74abd74b8f
 Now let's swap USDC from Goerli to MATIC on Polygon Mumbai. To send USDC specify
 the ERC-20 token contract address (on Goerli) in the `--token` parameter. You
 can find the address of the token in the
-[ZRC-20 section of the docs](/developers/omnichain/zrc-20).
+[ZRC-20 section of the docs](/developers/tokens/zrc20).
 
 ```
 npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 10 --token 0x07865c6e87b9f70255377e024ace6630c1eaa37f --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
