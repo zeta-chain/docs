@@ -92,7 +92,7 @@ To submit a governance proposal for whitelisting an ERC-20 token, follow these s
 1.  **Prepare the Proposal JSON File**: Draft a `mainnet_proposal.json` file that outlines the details of the token you wish to whitelist. This file must include:
     
     -   The proposal title and description, clearly articulating the value and details of the token and how it benefits the Zetachain ecosystem.
-    -   A deposit amount in ZETA to accompany the proposal. Mainnet minimum is currently `1000 Zeta` or `1000000000000000000000azeta`
+    -   A deposit amount in ZETA to accompany the proposal. Current Mainnet minimums can be found [here](https://www.zetachain.com/docs/developers/cli/governance/overview/)
     
     Example `mainnet_proposal.json`:
 ```json
