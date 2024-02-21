@@ -8,11 +8,23 @@ title: Overview
 
 # Cross-Chain Messaging
 
-Cross-chain messaging (CCM) lets you send messages from any connected chain to
-any connected chain, including ZetaChain. Cross-chain messaging makes the most
-sense for applications that generally need minimal logic or state to maintain
-across all chains, and where data that needs only to be passed between different
-chains one way.
+Cross-chain messaging makes the most sense for applications that generally need
+minimal logic or state to maintain across all chains, and where data that needs
+only to be passed between different chains one way.
+
+Cross-chain messaging (CCM) offers:
+
+- Transfer of ZETA tokens between connected EVM chains, including to/from
+  ZetaChain
+- Transfer of messages with arbitrary data between connected EVM chains
+
+:::note
+
+Currently, it's not possible to send messages with arbitrary data to/from
+ZetaChain using CCM. For sending data to ZetaChain, check out
+[omnichain contracts](/developers/omnichain/overview/).
+
+:::
 
 ```solidity
 pragma solidity 0.8.7;
