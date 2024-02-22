@@ -54,7 +54,7 @@ previous section.
 
 Goldsky is a subgraph indexer that uses GraphQL to query events from your
 contract. Write a query that fetches all `Transfer` events. You're interested in
-transfers that were sent to or from a specific address. In the bory of the query
+transfers that were sent to or from a specific address. In the body of the query
 specify the fields your're interested in.
 
 The function to fetch NFT makes a GraphQL request to the subgraph to fetch the
