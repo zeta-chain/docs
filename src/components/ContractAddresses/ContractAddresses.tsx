@@ -5,9 +5,9 @@ const ContractAddresses = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [groupedData, setGroupedData] = useState({ testnet: {}, mainnet: {} });
   const testnetUrl =
-    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/feat/addresses/data/addresses.testnet.json";
+    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.testnet.json";
   const mainnetUrl =
-    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/feat/addresses/data/addresses.mainnet.json";
+    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.mainnet.json";
 
   useEffect(() => {
     const fetchAndGroupAddresses = async () => {
