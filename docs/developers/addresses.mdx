@@ -2,6 +2,8 @@
 
 import { AddressConverter } from "@site/src/components/AddressConverter/AddressConverter";
 
+## Overview
+
 ZetaChain is built with Cosmos SDK and uses the Ethermint module to provide EVM
 compatibility. Being both a Cosmos and an EVM chain means that ZetaChain
 supports two types of addresses:
@@ -54,6 +56,18 @@ You don't need to transfer your tokens between a bech32 address and an hex
 address that represent the same account.
 
 :::
+
+## Account Type
+
+If you're having issues interacting from the same account from Cosmos and EVM
+wallets, check out the account type using the chain's API:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/auth/v1beta1/accounts/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+
+For Cosmos and EVM compatiblity the account `@type` should be
+`/ethermint.crypto.v1.ethsecp256k1.PubKey`.
+
+## Account Address Converter
 
 To convert between bech32 and EVM addresses, you can use the following tool:
 
