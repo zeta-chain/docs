@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 
 const API = {
   mainnet:
-    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/feat/addresses/data/addresses.mainnet.json",
+    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.mainnet.json",
   testnet:
-    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/feat/addresses/data/addresses.testnet.json",
+    "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.testnet.json",
 };
 
 const ZetaTokenTable = () => {
