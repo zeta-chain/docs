@@ -19,13 +19,22 @@ const GovUpgradeProposals = () => {
         const response = await fetch(API[activeTab]);
         const data = await response.json();
         const softwareUpgradeProposals = data.proposals
-          .filter((proposal) => proposal.status === "PROPOSAL_STATUS_PASSED")
+          .filter(
+            (proposal) =>
+              proposal.status === "PROPOSAL_STATUS_PASSED" ||
+              proposal.status === "PROPOSAL_STATUS_VOTING_PERIOD" ||
+              proposal.status === "PROPOSAL_STATUS_DEPOSIT_PERIOD"
+          )
           .map((proposal) => ({
             ...proposal,
             plan:
               proposal.messages.find((msg) =>
                 msg["@type"].includes("MsgSoftwareUpgrade")
               )?.plan || {},
+            status: proposal.status
+              .replace("PROPOSAL_STATUS_", "")
+              .replace(/_/g, " ")
+              .toLowerCase(),
           }))
           .filter((proposal) => proposal.plan.name)
           .sort((a, b) => b.plan.height - a.plan.height);
@@ -68,6 +77,7 @@ const GovUpgradeProposals = () => {
             <tr>
               <th>ZetaChain Version</th>
               <th>Upgrade Height</th>
+              <th>Status</th>
               <th>Details</th>
             </tr>
           </thead>
@@ -76,6 +86,7 @@ const GovUpgradeProposals = () => {
               <tr key={index}>
                 <td>{proposal.plan.name}</td>
                 <td>{proposal.plan.height}</td>
+                <td>{proposal.status}</td>
                 <td>
                   <a
                     href={proposal.plan.info}
