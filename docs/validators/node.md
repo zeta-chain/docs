@@ -1,23 +1,14 @@
 ---
-sidebar_position: 2
-sidebar_label: Running a Full Node
-hide_title: false
-id: running-a-full-node
-title: Running a Full Node
+sidebar_position: 6
 ---
 
-# Running a Full Node
+# Running a Node in Production
 
 This document outlines the process for running a full ZetaChain node. It is
 intended for those who are familiar with the Linux operating system and the
 command line interface.
 
-Please refer to [Technical Requirements](/validators/requirements) for more
-details on the technical requirements for running a ZetaChain node.
-
-## Getting Started
-
-### Set Limits on Open Files and Number of Processes
+## Set Limits on Open Files and Number of Processes
 
 To better manage the resources of your nodes, we recommend setting some limits
 on the maximum number of open file descriptors (nofile) and maximum number of
@@ -38,7 +29,7 @@ Edit `/etc/sysctl.conf` to include the following:
 fs.file-max=262144
 ```
 
-### Create _zetachain_ User Account
+## Create "zetachain" User Account
 
 We recommend running ZetaChain binary files with a user account rather than as
 root.
@@ -57,35 +48,7 @@ mkdir -p /home/zetachain/.zetacored/bin
 mkdir /home/zetachain/.zetacored/config
 ```
 
-### Download and Install the zetacored binary
-
-Binaries are built based on OS version and CPU architecture. You can download
-the latest binaries from our
-[ZetaChain Node GitHub Repo](https://github.com/zeta-chain/node/releases)
-
-Install it in your PATH:
-
-```
-/usr/local/bin/zetacored
-```
-
-## General Settings
-
-### Install ZetaChain Configuration Files
-
-ZetaChain configuration files can be downloaded from the
-[Athens3 Github Repo](https://github.com/zeta-chain/network-athens3/tree/main/network_files/config)
-
-Install it as follows:
-
-```
-/home/zetachain/.zetacored/config/app.toml
-/home/zetachain/.zetacored/config/client.toml
-/home/zetachain/.zetacored/config/config.toml
-/home/zetachain/.zetacored/config/genesis.json
-```
-
-### Create a Systemd Unit File
+## Create a Systemd Unit File
 
 We recommend using Systemd to start and stop ZetaChain binary files and view the
 logs. You can create a Systemd unit file at the following location
@@ -113,7 +76,7 @@ You can view the logs with `journalctl -o cat -f -u zetacored`.
 
 ## CLI
 
-ZetaChain Core is built with the Cosmos SDK. There is an `—help` flag that can
+ZetaChain Core is built with the Cosmos SDK. There is an `--help` flag that can
 be used with any subcommand to learn its use and syntax.
 
 ```bash
@@ -133,7 +96,7 @@ instructions above you can view this log with
 Prometheus can be enabled to serve metrics which can be consumed by Prometheus
 collector(s). Telemetry include Prometheus metrics can be enabled in the
 app.toml file. See the
-[CosmosSDK Telemetry Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html)
+[Cosmos SDK Telemetry Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html)
 for more information.
 
 See more about your Validator Monitoring [here](/validators/monitoring).

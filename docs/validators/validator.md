@@ -1,5 +1,4 @@
 ---
-sidebar_position: 3
 sidebar_label: Create a Core Validator
 hide_title: false
 id: creating-core-validator
@@ -8,8 +7,13 @@ title: Creating A Core Validator
 
 # Creating a Core Validator
 
-This guide assumes your have already created and synced up your node using the
-[Node Setup Guide](/validators/running-a-full-node).
+:::note
+
+This guide assumes you've completed the
+"[Setting Up Your Node](/validators/setup)" step and synced the node using of
+the provided options.
+
+:::
 
 This guide is design for simplicity and does not cover the intricacies of secure
 key management. We recommend you follow best practices when it comes to secure

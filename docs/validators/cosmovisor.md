@@ -1,5 +1,4 @@
 ---
-sidebar_position: 5
 sidebar_label: Setting up Cosmovisor
 hide_title: false
 id: setting-up-Cosmovisor
