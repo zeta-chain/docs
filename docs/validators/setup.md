@@ -67,7 +67,7 @@ all the required values common for all nodes, you will need to make some
 adjustments specific to your node.
 
 If your machine has an external IPv4 address you can get it by running the
-command:
+command in your terminal:
 
 ```
 curl -4 icanhazip.com
