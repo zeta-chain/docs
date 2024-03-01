@@ -112,7 +112,7 @@ cp network-athens3/network_files/config/* ~/.zetacored/config/
 
 You may choose to sync the state of your node from a snapshot. This will speed
 up the time it takes to sync your node. Instructions for syncing from a snapshot
-can be found [here](/validators/running-a-full-node/#state-sync).
+can be found [here](/validators/node).
 
 ### Start the `cosmovisor` Service
 
