@@ -76,7 +76,7 @@ Restart=always
 RestartSec=600
 User=zetachain
 LimitNOFILE=262144
-ExecStart=cosmovisor start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
+ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
 ```
 
 ## Install the `zetacored` Binary
