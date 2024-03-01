@@ -13,8 +13,6 @@ such as Omnichain DEXs, Omnichain Lending, Omnichain Portfolio Management, and
 anything else that involves fungible tokens on multiple chains from a single
 place extremely simple — as if they were all on a single chain.
 
-![zeta-evm](/img/graphs/zrc-20-header.svg)
-
 ## Summary
 
 Native gas tokens of connected blockchains and whitelisted ERC-20 tokens can be
@@ -75,6 +73,41 @@ extremely simple interface to also function in an omnichain way.
 
 ## Depositing Native Gas Tokens as ZRC-20
 
+```mermaid
+flowchart LR
+  subgraph Ethereum ["Ethereum (Polygon or BSC)"]
+    direction LR
+    subgraph send ["Transaction"]
+      direction LR
+      Data -- contains --- Message("Message")
+      Data((Data)) -- contains --- address("Omnichain contract address")
+      Value((Value)) -- contains --- eth("1 ETH")
+    end
+    account("Account") -- sends --- send
+    send --> TSS("TSS Address")
+  end
+  subgraph ZetaChain
+    SystemContract("System Contract")
+    subgraph contract ["Omnichain contract"]
+      addr("Contract address")
+      subgraph onCrossChainCall
+        msg("bytes calldata message")
+        zrc20("address zrc20")
+        amount("uint256 amount")
+        context("zContext calldata context")
+      end
+    end
+  end
+  TSS --> SystemContract
+  SystemContract -- calls --> contract
+  address -.- addr
+  eth -. ZRC-20 contract address of ETH .- zrc20
+  eth -. deposited amount .- amount
+  Ethereum -. chainID .- context
+  Message -. arbitrary data .- msg
+  account -. "origin" .- context
+```
+
 To deposit a native gas token (like gETH, tMATIC, tBNB, or tBTC) to ZetaChain,
 send it to the [TSS address](/reference/contracts) on a connected chain.
 
@@ -108,6 +141,42 @@ Where `DepositIncurredVBytes` is fixed as `68vB` and the `GasPriceMultiplier`
 defaults to 2 currently.
 
 ## Depositing Supported ERC-20 Tokens as ZRC-20
+
+```mermaid
+flowchart LR
+  subgraph Ethereum ["Ethereum (Polygon or BSC)"]
+    direction LR
+    subgraph send ["Deposit arguments"]
+      direction LR
+      recipient("bytes recipient") -- contains --- address("Omnichain contract address")
+      message("bytes message") -- contains --- Message("Message")
+      asset("IERC20 asset") -- contains --- erc20address("ERC-20 address")
+      erc20amount("uint256 amount") -- contains --- eth("1")
+    end
+    account("Account") -- "call deposit method" --- send
+    send --> TSS("ERC-20 custody")
+  end
+  subgraph ZetaChain
+    SystemContract("System Contract")
+    subgraph contract ["Omnichain contract"]
+      addr("Contract address")
+      subgraph onCrossChainCall
+        msg("bytes calldata message")
+        zrc20("address zrc20")
+        amount("uint256 amount")
+        context("zContext calldata context")
+      end
+    end
+  end
+  TSS --> SystemContract
+  SystemContract -- calls --> contract
+  address -.- addr
+  erc20address -. ZRC-20 contract address of ERC-20 .- zrc20
+  eth -. deposited amount .- amount
+  Ethereum -. chainID .- context
+  Message -. arbitrary data .- msg
+  account -. "origin" .- context
+```
 
 To deposit a supported ERC-20 token to ZetaChain, use the `deposit` method of
 the [ERC-20 custody contract](/reference/contracts) on a connected chain.
