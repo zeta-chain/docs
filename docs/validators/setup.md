@@ -66,13 +66,16 @@ Even though the config files you fetched in the previous step already contain
 all the required values common for all nodes, you will need to make some
 adjustments specific to your node.
 
-Get the correct external address for your machine:
+If your machine has an external IPv4 address you can get it by running the
+command:
 
 ```
 curl -4 icanhazip.com
 
 109.68.188.70
 ```
+
+If you have an IPv6 address, you can use that as an external address.
 
 Replace the moniker and external address with correct values.
 
