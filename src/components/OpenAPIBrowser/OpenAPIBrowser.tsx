@@ -30,6 +30,7 @@ const ZetaChainAPI = () => {
               ? "zetachain-athens.blockpi.network/lcd/v1/public"
               : "zetachain.blockpi.network/lcd/v1/public";
           modifiedSwagger.schemes = ["https"];
+          modifiedSwagger.info.title = "";
           const blob = new Blob([JSON.stringify(modifiedSwagger)], {
             type: "application/json",
           });
