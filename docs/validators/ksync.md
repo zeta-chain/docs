@@ -3,7 +3,7 @@ sidebar_position: 5
 sidebar_label: "Option 3: KSYNC"
 ---
 
-# Syncing a Node Using Kyve's KSYNC
+# Syncing a Node Using KYVE's KSYNC
 
 :::note
 
