@@ -22,7 +22,7 @@ returned in response.
 | Mainnet Beta | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=mainnet         |
 | Mainnet Beta | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=mainnet |
 | Testnet      | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=athens3         |
-| Testnet      | Snapshot         | https://snapshots.zetachain.com/latest-archive-snapshot?network=athens3 |
+| Testnet      | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=athens3 |
 
 ## Alternative Options
 
