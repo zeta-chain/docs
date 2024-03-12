@@ -217,7 +217,7 @@ const config = {
       prism: {
         theme: require("prism-react-renderer/themes/github"),
         darkTheme: require("prism-react-renderer/themes/dracula"),
-        additionalLanguages: ["solidity"],
+        additionalLanguages: ["solidity", "toml"],
         magicComments: [
           {
             className: "theme-code-block-highlighted-line",

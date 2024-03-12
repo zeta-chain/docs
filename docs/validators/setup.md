@@ -1,0 +1,91 @@
+---
+sidebar_position: 2
+---
+
+# Setting Up a Node
+
+In this guide we will be setting up a ZetaChain Mainnet Beta node. For a testnet
+node, follow the same instructions, but replace some values (like chain ID and
+seed nodes) with the ones provided in corresponding tables.
+
+## Install the ZetaChain Node Binary
+
+First, download the binary and give it executable permissions. Make sure to
+replace the `VERSION` with the latest version passed in a
+[governance software upgrade proposal](/validators/proposals) and the platform
+(`-darwin-amd64`) with the one you need.
+
+```
+wget https://github.com/zeta-chain/node/releases/download/VERSION/zetacored-darwin-amd64 -O /usr/local/bin/zetacored
+
+chmod a+x /usr/local/bin/zetacored
+```
+
+Check out the GitHub for
+[more information on releases](https://github.com/zeta-chain/node/releases).
+
+Check that you have the correct version of `zetacored` installed:
+
+```
+zetacored version
+```
+
+## Initialize the Data Directory
+
+| Network      | Chain ID         |
+| ------------ | ---------------- |
+| Mainnet Beta | zetachain_7000-1 |
+| Testnet      | athens_7001-1    |
+
+```
+zetacored init MONIKER --chain-id zetachain_7000-1
+```
+
+Replace `MONIKER` with a name for your node. By default the node will be
+initialized in `$HOME/.zetacored`, but you can customize this with the `--home`
+flag.
+
+## Fetch Config Files
+
+| Network      | Config Files                                                   |
+| ------------ | -------------------------------------------------------------- |
+| Mainnet Beta | https://github.com/zeta-chain/network-config/tree/main/mainnet |
+| Testnet      | https://github.com/zeta-chain/network-config/tree/main/athens3 |
+
+Fetch and save config files in the data directory:
+
+```
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/genesis.json -O ~/.zetacored/config/genesis.json
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/client.toml -O ~/.zetacored/config/client.toml
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/config.toml -O ~/.zetacored/config/config.toml
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/app.toml -O ~/.zetacored/config/app.toml
+```
+
+## Modify the Config Files
+
+Even though the config files you fetched in the previous step already contain
+all the required values common for all nodes, you will need to make some
+adjustments specific to your node.
+
+If your machine has an external IPv4 address you can get it by running the
+command in your terminal:
+
+```
+curl -4 icanhazip.com
+
+109.68.188.70
+```
+
+If you have an IPv6 address, you can use that as an external address.
+
+Replace the moniker and external address with correct values.
+
+```text title="~/.zetacored/config/config.toml"
+moniker = "MONIKER"
+
+[p2p]
+external_address = "109.68.188.70:26656"
+```
+
+Your node has been configured. Next, choose one of the options to sync your node
+with the network.
