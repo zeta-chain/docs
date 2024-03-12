@@ -11,12 +11,13 @@ seed nodes) with the ones provided in corresponding tables.
 ## Install the ZetaChain Node Binary
 
 First, download the binary and give it executable permissions. Make sure to
-replace the version (`v13.0.0`) with the latest version passed in a
+replace the `VERSION` with the latest version passed in a
 [governance software upgrade proposal](/validators/proposals) and the platform
 (`-darwin-amd64`) with the one you need.
 
 ```
-wget https://github.com/zeta-chain/node/releases/download/v13.0.0/zetacored-darwin-amd64 -O /usr/local/bin/zetacored
+wget https://github.com/zeta-chain/node/releases/download/VERSION/zetacored-darwin-amd64 -O /usr/local/bin/zetacored
+
 chmod a+x /usr/local/bin/zetacored
 ```
 
