@@ -47,11 +47,13 @@ curl -s "http://34.28.196.79:26657/block?height=1928420" | jq -r '.result.block_
 CE9E5908B9B319C6F48AC68044F4ECA53DFF7D78EABEC979EF5CF5061B315ABA
 ```
 
-Enable state-sync and set the correct values for trust height and hash:
+Enable state-sync, add RPC servers (choose the right IP from the table above for
+testnet or mainnet beta) and set the correct values for trust height and hash:
 
 ```text title="~/.zetacored/config/config.toml"
 [statesync]
 enable = "true"
+rpc_servers = "34.69.20.168:26657,34.69.20.168:26657"
 trust_height = "1928420"
 trust_hash = "CE9E5908B9B319C6F48AC68044F4ECA53DFF7D78EABEC979EF5CF5061B315ABA"
 ```
