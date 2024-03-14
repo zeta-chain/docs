@@ -33,7 +33,7 @@ Run the following command to create a new omnichain contract called
 `MultiOutput` with one parameter in the message:
 
 ```
-npx hardhat omnichain Multioutput recipient btcRecipient targetTokens
+npx hardhat omnichain Multioutput recipient btcRecipient targetToken
 ```
 
 ## OnCrossChainCall
@@ -163,17 +163,17 @@ Next, implement the `parseMessage` function:
             (
                 address evmAddress,
                 bytes memory btcAddress,
-                bytes memory targetTokens
+                bytes memory targetToken
             ) = abi.decode(message, (address, bytes, bytes));
 
             btcRecipient = btcAddress;
             evmRecipient = evmAddress;
 
-            uint256 numTokens = targetTokens.length / 32;
+            uint256 numTokens = targetToken.length / 32;
             destinationTokens = new address[](numTokens);
             for (uint256 i = 0; i < numTokens; i++) {
                 destinationTokens[i] = BytesHelperLib.bytesMemoryToAddress(
-                    targetTokens,
+                    targetToken,
                     i * 32
                 );
             }
@@ -252,14 +252,48 @@ If `targetZRC20` is a gas token, `gasZRC20` will be the same as `targetZRC20`.
 We could skip the first swap and just swap the source token for the target
 token, but for the sake of simplicity, we use the same logic for both cases.
 
-## Create a task to set destination chain
+## Modify the Interact Task
 
-```ts title="tasks/destination.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/omnichain/multioutput/tasks/destination.ts
-```
+Modify the interact task to correctly handle BTC destination address and a list
+of destination token addresses. If BTC address is provided, it gets converted
+into bytes. Destination tokens are split into an array and encoded as addresses.
 
-```ts title="hardhat.config.ts"
-import "./tasks/destination";
+```ts title="tasks/interact.ts"
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+
+  // highlight-start
+  const destinationTokens = args.targetToken.split(",");
+
+  let bitcoinAddress = "";
+  let data;
+  if (args.btcRecipient) {
+    bitcoinAddress = args.btcRecipient;
+  }
+
+  const bitcoinAddressBytes = utils.solidityPack(
+    ["bytes"],
+    [utils.toUtf8Bytes(bitcoinAddress)]
+  );
+
+  const tokensBytes = ethers.utils.concat(
+    destinationTokens.map((address) =>
+      utils.defaultAbiCoder.encode(["address"], [address])
+    )
+  );
+
+  data = prepareData(
+    args.contract,
+    ["address", "bytes", "bytes"],
+    [args.recipient, bitcoinAddressBytes, tokensBytes]
+  );
+  // highlight-end
+  //...
+};
+
+task("interact", "Interact with the contract", main)
+  // highlight-next-line
+  .addOptionalParam("btcRecipient", "The bitcoin address to send to");
 ```
 
 ## Create an Account and Request Tokens from the Faucet
