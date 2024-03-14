@@ -29,8 +29,7 @@ of long-term sustainability.
 | Core Contributors       | 22.50%     | 472,500,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month. After 12 months, 1/36 will be unlocked monthly for 24 months.                         |
 | Purchasers and Advisors | 16.00%     | 336,000,000 | Starting 6 months after launch, for a period of 6 months, 1/18 will be unlocked per month. After 12 months, 1/36 will be unlocked monthly for 24 months.                         |
 
-Holders who have locked ZETA may use the ZETA to stake to validators in order to
-provide security to the network and validate transactions.
+Holders who have locked ZETA may use the ZETA to stake to validators in order to provide security to the network and validate transactions. Locked ZETA may only be staked, not used for any other purposes. Some third parties may count staked ZETA as part of circulating supply. The amount of locked tokens that are staked is dynamic, and the total live amount of staked tokens can be found by querying the blockchain or viewing a relevant explorer. Different parties may employ different methodologies for calculating or tracking circulating, staked, or total token supply.
 
 # User Growth Pool
 
