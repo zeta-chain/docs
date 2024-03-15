@@ -12,7 +12,7 @@ StakingRewards = TransactionFees + {EmissionsPool \over NumberOfBlocksPerYear ×
 $$
 
 Emissions pool address:
-[zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy](https://zetachain.blockpi.network/lcd/v1/public/cosmos/auth/v1beta1/module_accounts)
+[zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/emissions/list_addresses)
 
 You can find the emissions pool balance by querying the API:
 
