@@ -2,7 +2,12 @@
 
 ZetaChain is a delegated proof of stake blockchain. Holders of ZETA tokens can
 stake their tokens by delegating to validators. Staking tokens allows holders to
-participate in governance and earn rewards for securing the network.
+participate in governance and earn rewards for securing the network. ZetaChain
+uses the standard Cosmos SDK
+[`staking`](https://docs.cosmos.network/main/build/modules/staking),
+[`distribution`](https://docs.cosmos.network/main/build/modules/distribution),
+and [`slashing`](https://docs.cosmos.network/main/build/modules/slashing)
+modules.
 
 Currently, staking rewards are comprised of transaction fees collected each
 block and fixed rewards coming from the emissions pool.
