@@ -8,7 +8,8 @@ Currently, staking rewards are comprised of transaction fees collected each
 block and fixed rewards coming from the emissions pool.
 
 $$
-StakingRewards = TransactionFees + {EmissionsPool \over NumberOfBlocksPerYear × 4}
+StakingRewards = TransactionFees + {EmissionsPool \over NumberOfBlocksPerYear ×
+4} × ValidatorRewardsPercentage
 $$
 
 Emissions pool address:
