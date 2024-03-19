@@ -25,7 +25,7 @@ You can find the emissions pool balance by querying the API:
 https://zetachain.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy
 
 - The emission pool is currently funded manually
-- Currently, there is no emission of new ZETA tokens (inflation) in the network
+- Currently, there is no inflation in the network
 
 Learn more about the tokenomics in the
 [ZETA Token Utility](/about/token-utility/distribution/) section of the docs.
