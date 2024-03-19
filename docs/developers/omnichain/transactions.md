@@ -145,7 +145,8 @@ To withdraw ERC-20 ZRC-20 from ZetaChain to a connected chain, call the
 
 Withdraw fee for ERC-20 ZRC-20 is denominated in the connected chain's native
 gas token. For example, for ZRC-20 USDC from Ethereum the withdraw fee is
-denominated in ETH.
+denominated in ETH. The caller of with withdraw method must have enough native
+gas ZRC-20 (approved) to pay the withdraw fee.
 
 ```
 npx hardhat withdraw --amount 2 --zrc20 0x91d4F0D54090Df2D81e834c3c8CE71C6c865e79F --network zeta_testnet
