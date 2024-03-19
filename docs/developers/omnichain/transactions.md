@@ -86,7 +86,7 @@ A single deposit and call transaction can result in multiple outbound
 transactions triggering outputs on multiple connected chains.
 
 This is an example deposit and call of
-[the example omnichain multioutput contract](/omnichain/tutorials/single-input-multiple-output/).
+[the example omnichain multioutput contract](/developers/omnichain/tutorials/single-input-multiple-output/).
 
 ```
 npx hardhat deposit --amount 50 --network mumbai_testnet --recipient 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --message '[["address", "bytes", "bytes"], ["0x4955a3F38ff86ae92A914445099caa8eA2B9bA32", "0x746231713873687a663761666333726877386e367736656333327338683665326d727730373764306767", "0x000000000000000000000000d97b1de3619ed2c6beb3860147e30ca8a7dc989100000000000000000000000065a45c57636f9bcced4fe193a602008578bca90b"]]'
