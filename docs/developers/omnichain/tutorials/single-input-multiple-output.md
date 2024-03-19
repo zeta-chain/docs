@@ -315,52 +315,38 @@ npx hardhat deploy --network zeta_testnet
 ```
 
 ```
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 
 🚀 Successfully deployed contract on ZetaChain.
-📜 Contract address: 0x040FDDE34d07e1FBA155DCCe829a250317985d83
-🌍 Explorer: https://athens3.explorer.zetachain.com/address/0x040FDDE34d07e1FBA155DCCe829a250317985d83
+📜 Contract address: 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47
 ```
 
 ## Interact with the Contract
 
-Set the destination chain to Mumbai:
+Interact with the contract by:
+
+- sending 50 tMATIC
+- specifying two destination tokens:
+  `0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891` (ZRC-20 tBNB) and
+  `0x65a45c57636f9BcCeD4fe193A602008578BcA90b` (ZRC-20 tBTC)
+- specifying EVM recipient address
+- specifying BTC recipient address
 
 ```
-npx hardhat destination --contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83 --destination mumbai_testnet --network zeta_testnet
+npx hardhat interact --contract 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --network mumbai_testnet  --target-token 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891,0x65a45c57636f9BcCeD4fe193A602008578BcA90b --amount 50 --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 --btc-recipient tb1q8shzf7afc3rhw8n6w6ec32s8h6e2mrw077d0gg
 ```
 
-```
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
-
-Registered token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb as a destination in the contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83
-```
-
-Set the destination chain to BSC testnet:
+Track the transaction:
 
 ```
-npx hardhat destination --contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83 --destination bsc_testnet --network zeta_testnet
-```
+npx hardhat cctx 0x642446f8b3d20d12f58cbbf2de33377e3c92d016f043deb81c5b854e7a440cd0
+✓ CCTXs on ZetaChain found.
 
-```
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
-
-Registered token 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 as a destination in the contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83
-```
-
-Interact with the contract by sending gETH to recieve tMATIC on Mumbai and tBNB
-on BSC testnet:
-
-```
-npx hardhat interact --contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83 --network goerli_testnet --amount 3 --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
-```
-
-```
-🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
-
-
-🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
-📝 Transaction hash: 0x5926a58bbb98dc34850c1933a46ba591d47476dd741df3b70da9c9cedcd0f649
+✓ 0x7b54665297fb6779da417ca431dd764b15f2237e3d7efbc0881e3801cced4fce: 80001 → 7001: OutboundMined (Remote omnicha
+in contract call completed)
+✓ 0xbd97de12a390e767491d5d6cbeed30a08b9c69adac7becee0be8cbb46ced93d2: 7001 → 97: OutboundMined
+⠦ 0x468e11ea759a3683ec89467ee2c47dde3f8245c984c41886c7a3712e5956e349: 7001 → 18332: PendingOutboun
 ```
 
 ## Source Code
