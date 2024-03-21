@@ -12,6 +12,7 @@ developers.
 | API                 | Covalent         | https://www.covalenthq.com/                |
 | Wallet as a Service | Particle Network | https://particle.network                   |
 | Wallet as a Service | Magic            | https://magic.link/                        |
+| Account Abstraction | Biconomy         | https://www.biconomy.io/                   |
 | Subgraph            | Goldsky          | https://goldsky.com/                       |
 | Subgraph            | Envio            | https://envio.dev/                         |
 | Explorer            | Blockscout       | https://zetachain-athens-3.blockscout.com/ |
