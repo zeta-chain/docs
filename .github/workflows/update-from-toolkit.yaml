@@ -1,0 +1,45 @@
+name: Update Toolkit docs
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # scheduled to run every day at midnight
+  workflow_dispatch:
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Checkout protocol-contracts repository
+        uses: actions/checkout@v2
+        with:
+          repository: zeta-chain/toolkit
+          path: toolkit
+
+      - name: Update docs
+        run: |
+          mkdir -p static/packages
+          rm -rf static/packages/toolkit
+          cp -r toolkit/docs/* static/packages/toolkit/
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git add static/packages/toolkit
+          git diff --cached --exit-code || echo "::set-output name=changed::true"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "docs: update toolkit docs"
+          body: |
+            This PR contains updates to toolkit
+            from the `zeta-chain/toolkit` repository.
+          commit-message: |
+            "docs: update toolkit from zeta-chain/toolkit"
+          base: main
+          branch: docs/updates-from-zeta-chain-node
+        if: steps.check-changes.outputs.changed == 'true'
