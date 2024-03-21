@@ -1,15 +1,5 @@
----
-hide_title: true
-sidebar_label: ZetaChain HTTP API
----
+import OpenAPIBrowser from "@site/src/components/OpenAPIBrowser/OpenAPIBrowser";
 
-import SwaggerUI from "swagger-ui-react";
-import "swagger-ui-react/swagger-ui.css";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+# ZetaChain HTTP API
 
-export const OpenAPI = () => {
-  const { siteConfig } = useDocusaurusContext();
-  return <SwaggerUI url={siteConfig.baseUrl + "data/openapi.swagger.yaml"} />;
-};
-
-<OpenAPI />
+<OpenAPIBrowser />
