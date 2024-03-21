@@ -9,43 +9,33 @@ orchestrate assets on connected chains, as well as on ZetaChain. With omnichain
 smart contracts you are able to have a single place of logic that can maintain
 the state of assets and data across all connected chains.
 
-```mermaid
-flowchart LR
-  subgraph Ethereum ["Ethereum (Polygon or BSC)"]
-    direction LR
-    subgraph send ["Transaction"]
-      direction LR
-      Data -- contains --- Message("Message")
-      Data((Data)) -- contains --- address("Omnichain contract address")
-      Value((Value)) -- contains --- eth("1 ETH")
-    end
-    account("Account") -- sends --- send
-    send --> TSS("TSS Address")
-  end
-  subgraph ZetaChain
-    SystemContract("System Contract")
-    subgraph contract ["Omnichain contract"]
-      addr("Contract address")
-      subgraph onCrossChainCall
-        msg("bytes calldata message")
-        zrc20("address zrc20")
-        amount("uint256 amount")
-        context("zContext calldata context")
-      end
-    end
-  end
-  TSS --> SystemContract
-  SystemContract -- calls --> contract
-  address -.- addr
-  eth -. ETH ZRC-20 contract address .- zrc20
-  eth -. deposited amount .- amount
-  Ethereum -. chainID .- context
-  Message -.- msg
-  account -. "origin" .- context
-```
-
 For a contract to be considered omnichain it must inherit from the `zContract`
 interface and implement the `onCrossChainCall` function:
+
+```mermaid
+flowchart LR
+  subgraph Ethereum ["Ethereum (or other EVM chain)"]
+    direction LR
+    Account("Account")
+    TSS("TSS Address")
+    erc20Custody("ERC-20 Custody Contract")
+    Account -- "send ETH" --> TSS
+    Account -- "deposit ERC-20" --> erc20Custody
+  end
+  subgraph Bitcoin ["Bitcoin"]
+    accountBTC("Account")
+    TSSBTC("TSS Address")
+    accountBTC -- send BTC --> TSSBTC
+  end
+  subgraph ZetaChain
+    systemContract("System Contract")
+    omnichainContract("Omnichain Contract")
+    TSS --> systemContract
+    erc20Custody --> systemContract
+    systemContract -- "call" --> omnichainContract
+    TSSBTC --> systemContract
+  end
+```
 
 ```solidity
 pragma solidity 0.8.7;
@@ -77,12 +67,11 @@ a more in-depth example.
 An omnichain contract is deployed on ZetaChain and can be called from any
 connected chain.
 
-To call on omnichain contract the only thing a user has to do is send a
-transaction to a connected chain to ZetaChain's TSS address. The transaction
-`amount` becomes available to the sender on ZetaChain as
-[ZRC-20](/developers/tokens/zrc20) and the `data` byte array (containing an the
-omnichain contract `address` and `message`) is used to call the omnichain
-contract by `address` and pass arguments from the `message`.
+To call an omnichain contract from a connected chain a user sends native gas
+tokens to the TSS address or deposits supported ERC-20 tokens to ERC-20 custody
+contract. The amount of deposited tokens becomes available an omnichain contract
+in a [ZRC-20](/developers/tokens/zrc20) form and the payload of the deposit is
+passed as the message to the contract.
 
 Omnichain Smart Contracts are ideal for more complex applications where state
 management between different chains is core to the application. Some use case
