@@ -21,9 +21,9 @@ Pyth Network is a permissionless system, meaning that anyone can submit prices
 to the oracle. The system uses a decentralized consensus mechanism to ensure
 that the prices are accurate and reliable.
 
-ZetaChain runs a Pyth scheduler that submits prices to the Pyth oracle. The
-scheduler regularly updates the prices of assets on the oracle, ensuring that
-the price feeds are accurate and up-to-date.
+The ZetaChain contributor team runs a Pyth scheduler that submits prices to the
+Pyth oracle. The scheduler regularly updates the prices of assets on the oracle,
+ensuring that the price feeds are accurate and up-to-date.
 
 :::info
 
