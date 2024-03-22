@@ -52,7 +52,7 @@ npx hardhat deposit --amount 2 --network mumbai_testnet --erc20 0x9999f7fea5938f
 
 https://mumbai.polygonscan.com/tx/0x06f99cd96623fbab566f37e5865dbe72bc4b39909a014b7d2ed7ed80c3a4d64e
 
-### ❌ USDC to ERC-20 сustody сontract with a message
+### ❌ USDC to ERC-20 custody contract with a message
 
 Depositing ERC-20 to an EOA with a message will result in a transaction revert.
 
