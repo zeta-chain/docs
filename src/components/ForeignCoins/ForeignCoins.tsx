@@ -92,6 +92,7 @@ const ForeignCoinsTable = () => {
               <th>Chain</th>
               <th>Symbol</th>
               <th>Type</th>
+              <th>ZRC-20 decimals</th>
               <th>ZRC-20 on ZetaChain</th>
               <th>ERC-20 on Connected Chain</th>
             </tr>
@@ -102,6 +103,7 @@ const ForeignCoinsTable = () => {
                 <td>{coin.chainName}</td>
                 <td>{coin.symbol}</td>
                 <td>{coin.coin_type}</td>
+                <td>{coin.decimals}</td>
                 <td>{coin.zrc20_contract_address}</td>
                 <td>{coin.asset}</td>
               </tr>
