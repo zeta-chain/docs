@@ -24,6 +24,7 @@ jobs:
           mkdir -p static/packages/toolkit
           rm -rf static/packages/toolkit/*
           cp -r toolkit/docs/* static/packages/toolkit/
+          rm -rf toolkit
 
       - name: Check for changes
         id: check-changes
