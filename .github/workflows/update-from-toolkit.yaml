@@ -21,8 +21,8 @@ jobs:
 
       - name: Update docs
         run: |
-          mkdir -p static/packages
-          rm -rf static/packages/toolkit
+          mkdir -p static/packages/toolkit
+          rm -rf static/packages/toolkit/*
           cp -r toolkit/docs/* static/packages/toolkit/
 
       - name: Check for changes
