@@ -17,10 +17,10 @@ and tested in MacOS and may need to be modified slightly for your local system.
 
 ## State-sync nodes
 
-| Network      | State Sync Server |
-| :----------- | :---------------- |
-| Mainnet Beta | 35.224.53.42      |
-| Testnet      | 34.30.34.119      |
+| Network      | State Sync Server IP |
+| :----------- | :------------------- |
+| Mainnet Beta | 35.224.53.42         |
+| Testnet      | 34.30.34.119         |
 
 :::info
 
