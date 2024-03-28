@@ -186,7 +186,7 @@ import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { parseEther } from "@ethersproject/units";
 import { getAddress } from "@zetachain/protocol-contracts";
-import { prepareData } from "@zetachain/toolkit/helpers";
+import { prepareData } from "@zetachain/toolkit/client";
 // highlight-next-line
 import bech32 from "bech32";
 
@@ -219,6 +219,12 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 
   if (args.token) {
     const custodyAddress = getAddress("erc20Custody", hre.network.name as any);
+    if (!custodyAddress) {
+      throw new Error(
+        `No ERC20 Custody contract found for ${hre.network.name} network`
+      );
+    }
+
     const custodyContract = new ethers.Contract(
       custodyAddress,
       ERC20Custody.abi,
