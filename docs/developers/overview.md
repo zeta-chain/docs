@@ -5,59 +5,47 @@ sidebar_position: 1
 # Start building with ZetaChain
 
 At a high level, ZetaChain is a Proof of Stake (PoS) blockchain developed using
-the Cosmos SDK and Tendermint Core consensus engine. As a result, ZetaChain
-enjoys fast block time and instant finality.
+the Cosmos SDK and Comet BFT consensus engine. As a result, ZetaChain enjoys
+fast block time and instant finality.
 
-ZetaChain hosts an Ethereum Virtual Machine (EVM) compatible execution layer
-referred to as zEVM. In addition to supporting all EVM features and standard
-interactions (such as contract creation, contract interaction, and contract
-composition), zEVM's distinguishing characteristics include:
+ZetaChain hosts an Ethereum Virtual Machine (EVM) compatible execution layer. In
+addition to supporting all EVM features and standard interactions (such as
+contract creation, contract interaction, and contract composition), ZetaChain's
+EVM distinguishing characteristics include:
 
-- The ability for contracts on zEVM to be called from external chains
-- The capacity for contracts on zEVM to generate outbound transactions on
+- The ability for contracts on ZetaChain to be called from connected chains
+- The capacity for contracts on ZetaChain to generate outbound transactions on
   external chains.
 
-These two unique features enable zEVM to function as a general-purpose
-programmable platform, supporting cross-chain transactions that can atomically
-modify states across different chains in a single step.
-
-When developing on ZetaChain, you create zEVM contracts. While zEVM contracts
-can be any standard Solidity contract, to fully utilize ZetaChain's
-capabilities, they must adhere to specific interfaces. These interfaces, unique
-to ZetaChain, enable interaction with externally connected blockchains.
+These two unique features enable ZetaChain's EVM to function as a
+general-purpose programmable platform, supporting cross-chain transactions that
+can atomically modify states across different chains in a single step.
 
 ZetaChain offers two ways to develop dApps: **omnichain contracts** and
 **cross-chain message passing**.
 
-## Omnichain contracts
+## Omnichain Contracts
 
-With [omnichain contract](/developers/omnichain/overview) you only need to
-deploy **a single omnichain contract** to ZetaChain. No contracts on connected
-chains are required.
+With [omnichain contracts](/developers/omnichain/overview) you deploy **a single
+omnichain contract** to ZetaChain.
 
-For a contract to be considered omnichain, it must implement a method that is
-executed on a cross chain call.
+Omnichain contracts can:
 
-On a connected chain, a user can transfer an asset to a ZetaChain address,
-referred to as a Threshold Signature Scheme (TSS) address.
+- Accept deposits from users on connected chains (e.g., Ethereum, Binance Smart
+  Chain, Bitcoin). A deposit may contain:
+  - a native gas or supported ERC-20 token. Tokens (both gas and ERC-20) are
+    deposited into omnichain contracts as
+    [ZRC-20 tokens](/developers/tokens/zrc20).
+  - a message with an arbitrary data.
+- Execute logic based on the deposits
+- Create outbound transactions to withdraw ZRC-20 to connected chains as native
+  assets. A single omnichain contract call can result in multiple outbound
+  transactions to different chains.
 
-- If the transfer only includes **an asset**, the asset becomes available to the
-  omnichain contract.
-- If the transfer includes **an asset and a message** containing the omnichain
-  contract address and data, the asset becomes available to the omnichain
-  contract, and the contract is called with the message data as an argument.
-
-Assets transferred to a TSS address on ZetaChain are represented as
-[ZRC-20](/developers/tokens/zrc20) tokens. ZRC-20 is an extension of ERC-20 that
-supports additional functionality for deposits from and withdrawals to connected
-chains.
-
-The state of your whole dApp can be stored in this omnichain contract.
-
-Right now omnichain contracts support the following features:
-
-- Transfer of native gas asset (ETH, BNB, MATIC, etc.) between connected chains.
-- Transfer of ERC-20 tokens between connected chains.
+Ability to accept inputs (native gas, supported ERC-20, and arbitrary data) from
+users on connected chains, execute custom logic and create outputs (tokens
+withdrawals) to connected chains makes ZetaChain omnichain contracts a powerful
+tool for building interoperable apps that span multiple chains.
 
 ### Advantages of omnichain contracts
 
@@ -87,7 +75,7 @@ With ZRC-20/zEVM, exception/revert handling is much simpler as foreign
 interaction is confined to either a standard ERC-20/contract interaction
 (success) or no contract interaction (failure) immediately.
 
-## Cross-chain message passing
+## Cross-Chain Message Passing
 
 With
 [cross-chain message (CCM) passing](/developers/cross-chain-messaging/overview)
