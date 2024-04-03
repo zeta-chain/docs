@@ -205,18 +205,18 @@ npx hardhat destination --contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83 --
 Registered token 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 as a destination in the contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83
 ```
 
-Interact with the contract by sending gETH to recieve tMATIC on Mumbai and tBNB
+Interact with the contract by sending sETH to recieve tMATIC on Mumbai and tBNB
 on BSC testnet:
 
 ```
-npx hardhat interact --contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83 --network goerli_testnet --amount 3 --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+npx hardhat interact --contract 0x040FDDE34d07e1FBA155DCCe829a250317985d83 --network sepolia_testnet --amount 3 --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
 
-🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet network.
 📝 Transaction hash: 0x5926a58bbb98dc34850c1933a46ba591d47476dd741df3b70da9c9cedcd0f649
 ```
 

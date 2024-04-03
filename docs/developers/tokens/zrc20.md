@@ -108,7 +108,7 @@ flowchart LR
   account -. "origin" .- context
 ```
 
-To deposit a native gas token (like gETH, tMATIC, tBNB, or tBTC) to ZetaChain,
+To deposit a native gas token (like sETH, tMATIC, tBNB, or tBTC) to ZetaChain,
 send it to the [TSS address](/reference/contracts) on a connected chain.
 
 If the input data field of the transaction is empty, the token will be deposited

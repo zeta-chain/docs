@@ -37,7 +37,7 @@ like this:
 https://github.com/zeta-chain/zetachain/blob/main/packages/zevm-app-contracts/contracts/zeta-swap/ZetaCurveSwapDemo.sol
 ```
 
-In this example `crvZRC20s` is an array of three ZRC20 tokens, for example gETH,
+In this example `crvZRC20s` is an array of three ZRC20 tokens, for example sETH,
 tBNB and tMATIC. And `crv3pool` is the address of the pool you deployed with
 Curve's code.
 

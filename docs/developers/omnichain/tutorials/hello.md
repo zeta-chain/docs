@@ -363,13 +363,13 @@ npx hardhat deploy --network zeta_testnet
 Call the `interact` task to interact with the contract:
 
 ```
-npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amount 0.1 --network goerli_testnet
+npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amount 0.1 --network sepolia_testnet
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
-🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet network.
 📝 Transaction hash: 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
 ```
 
@@ -389,8 +389,8 @@ transaction on the ZetaChain explorer:
 https://explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
 
 The `interact` task has sent a token transfer transaction to the TSS address on
-Goerli. The transaction contains the address of the contract on ZetaChain in the
-`data` field. ZetaChain detects the transaction and triggers the
+Sepolia. The transaction contains the address of the contract on ZetaChain in
+the `data` field. ZetaChain detects the transaction and triggers the
 `onCrossChainCall` function of the contract. The `onCrossChainCall` function
 does nothing in this example, but you can modify it to implement your own logic.
 

@@ -513,22 +513,22 @@ npx hardhat compile --force
 ```
 
 Use the `deploy` task to deploy the contract to ZetaChain with `--chain` flag
-specifying Goerli testnet:
+specifying Sepolia testnet:
 
 ```
-npx hardhat deploy --network zeta_testnet --chain goerli_testnet
+npx hardhat deploy --network zeta_testnet --chain sepolia_testnet
 ```
 
 ### Stake Tokens
 
 ```
-npx hardhat stake --amount 0.1 --beneficiary ADDRESS --contract ADDRESS --network goerli_testnet
+npx hardhat stake --amount 0.1 --beneficiary ADDRESS --contract ADDRESS --network sepolia_testnet
 ```
 
 ### Unstake Tokens
 
 ```
-npx hardhat unstake --contract ADDRESS --network goerli_testnet
+npx hardhat unstake --contract ADDRESS --network sepolia_testnet
 ```
 
 ## Interact with the Contract from Bitcoin

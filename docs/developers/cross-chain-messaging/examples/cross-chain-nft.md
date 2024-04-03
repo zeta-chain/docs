@@ -323,20 +323,20 @@ npx hardhat compile --force
 Run the following command to deploy the contract to two networks:
 
 ```
-npx hardhat deploy --networks goerli_testnet,mumbai_testnet
+npx hardhat deploy --networks sepolia_testnet,mumbai_testnet
 ```
 
 ```
 🚀 Successfully deployed contract on mumbai_testnet.
 📜 Contract address: 0xe6663Ea61512630438ADC89dB7fD9aE5Ccb28D7B
 
-🚀 Successfully deployed contract on goerli_testnet.
+🚀 Successfully deployed contract on sepolia_testnet.
 📜 Contract address: 0x834313e0C221A5507C3fD62d825FD5182b94c68D
 
 🔗 Setting interactors for a contract on mumbai_testnet
-✅ Interactor address for 5 (goerli_testnet) is set to 0x834313e0c221a5507c3fd62d825fd5182b94c68d
+✅ Interactor address for 511155111 (sepolia_testnet) is set to 0x834313e0c221a5507c3fd62d825fd5182b94c68d
 
-🔗 Setting interactors for a contract on goerli_testnet
+🔗 Setting interactors for a contract on sepolia_testnet
 ✅ Interactor address for 80001 (mumbai_testnet) is set to 0xe6663ea61512630438adc89db7fd9ae5ccb28d7b
 ```
 
@@ -357,7 +357,7 @@ npx hardhat mint --contract 0xe6663Ea61512630438ADC89dB7fD9aE5Ccb28D7B --network
 ## Send the NFT to the Destination Chain
 
 ```
-npx hardhat interact --contract 0xe6663Ea61512630438ADC89dB7fD9aE5Ccb28D7B --network mumbai_testnet --destination goerli_testnet --token 2 --amount 1.5 --to 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+npx hardhat interact --contract 0xe6663Ea61512630438ADC89dB7fD9aE5Ccb28D7B --network mumbai_testnet --destination sepolia_testnet --token 2 --amount 1.5 --to 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
 ```

@@ -142,7 +142,7 @@ or more blockchains connected to ZetaChain.
 
 You can specify the desired chains by using a `--networks` parameter of the
 `deploy` task, which accepts a list of network names separated by commas. For
-instance, `--networks goerli_testnet,bsc_testnet`.
+instance, `--networks sepolia_testnet,bsc_testnet`.
 
 The `main` function maintains a mapping of network names to their corresponding
 deployed contract addresses, iterating over the networks to deploy the contract
@@ -156,11 +156,11 @@ The `main` function subsequently sets interactors for each contract. An
 interactor is a mapping between a chain ID of the destination and the contract
 address on that chain.
 
-When deploying to two chains (like Goerli and BSC testnet), you will invoke
-`setInteractorByChainId` on a Goerli contract and pass the BSC testnet chain ID
+When deploying to two chains (like Sepolia and BSC testnet), you will invoke
+`setInteractorByChainId` on a Sepolia contract and pass the BSC testnet chain ID
 (97) and the BSC testnet contract address. You then perform the same operation
-on a BSC testnet contract, passing the Goerli chain ID (5) and the Goerli
-contract address. If deploying to more than two chains, you must call
+on a BSC testnet contract, passing the Sepolia chain ID (11155111) and the
+Sepolia contract address. If deploying to more than two chains, you must call
 `setInteractorByChainId` for each link between the chains.
 
 ## Interact Task
@@ -229,31 +229,31 @@ npx hardhat compile --force
 Run the following command to deploy the contract to two networks:
 
 ```
-npx hardhat deploy --networks bsc_testnet,goerli_testnet
+npx hardhat deploy --networks bsc_testnet,sepolia_testnet
 ```
 
 ```
 🚀 Successfully deployed contract on bsc_testnet
 📜 Contract address: 0x6Fd784c16219026Ab0349A1a8A6e99B6eE579C93
 
-🚀 Successfully deployed contract on goerli_testnet.
+🚀 Successfully deployed contract on sepolia_testnet.
 📜 Contract address: 0xf1907bb130feb28D6e1305C53A4bfdb32140d8E6
 
 🔗 Setting interactors for a contract on bsc_testnet
-✅ Interactor address for 5 (goerli_testnet) is set to 0xf1907bb130feb28d6e1305c53a4bfdb32140d8e6
+✅ Interactor address for 11155111 (sepolia_testnet) is set to 0xf1907bb130feb28d6e1305c53a4bfdb32140d8e6
 
-🔗 Setting interactors for a contract on goerli_testnet
+🔗 Setting interactors for a contract on sepolia_testnet
 ✅ Interactor address for 97 (bsc_testnet) is set to 0x6fd784c16219026ab0349a1a8a6e99b6ee579c93
 ```
 
 ## Interact with the Contract
 
-Send a message from BSC testnet to Goerli using the contract address (see the
+Send a message from BSC testnet to Sepolia using the contract address (see the
 output of the `deploy` task). Make sure to submit enough native tokens with
 `--amount` to pay for the transaction fees.
 
 ```
-npx hardhat interact --message hello --network bsc_testnet --destination goerli_testnet --contract 0x6Fd784c16219026Ab0349A1a8A6e99B6eE579C93 --amount 2
+npx hardhat interact --message hello --network bsc_testnet --destination sepolia_testnet --contract 0x6Fd784c16219026Ab0349A1a8A6e99B6eE579C93 --amount 2
 ```
 
 ```
@@ -264,7 +264,7 @@ npx hardhat interact --message hello --network bsc_testnet --destination goerli_
 ```
 
 After the cross-chain transaction is processed on ZetaChain, look up the
-contract on the Goerli explorer by the contract address
+contract on the Sepolia explorer by the contract address
 (`0xf1907bb130feb28D6e1305C53A4bfdb32140d8E6`) and you should be able to see the
 emitted `HelloWorldEvent` event.
 
