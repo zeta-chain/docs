@@ -18,7 +18,9 @@ const Fees = ({ type }) => {
         );
 
         const updatedData = {
-          ...data,
+          messaging: data.messaging.filter(
+            (fee: any) => !["18332", "8332"].includes(fee.chainID) // There is a bug in getFees that returns messaging fees for Bitcoin. This filters them out.
+          ),
           omnichain: sortedOmnichainFees,
         };
 
