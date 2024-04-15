@@ -178,57 +178,6 @@ track its status:
 npx hardhat cctx TX_HASH
 ```
 
-## Verifying a Contract
-
-To verify a contract deployed on ZetaChain:
-
-```
-npx hardhat verify:zeta --contract ADDRESS
-```
-
-Select the contract to verify:
-
-```
-? Select a contract to verify: (Use arrow keys)
-  @zetachain/zevm-protocol-contracts/contracts/interfaces/IZRC20.sol:IZRC20
-  @zetachain/zevm-protocol-contracts/contracts/interfaces/zContract.sol:zContract
-❯ contracts/Withdraw.sol:Withdraw
-```
-
-After the confirmation the contract will be verified.
-
-## Sending Tokens
-
-Sending ZETA from ZetaChain to Goerli:
-
-```
-npx hardhat send-zeta --amount 1 --network zeta_testnet --destination goerli_testnet
-```
-
-Sending ZETA from Goerli to ZetaChain:
-
-```
-npx hardhat send-zeta --amount 1 --network goerli_testnet --destination zeta_testnet
-```
-
-Depositing gETH to ZetaChain as ZRC-20:
-
-```
-npx hardhat send-zrc20 --amount 1 --network goerli_testnet --destination zeta_testnet
-```
-
-Withdrawing ZRC-20 from ZetaChain go Goerli as gETH:
-
-```
-npx hardhat send-zrc20 --amount 1 --network zeta_testnet --destination goerli_testnet
-```
-
-Depositing tBTC from the Bitcoin testnet to ZetaChain:
-
-```
-npx hardhat send-btc --amount 1 --recipient TSS_ADDRESS --memo RECIPIENT_ADDRESS_WITHOUT_0x
-```
-
 ## Querying Cross-Chain Fees
 
 To query cross-chain fees:

@@ -61,7 +61,7 @@ In the table below you can see the current fees. The fees are defined in native
 gas tokens on the destination chain (the chain to which ZRC-20 tokens are
 withdrawn). The fees are calculated with the gas limit of 500000.
 
-<Fees type="zevm" />
+<Fees type="omnichain" />
 
 To calculate fees for a different gas limit, please, check out the `fees`
 command in the smart-contract

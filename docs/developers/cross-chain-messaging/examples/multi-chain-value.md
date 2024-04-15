@@ -137,23 +137,23 @@ npx hardhat compile --force
 Run the following command to deploy the contract to two networks:
 
 ```
-npx hardhat deploy --networks goerli_testnet,mumbai_testnet
+npx hardhat deploy --networks sepolia_testnet,mumbai_testnet
 ```
 
 ## Send a message
 
-Run the following command to send ZETA tokens from Goerli to Mumbai. Please,
+Run the following command to send ZETA tokens from Sepolia to Mumbai. Please,
 note that since the contract expect ZETA tokens as fees, the value of the
 `--amount` param is denomited in ZETA tokens. A fraction of the amount will be
 deducted as a cross-chain fee, the rest will be sent to the recipient on the
 destination chain.
 
 ```
-npx hardhat interact --contract 0xe6DE62328677C80084b07eF25637EC83A53d69E1 --network goerli_testnet  --destination mumbai_testnet --amount 3
+npx hardhat interact --contract 0xe6DE62328677C80084b07eF25637EC83A53d69E1 --network sepolia_testnet  --destination mumbai_testnet --amount 3
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
-✅ The transaction has been broadcasted to goerli_testnet
+✅ The transaction has been broadcasted to sepolia_testnet
 📝 Transaction hash: 0x4996283c199fafe4c15f33a8ef6d4a41d00545b0736bac0e5a74d72fb342b4c7
 ```
 

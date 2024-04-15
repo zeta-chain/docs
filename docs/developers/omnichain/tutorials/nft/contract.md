@@ -273,13 +273,13 @@ amount of tokens that you want to deposit. The `--recipient` parameter is the
 address that you want to receive the NFT on ZetaChain.
 
 ```
-npx hardhat interact --contract 0xb9647Fbb6562A0049CE3b425228dC59218F3b93c --amount 0.01 --network goerli_testnet --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+npx hardhat interact --contract 0xb9647Fbb6562A0049CE3b425228dC59218F3b93c --amount 0.01 --network sepolia_testnet --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
-🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet network.
 📝 Transaction hash: 0x8e0c9edd2a570494b8610c99d9772cefd4fb3a5ebb42bb714f83ef898ff53881
 ```
 

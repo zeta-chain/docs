@@ -291,20 +291,20 @@ npx hardhat deploy --network zeta_testnet
 ## Swap Native Gas Tokens Between EVM Chains
 
 Use the `interact` task to perform a cross-chain swap. In this example, we're
-swapping native gETH from Goerli for tMATIC on Polygon Mumbai. The contract will
-deposit gETH to ZetaChain as ZRC-20, swap it for ZRC-20 tMATIC and then withdraw
-native tMATIC Polygon Mumbai. To get the value of the `--target-token` find the
-ZRC-20 contract address of the destination token in the
+swapping native sETH from Sepolia for tMATIC on Polygon Mumbai. The contract
+will deposit sETH to ZetaChain as ZRC-20, swap it for ZRC-20 tMATIC and then
+withdraw native tMATIC Polygon Mumbai. To get the value of the `--target-token`
+find the ZRC-20 contract address of the destination token in the
 [ZRC-20 section of the docs](/developers/tokens/zrc20).
 
 ```
-npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 0.01 --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 0.01 --network sepolia_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
-🚀 Successfully broadcasted a token transfer transaction on goerli_testnet network.
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet network.
 📝 Transaction hash: 0x6b4156c195d955d1325a5e6275214db63ff2e3642838607333e74abd74b8fc13
 ```
 
@@ -323,21 +323,21 @@ npx hardhat cctx 0x6b4156c195d955d1325a5e6275214db63ff2e3642838607333e74abd74b8f
 
 ## Swap ERC-20 Tokens Between EVM Chains
 
-Now let's swap USDC from Goerli to MATIC on Polygon Mumbai. To send USDC specify
-the ERC-20 token contract address (on Goerli) in the `--token` parameter. You
-can find the address of the token in the
+Now let's swap USDC from Sepolia to MATIC on Polygon Mumbai. To send USDC
+specify the ERC-20 token contract address (on Sepolia) in the `--token`
+parameter. You can find the address of the token in the
 [ZRC-20 section of the docs](/developers/tokens/zrc20).
 
 ```
-npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 10 --token 0x07865c6e87b9f70255377e024ace6630c1eaa37f --network goerli_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 10 --token 0x07865c6e87b9f70255377e024ace6630c1eaa37f --network sepolia_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 ```
 
 ```
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
-🚀 Successfully broadcasted a token transfer transaction on goerli_testnet
-network. 📝 Transaction hash:
-0xff32dd2391c4f62694cc99afd0da1c2a1352c8caf29846cc366aab54a631e8f8
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet
+network.
+📝 Transaction hash: 0xff32dd2391c4f62694cc99afd0da1c2a1352c8caf29846cc366aab54a631e8f8
 ```
 
 ```

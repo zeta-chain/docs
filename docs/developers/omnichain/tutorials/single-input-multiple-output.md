@@ -324,29 +324,22 @@ npx hardhat deploy --network zeta_testnet
 
 ## Interact with the Contract
 
-Interact with the contract by:
-
-- sending 50 tMATIC
-- specifying two destination tokens:
-  `0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891` (ZRC-20 tBNB) and
-  `0x65a45c57636f9BcCeD4fe193A602008578BcA90b` (ZRC-20 tBTC)
-- specifying EVM recipient address
-- specifying BTC recipient address
-
 ```
-npx hardhat interact --contract 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --network mumbai_testnet  --target-token 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891,0x65a45c57636f9BcCeD4fe193A602008578BcA90b --amount 50 --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 --btc-recipient tb1q8shzf7afc3rhw8n6w6ec32s8h6e2mrw077d0gg
+npx hardhat interact --contract 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --network bsc_testnet  --target-token 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0,0x65a45c57636f9BcCeD4fe193A602008578BcA90b --amount 5 --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 --btc-recipient tb1q8shzf7afc3rhw8n6w6ec32s8h6e2mrw077d0gg
+
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully broadcasted a token transfer transaction on bsc_testnet network.
+📝 Transaction hash: 0xf6895678629b99d756c8d4378d4d3e57e495c95edd39b2ab51cbd707bff75d59
 ```
 
-Track the transaction:
-
 ```
-npx hardhat cctx 0x642446f8b3d20d12f58cbbf2de33377e3c92d016f043deb81c5b854e7a440cd0
+npx hardhat cctx 0xf6895678629b99d756c8d4378d4d3e57e495c95edd39b2ab51cbd707bff75d59
 ✓ CCTXs on ZetaChain found.
 
-✓ 0x7b54665297fb6779da417ca431dd764b15f2237e3d7efbc0881e3801cced4fce: 80001 → 7001: OutboundMined (Remote omnicha
-in contract call completed)
-✓ 0xbd97de12a390e767491d5d6cbeed30a08b9c69adac7becee0be8cbb46ced93d2: 7001 → 97: OutboundMined
-⠦ 0x468e11ea759a3683ec89467ee2c47dde3f8245c984c41886c7a3712e5956e349: 7001 → 18332: PendingOutboun
+✓ 0x83dc34b68d36fbafb7a9c7eef51f3a19a5b842a39f1364f53091a236266d4ff1: 97 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0x25494fd66075c98a1ef1d13723fb0ca9029377580cf1c2847d0b786896d850cb: 7001 → 11155111: PendingOutbound  → OutboundMined
+✓ 0xacc9d061b051c48b79b1dfec9e2ed3b7679af7ac225e8c995fab77b96d437bcc: 7001 → 18332: PendingOutbound  → OutboundMined
 ```
 
 ## Source Code

@@ -209,18 +209,18 @@ npx hardhat compile --force
 ```
 
 ```
-npx hardhat deploy --networks goerli_testnet,mumbai_testnet
+npx hardhat deploy --networks sepolia_testnet,mumbai_testnet
 
 🚀 Successfully deployed contract on mumbai_testnet.
 📜 Contract address: 0xbe58130dcD7db27f7b79AE27F91d2D74324c5999
 
-🚀 Successfully deployed contract on goerli_testnet.
+🚀 Successfully deployed contract on sepolia_testnet.
 📜 Contract address: 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 
 🔗 Setting interactors for a contract on mumbai_testnet
-✅ Interactor address for 5 (goerli_testnet) is set to 0x0e10df07dca39ae5e09bc37897e846b281a68a6c
+✅ Interactor address for 5 (sepolia_testnet) is set to 0x0e10df07dca39ae5e09bc37897e846b281a68a6c
 
-🔗 Setting interactors for a contract on goerli_testnet
+🔗 Setting interactors for a contract on sepolia_testnet
 ✅ Interactor address for 80001 (mumbai_testnet) is set to 0xbe58130dcd7db27f7b79ae27f91d2d74324c5999
 ```
 
@@ -229,7 +229,7 @@ npx hardhat deploy --networks goerli_testnet,mumbai_testnet
 ### Show initial counter value on both chains
 
 ```
-npx hardhat counter:show --network goerli_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
+npx hardhat counter:show --network sepolia_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
@@ -247,12 +247,12 @@ npx hardhat counter:show --network mumbai_testnet --contract 0xbe58130dcD7db27f7
 ### Increment the counter value
 
 ```
-npx hardhat interact --network goerli_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
+npx hardhat interact --network sepolia_testnet --contract 0x0e10dF07DCA39Ae5e09bC37897E846b281A68A6C
 --amount 0.3 --destination mumbai_testnet
 
 🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
 
-✅ The transaction has been broadcasted to goerli_testnet
+✅ The transaction has been broadcasted to sepolia_testnet
 📝 Transaction hash: 0xd0e5adadda20236fd1f50c2e3290e823744015e3227242fb22c78f27b46a63db
 ```
 
