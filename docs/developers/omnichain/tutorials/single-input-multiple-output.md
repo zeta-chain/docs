@@ -322,6 +322,26 @@ npx hardhat deploy --network zeta_testnet
 🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47
 ```
 
+## Interact with the Contract
+
+```
+npx hardhat interact --contract 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --network bsc_testnet  --target-token 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0,0x65a45c57636f9BcCeD4fe193A602008578BcA90b --amount 5 --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 --btc-recipient tb1q8shzf7afc3rhw8n6w6ec32s8h6e2mrw077d0gg
+
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully broadcasted a token transfer transaction on bsc_testnet network.
+📝 Transaction hash: 0xf6895678629b99d756c8d4378d4d3e57e495c95edd39b2ab51cbd707bff75d59
+```
+
+```
+npx hardhat cctx 0xf6895678629b99d756c8d4378d4d3e57e495c95edd39b2ab51cbd707bff75d59
+✓ CCTXs on ZetaChain found.
+
+✓ 0x83dc34b68d36fbafb7a9c7eef51f3a19a5b842a39f1364f53091a236266d4ff1: 97 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0x25494fd66075c98a1ef1d13723fb0ca9029377580cf1c2847d0b786896d850cb: 7001 → 11155111: PendingOutbound  → OutboundMined
+✓ 0xacc9d061b051c48b79b1dfec9e2ed3b7679af7ac225e8c995fab77b96d437bcc: 7001 → 18332: PendingOutbound  → OutboundMined
+```
+
 ## Source Code
 
 You can find the source code for the example in this tutorial here:
