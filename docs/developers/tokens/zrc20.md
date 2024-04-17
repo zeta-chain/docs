@@ -3,6 +3,8 @@ sidebar_position: 2
 ---
 
 import ForeignCoinsTable from "@site/src/components/ForeignCoins/ForeignCoins";
+import ChainConfirmations from
+"@site/src/components/ChainConfirmations/ChainConfirmations";
 
 # ZRC-20 on ZetaChain
 
@@ -210,6 +212,20 @@ Check out the [Swap tutorial](/developers/omnichain/tutorials/swap) to learn how
 to build omnichain contracts that accept token deposits form connected chains,
 swap between ZRC-20 tokens using the internal liquidity pools on ZetaChain, and
 withdraw them to connected chains.
+
+## Block Confirmations
+
+When depositing to or withdrawing from ZetaChain, the protocol requires a
+certain number of confirmations on the connected chain before the transaction is
+considered final. The number of confirmations required is different for each
+chain. You can check the number of confirmations in the table below:
+
+<ChainConfirmations/>
+
+These values are stored in the state of ZetaChain and are used by ZetaClient
+(the program that observer-signer validators run) as recommended values of
+confirmations. In some cases ZetaClient can use a higher number of
+confirmations, for example, when the value transfer exceeds a specified amount.
 
 ## Liquidity Cap
 
