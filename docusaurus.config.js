@@ -22,7 +22,7 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon/favicon.png?v=2",
-  trailingSlash: false,
+  trailingSlash: true,
   organizationName: "zeta-chain", // Usually your GitHub org/user name.
   projectName: "zeta-docs", // Usually your repo name.
 
