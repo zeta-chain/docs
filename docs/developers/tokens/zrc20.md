@@ -135,9 +135,9 @@ advance as a deposit fee.
 
 The Bitcoin deposit fee is calculated with the following formula:
 
-$$
+```
 DepositFee = AverageFeeRateBlockX * GasPriceMultiplier * DepositIncurredVBytes
-$$
+```
 
 Where `DepositIncurredVBytes` is fixed as `68vB` and the `GasPriceMultiplier`
 defaults to 2 currently.
