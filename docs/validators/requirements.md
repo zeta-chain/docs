@@ -13,6 +13,9 @@ These are the recommended specs for a ZetaChain node.
 | Observer Signer | 8 CPUs | 32 GB Memory | 300+ GB Data Disk |
 | Core Validator  | 4 CPUs | 16 GB Memory | 300+ GB Data Disk |
 
+It is recommended to run a validator on a machine with NVMe SSDs that support
+high IOPS (12 or higher).
+
 ## Network Requirements
 
 ### Public Ports
