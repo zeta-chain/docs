@@ -14,7 +14,7 @@ These are the recommended specs for a ZetaChain node.
 | Core Validator  | 4 CPUs | 16 GB Memory | 300+ GB Data Disk |
 
 It is recommended to run a validator on a machine with NVMe SSDs that support
-high IOPS (12 or higher).
+high IOPS (12K or higher).
 
 ## Network Requirements
 
