@@ -14,10 +14,10 @@ recipient address.
 When depositing from Bitcoin you must specify the recipient address in the memo.
 
 ```
-npx hardhat deposit --amount 0.1 --network mumbai_testnet
+npx hardhat deposit --amount 0.01 --network sepolia_testnet
 ```
 
-https://mumbai.polygonscan.com/tx/0x4b49a681cb04b87839f537462dae3e6a0d05d324970fe051a8bc56a752a02a3e
+https://sepolia.etherscan.io/tx/0x88d180a6424bdaf245ebddcbe4af4e67fd05b0037426fcebe6f9ae011b46fa5a
 
 ### ✅ Native gas token to TSS with recipient in input data
 
@@ -25,21 +25,10 @@ When depositing from an EVM chain you can optionally specify a recipient address
 in the input data (first 20 bytes).
 
 ```
-npx hardhat deposit --amount 0.1 --network mumbai_testnet --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+npx hardhat deposit --amount 0.01 --network sepolia_testnet --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 ```
 
-https://mumbai.polygonscan.com/tx/0x9fe3754d2981754d675b63f8659711dc44a4d89be03448b22d746b10db7e5faf
-
-### ❌ Native gas token to TSS with no recipient and a message
-
-When the input data is not empty and the first 20 bytes cannot be decoded as a
-hex address, the deposit will be reverted.
-
-```
-npx hardhat deposit --amount 0.1 --network mumbai_testnet --message '[["string"], ["hello"]]'
-```
-
-https://mumbai.polygonscan.com/tx/0x2ce67a5ae1bc6545ff245a12860d6d70de020c4ff10d719fae0df7e1aea319a8
+https://sepolia.etherscan.io/tx/0xaee07e4ab765e4a53d555cf62713100b95f2d0f87b40911acb7dca4342aea7b1
 
 ### ✅ USDC to ERC-20 custody contract with no input data
 
@@ -47,20 +36,20 @@ Supported ERC-20 can be deposited to ZetaChain by calling the `deposit` method
 of the ERC-20 custody contract on a connected chain.
 
 ```
-npx hardhat deposit --amount 2 --network mumbai_testnet --erc20 0x9999f7fea5938fd3b1e26a12c3f2fb024e194f97
+npx hardhat deposit --amount 1 --network sepolia_testnet --erc20 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238
 ```
 
-https://mumbai.polygonscan.com/tx/0x06f99cd96623fbab566f37e5865dbe72bc4b39909a014b7d2ed7ed80c3a4d64e
+https://sepolia.etherscan.io/tx/0x281437be30bbde834cb05676fc59ad0084b8828a2b4f9503e8cf46d12f3ce4a2
 
 ### ❌ USDC to ERC-20 custody contract with a message
 
 Depositing ERC-20 to an EOA with a message will result in a transaction revert.
 
 ```
-npx hardhat deposit --amount 2 --network mumbai_testnet --erc20 0x9999f7fea5938fd3b1e26a12c3f2fb024e194f97 --message '[["string"], ["hello"]]' --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+npx hardhat deposit --amount 1 --network sepolia_testnet --erc20 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238 --message '[["string"], ["hello"]]' --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 --ignore-checks
 ```
 
-https://mumbai.polygonscan.com/tx/0x775fe9b1664813f9e54286a4ec889cfd7e0b7344cffd25338882c93b5d97cefe
+https://sepolia.etherscan.io/tx/0x8cefbf39999a18a56e54923276d6b85afcc6b366c21752e2e792ec7aeed375e5
 
 ## Depositing to Omnichain Contract
 
@@ -75,10 +64,10 @@ This is an example deposit and call of
 [the example omnichain swap contract](/developers/omnichain/tutorials/swap/).
 
 ```
-npx hardhat deposit --amount 10 --network mumbai_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0x13A0c5930C028511Dc02665E7285134B6d11A5f4", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]'
+npx hardhat deposit --amount 0.1 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0x7c8dDa80bbBE1254a7aACf3219EBe1481c6E01d7", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]'
 ```
 
-https://mumbai.polygonscan.com/tx/0x747eca013dcbf66c044739e9d839a0c6960d132e124e6ff349c33bff8db0c4a8
+https://sepolia.etherscan.io/tx/0x0c7fffc3d51c9dfc69a094a969b2004c464bc966ddc62d3ff6f9f3ead8f0d7e5
 
 ### ✅ Native gas token to TSS with multiple outputs
 
@@ -89,10 +78,10 @@ This is an example deposit and call of
 [the example omnichain multioutput contract](/developers/omnichain/tutorials/single-input-multiple-output/).
 
 ```
-npx hardhat deposit --amount 50 --network mumbai_testnet --recipient 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --message '[["address", "bytes", "bytes"], ["0x4955a3F38ff86ae92A914445099caa8eA2B9bA32", "0x746231713873687a663761666333726877386e367736656333327338683665326d727730373764306767", "0x000000000000000000000000d97b1de3619ed2c6beb3860147e30ca8a7dc989100000000000000000000000065a45c57636f9bcced4fe193a602008578bca90b"]]'
+npx hardhat deposit --amount 1 --network sepolia_testnet --recipient 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --message '[["address", "bytes", "bytes"], ["0x4955a3F38ff86ae92A914445099caa8eA2B9bA32", "0x746231713873687a663761666333726877386e367736656333327338683665326d727730373764306767", "0x000000000000000000000000d97b1de3619ed2c6beb3860147e30ca8a7dc989100000000000000000000000065a45c57636f9bcced4fe193a602008578bca90b"]]'
 ```
 
-https://mumbai.polygonscan.com/tx/0x9b4ee1e6a63e20a290f8cf1660dae7954202c2554f891e06c2305e9a6e46d0ad
+https://sepolia.etherscan.io/tx/0x1a0c20c9d04237e1b61644f4195400ea7f1ddd1e30cbf7876c087660f8e6b140
 
 ### ❌ USDC with recipient and valid message
 
@@ -104,11 +93,10 @@ https://github.com/zeta-chain/node/issues/1906
 :::
 
 ```
-npx hardhat deposit --amount 10 --network mumbai_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0x13A0c5930C028511Dc02665E7285134B6d11A5f4", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]' --e
-rc20 0x9999f7fea5938fd3b1e26a12c3f2fb024e194f97
+npx hardhat deposit --amount 1 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]' --erc20 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238
 ```
 
-https://mumbai.polygonscan.com/tx/0x350c8b57126ccfafbd4de0ab309e89a7a367ba1a1d14f483c2afc85f13986f67
+https://sepolia.etherscan.io/tx/0xf680fa673a4077cec2e2d752260295375113a8c0525c74c5225fb2d2d73cb6d9
 
 ### ❌ Native gas token to TSS with recipient and invalid message
 
@@ -116,10 +104,10 @@ If an omnichain contract expects a specific message, an invalid message will
 trigger a contract revert, resulting in a reverted deposit.
 
 ```
-npx hardhat deposit --amount 0.1 --network mumbai_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257
+npx hardhat deposit --amount 0.01 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257
 ```
 
-https://mumbai.polygonscan.com/tx/0x2443b7b0ecb6e3d40f02b7e353675aa7853e99a54a86249d97cd44998250c79f
+https://sepolia.etherscan.io/tx/0xecf2916c940a4fdf85f250ea822532bba92879cf615197ce3cdd2d9a1137a095
 
 ## Withdrawing
 
@@ -133,10 +121,10 @@ The withdraw amount must be higher than
 own withdraw fee.
 
 ```
-npx hardhat withdraw --amount 10 --zrc20 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --network zeta_testnet
+npx hardhat withdraw --amount 0.1 --zrc20 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 --network zeta_testnet
 ```
 
-https://athens.explorer.zetachain.com/cc/tx/0x118bcfbf3b7f54eca1c138fe3832e843fff523a89f4d506d35be6981a8b944f1
+https://athens.explorer.zetachain.com/evm/tx/0x0013b02a9420109fe0bcedf4733c973d6113cd6e93b120406fadd52188814b21
 
 ### ✅ Withdrawing ERC-20 (USDC) ZRC-20 from ZetaChain
 
@@ -149,7 +137,7 @@ denominated in ETH. The caller of with withdraw method must have enough native
 gas ZRC-20 (approved) to pay the withdraw fee.
 
 ```
-npx hardhat withdraw --amount 2 --zrc20 0x91d4F0D54090Df2D81e834c3c8CE71C6c865e79F --network zeta_testnet
+npx hardhat withdraw --amount 1 --zrc20 0xcC683A782f4B30c138787CB5576a86AF66fdc31d --network zeta_testnet
 ```
 
-https://athens.explorer.zetachain.com/cc/tx/0x4721f2da8b9dcbb803a7116871aba156a5fc23452dcf7c53e4e858e6006f27e3
+https://athens.explorer.zetachain.com/evm/tx/0x540738849a6414809aeb0a9c959e3401b460aeae87c86bc9fd55bd6c1009b014
