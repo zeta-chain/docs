@@ -64,10 +64,10 @@ This is an example deposit and call of
 [the example omnichain swap contract](/developers/omnichain/tutorials/swap/).
 
 ```
-npx hardhat deposit --amount 0.1 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0x7c8dDa80bbBE1254a7aACf3219EBe1481c6E01d7", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]'
+npx hardhat deposit --amount 3 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]'
 ```
 
-https://sepolia.etherscan.io/tx/0x0c7fffc3d51c9dfc69a094a969b2004c464bc966ddc62d3ff6f9f3ead8f0d7e5
+https://sepolia.etherscan.io/tx/0xf291232b1fa6b6e9dd9dbfc4c09b22f32ed9ca61e6f778e985ded1af1d43ee3d
 
 ### ✅ Native gas token to TSS with multiple outputs
 
@@ -78,10 +78,10 @@ This is an example deposit and call of
 [the example omnichain multioutput contract](/developers/omnichain/tutorials/single-input-multiple-output/).
 
 ```
-npx hardhat deposit --amount 1 --network sepolia_testnet --recipient 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --message '[["address", "bytes", "bytes"], ["0x4955a3F38ff86ae92A914445099caa8eA2B9bA32", "0x746231713873687a663761666333726877386e367736656333327338683665326d727730373764306767", "0x000000000000000000000000d97b1de3619ed2c6beb3860147e30ca8a7dc989100000000000000000000000065a45c57636f9bcced4fe193a602008578bca90b"]]'
+npx hardhat deposit --amount 4 --network sepolia_testnet --recipient 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --message '[["address", "bytes", "bytes"], ["0x4955a3F38ff86ae92A914445099caa8eA2B9bA32", "0x746231713873687a663761666333726877386e367736656333327338683665326d727730373764306767", "0x000000000000000000000000d97b1de3619ed2c6beb3860147e30ca8a7dc989100000000000000000000000065a45c57636f9bcced4fe193a602008578bca90b"]]'
 ```
 
-https://sepolia.etherscan.io/tx/0x1a0c20c9d04237e1b61644f4195400ea7f1ddd1e30cbf7876c087660f8e6b140
+https://sepolia.etherscan.io/tx/0xce9386cff141cfe64d38589bdd6d2de843aa07559beea1cc3f3d002b47338711
 
 ### ❌ USDC with recipient and valid message
 
