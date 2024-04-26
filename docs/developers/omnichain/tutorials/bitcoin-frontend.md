@@ -12,7 +12,7 @@ wallet extension.
 
 - [XDEFI](https://xdefi.io/) wallet extension
   [installed in your browser](https://www.xdefi.io/article/create-wallet-new/)
-- [Unisat] wallet extension
+- [Unisat](https://docs.unisat.io/) wallet extension
 - Bitcoin Testnet wallet with some testnet BTC (use
   [one of the faucets](https://coinfaucet.eu/en/btc-testnet/) available)
 - [Node.js](https://nodejs.org/en/) installed on your machine with `npm` or
