@@ -9,6 +9,7 @@ developers.
 | RPC                 | InfStones        | https://infstones.com/fast-api             |
 | RPC                 | BlastAPI         | https://blastapi.io/                       |
 | RPC                 | All That Node    | https://www.allthatnode.com/               |
+| RPC                 | NOWNodes         | https://nownodes.io/                       |
 | API                 | Covalent         | https://www.covalenthq.com/                |
 | Wallet as a Service | Particle Network | https://particle.network                   |
 | Wallet as a Service | Magic            | https://magic.link/                        |
