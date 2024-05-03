@@ -86,6 +86,18 @@ const config = {
             from: "/developers/omnichain/zrc-20",
             to: "/developers/tokens/zrc20",
           },
+          {
+            from: "/developers/cross-chain-messaging/examples/cross-chain-nft",
+            to: "/cross-chain-messaging/examples/nft",
+          },
+          {
+            from: "/developers/cross-chain-messaging/examples/hello-world",
+            to: "/cross-chain-messaging/examples/message",
+          },
+          {
+            from: "/developers/cross-chain-messaging/examples/multichain-value-transfer",
+            to: "/cross-chain-messaging/examples/zeta",
+          },
         ],
       },
     ],
