@@ -88,15 +88,15 @@ const config = {
           },
           {
             from: "/developers/cross-chain-messaging/examples/cross-chain-nft",
-            to: "/cross-chain-messaging/examples/nft",
+            to: "/developers/cross-chain-messaging/examples/nft",
           },
           {
             from: "/developers/cross-chain-messaging/examples/hello-world",
-            to: "/cross-chain-messaging/examples/message",
+            to: "/developers/cross-chain-messaging/examples/message",
           },
           {
             from: "/developers/cross-chain-messaging/examples/multichain-value-transfer",
-            to: "/cross-chain-messaging/examples/zeta",
+            to: "/developers/cross-chain-messaging/examples/zeta",
           },
         ],
       },
