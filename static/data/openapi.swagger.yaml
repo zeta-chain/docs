@@ -54603,7 +54603,7 @@ definitions:
       - FailureObservation
       - NotYetVoted
     default: SuccessObservation
-    description: ' - FailureObservation: Failure observation means , the the message that this voter is observing failed / reverted . It does not mean it was unable to observe.'
+    description: ' - FailureObservation: Failure observation means , the message that this voter is observing failed / reverted . It does not mean it was unable to observe.'
   observerVoterList:
     type: object
     properties:
