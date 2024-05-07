@@ -59,9 +59,11 @@ tasks.
 
 Let's review the contents of the `CrossChainMessage` contract:
 
-```solidity filename="contracts/CrossChainMessage.sol" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/contracts/CrossChainMessage.sol
-```
+<CodeBlock
+  language="solidity"
+  filename="contracts/CrossChainMessage.sol"
+  codeUrl="https://raw.githubusercontent.com/zeta-chain/example-contracts/main/messaging/message/contracts/CrossChainMessage.sol"
+/>
 
 The contract:
 
@@ -132,9 +134,11 @@ originates from the trusted source.
 
 The `messaging` task has created a Hardhat task to deploy the contract.
 
-```ts filename="tasks/deploy.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/deploy.ts
-```
+<CodeBlock
+  language="ts"
+  filename="tasks/deploy.ts"
+  codeUrl="https://raw.githubusercontent.com/zeta-chain/example-contracts/main/messaging/message/tasks/deploy.ts"
+/>
 
 To establish cross-chain messaging between blockchains via ZetaChain, you need
 to deploy contracts capable of sending and receiving cross-chain messages to two
@@ -168,9 +172,11 @@ Sepolia contract address. If deploying to more than two chains, you must call
 The `messaging` task has also created a Hardhat task to interact with the
 contract:
 
-```ts filename="tasks/interact.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/message/tasks/interact.ts
-```
+<CodeBlock
+  language="ts"
+  filename="tasks/interact.ts"
+  codeUrl="https://raw.githubusercontent.com/zeta-chain/example-contracts/main/messaging/message/tasks/interact.ts"
+/>
 
 The task accepts the following arguments:
 

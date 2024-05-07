@@ -216,9 +216,11 @@ The mint task accepts a contract address as an argument, calls the `mint`
 function on it, searches the events for a "Transfer" event and prints out the
 token ID.
 
-```ts filename="tasks/mint.ts" reference
-https://github.com/zeta-chain/example-contracts/blob/main/messaging/warriors/tasks/mint.ts
-```
+<CodeBlock
+  language="ts"
+  filename="tasks/mint.ts"
+  codeUrl="https://raw.githubusercontent.com/zeta-chain/example-contracts/main/messaging/warriors/tasks/mint.ts"
+/>
 
 ```ts filename="hardhat.config.ts"
 import "./tasks/mint";
