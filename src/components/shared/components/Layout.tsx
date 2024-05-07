@@ -18,6 +18,17 @@ const LayoutContainer = styled.div`
     }
   }
 
+  /* Custom styles for nextra Navbar component */
+  .nextra-nav-container {
+    .nextra-nav-container-blur {
+      ${tw`!bg-grey-50/80 dark:!bg-grey-900/80`};
+    }
+
+    nav a.nx-flex.nx-items-center {
+      ${tw`hover:opacity-100 dark:hover:opacity-100`};
+    }
+  }
+
   .nx-text-primary-600 {
     ${tw`text-green-100`};
   }
