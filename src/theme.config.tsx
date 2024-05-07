@@ -1,7 +1,7 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { Footer, IconZetaDocsLogo, ThemeToggle } from "~/components/shared";
-
+import { AppHead, Footer, IconZetaDocsLogo, ThemeToggle } from "~/components/shared";
+import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 /**
  * @description Custom Nextra Docs theme configuration
  * @see https://nextra.site/docs/docs-theme/theme-configuration
@@ -26,9 +26,16 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     icon: null,
   },
 
-  // Reset default head and SEO configs to use custom setup
-  head: () => null,
-  useNextSeoProps: () => {},
+  // Configure App Head component
+  head: <AppHead />,
+
+  // Configure next-seo props
+  useNextSeoProps: () => {
+    return {
+      ...nextSeoProps,
+      canonical: typeof window !== "undefined" ? window.location.href : defaultBaseUrl,
+    };
+  },
 
   // Edit search component in the navbar
   search: {

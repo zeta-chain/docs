@@ -6,7 +6,7 @@ import { compose } from "@reduxjs/toolkit";
 import type { AppProps } from "next/app";
 import Script from "next/script";
 
-import { AppHead, HeadProgressBar, Layout } from "~/components/shared";
+import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
 import { createEmotionCache } from "~/lib/createEmotionCache";
@@ -25,7 +25,6 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
   return (
     <>
       <CacheProvider value={emotionCache}>
-        <AppHead />
         <ThemeProvider theme={theme}>
           <GlobalStyles />
           <HeadProgressBar />

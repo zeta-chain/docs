@@ -1,10 +1,12 @@
-export const defaultTitle = "ZetaDocs";
-export const defaultDescription = "ZetaChain documentation.";
-export const defaultBaseUrl = "https://docs.zetachain.com/";
+import { NextSeoProps } from "next-seo";
 
-// eslint-disable-next-line import/no-default-export
-export default {
-  title: defaultTitle,
+export const defaultTitle = "ZetaDocs";
+export const defaultDescription =
+  "ZetaChain Docs. ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.";
+export const defaultBaseUrl = "https://www.zetachain.com/docs/";
+
+export const nextSeoProps: NextSeoProps = {
+  titleTemplate: `%s – ${defaultTitle}`,
   description: defaultDescription,
   openGraph: {
     title: defaultTitle,
