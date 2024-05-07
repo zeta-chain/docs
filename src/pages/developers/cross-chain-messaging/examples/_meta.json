@@ -1,6 +1,6 @@
 {
-  "your-first-message": "Your First Cross-Chain Message",
-  "multi-chain-value": "Value Transfer",
-  "cross-chain-counter": "Cross-Chain Counter",
-  "cross-chain-nft": "Cross-Chain NFT"
+  "zeta": "Cross-Chain ZETA Transfer",
+  "message": "Cross-Chain Message",
+  "erc20": "Cross-Chain ERC-20",
+  "nft": "Cross-Chain NFT"
 }
