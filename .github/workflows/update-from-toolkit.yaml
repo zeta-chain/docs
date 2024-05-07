@@ -21,15 +21,15 @@ jobs:
 
       - name: Update docs
         run: |
-          mkdir -p static/packages/toolkit
-          rm -rf static/packages/toolkit/*
-          cp -r toolkit/docs/* static/packages/toolkit/
+          mkdir -p public/packages/toolkit
+          rm -rf public/packages/toolkit/*
+          cp -r toolkit/docs/* public/packages/toolkit/
           rm -rf toolkit
 
       - name: Check for changes
         id: check-changes
         run: |
-          git add static/packages/toolkit
+          git add public/packages/toolkit
           git diff --cached --exit-code || echo "::set-output name=changed::true"
 
       - name: Create Pull Request

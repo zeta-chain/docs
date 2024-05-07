@@ -2,15 +2,15 @@
 
 To make a release click on the "Releases" link on right side of the page.
 
-![](./static/img/docs/release-releases.png)
+![](./public/img/docs/release-releases.png)
 
 Then click on the "Draft a new release" button.
 
-![](./static/img/docs/release-draft.png)
+![](./public/img/docs/release-draft.png)
 
 A release form will appear.
 
-![](./static/img/docs/release-form.png)
+![](./public/img/docs/release-form.png)
 
 ZetaChain follows [semantic versioning](https://semver.org/). The version number
 should be in the format `MAJOR.MINOR.PATCH`. For example, `1.0.0`. The version

@@ -1,0 +1,10 @@
+{
+  "create-wallet": "Create a Wallet in ZetaChain",
+  "connect-wallet": "Connect Wallet in ZetaHub",
+  "get-zeta": "Get ZETA",
+  "pool": "Pool your ZETA",
+  "stake": "Delegate/Stake ZETA",
+  "enroll-zeta-xp": "Enroll in Zeta XP",
+  "earn-zeta-xp": "Earn Zeta XP",
+  "send": "Send Assets"
+}
