@@ -1,7 +1,3 @@
----
-sidebar_position: 5
----
-
 # Subgraph: Goldsky
 
 In this tutorial you will learn how to query for omnichain contract event data
