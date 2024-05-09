@@ -2,15 +2,24 @@
 sidebar_position: 5
 ---
 
-# Swap
+# Swap To ZETA
 
 ## Overview
 
-In this tutorial you will write a cross-chain swap contract that allows users to
-swap a native gas or ERC-20 token from one of the connected chains for a token
-on another chain.
+In the previous tutorial you've learned how to create an omnichain swap
+contracts that allows users to swap between tokens between connected
+blockchains. The target token was always on a connected blockchain.
 
-```solidity
+In this tutorial you will modify the swap example to support swapping tokens for
+wrapped ZETA (WZETA). By design WZETA tokens will be transferred to recipient on
+ZetaChain.
+
+## Omnichain Contract
+
+Copy the existing swap example into a new file `SwapToZeta.sol` and make the
+necessary changes:
+
+```solidity title="contracts/SwapToZeta.sol"
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -19,7 +28,7 @@ import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
 import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
 // highlight-next-line
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IWZETA.sol";
 
 // highlight-next-line
 contract SwapToZeta is zContract {
@@ -89,11 +98,86 @@ contract SwapToZeta is zContract {
             0
         );
 
-        // highlight-next-line
-        if (!isTargetZeta) {
+        // highlight-start
+        if (isTargetZeta) {
+            IWETH9(wzeta).transfer(address(uint160(bytes20(to))), outputAmount);
+        } else {
             IZRC20(gasZRC20).approve(target, gasFee);
             IZRC20(target).withdraw(to, outputAmount);
         }
+        // highlight-end
     }
 }
 ```
+
+Add the `IWZETA` interface to interact seamlessly with the WZETA wrapped token
+contract. This import enables the new features introduced in the updated version
+of the contract.
+
+Change the contract name from `Swap` to `SwapToZeta`.
+
+Add a conditional to check if the target token's address matches WZETA token
+address. You can get WZETA token address from the system contract.
+
+Introduce a conditional to skip querying the withdrawal gas fee and swapping for
+a gas token when the target is WZETA. This step is only necessary for
+transactions involving ZRC-20 tokens that will be withdrawn. For transactions
+with WZETA, these steps are unnecessary as the token remains within the
+ZetaChain.
+
+Add logic to swap the entire incoming amount when the target is WZETA and to
+swap `amount - inputForGas` when dealing with ZRC-20 tokens. This ensures that
+the correct amount is swapped based on the token type involved.
+
+Finally, insert a conditional operation to either transfer swapped WZETA
+directly to the recipient on the ZetaChain or to withdraw ZRC-20 tokens to the
+designated destination chain.
+
+## Compile and Deploy the Contract
+
+```
+npx hardhat compile --force
+```
+
+When deploying use the `--name` flag to specify which contract you want to
+deploy:
+
+```
+npx hardhat deploy --network zeta_testnet --name SwapToZeta
+```
+
+```
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully deployed contract on zeta_testnet.
+📜 Contract address: 0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
+🌍 ZetaScan: https://athens.explorer.zetachain.com/address/0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
+🌍 Blockcsout: https://zetachain-athens-3.blockscout.com/address/0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
+```
+
+## Swap Native Gas Tokens For WZETA
+
+When using the `interact` task specify ZETA token contract address as the value
+of `--target-token`:
+
+```
+npx hardhat interact --contract 0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7 --network bsc_testnet --amount 0.01 --target-token 0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+```
+
+Track the transaction:
+
+```
+npx hardhat cctx 0xe8f3aa508fcd204939343eb9dd8e7e6e7425bf920b14bdbb64743c0f27e7981e
+```
+
+```
+✓ CCTXs on ZetaChain found.
+
+✓ 0xb83ca0b837ae812033dd06c46c979582415085faa47158875fbf04198152a203: 97 → 7001: OutboundMined (Remote omnichain contract call completed)
+```
+
+Notice that an outbound CCTX is not created, because when swapping for WZETA,
+WZETA tokens remains on ZetaChain and isn't being withdrawn.
+
+You can now open the recipient's address page on Blockscout and check for an
+incoming WZETA token transfer.
