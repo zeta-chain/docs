@@ -1,0 +1,13 @@
+{
+  "details": "Network Details",
+  "api": "API/RPC endpoints",
+  "contracts": "Contract Addresses",
+  "bugbounty": "Bug Bounty",
+  "wallets": "Wallets",
+  "get-testnet-zeta": "Get Testnet ZETA (faucet)",
+  "faq": "FAQ",
+  "glossary": "Glossary",
+  "explorers": "ZetaScan",
+  "openapi": "ZetaChain HTTP API",
+  "services": "Services and Providers"
+}

@@ -1,0 +1,40 @@
+{
+  "index": "Home",
+  "about": "About ZetaChain",
+  "developers": "Developers",
+  "users": "Users",
+  "validators": "Validators",
+  "architecture": "Architecture",
+  "reference": "Tools",
+
+  "github": {
+    "title": "GitHub",
+    "type": "page",
+    "href": "https://github.com/zeta-chain",
+    "newWindow": true
+  },
+  "whitepaper": {
+    "title": "Whitepaper",
+    "type": "page",
+    "href": "https://www.zetachain.com/whitepaper.pdf",
+    "newWindow": true
+  },
+  "explorer": {
+    "title": "Explorer",
+    "type": "page",
+    "href": "https://explorer.zetachain.com",
+    "newWindow": true
+  },
+  "community": {
+    "title": "Community",
+    "type": "page",
+    "href": "https://link3.to/zetachain",
+    "newWindow": true
+  },
+  "blog": {
+    "title": "Blog",
+    "type": "page",
+    "href": "https://blog.zetachain.com/",
+    "newWindow": true
+  }
+}

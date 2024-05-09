@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./fonts.css";
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+:root {
+  /**
+    * Polyfill Nextra Shiki Theme Colors
+    * @see https://nextra.site/docs/guide/syntax-highlighting#customize-the-theme
+    * @see https://shiki.matsu.io/guide/theme-colors#css-variables-theme
+    */
+  --shiki-foreground: var(--shiki-color-text);
+  --shiki-background: var(--shiki-color-background);
+
+  /* Only required if using lang: 'ansi' */
+  --shiki-ansi-black: var(--shiki-color-ansi-black);
+  --shiki-ansi-black-dim: var(--shiki-color-ansi-black-dim);
+  --shiki-ansi-red: var(--shiki-color-ansi-red);
+  --shiki-ansi-red-dim: var(--shiki-color-ansi-red-dim);
+  --shiki-ansi-green: var(--shiki-color-ansi-green);
+  --shiki-ansi-green-dim: var(--shiki-color-ansi-green-dim);
+  --shiki-ansi-yellow: var(--shiki-color-ansi-yellow);
+  --shiki-ansi-yellow-dim: var(--shiki-color-ansi-yellow-dim);
+  --shiki-ansi-blue: var(--shiki-color-ansi-blue);
+  --shiki-ansi-blue-dim: var(--shiki-color-ansi-blue-dim);
+  --shiki-ansi-magenta: var(--shiki-color-ansi-magenta);
+  --shiki-ansi-magenta-dim: var(--shiki-color-ansi-magenta-dim);
+  --shiki-ansi-cyan: var(--shiki-color-ansi-cyan);
+  --shiki-ansi-cyan-dim: var(--shiki-color-ansi-cyan-dim);
+  --shiki-ansi-white: var(--shiki-color-ansi-white);
+  --shiki-ansi-white-dim: var(--shiki-color-ansi-white-dim);
+  --shiki-ansi-bright-black: var(--shiki-color-ansi-bright-black);
+  --shiki-ansi-bright-black-dim: var(--shiki-color-ansi-bright-black-dim);
+  --shiki-ansi-bright-red: var(--shiki-color-ansi-bright-red);
+  --shiki-ansi-bright-red-dim: var(--shiki-color-ansi-bright-red-dim);
+  --shiki-ansi-bright-green: var(--shiki-color-ansi-bright-green);
+  --shiki-ansi-bright-green-dim: var(--shiki-color-ansi-bright-green-dim);
+  --shiki-ansi-bright-yellow: var(--shiki-color-ansi-bright-yellow);
+  --shiki-ansi-bright-yellow-dim: var(--shiki-color-ansi-bright-yellow-dim);
+  --shiki-ansi-bright-blue: var(--shiki-color-ansi-bright-blue);
+  --shiki-ansi-bright-blue-dim: var(--shiki-color-ansi-bright-blue-dim);
+  --shiki-ansi-bright-magenta: var(--shiki-color-ansi-bright-magenta);
+  --shiki-ansi-bright-magenta-dim: var(--shiki-color-ansi-bright-magenta-dim);
+  --shiki-ansi-bright-cyan: var(--shiki-color-ansi-bright-cyan);
+  --shiki-ansi-bright-cyan-dim: var(--shiki-color-ansi-bright-cyan-dim);
+  --shiki-ansi-bright-white: var(--shiki-color-ansi-bright-white);
+  --shiki-ansi-bright-white-dim: var(--shiki-color-ansi-bright-white-dim);
+}

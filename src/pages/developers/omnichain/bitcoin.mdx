@@ -1,0 +1,79 @@
+import { Alert } from "~/components/shared";
+
+# Deposit and call zEVM contracts from Bitcoin
+
+<Alert variant="tip">This section is important for wallet and app developers.</Alert>
+
+<Alert variant="tip">
+  All inputs and outputs of Bitcoin transactions sent to TSS address must be a P2WPKH address (SegWit bech32 address,
+  such as bc1xxx on Bitcoin mainnet). Otherwise the transactions will not be observed and there will be no refund, and
+  may cause irreversible user fund loss.
+</Alert>
+
+To deposit BTC into zEVM ZRC-20 contract (and optionally call a smart contract),
+the Bitcoin transaction must conform to this specifications:
+
+1. The Bitcoin transaction must have at least 2 outputs.
+2. The first output must be addressed to the TSS Bitcoin address.
+3. The second output must be a memo output, i.e. `OP_RETURN PUSH_x [DATA]`. This
+   output must be less than 80 bytes.
+4. The memo `[DATA]` is an array of bytes that encodes the recipient address of
+   this deposit into ZRC-20 or the smart contract on zEVM that will be invoked
+   by this transaction.
+5. If the purpose of this Bitcoin transaction is to only deposit BTC into the
+   BTC ZRC-20 on zEVM, then the `[DATA]` should be exactly 20 bytes long,
+   consists of an Ethereum-style address.
+6. If the purpose of this Bitcoin transaction is to deposit BTC and also use the
+   deposited amount to call a smart contract on zEVM, then the `[DATA]` field
+   must consists of a smart contract address, and a binary message that will be
+   forwarded to the said smart contract:
+   `[DATA] = [zEVM contract address (20B)] + [arbitrary binary message]`
+
+## Example 1: Deposit BTC into an account in zEVM
+
+[Here's](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f?expand)
+an example Bitcoin transaction on Bitcoin Testnet that deposits 0.0005 tBTC
+(50000 sats) into the address (0x)6da30bfa65e85a16b05bce3846339ed2bc746316.
+
+Note the three outputs:
+
+1. sending the intended amount (50000sats) to the current TSS Bitcoin address
+   tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur.
+2. the memo output, encoding the recipient address on zEVM
+   (0x)6a146da30bfa65e85a16b05bce3846339ed2bc746316.
+3. change sent back to the user.
+
+If you're using ZetaChain's Hardhat
+[smart contract template](https://github.com/zeta-chain/template), you can use
+the `send-btc` task to transfer BTC:
+
+```
+npx hardhat send-btc --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur --amount 0.0005 --memo 6a146da30bfa65e85a16b05bce3846339ed2bc746316
+```
+
+Where `recipient` is the TSS Bitcoin address, `amount` is the amount of tBTC to
+transfer, and `memo` is the recipient address on zEVM.
+
+## Example 2: Deposit BTC and call a smart contract in zEVM
+
+<Alert variant="tip">
+  In order to test with Bitcoin, you will need to use a wallet that allows setting an `OP_RETURN` and memos in a binary
+  format. Please see our wallet suggestions [here](/reference/wallets).
+</Alert>
+
+If invalid information is sent (i. e. invalid address), the assets may be lost
+and not recoverable.
+
+In summary, a zEVM BTC transaction would look like this:
+
+1. A user sends 1 BTC on Bitcoin network to the Bitcoin
+   [TSS address](/reference/contracts) , adding a memo (via `OP_RETURN`) in the
+   tx saying (colloquially) “deposit to 0x1337”.
+2. Upon receiving this tx, the ZetaCore state machine calls the deposit (0x1337,
+   1e8) to mint and credit 0x1337 with 1 zBTC minus fees.
+3. If 0x1337 is an Externally Owned Account (EOA), that's it. If it's a
+   contract, ZetaCore will call the `onCrossChainMessage` function sending the
+   message that was specified in the `OP_RETURN` memo.
+
+The TSS address holds the BTC, where ownerships are tracked inside this BTC
+ZRC-20 contract.

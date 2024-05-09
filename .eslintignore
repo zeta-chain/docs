@@ -1,0 +1,7 @@
+.cache
+node_modules
+public
+.next
+.vscode
+.git
+.yarn

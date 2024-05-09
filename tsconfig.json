@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/docusaurus/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -8,8 +8,8 @@
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
     "strict": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -18,6 +18,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
-  }
+    "incremental": true,
+    "useUnknownInCatchVariables": true,
+    "sourceMap": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "decs.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mts",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.jsx",
+    "**/*.json"
+  ],
+  "exclude": ["node_modules", ".next", ".yarn"]
 }
