@@ -29,6 +29,10 @@ const LayoutContainer = styled.div`
     }
   }
 
+  .nextra-sidebar-container {
+    ${tw`hidden`};
+  }
+
   .nx-text-primary-600 {
     ${tw`text-green-100`};
   }

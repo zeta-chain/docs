@@ -10,9 +10,9 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   // Add main logo to the left side of the navbar
   logo: <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />,
 
-  // Add theme toggle button to the right side of the navbar
+  // Remove navbar from default layout
   navbar: {
-    extraContent: <ThemeToggle />,
+    component: null,
   },
 
   // Remove nextra default theme switch in favor of custom theme toggle button
@@ -46,6 +46,8 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   sidebar: {
     // Control default sidebar collapse level
     defaultMenuCollapseLevel: 1,
+    // Remove title component
+    titleComponent: null,
   },
 
   // Edit table of contents (TOC) component
@@ -64,6 +66,12 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
 
   // Remove last updated date
   gitTimestamp: undefined,
+
+  // Remove bottom page navigation
+  navigation: {
+    prev: false,
+    next: false,
+  },
 
   // Add custom footer component
   footer: {
