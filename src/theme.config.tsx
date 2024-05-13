@@ -1,6 +1,6 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { AppHead, Footer, IconZetaDocsLogo, ThemeToggle } from "~/components/shared";
+import { AppHead, IconZetaDocsLogo } from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 /**
  * @description Custom Nextra Docs theme configuration
@@ -73,9 +73,9 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     next: false,
   },
 
-  // Add custom footer component
+  // Remove footer component
   footer: {
-    component: <Footer />,
+    component: null,
   },
 };
 

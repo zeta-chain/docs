@@ -8,4 +8,6 @@ export const globalLinks = {
   labsLink: "https://labs.zetachain.com",
   privacyLink: "https://zetachain.com/privacy",
   termsOfUseLink: "https://zetachain.com/terms-of-use",
+  githubLink: "https://github.com/zeta-chain",
+  whitepaperLink: "https://www.zetachain.com/whitepaper.pdf",
 };

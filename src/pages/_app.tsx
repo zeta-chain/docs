@@ -9,7 +9,7 @@ import Script from "next/script";
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
-import { createEmotionCache } from "~/lib/createEmotionCache";
+import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
 import { useHydrateTheme } from "~/lib/theme/useHydrateTheme";
 import { withProviders } from "~/lib/withProviders";
 import { GlobalStyles } from "~/styles/GlobalStyles";
