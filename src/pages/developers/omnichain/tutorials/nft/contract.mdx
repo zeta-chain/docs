@@ -44,36 +44,29 @@ npx hardhat omnichain NFT recipient:address
 
 ## Omnichain Contract
 
-```solidity filename="contracts/NFT.sol" {6-8,10,12,14-20,38-46}
+```solidity filename="contracts/NFT.sol" {6-7,10,12,15-18,20,22,31-39}
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
 import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
+import "@zetachain/toolkit/contracts/OnlySystem.sol";
 
-contract NFT is zContract, ERC721 {
-    SystemContract public immutable systemContract;
+contract NFT is zContract, ERC721, OnlySystem {
+    SystemContract public systemContract;
+    error CallerNotOwnerNotApproved();
     uint256 constant BITCOIN = 18332;
-
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIdCounter;
 
     mapping(uint256 => uint256) public tokenAmounts;
     mapping(uint256 => uint256) public tokenChains;
 
+    uint256 private _nextTokenId;
+
     constructor(address systemContractAddress) ERC721("MyNFT", "MNFT") {
         systemContract = SystemContract(systemContractAddress);
-    }
-
-    modifier onlySystem() {
-        require(
-            msg.sender == address(systemContract),
-            "Only system contract can call this function"
-        );
-        _;
+        _nextTokenId = 0;
     }
 
     function onCrossChainCall(
@@ -81,7 +74,7 @@ contract NFT is zContract, ERC721 {
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external override onlySystem {
+    ) external override onlySystem(systemContract) {
         address recipient;
 
         if (context.chainID == BITCOIN) {
@@ -148,11 +141,11 @@ called from the `onCrossChainCall` function.
         uint256 chainId,
         uint256 amount
     ) private {
-        uint256 tokenId = _tokenIdCounter.current();
+        uint256 tokenId = _nextTokenId;
         _safeMint(recipient, tokenId);
         tokenChains[tokenId] = chainId;
         tokenAmounts[tokenId] = amount;
-        _tokenIdCounter.increment();
+        _nextTokenId++;
     }
 ```
 
@@ -168,10 +161,9 @@ want to burn an NFT and withdraw the tokens that it represents.
 
 ```solidity filename="contracts/NFT.sol"
     function burnNFT(uint256 tokenId, bytes memory recipient) public {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "Caller is not owner nor approved"
-        );
+        if (!_isApprovedOrOwner(_msgSender(), tokenId)) {
+            revert CallerNotOwnerNotApproved();
+        }
         address zrc20 = systemContract.gasCoinZRC20ByChainId(
             tokenChains[tokenId]
         );
@@ -282,7 +274,7 @@ npx hardhat cctx 0x8e0c9edd2a570494b8610c99d9772cefd4fb3a5ebb42bb714f83ef898ff53
 
 ✓ CCTXs on ZetaChain found.
 
-✓ 0xcd894e7299d80b6bf04c7a0b1589f0e5e1b4bcdbd691eb780429ceb359006d59: 5 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0xcd894e7299d80b6bf04c7a0b1589f0e5e1b4bcdbd691eb780429ceb359006d59: 11155111 → 7001: OutboundMined (Remote omnichain contract call completed)
 ```
 
 ## Limitations
