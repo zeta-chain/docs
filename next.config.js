@@ -24,6 +24,8 @@ const nextConfig = {
     externalDir: true,
   },
 
+  basePath: "/docs",
+
   headers: async () => nextHeadersConfig,
 
   webpack(config) {
