@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { basePath } from "~/lib/app.constants";
+
 # Setup
 
 Keplr is a popular browser extension wallet for the Cosmos ecosystem. Keplr
@@ -23,4 +25,4 @@ To add ZetaChain to Keplr:
 
 Now open the Keplr extension and you should see your ZetaChain balance:
 
-<Image src="/docs/img/docs/keplr-balances.png" width={400} height={670} alt="Keplr extension" />
+<Image src={`${basePath}/img/docs/keplr-balances.png`} width={400} height={670} alt="Keplr extension" />
