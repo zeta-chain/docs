@@ -60,7 +60,7 @@ export const OpenAPIBrowser = () => {
       setIsLoading(true);
 
       try {
-        const response = await axios.get(`/data/openapi.swagger.yaml`, {
+        const response = await axios.get(`/docs/data/openapi.swagger.yaml`, {
           responseType: "text",
         });
 
