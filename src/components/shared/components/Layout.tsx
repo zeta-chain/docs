@@ -37,7 +37,7 @@ const LayoutContainer = styled.div`
 
         input {
           ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
-               focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300`};
+               focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300 text-sm pl-10`};
         }
 
         ul.nextra-scrollbar {

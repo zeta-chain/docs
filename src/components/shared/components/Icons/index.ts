@@ -7,6 +7,7 @@ export * from "./components/IconBuild";
 export * from "./components/IconCommunity";
 export * from "./components/IconDiscord";
 export * from "./components/IconExclamationCircle";
+export * from "./components/IconSearch";
 export * from "./components/IconSupport";
 export * from "./components/IconTelegram";
 export * from "./components/IconTools";
