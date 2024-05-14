@@ -115,9 +115,10 @@ import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
+import "@zetachain/toolkit/contracts/OnlySystem.sol";
 
-contract Staking is ERC20, zContract {
-    SystemContract public immutable systemContract;
+contract Staking is ERC20, zContract, OnlySystem {
+    SystemContract public systemContract;
     uint256 public immutable chainID;
     uint256 constant BITCOIN = 18332;
 
@@ -145,20 +146,12 @@ contract Staking is ERC20, zContract {
         chainID = chainID_;
     }
 
-    modifier onlySystem() {
-        require(
-            msg.sender == address(systemContract),
-            "Only system contract can call this function"
-        );
-        _;
-    }
-
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external virtual override onlySystem {
+    ) external virtual override onlySystem(systemContract) {
         if (chainID != context.chainID) {
             revert WrongChain(context.chainID);
         }
@@ -371,7 +364,6 @@ connected chain and pass it as an argument to the constructor.
 
 It is also used to get the symbol of the ZRC-20 token on the connected chain.
 
-{/* prettier-ignore-start */}
 ```ts filename="tasks/deploy.ts" {1,7-26,32-36}
 import ZRC20 from "@zetachain/protocol-contracts/abi/zevm/ZRC20.sol/ZRC20.json";
 
@@ -409,7 +401,6 @@ task("deploy", "Deploy the contract", main).addParam(
   "Chain ID (use btc_testnet for Bitcoin Testnet)"
 );
 ```
-{/* prettier-ignore-end */}
 
 ## Tasks to Interact with the Contract
 
