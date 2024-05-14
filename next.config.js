@@ -24,7 +24,7 @@ const nextConfig = {
     externalDir: true,
   },
 
-  basePath: "/docs",
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
 
   headers: async () => nextHeadersConfig,
 
