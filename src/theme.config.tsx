@@ -1,18 +1,18 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { AppHead, IconZetaDocsLogo } from "~/components/shared";
+import { AppHead, ThemeToggle } from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 /**
  * @description Custom Nextra Docs theme configuration
  * @see https://nextra.site/docs/docs-theme/theme-configuration
  */
 const nextraDocsThemeConfig: DocsThemeConfig = {
-  // Add main logo to the left side of the navbar
-  logo: <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />,
+  // Remove logo from the navbar
+  logo: null,
 
-  // Remove navbar from default layout
+  // Add Theme toggle button to the navbar
   navbar: {
-    component: null,
+    extraContent: <ThemeToggle className="hidden sm:flex" />,
   },
 
   // Remove nextra default theme switch in favor of custom theme toggle button
@@ -39,7 +39,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
 
   // Edit search component in the navbar
   search: {
-    placeholder: "Search...",
+    placeholder: "Search the docs",
   },
 
   // Edit sidebar component

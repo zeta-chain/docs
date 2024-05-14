@@ -9,31 +9,31 @@ import { getRevealProps } from "~/lib/helpers/animations";
 import { Footer } from "../../Footer";
 import { IconZetaDocsLogo } from "../../Icons";
 import { ThemeToggle } from "../../ThemeToggle";
-import { closeDrawerWidth, Drawer, navBottomItems, navMainItems } from "../Navigation.constants";
+import { closeDrawerWidth, LeftNavDrawer, navBottomItems, navMainItems } from "../Navigation.constants";
+import { Header } from "./Header";
 import { NavigationItem } from "./NavigationItem";
-import { NavigationTop } from "./NavigationTop";
 
 export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const { upSm } = useCurrentBreakpoint();
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
 
   // To prevent a flash of the drawer on first render given that useCurrentBreakpoint has an issue always returning false for the first render for upLg and others
   useEffect(() => {
-    if (upSm) setIsDrawerOpen(true);
-    else setIsDrawerOpen(false);
+    if (upSm) setIsLeftDrawerOpen(true);
+    else setIsLeftDrawerOpen(false);
   }, [upSm]);
 
   return (
     <>
       <motion.div className="fixed z-[99] top-0 left-0 w-fit h-full" {...getRevealProps({ y: 0 })}>
-        <Drawer
+        <LeftNavDrawer
           variant="permanent"
-          open={isDrawerOpen}
+          open={isLeftDrawerOpen}
           closeDrawerWidth={upSm ? closeDrawerWidth : 0}
           classes={{
             paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
-              isDrawerOpen ? `!w-screen sm:!w-[200px]` : ""
+              isLeftDrawerOpen ? `!w-screen sm:!w-[200px]` : ""
             }`,
           }}
         >
@@ -53,9 +53,9 @@ export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
                       <NavigationItem
                         key={item.label}
                         item={item}
-                        isOpen={isDrawerOpen}
+                        isOpen={isLeftDrawerOpen}
                         onClick={() => {
-                          if (!upSm) setIsDrawerOpen(false);
+                          if (!upSm) setIsLeftDrawerOpen(false);
                         }}
                       />
                     ))}
@@ -74,9 +74,9 @@ export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
                   <NavigationItem
                     key={item.label}
                     item={item}
-                    isOpen={isDrawerOpen}
+                    isOpen={isLeftDrawerOpen}
                     onClick={() => {
-                      if (!upSm) setIsDrawerOpen(false);
+                      if (!upSm) setIsLeftDrawerOpen(false);
                     }}
                   />
                 ))}
@@ -87,21 +87,21 @@ export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
               </div>
             </div>
           </div>
-        </Drawer>
+        </LeftNavDrawer>
       </motion.div>
 
-      <main className="min-h-screen flex-grow sm:pl-[200px]">
-        <NavigationTop isOpen={isDrawerOpen} toggle={() => setIsDrawerOpen((prev) => !prev)} />
+      <div className="min-h-screen flex-grow sm:pl-[200px]">
+        <Header isLeftDrawerOpen={isLeftDrawerOpen} toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)} />
 
         <motion.div
           {...getRevealProps({ y: 0 })}
-          className={"min-h-[calc(100vh-300px)] text-black dark:text-white pt-[70px] sm:pt-0"}
+          className={"min-h-[calc(100vh-300px)] text-black dark:text-white pt-[62px] sm:pt-0"}
         >
           {children}
         </motion.div>
 
         <Footer />
-      </main>
+      </div>
     </>
   );
 };

@@ -6,6 +6,7 @@ import { Navigation } from "./Navigation";
 const LayoutContainer = styled.div`
   ${tw`bg-grey-50 dark:bg-grey-900`};
 
+  /* Base styles for rendered tables */
   table {
     ${tw`border-collapse`};
 
@@ -20,17 +21,68 @@ const LayoutContainer = styled.div`
     }
   }
 
-  /* Custom styles for nextra Navbar component */
+  /* Custom styles for Nextra Navbar component */
   .nextra-nav-container {
+    ${tw`static`};
+
     .nextra-nav-container-blur {
-      ${tw`!bg-grey-50/80 dark:!bg-grey-900/80`};
+      ${tw`hidden`};
     }
 
-    nav a.nx-flex.nx-items-center {
-      ${tw`hover:opacity-100 dark:hover:opacity-100`};
+    nav {
+      ${tw`justify-between px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] h-auto max-w-none`};
+
+      .nextra-search {
+        ${tw`block w-full sm:w-[250px]`};
+
+        input {
+          ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
+               focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300`};
+        }
+
+        ul.nextra-scrollbar {
+          ${tw`left-0 max-w-[calc(100vw-32px)] sm:max-w-[min(calc(100vw-248px), 500px)]`};
+
+          li.nx-text-primary-600 {
+            ${tw`bg-grey-100 dark:bg-grey-700`};
+          }
+        }
+
+        kbd {
+          ${tw`hidden`};
+        }
+      }
+
+      a.nx-flex.nx-items-center,
+      .nextra-hamburger {
+        ${tw`hidden`};
+      }
+    }
+
+    + .nx-mx-auto.nx-flex {
+      ${tw`max-w-none`};
     }
   }
 
+  /* Custom styles for Nextra TOC component */
+  nav.nextra-toc {
+    ${tw`md:mr-14 md:pt-24`};
+
+    .nextra-scrollbar {
+      ${tw`pt-0`};
+
+      > p {
+        ${tw`hidden`};
+      }
+    }
+  }
+
+  /* Custom styles for Nextra main content container */
+  .nextra-content main {
+    ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] md:pt-24 max-w-none`};
+  }
+
+  /* Hide Nextra sidebar component */
   .nextra-sidebar-container {
     ${tw`hidden`};
   }

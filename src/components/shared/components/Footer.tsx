@@ -37,7 +37,7 @@ const links = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-[transparent] border-t border-grey-200 dark:border-grey-600 mx-6 md:mx-[72px] md:px-4 pt-8 pb-10 md:pb-14 flex flex-col md:flex-row md:justify-between gap-14">
+    <footer className="bg-[transparent] border-t border-grey-200 dark:border-grey-600 mx-4 sm:mx-6 md:mx-[72px] md:px-4 pt-8 pb-10 md:pb-14 flex flex-col md:flex-row md:justify-between gap-14">
       <p className="text-sm text-grey-400 dark:text-grey-300 flex-shrink-0">
         © {new Date().getFullYear()} Meta Protocol, Inc
       </p>
