@@ -1,6 +1,7 @@
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
@@ -38,7 +39,9 @@ export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           }}
         >
           <div className="hidden sm:flex items-center sm:w-[200px] h-[104px] py-6 pl-4 sm:pl-6">
-            <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
+            <Link href="/">
+              <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
+            </Link>
           </div>
 
           <div className="flex flex-col gap-6 flex-grow">
