@@ -2,11 +2,11 @@
   "hello": "First Omnichain Contract",
   "staking": "Staking",
   "swap": "Swap",
-  "goldsky": "Subgraph: Goldsky",
+  "swap-zeta": "Swap to ZETA",
   "single-input-multiple-output": "Single Input Multiple Output",
-  "curve": "Curve on zEVM",
+  "nft": "Non-Fungible Tokens (NFTs)",
   "bitcoin-frontend": "Bitcoin Frontend",
+  "goldsky": "Subgraph: Goldsky",
   "particle": "Account Abstraction: Particle Network",
-  "pyth": "Pyth Price Oracle",
-  "nft": "Non-Fungible Tokens (NFTs)"
+  "pyth": "Pyth Price Oracle"
 }

@@ -9,3 +9,5 @@ export const isVercelProd = Boolean(environment.NEXT_PUBLIC_VERCEL_ENV === "prod
 export const isVercelPreview = Boolean(environment.NEXT_PUBLIC_VERCEL_ENV === "preview");
 
 export const isLocalEnv = !isVercelProd && !isVercelPreview;
+
+export const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";

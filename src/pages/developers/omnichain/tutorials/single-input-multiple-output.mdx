@@ -45,15 +45,16 @@ import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
 import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@zetachain/toolkit/contracts/OnlySystem.sol";
 
-contract MultiOutput is zContract, Ownable {
+contract Multioutput is zContract, Ownable, OnlySystem {
     error NoAvailableTransfers();
     error InvalidRecipient();
     error FetchingBTCZRC20Failed();
 
     event Withdrawal(address, uint256, bytes);
 
-    SystemContract public immutable systemContract;
+    SystemContract public systemContract;
 
     uint256 constant BITCOIN = 18332;
 
@@ -61,22 +62,14 @@ contract MultiOutput is zContract, Ownable {
         systemContract = SystemContract(systemContractAddress);
     }
 
-    modifier onlySystem() {
-        require(
-            msg.sender == address(systemContract),
-            "Only system contract can call this function"
-        );
-        _;
-    }
-
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external virtual override onlySystem {
-        address btcToken = systemContract.gasCoinZRC20ByChainId(BITCOIN);
-        if (btcToken == address(0)) revert FetchingBTCZRC20Failed();
+    ) external virtual override onlySystem(systemContract) {
+        if (systemContract.gasCoinZRC20ByChainId(BITCOIN) == address(0))
+            revert FetchingBTCZRC20Failed();
 
         (
             address evmRecipient,
@@ -108,7 +101,7 @@ contract MultiOutput is zContract, Ownable {
                 BytesHelperLib.addressToBytes(evmRecipient)
             );
 
-            if (targetZRC20 == btcToken) {
+            if (targetZRC20 == systemContract.gasCoinZRC20ByChainId(BITCOIN)) {
                 if (btcRecipient.length == 0) revert InvalidRecipient();
                 recipient = abi.encodePacked(btcRecipient);
             }
@@ -159,17 +152,17 @@ Next, implement the `parseMessage` function:
             (
                 address evmAddress,
                 bytes memory btcAddress,
-                bytes memory targetToken
+                bytes memory targetTokens
             ) = abi.decode(message, (address, bytes, bytes));
 
             btcRecipient = btcAddress;
             evmRecipient = evmAddress;
 
-            uint256 numTokens = targetToken.length / 32;
+            uint256 numTokens = targetTokens.length / 32;
             destinationTokens = new address[](numTokens);
             for (uint256 i = 0; i < numTokens; i++) {
                 destinationTokens[i] = BytesHelperLib.bytesMemoryToAddress(
-                    targetToken,
+                    targetTokens,
                     i * 32
                 );
             }
@@ -209,19 +202,15 @@ Finally, implement the `_doSwapAndWithdraw` function:
             .withdrawGasFee();
 
         uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(
-            systemContract.wZetaContractAddress(),
-            systemContract.uniswapv2FactoryAddress(),
-            systemContract.uniswapv2Router02Address(),
+            systemContract,
             zrc20,
             gasFee,
             gasZRC20,
             amountToTransfer
         );
 
-        uint256 outputAmount = SwapHelperLib._doSwap(
-            systemContract.wZetaContractAddress(),
-            systemContract.uniswapv2FactoryAddress(),
-            systemContract.uniswapv2Router02Address(),
+        uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
+            systemContract,
             zrc20,
             amountToTransfer - inputForGas,
             targetZRC20,
@@ -254,8 +243,7 @@ Modify the interact task to correctly handle BTC destination address and a list
 of destination token addresses. If BTC address is provided, it gets converted
 into bytes. Destination tokens are split into an array and encoded as addresses.
 
-{/* prettier-ignore-start */}
-```ts filename="tasks/interact.ts" {4-18, 23}
+```ts filename="tasks/interact.ts" {4-27, 32}
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
 
@@ -267,20 +255,28 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
     bitcoinAddress = args.btcRecipient;
   }
 
-  const bitcoinAddressBytes = utils.solidityPack(["bytes"], [utils.toUtf8Bytes(bitcoinAddress)]);
-
-  const tokensBytes = ethers.utils.concat(
-    destinationTokens.map((address) => utils.defaultAbiCoder.encode(["address"], [address]))
+  const bitcoinAddressBytes = utils.solidityPack(
+    ["bytes"],
+    [utils.toUtf8Bytes(bitcoinAddress)]
   );
 
-  data = prepareData(args.contract, ["address", "bytes", "bytes"], [args.recipient, bitcoinAddressBytes, tokensBytes]);
+  const tokensBytes = ethers.utils.concat(
+    destinationTokens.map((address) =>
+      utils.defaultAbiCoder.encode(["address"], [address])
+    )
+  );
+
+  data = prepareData(
+    args.contract,
+    ["address", "bytes", "bytes"],
+    [args.recipient, bitcoinAddressBytes, tokensBytes]
+  );
   //...
 };
 
 task("interact", "Interact with the contract", main)
   .addOptionalParam("btcRecipient", "The bitcoin address to send to");
 ```
-{/* prettier-ignore-end */}
 
 ## Create an Account and Request Tokens from the Faucet
 

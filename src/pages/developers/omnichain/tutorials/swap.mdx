@@ -36,7 +36,7 @@ npx hardhat omnichain Swap targetToken:address recipient
 
 ## Omnichain Contract
 
-```solidity filename="contracts/Swap.sol" {6-7,11,31-72}
+```solidity filename="contracts/Swap.sol" {6-7,12,24-61}
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -44,21 +44,14 @@ import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
 import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
+import "@zetachain/toolkit/contracts/OnlySystem.sol";
 
-contract Swap is zContract {
-    SystemContract public immutable systemContract;
+contract Swap is zContract, OnlySystem {
+    SystemContract public systemContract;
     uint256 constant BITCOIN = 18332;
 
     constructor(address systemContractAddress) {
         systemContract = SystemContract(systemContractAddress);
-    }
-
-    modifier onlySystem() {
-        require(
-            msg.sender == address(systemContract),
-            "Only system contract can call this function"
-        );
-        _;
     }
 
     function onCrossChainCall(
@@ -66,7 +59,7 @@ contract Swap is zContract {
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external virtual override onlySystem {
+    ) external virtual override onlySystem(systemContract) {
         address targetTokenAddress;
         bytes memory recipientAddress;
 
@@ -88,19 +81,15 @@ contract Swap is zContract {
             .withdrawGasFee();
 
         uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(
-            systemContract.wZetaContractAddress(),
-            systemContract.uniswapv2FactoryAddress(),
-            systemContract.uniswapv2Router02Address(),
+            systemContract,
             zrc20,
             gasFee,
             gasZRC20,
             amount
         );
 
-        uint256 outputAmount = SwapHelperLib._doSwap(
-            systemContract.wZetaContractAddress(),
-            systemContract.uniswapv2FactoryAddress(),
-            systemContract.uniswapv2Router02Address(),
+        uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
+            systemContract,
             zrc20,
             amount - inputForGas,
             targetTokenAddress,
@@ -168,13 +157,7 @@ If it's not a valid bech32 address, then we assume it's an EVM address and use
 Finally, update the `prepareData` function call to use the `bytes` type for the
 recipient.
 
-{/* prettier-ignore-start */}
-```ts filename="tasks/interact.ts" {6,11-18,22-23}
-import { task } from "hardhat/config";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { parseEther } from "@ethersproject/units";
-import { getAddress } from "@zetachain/protocol-contracts";
-import { prepareData } from "@zetachain/toolkit/client";
+```ts filename="tasks/interact.ts" {1,6-22}
 import bech32 from "bech32";
 
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
@@ -183,7 +166,10 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   let recipient;
   try {
     if (bech32.decode(args.recipient)) {
-      recipient = utils.solidityPack(["bytes"], [utils.toUtf8Bytes(args.recipient)]);
+      recipient = utils.solidityPack(
+        ["bytes"],
+        [utils.toUtf8Bytes(args.recipient)]
+      );
     }
   } catch (e) {
     recipient = args.recipient;
@@ -194,50 +180,9 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
     ["address", "bytes"],
     [args.targetToken, recipient]
   );
-
-  let tx;
-
-  if (args.token) {
-    const custodyAddress = getAddress("erc20Custody", hre.network.name as any);
-    if (!custodyAddress) {
-      throw new Error(`No ERC20 Custody contract found for ${hre.network.name} network`);
-    }
-
-    const custodyContract = new ethers.Contract(custodyAddress, ERC20Custody.abi, signer);
-    const tokenContract = new ethers.Contract(args.token, ERC20.abi, signer);
-    const decimals = await tokenContract.decimals();
-    const value = parseUnits(args.amount, decimals);
-    const approve = await tokenContract.approve(custodyAddress, value);
-    await approve.wait();
-
-    tx = await custodyContract.deposit(signer.address, args.token, value, data);
-    tx.wait();
-  } else {
-    const value = parseUnits(args.amount, 18);
-    const to = getAddress("tss", hre.network.name as any);
-    tx = await signer.sendTransaction({ data, to, value });
-  }
-
-  if (args.json) {
-    console.log(JSON.stringify(tx, null, 2));
-  } else {
-    console.log(`🔑 Using account: ${signer.address}\n`);
-
-    console.log(`🚀 Successfully broadcasted a token transfer transaction on ${hre.network.name} network.
-📝 Transaction hash: ${tx.hash}
-  `);
-  }
-};
-
-task("interact", "Interact with the contract", main)
-  .addParam("contract", "The address of the withdraw contract on ZetaChain")
-  .addParam("amount", "Amount of tokens to send")
-  .addOptionalParam("token", "The address of the token to send")
-  .addFlag("json", "Output in JSON")
-  .addParam("targetToken")
-  .addParam("recipient");
+  //...
+}
 ```
-{/* prettier-ignore-end */}
 
 ## Create an Account and Request Tokens from the Faucet
 
