@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import SwaggerUI from "swagger-ui-react";
 import tw, { styled } from "twin.macro";
 
+import { basePath } from "~/lib/app.constants";
 import { NetworkType } from "~/lib/app.types";
 
 const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
@@ -60,7 +61,7 @@ export const OpenAPIBrowser = () => {
       setIsLoading(true);
 
       try {
-        const response = await axios.get(`/docs/data/openapi.swagger.yaml`, {
+        const response = await axios.get(`${basePath}/data/openapi.swagger.yaml`, {
           responseType: "text",
         });
 
