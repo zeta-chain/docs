@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Image from "next/image";
+import { useConfig } from "nextra-theme-docs";
 import tw, { styled } from "twin.macro";
 
 import { basePath } from "~/lib/app.constants";
@@ -17,32 +18,43 @@ const StyledHero = styled.div`
 `;
 
 type HeroProps = {
-  title: string;
-  description: React.ReactNode;
+  title?: string;
+  description?: React.ReactNode;
   imageUrl?: string;
   variant?: "primary" | "secondary";
 };
 
 export const Hero: React.FC<HeroProps> = ({ title, description, imageUrl, variant = "primary" }) => {
+  const { title: pageTitle, frontMatter } = useConfig();
+
+  const heroTitle = title || (frontMatter.title ? String(frontMatter.title) : undefined) || pageTitle;
+  const heroDescription = description || (frontMatter.description ? String(frontMatter.description) : undefined);
+  const heroImageUrl = imageUrl || (frontMatter.imageUrl ? String(frontMatter.imageUrl) : undefined);
+
   return (
-    <StyledHero className={clsx("grid grid-cols-10 gap-8")}>
+    <StyledHero>
       <div
         className={clsx("order-2 lg:order-1 flex flex-col justify-center gap-8 sm:gap-10", {
-          "col-span-10 lg:col-span-4": variant === "primary" && imageUrl,
-          "col-span-10 lg:col-span-6": variant === "secondary" && imageUrl,
-          "col-span-10": !imageUrl,
+          "col-span-10 lg:col-span-4": variant === "primary" && heroImageUrl,
+          "col-span-10 lg:col-span-6": variant === "secondary" && heroImageUrl,
+          "col-span-10": !heroImageUrl,
         })}
       >
-        <h1>{title}</h1>
+        <h1>{heroTitle}</h1>
 
-        <div className="description">{description}</div>
+        {heroDescription && <div className="description">{heroDescription}</div>}
       </div>
 
-      {imageUrl && (
-        <div className="order-1 lg:order-2 col-span-10 lg:col-span-4 flex lg:justify-center">
+      {heroImageUrl && (
+        <div
+          className={clsx("order-1 lg:order-2 col-span-10 flex lg:justify-center", {
+            "lg:col-span-6": variant === "primary",
+            "lg:col-span-4": variant === "secondary",
+          })}
+        >
           <Image
-            src={`${basePath}${imageUrl}`}
-            alt={title}
+            src={`${basePath}${heroImageUrl}`}
+            alt={heroTitle}
             width={448}
             height={520}
             className="w-auto h-[200px] sm:h-[260px] lg:h-[520px] !rounded-none !mt-0"

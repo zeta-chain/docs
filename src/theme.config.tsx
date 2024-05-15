@@ -7,6 +7,8 @@ import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
  * @see https://nextra.site/docs/docs-theme/theme-configuration
  */
 const nextraDocsThemeConfig: DocsThemeConfig = {
+  docsRepositoryBase: "https://github.com/zeta-chain/docs",
+
   // Remove logo from the navbar
   logo: null,
 
@@ -76,6 +78,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   // Remove footer component
   footer: {
     component: null,
+    text: `© ${new Date().getFullYear()} Meta Protocol, Inc`,
   },
 };
 
