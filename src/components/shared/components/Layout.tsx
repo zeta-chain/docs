@@ -32,6 +32,7 @@ const LayoutContainer = styled.div`
     nav {
       ${tw`justify-between px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] h-auto max-w-none`};
 
+      /* Custom styles for Nextra Search component */
       .nextra-search {
         ${tw`block w-full sm:w-[250px]`};
 
@@ -45,6 +46,10 @@ const LayoutContainer = styled.div`
 
           li.nx-text-primary-600 {
             ${tw`bg-grey-100 dark:bg-grey-700`};
+
+            a {
+              ${tw`focus:outline-none focus:shadow-none focus:ring-0 focus:ring-offset-0`};
+            }
           }
         }
 
