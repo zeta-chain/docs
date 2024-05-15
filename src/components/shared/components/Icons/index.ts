@@ -6,6 +6,7 @@ export * from "./components/IconAbout";
 export * from "./components/IconBuild";
 export * from "./components/IconCommunity";
 export * from "./components/IconDiscord";
+export * from "./components/IconDocument";
 export * from "./components/IconExclamationCircle";
 export * from "./components/IconSearch";
 export * from "./components/IconSupport";

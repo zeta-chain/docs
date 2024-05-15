@@ -93,13 +93,10 @@ export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
         </LeftNavDrawer>
       </motion.div>
 
-      <div className="min-h-screen flex-grow sm:pl-[200px]">
+      <div className="min-h-screen flex flex-col sm:pl-[200px]">
         <Header isLeftDrawerOpen={isLeftDrawerOpen} toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)} />
 
-        <motion.div
-          {...getRevealProps({ y: 0 })}
-          className={"min-h-[calc(100vh-300px)] text-black dark:text-white pt-[62px] sm:pt-0"}
-        >
+        <motion.div {...getRevealProps({ y: 0 })} className={"flex-grow text-black dark:text-white pt-[62px] sm:pt-0"}>
           {children}
         </motion.div>
 

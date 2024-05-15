@@ -82,8 +82,10 @@ const LayoutContainer = styled.div`
     ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] md:pt-24 max-w-none`};
   }
 
-  /* Hide Nextra sidebar component */
-  .nextra-sidebar-container {
+  /* Hide Nextra docs theme components */
+  .nextra-sidebar-container,
+  .nextra-breadcrumb,
+  .nextra-toc {
     ${tw`hidden`};
   }
 
@@ -109,7 +111,7 @@ const LayoutContainer = styled.div`
   }
 
   img {
-    ${tw`rounded-[5px] mt-6`};
+    ${tw`rounded-lg mt-6`};
   }
 
   /* Custom Shiki code block syntax highlighting styles */
