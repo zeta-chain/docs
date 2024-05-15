@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useConfig } from "nextra-theme-docs";
 import tw, { styled } from "twin.macro";
 
+import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { basePath } from "~/lib/app.constants";
 
 const StyledHero = styled.div`
@@ -20,24 +21,27 @@ const StyledHero = styled.div`
 type HeroProps = {
   title?: string;
   description?: React.ReactNode;
-  imageUrl?: string;
+  imgUrl?: string;
+  imgMaxWidth?: number;
   variant?: "primary" | "secondary";
 };
 
-export const Hero: React.FC<HeroProps> = ({ title, description, imageUrl, variant = "primary" }) => {
+export const Hero: React.FC<HeroProps> = ({ title, description, imgUrl, imgMaxWidth, variant = "primary" }) => {
+  const { upLg } = useCurrentBreakpoint();
   const { title: pageTitle, frontMatter } = useConfig();
 
   const heroTitle = title || (frontMatter.title ? String(frontMatter.title) : undefined) || pageTitle;
   const heroDescription = description || (frontMatter.description ? String(frontMatter.description) : undefined);
-  const heroImageUrl = imageUrl || (frontMatter.imageUrl ? String(frontMatter.imageUrl) : undefined);
+  const heroImgUrl = imgUrl || (frontMatter.imgUrl ? String(frontMatter.imgUrl) : undefined);
+  const heroImgMaxWidth = imgMaxWidth || (frontMatter.imgMaxWidth ? Number(frontMatter.imgMaxWidth) : undefined);
 
   return (
     <StyledHero>
       <div
         className={clsx("order-2 lg:order-1 flex flex-col justify-center gap-8 sm:gap-10", {
-          "col-span-10 lg:col-span-4": variant === "primary" && heroImageUrl,
-          "col-span-10 lg:col-span-6": variant === "secondary" && heroImageUrl,
-          "col-span-10": !heroImageUrl,
+          "col-span-10 lg:col-span-5 xl:col-span-4": variant === "primary" && heroImgUrl,
+          "col-span-10 lg:col-span-7 xl:lg:col-span-6": variant === "secondary" && heroImgUrl,
+          "col-span-10": !heroImgUrl,
         })}
       >
         <h1>{heroTitle}</h1>
@@ -45,20 +49,23 @@ export const Hero: React.FC<HeroProps> = ({ title, description, imageUrl, varian
         {heroDescription && <div className="description">{heroDescription}</div>}
       </div>
 
-      {heroImageUrl && (
+      {heroImgUrl && (
         <div
           className={clsx("order-1 lg:order-2 col-span-10 flex lg:justify-center", {
-            "lg:col-span-6": variant === "primary",
-            "lg:col-span-4": variant === "secondary",
+            "lg:col-span-5 xl:col-span-6": variant === "primary",
+            "lg:col-span-3 xl:col-span-4": variant === "secondary",
           })}
         >
           <Image
-            src={`${basePath}${heroImageUrl}`}
+            src={`${basePath}${heroImgUrl}`}
             alt={heroTitle}
             width={448}
             height={520}
-            className="w-auto h-[200px] sm:h-[260px] lg:h-[520px] !rounded-none !mt-0"
+            className="w-auto sm:w-full !rounded-none !mt-0 max-h-[250px] sm:max-h-[unset] sm:max-w-[250px]"
             priority
+            style={{
+              ...(heroImgMaxWidth && upLg && { maxWidth: `${frontMatter.imgMaxWidth}px` }),
+            }}
           />
         </div>
       )}
