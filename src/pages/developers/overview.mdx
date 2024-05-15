@@ -7,15 +7,15 @@ fast block time and instant finality.
 ZetaChain hosts an Ethereum Virtual Machine (EVM) compatible execution layer
 called the Universal EVM. In addition to supporting all EVM features and
 standard interactions (such as contract creation, contract interaction, and
-contract composition), ZetaChain's EVM distinguishing characteristics include:
+contract composition), ZetaChain's EVM is connected to the Chain Abstraction
+Framework (CAF), which enables omnichain connectivity of the network to any
+blockchain.
 
-- The ability for contracts on ZetaChain to be called from connected chains
-- The capacity for contracts on ZetaChain to generate outbound transactions on
-  external chains.
-
-These two unique features enable ZetaChain's EVM to function as a
-general-purpose programmable platform, supporting cross-chain transactions that
-can atomically modify states across different chains in a single step.
+Thanks to CAF, ZetaChain's EVM can be called from any chain, manage
+native assets on any chain, and access asynchronous arbitrary messaging to call
+contracts on other chains. Developing with the CAF offers the ability to build
+robust state management combined with multi-leg, multi-chain apps' needs, all in
+the familiar EVM development environment.
 
 ZetaChain offers two ways to develop dApps: **omnichain contracts** and
 **cross-chain message passing**.
