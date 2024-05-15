@@ -15,14 +15,20 @@ look at ZetaChain's background and architecture.
 
 ## Key Features
 
-### Decentralized and Public Blockchain
+### Chain Abstraction Framework
 
 ZetaChain is a decentralized and public blockchain network. It is built on
-Cosmos SDK and Comet BFT consensus. While many cross-chain solutions like
-bridges often have centralized trust models with track record of exploits and
-hacks, ZetaChain is a Proof-of-Stake blockchain, where all transactions and
-activity on the platform -- even cross-chain transactions -- are fully
-transparent, verifiable, and function in a trust-minimized manner.
+Cosmos SDK and Comet BFT consensus. The unique feature of ZetaChain is the Chain
+Abstraction Framework (CAF), which enables omnichain connectivity of the network
+to any blockchain. This framework is accessible through the Universal EVM, which
+is a synchronous environment that can be called from any chain, manage native
+assets on any chain, and access asynchronous arbitrary messaging to call
+contracts on other chains. Developing with the CAF offers the ability to build
+robust state management combined with multi-leg, multi-chain apps' needs, all in
+the familiar EVM development environment. The resulting user experience is
+unbounded, where the majority of apps can be used entirely from any single
+network while the rest of the app logic can be affordably, securely, and
+performantly abstracted.
 
 ### Hyper-connected nodes
 
