@@ -1,42 +1,49 @@
 # What is ZetaChain?
 
-ZetaChain is the foundational, public blockchain that enables omnichain, generic
-smart contracts and messaging between _any_ blockchain. It solves the problems
-of “cross-chain” and “multi-chain” and aims to open the crypto and global
-financial ecosystem to anyone. ZetaChain envisions and supports a truly fluid,
-multi-chain crypto ecosystem, where users and developers can move between and
-appreciate the benefits of any blockchain: payments, DeFi, liquidity, games,
-art, social graphs, performance, security, privacy, and so on.
+ZetaChain is the foundational, public blockchain that enables omnichain smart
+contracts and messaging between any blockchain. It solves the problems of
+“cross-chain” and “multi-chain” and aims to open the crypto and global financial
+ecosystem to anyone. ZetaChain envisions and supports a truly fluid, multi-chain
+crypto ecosystem, where users and developers can move between and appreciate the
+benefits of any blockchain: payments, DeFi, liquidity, games, art, social
+graphs, performance, security, privacy, and more. As the first Universal EVM,
+ZetaChain abstracts chains, assets, and data, orchestrating them to offer a
+seamless and comprehensive user experience across all connected networks.
 
 View the whitepaper [here](https://zetachain.com/whitepaper.pdf) for a closer
 look at ZetaChain's background and architecture.
 
-## Key features
+## Key Features
 
-### Decentralized and public
+### Chain Abstraction Framework
 
 ZetaChain is a decentralized and public blockchain network. It is built on
-Cosmos SDK and Tendermint Consensus. While many cross-chain solutions like
-bridges have to vary, often centralized trust models that have a track record
-for being susceptible to exploits and hacks, ZetaChain is a Proof-of-Stake
-blockchain, where all transactions and activity on the platform -- even
-cross-chain transactions -- are fully transparent, verifiable, and function in a
-trust-minimized manner.
+Cosmos SDK and Comet BFT consensus. The unique feature of ZetaChain is the Chain
+Abstraction Framework (CAF), which enables omnichain connectivity of the network
+to any blockchain. This framework is accessible through the Universal EVM, which
+is a synchronous environment that can be called from any chain, manage native
+assets on any chain, and access asynchronous arbitrary messaging to call
+contracts on other chains. Developing with the CAF offers the ability to build
+robust state management combined with multi-leg, multi-chain apps' needs, all in
+the familiar EVM development environment. The resulting user experience is
+unbounded, where the majority of apps can be used entirely from any single
+network while the rest of the app logic can be affordably, securely, and
+performantly abstracted.
 
 ### Hyper-connected nodes
 
 ZetaChain's nodes have observers that monitor transactions on every connected
 chain. Through ZetaChain's TSS architecture, the network can sign and verify
-transactions on every connected chain as a wallet can. By being able to read and
-write to connected chains in a secure, decentralized manner, these
-hyper-connected nodes provide a seamless omnichain environment for developers to
-build novel and powerful cross-chain applications on top of.
+transactions on every connected chain. By being able to read and write to
+connected chains in a secure, decentralized manner, these hyper-connected nodes
+provide a seamless Chain Abstraction Framework for developers to build novel and
+powerful cross-chain applications.
 
 ### Omnichain smart contracts
 
-Smart contracts can be deployed natively on ZetaChain that can read/write to
-connected chains. ZetaChain is the only public blockchain to support smart
-contracts with this capability, enabling a new paradigm of app development.
+Smart contracts deployed natively on ZetaChain can read/write to connected
+chains. ZetaChain is the only public blockchain to support smart contracts with
+this capability, enabling a new paradigm of app development.
 
 ### Cross-chain message passing
 
@@ -44,6 +51,12 @@ A developer can pass messages (data and value) between chains and layers with
 simple function calls. Through message passing, a dApp developer can build
 powerful cross-chain applications by simply implementing a few functions within
 their existing smart contracts.
+
+By composing messaging capabilities with Omnichain Smart Contracts, apps can
+abstract multi-leg cross-chain transactions in tandem with native asset
+movements and interactions. For example, a contract on ZetaChain could be called
+by a user on Bitcoin and also enact external contract calls on Ethereum and BNB
+Chain, and more legs thereafter — all in just one step for the user.
 
 Learn how to build dApps using ZetaChain's Connector
 [here](/developers/cross-chain-messaging/connector).
