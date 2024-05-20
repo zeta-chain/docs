@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { IconArticle001 } from "./IconArticle001";
 import { IconArticle002 } from "./IconArticle002";
@@ -87,7 +87,12 @@ const articleIcons = [
 const ICON_COUNT = articleIcons.length;
 
 export const IconArticleRandom: React.FC = () => {
+  const [isRendered, setIsRendered] = useState(false);
+  useEffect(() => setIsRendered(true), []);
+
   const randomIndex = useMemo(() => Math.floor(Math.random() * ICON_COUNT), []);
+
+  if (!isRendered) return null;
 
   return articleIcons[randomIndex];
 };
