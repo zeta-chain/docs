@@ -16,7 +16,7 @@ export const DeveloperCommunity: React.FC = () => {
           alt="Developer Community"
           width={574}
           height={288}
-          className="w-auto sm:w-full !rounded-none !mt-0 max-w-[250px] sm:max-w-[350px] lg:max-w-[574px]"
+          className="w-full !rounded-none !mt-0 max-w-[250px] lg:max-w-[574px]"
         />
       </div>
 
