@@ -4,6 +4,48 @@ imgUrl: /img/pages/zetachain-documentation.svg
 imgMaxWidth: 448
 ---
 
-import { Hero, HomeHeroDescription } from "~/components/shared";
+import { ArticleNavigation, Hero, HomeHeroDescription } from "~/components/shared";
 
 <Hero variant="secondary" description={<HomeHeroDescription />} />
+
+<ArticleNavigation
+  title="Get Started"
+  description="Dive into the basics of ZetaChain"
+  articles={[
+    {
+      title: "What is ZetaChain?",
+      description: "Learn about the unparalleled blockchain enabling omnichain.",
+      href: "about/zetachain",
+      readTime: "5 min",
+      readType: "Beginner",
+    },
+    {
+      title: "Install the CLI",
+      description: "Learn how to install a tool that allows you to interact with the ZetaChain network.",
+      href: "developers/cli/setup",
+      readTime: "5 min",
+      readType: "Beginner",
+    },
+    {
+      title: "Smart Contract Templates",
+      description: "Short description about this article that is at a maximum three lines.",
+      href: "about/zetachain",
+      readTime: "5 min",
+      readType: "Beginner",
+    },
+    {
+      title: "Omnichain Contracts",
+      description: "Short description about this article that is at a maximum three lines.",
+      href: "about/zetachain",
+      readTime: "5 min",
+      readType: "Beginner",
+    },
+    {
+      title: "Cross-chain Messaging",
+      description: "Short description about this article that is at a maximum three lines.",
+      href: "about/zetachain",
+      readTime: "5 min",
+      readType: "Beginner",
+    },
+  ]}
+/>

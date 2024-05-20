@@ -27,6 +27,7 @@
     "@shikijs/transformers": "1.3.0",
     "@svgr/webpack": "6.5.1",
     "@t3-oss/env-nextjs": "0.7.1",
+    "@tailwindcss/line-clamp": "0.4.4",
     "@zetachain/addresses": "0.0.13",
     "@zetachain/toolkit": "6.0.0",
     "@zetachain/ui-toolkit": "1.0.3",
