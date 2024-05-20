@@ -89,7 +89,6 @@ export const CommunityLedGroups: React.FC = () => {
         {communityGroups.map((item, index) => (
           <div
             key={index}
-            {...item}
             className="flex flex-col gap-6 sm:min-h-[192px] p-3 sm:p-6 justify-between items-start rounded-lg border border-grey-200 dark:border-grey-600"
           >
             <h3 className="text-xl font-medium text-black dark:text-white">{item.name}</h3>
