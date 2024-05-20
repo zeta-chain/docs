@@ -1,7 +1,7 @@
 import { globalLinks } from "~/constants";
 
-import { ArticleNavigationCard, ArticleNavigationCardProps, ArticleNavigationTitle } from "./ArticleNavigation";
-import { IconDiscord, IconGitHub, IconMedium, IconReddit, IconTelegram, IconTwitter, IconYouTube } from "./Icons";
+import { ArticleNavigationCard, ArticleNavigationCardProps, ArticleNavigationTitle } from "../../ArticleNavigation";
+import { IconDiscord, IconGitHub, IconMedium, IconReddit, IconTelegram, IconTwitter, IconYouTube } from "../../Icons";
 
 const mainChannels: ArticleNavigationCardProps[] = [
   {
