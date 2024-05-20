@@ -87,12 +87,12 @@ const articleIcons = [
 const ICON_COUNT = articleIcons.length;
 
 export const IconArticleRandom: React.FC = () => {
-  const [isRendered, setIsRendered] = useState(false);
-  useEffect(() => setIsRendered(true), []);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
 
   const randomIndex = useMemo(() => Math.floor(Math.random() * ICON_COUNT), []);
 
-  if (!isRendered) return null;
+  if (!isMounted) return null;
 
   return articleIcons[randomIndex];
 };
