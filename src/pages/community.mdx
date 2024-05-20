@@ -5,8 +5,12 @@ imgUrl: /img/pages/community.svg
 imgMaxWidth: 525
 ---
 
-import { Hero, OfficialChannels } from "~/components/shared";
+import { DeveloperCommunity, Hero, OfficialChannels } from "~/components/shared";
 
 <Hero />
 
-<OfficialChannels />
+<div className='flex flex-col gap-20 sm:gap-[120px]'>
+  <OfficialChannels />
+
+  <DeveloperCommunity />
+</div>

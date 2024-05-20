@@ -12,5 +12,5 @@ export const globalLinks = {
   whitepaperLink: "https://www.zetachain.com/whitepaper.pdf",
   mediumLink: "https://blog.zetachain.com/",
   youTubeLink: "https://www.youtube.com/@ZetaBlockchain",
-  redditLink: "https://www.reddit.com/r/zetablockchain/",
+  redditLink: "https://www.reddit.com/r/zetablockchain",
 };
