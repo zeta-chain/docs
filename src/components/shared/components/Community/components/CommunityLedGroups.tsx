@@ -81,7 +81,7 @@ export const CommunityLedGroups: React.FC = () => {
     <div className="flex flex-col gap-10">
       <ArticleNavigationTitle
         title="Community-led Groups"
-        description="Social channels run the by the community for support, local events, news and more."
+        description="Social channels run the by the community for support, local events, news and more"
         colorClass="bg-[#00C6EE]"
       />
 

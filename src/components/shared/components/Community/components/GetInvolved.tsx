@@ -1,21 +1,19 @@
 import Image from "next/image";
 
+import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
 
 import { ArticleNavigationTitle } from "../../ArticleNavigation";
 import { IconClaim, IconSparkle } from "../../Icons";
 import { PrimaryLink } from "../../Link";
 
-const techAmbassadorProgramLink = "https://zetachain.deform.cc/TechAmbassadors/";
-const communityAmbassadorLink = "https://zealy.io/cw/zetachain/questboard";
-
 export const GetInvolved = () => {
   return (
     <div className="flex flex-col gap-10">
       <ArticleNavigationTitle
         title="Get Involved"
-        description="Social channels run the by the community for support, local events, news and more."
-        colorClass="bg-[#9AEA4A] dark:bg-[#B0FF61]"
+        description="Social channels run the by the community for support, local events, news and more"
+        colorClass="bg-[#9AEA4A]"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6 lg:gap-8">
@@ -26,7 +24,7 @@ export const GetInvolved = () => {
               alt="Tech Ambassador Program"
               width={384}
               height={246}
-              className="w-full !rounded-none !mt-0 max-w-[300px] sm:max-w-[384px]"
+              className="w-full !rounded-none !mt-0 max-w-[300px] sm:max-w-[384px] lg:max-w-full lg:w-auto lg:h-[240px]"
             />
           </div>
 
@@ -35,25 +33,25 @@ export const GetInvolved = () => {
             <p className="text-base text-grey-400 dark:text-grey-300">Apply to become a Tech Ambassador</p>
           </div>
 
-          <p className="text-base text-grey-400 dark:text-grey-300">
+          <p className="text-base text-grey-400 dark:text-grey-300 flex-grow">
             The Tech Leads program is designed to scale and improve ZetaChain devX. It is flexible and based on your
             unique strengths and interests. Help monitor and support the Discord and contribute articles, code, and
             tutorials or help run live events.
           </p>
 
-          <PrimaryLink href={techAmbassadorProgramLink} target="_blank" icon={<IconClaim />}>
+          <PrimaryLink href={globalLinks.techAmbassadorProgramLink} target="_blank" icon={<IconClaim />}>
             Apply Now
           </PrimaryLink>
         </div>
 
         <div className="flex flex-col gap-[30px] py-10 px-6 rounded-lg border border-grey-200 dark:border-grey-600">
-          <div className="flex justify-center flex-grow">
+          <div className="flex justify-center">
             <Image
               src={`${basePath}/img/pages/community-ambassador.svg`}
               alt="Community Ambassador"
               width={424}
               height={156}
-              className="w-full !rounded-none !mt-0 max-w-[380px] sm:max-w-[424px]"
+              className="w-full !rounded-none !mt-0 max-w-[380px] sm:max-w-[424px] lg:max-w-full lg:w-auto lg:h-[240px]"
             />
           </div>
 
@@ -62,13 +60,13 @@ export const GetInvolved = () => {
             <p className="text-base text-grey-400 dark:text-grey-300">Lead a local community group</p>
           </div>
 
-          <p className="text-base text-grey-400 dark:text-grey-300">
+          <p className="text-base text-grey-400 dark:text-grey-300 flex-grow">
             Become a ZetaChain Community Ambassador and help establish or run community events, and support your region.
             Ambassadors enjoy exclusive perks and get to help shape the kind of events, talks, meetups and more for
             their region.
           </p>
 
-          <PrimaryLink href={communityAmbassadorLink} target="_blank" icon={<IconSparkle />}>
+          <PrimaryLink href={globalLinks.communityAmbassadorLink} target="_blank" icon={<IconSparkle />}>
             Apply Now
           </PrimaryLink>
         </div>

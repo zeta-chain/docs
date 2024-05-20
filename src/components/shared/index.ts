@@ -11,4 +11,5 @@ export * from "./components/Icons";
 export * from "./components/Layout";
 export * from "./components/PageBlocked";
 export * from "./components/PreloadedFonts";
+export * from "./components/Support";
 export * from "./components/ThemeToggle";

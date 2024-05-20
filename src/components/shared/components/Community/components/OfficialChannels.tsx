@@ -56,7 +56,7 @@ export const OfficialChannels = () => {
     <div className="flex flex-col gap-10">
       <ArticleNavigationTitle
         title="Official Channels"
-        description="ZetaChain’s official social channels for news, announcements and more."
+        description="ZetaChain’s official social channels for news, announcements and more"
       />
 
       <div className="flex flex-col gap-5 md:gap-6 lg:gap-8">
