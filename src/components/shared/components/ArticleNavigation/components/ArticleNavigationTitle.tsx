@@ -11,7 +11,7 @@ export const ArticleNavigationTitle: React.FC<ArticleNavigationTitleProps> = ({ 
     <div className="flex flex-col gap-1 sm:gap-2">
       <div
         className={clsx(
-          "h-[3px] rounded-full w-8 relative -left-[1px] -top-[1px]",
+          "h-[3px] rounded-full w-8 relative -left-[1px] -top-[1px] mb-1 sm:mb-0",
           {
             "bg-green-200": !colorClass,
           },

@@ -8,6 +8,7 @@ export * from "./components/HeadProgressBar";
 export * from "./components/Hero";
 export * from "./components/Icons";
 export * from "./components/Layout";
+export * from "./components/OfficialChannels";
 export * from "./components/PageBlocked";
 export * from "./components/PreloadedFonts";
 export * from "./components/ThemeToggle";

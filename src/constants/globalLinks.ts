@@ -10,4 +10,7 @@ export const globalLinks = {
   termsOfUseLink: "https://zetachain.com/terms-of-use",
   githubLink: "https://github.com/zeta-chain",
   whitepaperLink: "https://www.zetachain.com/whitepaper.pdf",
+  mediumLink: "https://blog.zetachain.com/",
+  youTubeLink: "https://www.youtube.com/@ZetaBlockchain",
+  redditLink: "https://www.reddit.com/r/zetablockchain/",
 };
