@@ -1,7 +1,7 @@
 export const IconArticle082 = () => (
   <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="56" height="56" className="fill-white dark:fill-[transparent]" />
-    <g clip-path="url(#clip0_2359_11788)">
+    <g clipPath="url(#clip0_2359_11788)">
       <rect width="44" height="44" rx="22" transform="matrix(1 0 0 -1 6 50)" className="fill-[#FF5AF1]" />
       <path
         fill-rule="evenodd"
