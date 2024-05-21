@@ -1,7 +1,16 @@
+import {
+  ArticleNavigationCard,
+  ArticleNavigationCardProps,
+  ArticleNavigationTitle,
+  IconDiscord,
+  IconGitHub,
+  IconMedium,
+  IconReddit,
+  IconTelegram,
+  IconTwitter,
+  IconYouTube,
+} from "~/components/shared";
 import { globalLinks } from "~/constants";
-
-import { ArticleNavigationCard, ArticleNavigationCardProps, ArticleNavigationTitle } from "../../ArticleNavigation";
-import { IconDiscord, IconGitHub, IconMedium, IconReddit, IconTelegram, IconTwitter, IconYouTube } from "../../Icons";
 
 const mainChannels: ArticleNavigationCardProps[] = [
   {

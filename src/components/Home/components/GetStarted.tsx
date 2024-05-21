@@ -1,4 +1,4 @@
-import { ArticleNavigation } from "../../ArticleNavigation";
+import { ArticleNavigation } from "~/components/shared";
 
 export const GetStarted: React.FC = () => {
   return (

@@ -1,11 +1,8 @@
 import Image from "next/image";
 
+import { ArticleNavigationTitle, IconCommunity, IconDiscord, PrimaryLink } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
-
-import { ArticleNavigationTitle } from "../../ArticleNavigation";
-import { IconCommunity, IconDiscord } from "../../Icons";
-import { PrimaryLink } from "../../Link";
 
 type GetSupportProps = {
   title?: string;

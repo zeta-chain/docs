@@ -1,7 +1,7 @@
 import { globalLinks } from "~/constants";
 
-import { IconDocument } from "../../Icons";
-import { PrimaryLink } from "../../Link";
+import { IconDocument } from "../../shared/components/Icons";
+import { PrimaryLink } from "../../shared/components/Link";
 
 export const HomeHeroDescription: React.FC = () => {
   return (

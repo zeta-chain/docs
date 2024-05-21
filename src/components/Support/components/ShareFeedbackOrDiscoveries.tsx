@@ -1,11 +1,8 @@
 import Image from "next/image";
 
+import { ArticleNavigationTitle, IconBug, IconChat, PrimaryLink } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
-
-import { ArticleNavigationTitle } from "../../ArticleNavigation";
-import { IconBug, IconChat } from "../../Icons";
-import { PrimaryLink } from "../../Link";
 
 export const ShareFeedbackOrDiscoveries = () => {
   return (

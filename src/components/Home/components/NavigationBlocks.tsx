@@ -1,9 +1,8 @@
 import { getAllPages } from "nextra/context";
 import { useMemo } from "react";
 
+import { ArticleNavigation } from "~/components/shared";
 import { getPageDescription, getPageTitle } from "~/lib/helpers/nextra";
-
-import { ArticleNavigation } from "../../ArticleNavigation";
 
 /**
  * @description Used to exclude pages from the default tree as navigation blocks

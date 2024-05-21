@@ -1,11 +1,8 @@
 import Image from "next/image";
 
+import { ArticleNavigationTitle, IconDiscord, PrimaryLink } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
-
-import { ArticleNavigationTitle } from "../../ArticleNavigation";
-import { IconDiscord } from "../../Icons";
-import { PrimaryLink } from "../../Link";
 
 export const DeveloperCommunity: React.FC = () => {
   return (
