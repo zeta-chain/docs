@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { SVGProps } from "react";
 
-const IconValidate = <T extends unknown>({ color, ...otherProps }: SVGProps<T, SVGSVGElement> & { color?: string }) => (
+const IconStaking = <T extends unknown>({ color, ...otherProps }: SVGProps<T, SVGSVGElement> & { color?: string }) => (
   <svg
     width={24}
     height={24}
@@ -20,4 +20,4 @@ const IconValidate = <T extends unknown>({ color, ...otherProps }: SVGProps<T, S
   </svg>
 );
 
-export { IconValidate };
+export { IconStaking };

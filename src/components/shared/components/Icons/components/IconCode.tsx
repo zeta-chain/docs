@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { SVGProps } from "react";
 
-const IconBuild = <T extends unknown>({ color, ...otherProps }: SVGProps<T, SVGSVGElement> & { color?: string }) => (
+const IconCode = <T extends unknown>({ color, ...otherProps }: SVGProps<T, SVGSVGElement> & { color?: string }) => (
   <svg
     width={24}
     height={24}
@@ -20,4 +20,4 @@ const IconBuild = <T extends unknown>({ color, ...otherProps }: SVGProps<T, SVGS
   </svg>
 );
 
-export { IconBuild };
+export { IconCode };
