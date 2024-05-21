@@ -5,7 +5,7 @@ import { IconArticleRandom, IconTime } from "../../Icons";
 
 export type ArticleNavigationCardProps = {
   title: string;
-  description: string;
+  description?: string;
   icon?: React.ReactNode;
   read?: {
     time: string;
@@ -37,7 +37,7 @@ export const ArticleNavigationCard: React.FC<ArticleNavigationCardProps> = ({
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h3 className="text-xl font-medium text-black dark:text-white">{title}</h3>
-          <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3">{description}</p>
+          {description && <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3">{description}</p>}
         </div>
 
         {read && (

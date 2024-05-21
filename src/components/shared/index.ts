@@ -7,6 +7,7 @@ export * from "./components/Error";
 export * from "./components/Footer";
 export * from "./components/HeadProgressBar";
 export * from "./components/Hero";
+export * from "./components/Home";
 export * from "./components/Icons";
 export * from "./components/Layout";
 export * from "./components/PageBlocked";

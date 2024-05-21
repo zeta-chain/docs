@@ -1,64 +1,16 @@
 ---
 title: ZetaChain Documentation
+description: ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.
 imgUrl: /img/pages/zetachain-documentation.svg
 imgMaxWidth: 448
 ---
 
-import { ArticleNavigation, GetSupport, Hero, HomeHeroDescription } from "~/components/shared";
+import { GetSupport, GetStarted, Hero, HomeHeroDescription, NavigationBlocks } from "~/components/shared";
 
 <Hero variant="secondary" description={<HomeHeroDescription />} />
 
 <div className="flex flex-col gap-20 sm:gap-[120px]">
-  <ArticleNavigation
-    title="Get Started"
-    description="Dive into the basics of ZetaChain"
-    articles={[
-      {
-        title: "What is ZetaChain?",
-        description: "Learn about the unparalleled blockchain enabling omnichain.",
-        href: "about/zetachain",
-        read: {
-          time: "5 min",
-          type: "Beginner",
-        },
-      },
-      {
-        title: "Install the CLI",
-        description: "Learn how to install a tool that allows you to interact with the ZetaChain network.",
-        href: "developers/cli/setup",
-        read: {
-          time: "5 min",
-          type: "Beginner",
-        },
-      },
-      {
-        title: "Smart Contract Templates",
-        description: "Short description about this article that is at a maximum three lines.",
-        href: "about/zetachain",
-        read: {
-          time: "5 min",
-          type: "Beginner",
-        },
-      },
-      {
-        title: "Omnichain Contracts",
-        description: "Short description about this article that is at a maximum three lines.",
-        href: "about/zetachain",
-        read: {
-          time: "5 min",
-          type: "Beginner",
-        },
-      },
-      {
-        title: "Cross-chain Messaging",
-        description: "Short description about this article that is at a maximum three lines.",
-        href: "about/zetachain",
-        read: {
-          time: "5 min",
-          type: "Beginner",
-        },
-      },
-    ]}
-  />
+  <GetStarted />
+  <NavigationBlocks />
   <GetSupport />
 </div>
