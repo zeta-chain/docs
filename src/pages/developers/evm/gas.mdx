@@ -1,27 +1,50 @@
 import { Fees } from "~/components/Docs";
 
-# Cross-Chain Messaging Fees
+import { Alert } from "~/components/shared";
 
-A user (wallet, contract) must pay fees in order to send data and value across
-chains through ZetaChain. A user pays for fees by sending ZETA (and message
-data) on a connected chain to a Connector contract. This ZETA is used to pay
-validators/stakers/ecosystem pools, as well as for paying the gas on the
-destination. To a user, this is all bundled into a single transaction.
+# Gas Fees
 
-When sending a cross-chain message you're paying two types of fees:
+When interacting with smart contracts on ZetaChain, users need to include a fee
+for gas for each transaction.
 
-- Outbound gas fee: calculated dynamically based on the gas prices for the
-  destination chain, the gas limit supplied by the user and the token prices on
-  the liquidity pools on ZetaChain.
-- Protocol fee: currently, a fixed value defined in the ZetaChain source code.
+The gas market mechanism for smart contracts on ZetaChain's EVM is similar to
+that of [Ethermint](https://docs.ethermint.zone/basics/gas.html) and follows
+Ethereum's EIP 1559 gas fee structure. This system is designed to deter spamming
+activities on the network.
 
-### Current Cross-Chain Messaging Fees
+## Omnichain Contract Fees
 
-In the table below you can see the current fees. The fees are defined in ZETA
-tokens and are calculated for the destination chain (the chain where the message
-is sent to). The fees are calculated with the gas limit of 500000.
+### Deposit
 
-<Fees type="messaging" />
+When depositing tokens to ZetaChain by sending them to the TSS (Threshold
+Signature Scheme) address on a connected chain, you will pay the fee in the
+native gas token of that chain, similar to a standard transaction.
+
+For example, if you are depositing ETH from Ethereum to ZetaChain, the fee will
+be in ETH, comparable to a regular token transfer on the Ethereum network. For
+more information on Ethereum gas and fees, refer to the [official
+documentation](https://ethereum.org/en/developers/docs/gas/).
+
+### Withdraw
+
+When withdrawing ZRC-20 tokens back to a connected external chain, the "withdraw
+gas fee" is applicable (listed as "Total fee" in the table below).
+
+To find out the fee amount, call the `withdrawGasFee` function on the [ZRC-20
+contract](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/ZRC20.sol)
+for the token you wish to withdraw. This function will return the fee in the
+native gas token of the connected chain.
+
+The `withdraw` function will deduct this gas fee from your ZRC-20 balance and
+proceed with the withdrawal to the destination chain.
+
+### Current omnichain fees
+
+In the table below you can see the current fees. The fees are defined in native
+gas tokens on the destination chain (the chain to which ZRC-20 tokens are
+withdrawn). The fees are calculated with the gas limit of 500000.
+
+<Fees type="omnichain" />
 
 To calculate fees for a different gas limit, please, check out the `fees`
 command in the smart-contract
@@ -31,13 +54,44 @@ command in the smart-contract
 npx hardhat fees
 ```
 
-## Different Approaches to Paying the Fees
+## Cross-Chain Messaging Fees
+
+To send data and value across chains through ZetaChain, users (wallets,
+contracts) must pay fees. These fees are paid by sending ZETA (along with the
+message data) on a connected chain to a Connector contract. This ZETA is used to
+compensate validators, stakers, and ecosystem pools, as well as to cover the gas
+fees on the destination chain. For users, this process is simplified into a
+single transaction.
+
+When sending a cross-chain message, you incur two types of fees:
+
+- Outbound Gas Fee: This fee is calculated dynamically based on the gas prices
+  for the destination chain, the gas limit provided by the user, and the token
+  prices in the liquidity pools on ZetaChain.
+- Protocol Fee: This is a fixed value defined in the ZetaChain source code.
+
+### Current Cross-Chain Messaging Fees
+
+The table below shows the current cross-chain messaging fees, defined in ZETA
+tokens. These fees are calculated for the destination chain (the chain to which
+the message is sent) with a gas limit of 500,000.
+
+<Fees type="messaging" />
+
+To calculate fees for a different gas limit, use the fees command in the
+smart-contract [template](https://github.com/zeta-chain/template):
+
+```
+npx hardhat fees
+```
+
+### Different Approaches to Paying the Fees
 
 When you write a smart contract that uses cross chain messages this contract
 needs to pay fees in ZETA for every cross chain transaction. There are several
 ways to handle this.
 
-### Sending ZETA to the Connector
+#### Sending ZETA to the Connector
 
 In your cross-chain messaging contract approve `zetaValueAndGas` amount of ZETA
 tokens to the connector and then transfer them to the connector contract.
@@ -66,7 +120,7 @@ function sendMessage(uint256 destinationChainId, bytes calldata destinationAddre
 }
 ```
 
-### Pay With ZETA From the Contract
+#### Pay With ZETA From the Contract
 
 You can add ZETA tokens to the contract and the contract will use these tokens
 when sending cross chain messages.
@@ -93,7 +147,7 @@ function sendMessage(uint256 destinationChainId, bytes calldata destinationAddre
 }
 ```
 
-### Pay With Any Token and Swap to ZETA
+#### Pay With Any Token and Swap to ZETA
 
 Your contract can accept any token and swap it to ZETA internally.
 
@@ -128,8 +182,10 @@ function sendMessage(uint256 destinationChainId, bytes calldata destinationAddre
 [ZetaTokenConsumer](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/ZetaInterfaces.sol)
 is an interface with several implementations that handles all the logic you need
 to swap ZETA from/to another token. Right now we have three implementations
-([Uniswap V2](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV2.strategy.sol),
-[Uniswap V3](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV3.strategy.sol),
+([Uniswap
+V2](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV2.strategy.sol),
+[Uniswap
+V3](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV3.strategy.sol),
 and
 [Trident](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerTrident.strategy.sol))
 using different DEX. You can include it in your contract and just call the

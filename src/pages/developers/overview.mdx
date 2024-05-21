@@ -1,106 +1,69 @@
-# Start building with ZetaChain
+# Overview
 
-At a high level, ZetaChain is a Proof of Stake (PoS) blockchain developed using
-the Cosmos SDK and Comet BFT consensus engine. As a result, ZetaChain enjoys
-fast block time and instant finality.
+ZetaChain is a blockchain for universal omnichain apps that span across any
+blockchain, from Ethereum and Cosmos to Bitcoin and beyond.
 
-ZetaChain hosts an Ethereum Virtual Machine (EVM) compatible execution layer
-called the Universal EVM. In addition to supporting all EVM features and
-standard interactions (such as contract creation, contract interaction, and
-contract composition), ZetaChain's EVM is connected to the Chain Abstraction
-Framework (CAF), which enables omnichain connectivity of the network to any
-blockchain.
+## Universal Apps
 
-Thanks to CAF, ZetaChain's EVM can be called from any chain, manage
-native assets on any chain, and access asynchronous arbitrary messaging to call
-contracts on other chains. Developing with the CAF offers the ability to build
-robust state management combined with multi-leg, multi-chain apps' needs, all in
-the familiar EVM development environment.
+Universal apps are smart contracts deployed on ZetaChain's universal EVM. A
+universal app implemented as a single contract on ZetaChain can both natively
+access and be accessed from connected chains (such as Ethereum or Bitcoin).
 
-ZetaChain offers two ways to develop dApps: **omnichain contracts** and
-**cross-chain message passing**.
+Users on connected chains can interact with universal apps on ZetaChain by
+passing messages containing arbitrary data and tokens, both native gas and
+supported ERC-20s. To interact with a universal app a user only has to sign a
+single transaction on a connected chain, the rest is taken care by ZetaChain's
+Chain Abstraction Framework.
 
-## Omnichain Contracts
+Universal apps can generate outbound transactions on connected chains: both
+token transfers and contract calls.
 
-With [omnichain contracts](/developers/omnichain/overview) you deploy **a single
-omnichain contract** to ZetaChain.
+The ability to receive inbound messages and tokens and generate outbound
+contract calls and tokens transfers enables universal apps to orchestrate
+complex multi-step transactions that span across chains.
 
-Omnichain contracts can:
+## Universal EVM
 
-- Accept deposits from users on connected chains (e.g., Ethereum, Binance Smart
-  Chain, Bitcoin). A deposit may contain:
-  - a native gas or supported ERC-20 token. Tokens (both gas and ERC-20) are
-    deposited into omnichain contracts as
-    [ZRC-20 tokens](/developers/tokens/zrc20).
-  - a message with an arbitrary data.
-- Execute logic based on the deposits
-- Create outbound transactions to withdraw ZRC-20 to connected chains as native
-  assets. A single omnichain contract call can result in multiple outbound
-  transactions to different chains.
+ZetaChain's universal EVM is an Ethereum-compatible virtual machine enhanced
+with omnichain interoperability features, enabling the development of robust
+universal apps.
 
-Ability to accept inputs (native gas, supported ERC-20, and arbitrary data) from
-users on connected chains, execute custom logic and create outputs (tokens
-withdrawals) to connected chains makes ZetaChain omnichain contracts a powerful
-tool for building interoperable apps that span multiple chains.
+Each universal app contract has a special function called `onCrossChainCall`.
+This function is executed every time someone calls a universal app from a
+connected chain. A message with data and the tokens are passed to this function.
 
-### Advantages of omnichain contracts
+Tokens transferred from connected chains to universal apps are represented in
+the universal EVM as ZRC-20 tokens. For instance, when a user sends ETH from
+Ethereum to a universal app on ZetaChain, the app receives the equivalent amount
+in ZRC-20 ETH tokens. These ZRC-20 tokens can be withdrawn back to the
+corresponding connected chain.
 
-Developers can extend common applications like Uniswap V2/V3, Curve, Aave, and
-Compound by making them compatible with ZRC-20. These applications have been
-audited and battle-tested on Ethereum and can easily be deployed and built on
-ZetaChain. The changes required to add ZRC-20 support are minimal, and users may
-interact with these applications in single-step transactions just as they would
-on Ethereum.
+Universal apps can also make contract calls on connected chains using the
+Connector API. ZetaChain and connected smart contract chains have a connector
+contract capable of sending messages and ZETA tokens between chains.
 
-ZRC-20 can easily support Bitcoin/Dogecoin which do not have capability or
-efficiency to support general purpose smart contracts for applications like
-swapping, lending, etc.
+## Chain Abstraction Framework (CAF)
 
-ZRC-20 may cost significantly less gas than message passing in many use cases
-because its interactions with foreign chains are confined to fungible coins
-(standard value transfer of ETH/BNB/MATIC costs 21k gas, moving ERC20 tokens
-costs around 60k gas; no logic/state on foreign chains means much less gas).
+The Chain Abstraction Framework (CAF) is the connectivity layer of ZetaChain. It
+is powered by a decentralized network of observer-signer validators who run
+nodes of connected chains and an off-chain program called ZetaClient.
 
-With omnichain smart contracts, you can pair and trade native asset liquidity
-directly against each other. This minimizes steps to trade native assets in a
-single step, and it doesn't involve a bridge or wrapping step or sending complex
-messages. For example, you could trade Ethereum ETH directly for Polygon USDC
-through a unified pool in a single transaction.
+ZetaClient is responsible for observing connected chains for inbound
+transactions, casting votes for observed inbound transactions, and signing
+outbound transaction on behalf of the protocol.
 
-With ZRC-20/zEVM, exception/revert handling is much simpler as foreign
-interaction is confined to either a standard ERC-20/contract interaction
-(success) or no contract interaction (failure) immediately.
+ZetaClient is responsible for observing inbound transactions on connected
+chains, voting on these transactions, and signing outbound transactions on
+behalf of the protocol. The observer-signer validators collectively hold custody
+of tokens transferred from connected chains to ZetaChain's universal EVM using
+the Threshold Signature Scheme (TSS) process. Each connected blockchain has a
+special TSS address, and transferring tokens and data to this address triggers
+calls to universal apps.
 
-## Cross-Chain Message Passing
+Additionally, each smart contract chain has an ERC-20 custody contract that
+holds custody of ERC-20 tokens transferred to ZetaChain. Calling the `deposit`
+method of this contract also triggers calls to universal apps.
 
-With
-[cross-chain message (CCM) passing](/developers/cross-chain-messaging/overview)
-you deploy **CCM-enabled contracts on connected chains** that can pass arbitrary
-message data and value between each other.
-
-On a connected chain a user can call a CCM-enabled contract. The contract calls
-the Connector API and sends a message. ZetaChain acts as a relayer and transmits
-the message to the destination chain. On the destination chain a CCM-enabled
-contract uses the Connector API to receive the message and handles it.
-
-The state is stored on a set of CCM-enabled contracts on different chains.
-
-CCM makes sense for applications that only need unidirectional and asynchronous
-logic/effects and that don't need or benefit from a unified state.
-
-### Advantages of cross-chain message passing
-
-CCM supports any type of data transfer and it's up to the contracts to decide
-how to handle the data.
-
-CCM is a reliable general purpose solution for augmenting existing applications
-with cross-chain functionality.
-
-With messages, you can leverage existing liquidity like Uniswap pools on
-existing chains, and trade via burning/minting ZETA through ZetaChain. This
-approach may be more complex (more transactions involved, more gas), but doesn't
-rely on liquidity within ZetaChain's ecosystem.
-
-By leveraging the ZETA burn/mint functionality built into ZetaChain, one can
-build value-transfer applications that don't bridge/wrap assets, minimizing risk
-for users.
+Observer-signer validators running ZetaClient provide a seamless omnichain
+interoperability layer, simplifying the complexity of building omnichain
+universal apps and enhancing the user experience.

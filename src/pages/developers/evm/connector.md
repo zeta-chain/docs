@@ -13,6 +13,41 @@ should:
 - Handle `onZetaMessage` to receive messages.
 - Handle `onZetaRevert` to revert messages.
 
+```solidity
+
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+
+contract YourContract is ZetaInteractor, ZetaReceiver {
+    constructor(address connectorAddress)
+        ZetaInteractor(connectorAddress)
+    {}
+
+    function sendMessage(uint256 destinationChainId) external payable {
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
+                destinationGasLimit: 300000,
+                message: abi.encode("Hello, Cross-Chain World!"),
+                zetaValueAndGas: msg.value,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override isValidMessageCall(zetaMessage) {
+        // Handle the message
+    }
+
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override isValidRevertCall(zetaRevert) {
+        // Handle the revert
+    }
+}
+```
+
 ## Sending data and value across chains
 
 Call `connector.send` from your contracts to interact with other chains:
@@ -111,8 +146,3 @@ To make your dApps multi-chain using ZetaChain's Connector, you will need to
 deploy contracts to multiple chains supported by ZetaChain. Those contracts will
 be able to send messages and value between each other by implementing the
 `onZetaMessage` and `onZetaRevert` callbacks, and calling `connector.send`.
-
-## Examples
-
-We have a growing library of example apps with real code you can use to
-kickstart your development.

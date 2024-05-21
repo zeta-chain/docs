@@ -1,9 +1,11 @@
 {
-  "overview": "Start building with ZetaChain",
-  "template": "Smart Contract Template",
-  "addresses": "Account Addresses",
-  "omnichain": "Omnichain Contracts",
-  "cross-chain-messaging": "Cross-Chain Messaging",
+  "overview": "Overview",
+  "apps": "Building Universal Apps",
+  "evm": "Universal EVM",
+  "tutorials": "Tutorials",
+  "services": "Apps and Services",
+  "tokens": "Working with Tokens",
   "cli": "Using ZetaChain's CLI",
-  "tokens": "Types of Tokens"
+  "transactions": "Types of Transactions",
+  "architecture": "Architecture"
 }
