@@ -17,4 +17,5 @@ export const globalLinks = {
   bugBountyLink: "https://hackenproof.com/zetachain",
   techAmbassadorProgramLink: "https://zetachain.deform.cc/TechAmbassadors",
   communityAmbassadorLink: "https://zealy.io/cw/zetachain/questboard",
+  workWithUsLink: "https://zetachain.notion.site/Work-With-ZetaChain-5023467bea594d9c83e54e81a1afa97b",
 };
