@@ -2,15 +2,17 @@ import clsx from "clsx";
 
 import { PrimaryLink } from "./Link";
 
+export type SectionTitleLink = {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+};
+
 export type SectionTitleProps = {
   title: string;
   description?: string;
   colorClass?: string;
-  link?: {
-    title: string;
-    href: string;
-    icon: React.ReactNode;
-  };
+  link?: SectionTitleLink;
 };
 
 export const SectionTitle: React.FC<SectionTitleProps> = ({ title, description, colorClass, link }) => {
