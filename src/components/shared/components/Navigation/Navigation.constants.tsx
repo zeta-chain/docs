@@ -61,24 +61,24 @@ export const navMainItems: NavItem[][] = [
     {
       label: "Build",
       icon: IconCode,
-      url: "/build",
+      url: "/developers",
     },
     {
       label: "Validate",
       icon: IconStaking,
-      url: "/validate",
+      url: "/validators",
     },
     {
       label: "Use",
       icon: IconClaim,
-      url: "/use",
+      url: "/users",
     },
   ],
   [
     {
       label: "Tools",
       icon: IconTools,
-      url: "/tools",
+      url: "/reference",
     },
   ],
 ];
