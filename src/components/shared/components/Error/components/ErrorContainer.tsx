@@ -1,5 +1,7 @@
 import { Typography } from "@mui/material";
-import Link from "next/link";
+
+import { IconDocument } from "../../Icons";
+import { PrimaryLink } from "../../Link";
 
 type ErrorContainerProps = {
   title: string;
@@ -16,14 +18,9 @@ export const ErrorContainer: React.FC<ErrorContainerProps> = ({ title, children 
 
         <div className="mb-2 px-4">{children}</div>
 
-        <Link href="/">
-          <button
-            type="button"
-            className="text-grey-50 bg-green-500 hover:bg-green-600 px-4 py-1.5 rounded font-medium transition-all"
-          >
-            Back to Home
-          </button>
-        </Link>
+        <PrimaryLink href="/" icon={<IconDocument />}>
+          Home
+        </PrimaryLink>
       </div>
     </div>
   );
