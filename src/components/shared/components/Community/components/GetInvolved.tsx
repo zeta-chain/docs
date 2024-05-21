@@ -16,7 +16,7 @@ export const GetInvolved = () => {
         colorClass="bg-[#9AEA4A]"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
         <div className="flex flex-col gap-[30px] py-10 px-6 rounded-lg border border-grey-200 dark:border-grey-600">
           <div className="flex justify-center">
             <Image

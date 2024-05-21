@@ -1,3 +1,5 @@
+import clsx from "clsx";
+
 import { ArticleNavigationCard, ArticleNavigationCardProps } from "./ArticleNavigationCard";
 import { ArticleNavigationTitle, ArticleNavigationTitleProps } from "./ArticleNavigationTitle";
 
@@ -10,7 +12,14 @@ export const ArticleNavigation: React.FC<ArticleNavigationProps> = ({ title, des
     <div className="flex flex-col gap-10">
       <ArticleNavigationTitle title={title} description={description} colorClass={colorClass} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6 lg:gap-7 xl:gap-8">
+      <div
+        className={clsx("grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-8", {
+          "sm:grid-cols-1 lg:grid-cols-3": articles.length === 1,
+          "lg:grid-cols-3": articles.length === 3,
+          "lg:grid-cols-4": articles.length === 4,
+          "lg:grid-cols-4 xl:grid-cols-5": articles.length >= 5,
+        })}
+      >
         {articles.map((article, index) => (
           <ArticleNavigationCard key={index} {...article} />
         ))}

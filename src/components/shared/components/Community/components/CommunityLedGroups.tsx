@@ -85,7 +85,7 @@ export const CommunityLedGroups: React.FC = () => {
         colorClass="bg-[#00C6EE]"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-8">
         {communityGroups.map((item, index) => (
           <div
             key={index}
