@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { basePath } from "~/lib/app.constants";
+
 # Overview
 
 At a high level, ZetaChain is a Proof of Stake (PoS) blockchain built on the
@@ -28,7 +30,7 @@ can become a node operator to participate in validation provided that enough
 bonds are staked.
 
 <Image
-  src="/img/graphs/zetachain-architecture-overview-graph.svg"
+  src={`${basePath}/img/graphs/zetachain-architecture-overview-graph.svg`}
   alt="high-level-architecture"
   width={498}
   height={387}

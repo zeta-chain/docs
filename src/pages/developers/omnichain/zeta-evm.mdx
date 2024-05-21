@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { basePath } from "~/lib/app.constants";
+
 # ZetaEVM (zEVM)
 
 zEVM is an Ethereum-compatible virtual machine where you can deploy and use
@@ -9,7 +11,7 @@ able to orchestrate assets on external chains as if they were all on a single
 chain.
 
 <Image
-  src="/img/graphs/omnichain-smart-contracts-orchestrate-graph.svg"
+  src={`${basePath}/img/graphs/omnichain-smart-contracts-orchestrate-graph.svg`}
   alt="omnichain-smart-contracts-orchestrate-graph"
   width={940}
   height={836}
