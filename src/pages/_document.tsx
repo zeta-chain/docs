@@ -40,9 +40,6 @@ export default class MyDocument extends Document {
 
         <body className="no-scrollbar">
           <Main />
-          <div id="price-chart-crosshair-container" />
-          <div id="tooltip-container" />
-          <div id="button-tooltip-container" />
           <NextScript />
         </body>
       </Html>
