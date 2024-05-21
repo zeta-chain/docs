@@ -10,6 +10,7 @@ export * from "./components/IconClaim";
 export * from "./components/IconCode";
 export * from "./components/IconCommunity";
 export * from "./components/IconDiscord";
+export * from "./components/IconDocs";
 export * from "./components/IconDocument";
 export * from "./components/IconExclamationCircle";
 export * from "./components/IconGitHub";

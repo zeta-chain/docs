@@ -85,7 +85,7 @@ export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
                 ))}
               </List>
 
-              <div className="sm:hidden pl-2 pt-8 text-grey-500 dark:text-grey-300">
+              <div className="sm:hidden pl-2 pt-8 text-grey-400 dark:text-grey-300">
                 <ThemeToggle />
               </div>
             </div>

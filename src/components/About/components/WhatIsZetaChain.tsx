@@ -25,7 +25,7 @@ export const WhatIsZetaChain: React.FC = () => {
         <div className="grid grid-cols-10 gap-8">
           <div className="col-span-10 lg:col-span-5 flex items-center gap-4 p-4 sm:p-6 rounded-lg border border-grey-200 dark:border-grey-600">
             <div className="shrink-0">
-              <IconDocument className="text-grey-500 dark:text-grey-300 w-8 h-8" />
+              <IconDocument className="text-grey-400 dark:text-grey-300 w-8 h-8" />
             </div>
 
             <div>

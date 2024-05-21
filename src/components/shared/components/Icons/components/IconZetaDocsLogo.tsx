@@ -12,7 +12,7 @@ export const IconZetaDocsLogo = <T extends unknown>({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...otherProps}
-    className={clsx(otherProps?.className, { "text-grey-500 dark:text-grey-300": !otherProps?.className })}
+    className={clsx(otherProps?.className, { "text-grey-400 dark:text-grey-300": !otherProps?.className })}
   >
     <path
       d="M16.807 17.7227V20.9134H3.64454C3.82611 18.8135 4.5037 17.3359 6.84699 15.2584L16.807 6.7615V14.2177H20.3923V0.5H0.00394715V7.33778H3.58796V4.08533H14.4189L4.50765 12.5428L4.48396 12.5651C0.330245 16.2426 0 19.2108 0 22.708V24.5H20.391V17.7241H16.8057L16.807 17.7227Z"

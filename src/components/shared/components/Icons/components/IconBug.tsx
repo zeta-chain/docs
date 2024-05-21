@@ -9,7 +9,7 @@ const IconBug = <T extends unknown>({ color, ...otherProps }: SVGProps<T, SVGSVG
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...otherProps}
-    className={clsx(otherProps?.className, { "text-grey-500 dark:text-grey-300": !otherProps?.className })}
+    className={clsx(otherProps?.className, { "text-grey-400 dark:text-grey-300": !otherProps?.className })}
   >
     <path
       fillRule="evenodd"
