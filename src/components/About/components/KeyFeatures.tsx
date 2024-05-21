@@ -41,12 +41,12 @@ const keyFeatures: KeyFeature[] = [
 
 export const KeyFeatures: React.FC = () => {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 sm:gap-10">
       <h3 className="text-xl sm:text-2xl tracking-[-0.48px] font-medium text-black dark:text-white">Key Features</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {keyFeatures.map((feature, index) => (
-          <div className="flex flex-col md:flex-row gap-0 md:gap-8">
+          <div key={feature.title} className="flex flex-col md:flex-row gap-0 md:gap-8">
             <div className="shrink-0">
               <IconArticleRandom />
             </div>
