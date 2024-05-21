@@ -7,7 +7,7 @@ import { getPageDescription, getPageReadTime, getPageReadType, getPageTitle } fr
 /**
  * @description Used to exclude pages from the default tree as navigation blocks
  */
-const EXCLUDED_PAGES = ["about"];
+const EXCLUDED_PAGES_NAMES = ["about"];
 
 /**
  * @description Used to color the title of the navigation blocks
@@ -19,11 +19,11 @@ const BG_COLOR_CLASSES = ["bg-[#00C6EE]", "bg-[#E34ED6]", "bg-[#9AEA4A]", "bg-[#
  */
 const MAX_ARTICLE_CARDS = 5;
 
-export const NavigationBlocks: React.FC = () => {
+export const HomeNavigationBlocks: React.FC = () => {
   const pages = getAllPages();
 
   const { navigationPages } = useMemo(() => {
-    const navigationPages = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_PAGES.includes(page.name));
+    const navigationPages = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_PAGES_NAMES.includes(page.name));
 
     return {
       navigationPages,

@@ -1,4 +1,4 @@
-import { getCurrentLevelPages } from "nextra/context";
+import { getPagesUnderRoute } from "nextra/context";
 import { useMemo } from "react";
 
 import { ArticleNavigation } from "~/components/shared";
@@ -6,8 +6,8 @@ import { getPageDescription, getPageReadTime, getPageReadType, getPageTitle } fr
 
 const BG_COLOR_CLASSES = ["bg-[#C241B6]", "bg-[#00C6EE]", "bg-[#9AEA4A]", "bg-[#00A87D]"];
 
-export const NavigationBlocks: React.FC = () => {
-  const pages = getCurrentLevelPages();
+export const AboutNavigationBlocks: React.FC = () => {
+  const pages = getPagesUnderRoute("/about");
 
   const { navigationPages } = useMemo(() => {
     const navigationPages = pages.filter((page) => page.kind === "Folder");
