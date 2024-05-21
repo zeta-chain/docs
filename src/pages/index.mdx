@@ -4,58 +4,61 @@ imgUrl: /img/pages/zetachain-documentation.svg
 imgMaxWidth: 448
 ---
 
-import { ArticleNavigation, Hero, HomeHeroDescription } from "~/components/shared";
+import { ArticleNavigation, CommunitySupport, Hero, HomeHeroDescription } from "~/components/shared";
 
 <Hero variant="secondary" description={<HomeHeroDescription />} />
 
-<ArticleNavigation
-  title="Get Started"
-  description="Dive into the basics of ZetaChain."
-  articles={[
-    {
-      title: "What is ZetaChain?",
-      description: "Learn about the unparalleled blockchain enabling omnichain.",
-      href: "about/zetachain",
-      read: {
-        time: "5 min",
-        type: "Beginner",
+<div className="flex flex-col gap-20 sm:gap-[120px]">
+  <ArticleNavigation
+    title="Get Started"
+    description="Dive into the basics of ZetaChain."
+    articles={[
+      {
+        title: "What is ZetaChain?",
+        description: "Learn about the unparalleled blockchain enabling omnichain.",
+        href: "about/zetachain",
+        read: {
+          time: "5 min",
+          type: "Beginner",
+        },
       },
-    },
-    {
-      title: "Install the CLI",
-      description: "Learn how to install a tool that allows you to interact with the ZetaChain network.",
-      href: "developers/cli/setup",
-      read: {
-        time: "5 min",
-        type: "Beginner",
+      {
+        title: "Install the CLI",
+        description: "Learn how to install a tool that allows you to interact with the ZetaChain network.",
+        href: "developers/cli/setup",
+        read: {
+          time: "5 min",
+          type: "Beginner",
+        },
       },
-    },
-    {
-      title: "Smart Contract Templates",
-      description: "Short description about this article that is at a maximum three lines.",
-      href: "about/zetachain",
-      read: {
-        time: "5 min",
-        type: "Beginner",
+      {
+        title: "Smart Contract Templates",
+        description: "Short description about this article that is at a maximum three lines.",
+        href: "about/zetachain",
+        read: {
+          time: "5 min",
+          type: "Beginner",
+        },
       },
-    },
-    {
-      title: "Omnichain Contracts",
-      description: "Short description about this article that is at a maximum three lines.",
-      href: "about/zetachain",
-      read: {
-        time: "5 min",
-        type: "Beginner",
+      {
+        title: "Omnichain Contracts",
+        description: "Short description about this article that is at a maximum three lines.",
+        href: "about/zetachain",
+        read: {
+          time: "5 min",
+          type: "Beginner",
+        },
       },
-    },
-    {
-      title: "Cross-chain Messaging",
-      description: "Short description about this article that is at a maximum three lines.",
-      href: "about/zetachain",
-      read: {
-        time: "5 min",
-        type: "Beginner",
+      {
+        title: "Cross-chain Messaging",
+        description: "Short description about this article that is at a maximum three lines.",
+        href: "about/zetachain",
+        read: {
+          time: "5 min",
+          type: "Beginner",
+        },
       },
-    },
-  ]}
-/>
+    ]}
+  />
+  <CommunitySupport title="Get Support" />
+</div>

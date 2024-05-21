@@ -7,11 +7,15 @@ import { ArticleNavigationTitle } from "../../ArticleNavigation";
 import { IconCommunity, IconDiscord } from "../../Icons";
 import { PrimaryLink } from "../../Link";
 
-export const CommunitySupport = () => {
+type CommunitySupportProps = {
+  title?: string;
+};
+
+export const CommunitySupport: React.FC<CommunitySupportProps> = ({ title }) => {
   return (
     <div className="flex flex-col gap-10">
       <ArticleNavigationTitle
-        title="Community Support"
+        title={title || "Community Support"}
         description="Get the help from a supportive, active and growing community"
         colorClass="bg-[#9AEA4A]"
       />
