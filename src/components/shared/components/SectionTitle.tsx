@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
-import { PrimaryLink } from "../../Link";
+import { PrimaryLink } from "./Link";
 
-export type ArticleNavigationTitleProps = {
+export type SectionTitleProps = {
   title: string;
   description?: string;
   colorClass?: string;
@@ -13,12 +13,7 @@ export type ArticleNavigationTitleProps = {
   };
 };
 
-export const ArticleNavigationTitle: React.FC<ArticleNavigationTitleProps> = ({
-  title,
-  description,
-  colorClass,
-  link,
-}) => {
+export const SectionTitle: React.FC<SectionTitleProps> = ({ title, description, colorClass, link }) => {
   return (
     <div className="flex flex-col gap-1 sm:gap-2">
       <div

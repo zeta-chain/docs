@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { ArticleNavigationTitle, IconCommunity, IconDiscord, PrimaryLink } from "~/components/shared";
+import { IconCommunity, IconDiscord, PrimaryLink, SectionTitle } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
 
@@ -11,7 +11,7 @@ type GetSupportProps = {
 export const GetSupport: React.FC<GetSupportProps> = ({ title }) => {
   return (
     <div className="flex flex-col gap-10">
-      <ArticleNavigationTitle
+      <SectionTitle
         title={title || "Get Support"}
         description="Get the help from a supportive, active and growing community"
         colorClass="bg-[#9AEA4A]"

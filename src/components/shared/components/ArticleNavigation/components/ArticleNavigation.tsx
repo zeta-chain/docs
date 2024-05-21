@@ -1,9 +1,9 @@
 import clsx from "clsx";
 
+import { SectionTitle, SectionTitleProps } from "../../SectionTitle";
 import { ArticleNavigationCard, ArticleNavigationCardProps } from "./ArticleNavigationCard";
-import { ArticleNavigationTitle, ArticleNavigationTitleProps } from "./ArticleNavigationTitle";
 
-type ArticleNavigationProps = ArticleNavigationTitleProps & {
+type ArticleNavigationProps = SectionTitleProps & {
   articles: ArticleNavigationCardProps[];
 };
 
@@ -16,7 +16,7 @@ export const ArticleNavigation: React.FC<ArticleNavigationProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-10">
-      <ArticleNavigationTitle title={title} description={description} colorClass={colorClass} link={link} />
+      <SectionTitle title={title} description={description} colorClass={colorClass} link={link} />
 
       <div
         className={clsx("grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-8", {

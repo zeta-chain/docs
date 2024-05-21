@@ -1,13 +1,13 @@
 import Image from "next/image";
 
-import { ArticleNavigationTitle, IconBug, IconChat, PrimaryLink } from "~/components/shared";
+import { IconBug, IconChat, PrimaryLink, SectionTitle } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
 
 export const ShareFeedbackOrDiscoveries = () => {
   return (
     <div className="flex flex-col gap-10">
-      <ArticleNavigationTitle
+      <SectionTitle
         title="Share Feedback or Discoveries"
         description="Provide feedback or discovered bugs"
         colorClass="bg-[#00BC8D]"

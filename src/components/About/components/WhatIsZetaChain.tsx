@@ -1,11 +1,11 @@
 import { globalLinks } from "~/constants";
 
-import { ArticleNavigationTitle, IconDocument, PrimaryLink } from "../../shared";
+import { IconDocument, PrimaryLink, SectionTitle } from "../../shared";
 
 export const WhatIsZetaChain: React.FC = () => {
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
-      <ArticleNavigationTitle title="What is ZetaChain?" description="An overview" />
+      <SectionTitle title="What is ZetaChain?" description="An overview" />
 
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-10 gap-5 md:gap-8 text-base leading-[160%] font-normal text-grey-400 dark:text-grey-300">

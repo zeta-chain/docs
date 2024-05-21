@@ -1,13 +1,13 @@
 import Link from "next/link";
 
-import { ArticleNavigationTitle, IconTelegram, IconTwitter } from "~/components/shared";
+import { IconTelegram, IconTwitter, SectionTitle } from "~/components/shared";
 
 import { communityGroups } from "../Community.constants";
 
 export const CommunityLedGroups: React.FC = () => {
   return (
     <div className="flex flex-col gap-10">
-      <ArticleNavigationTitle
+      <SectionTitle
         title="Community-led Groups"
         description="Social channels run the by the community for support, local events, news and more"
         colorClass="bg-[#00C6EE]"

@@ -1,7 +1,6 @@
 import {
   ArticleNavigationCard,
   ArticleNavigationCardProps,
-  ArticleNavigationTitle,
   IconDiscord,
   IconGitHub,
   IconMedium,
@@ -9,6 +8,7 @@ import {
   IconTelegram,
   IconTwitter,
   IconYouTube,
+  SectionTitle,
 } from "~/components/shared";
 import { globalLinks } from "~/constants";
 
@@ -63,7 +63,7 @@ const otherChannels: ArticleNavigationCardProps[] = [
 export const OfficialChannels = () => {
   return (
     <div className="flex flex-col gap-10">
-      <ArticleNavigationTitle
+      <SectionTitle
         title="Official Channels"
         description="ZetaChain’s official social channels for news, announcements and more"
       />

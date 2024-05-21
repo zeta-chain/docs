@@ -1,13 +1,13 @@
 import Image from "next/image";
 
-import { ArticleNavigationTitle, IconClaim, IconSparkle, PrimaryLink } from "~/components/shared";
+import { IconClaim, IconSparkle, PrimaryLink, SectionTitle } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
 
 export const GetInvolved = () => {
   return (
     <div className="flex flex-col gap-10">
-      <ArticleNavigationTitle
+      <SectionTitle
         title="Get Involved"
         description="Social channels run the by the community for support, local events, news and more"
         colorClass="bg-[#9AEA4A]"

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { ArticleNavigationTitle, IconClaim, PrimaryLink } from "~/components/shared";
+import { IconClaim, PrimaryLink, SectionTitle } from "~/components/shared";
 import { globalLinks } from "~/constants";
 import { basePath } from "~/lib/app.constants";
 
@@ -18,7 +18,7 @@ export const WorkWithUs: React.FC = () => {
       </div>
 
       <div className="flex flex-col justify-center gap-5 lg:gap-6 col-span-10 lg:col-span-4">
-        <ArticleNavigationTitle title="Work with Us" colorClass="bg-[#FF5AF1]" />
+        <SectionTitle title="Work with Us" colorClass="bg-[#FF5AF1]" />
 
         <p className="text-base text-grey-400 dark:text-grey-300">
           Join an amazing, global team of passionate builders.
