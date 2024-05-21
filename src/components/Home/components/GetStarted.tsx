@@ -10,48 +10,39 @@ export const GetStarted: React.FC = () => {
           title: "What is ZetaChain?",
           description: "Learn about the unparalleled blockchain enabling omnichain.",
           href: "/about",
-          read: {
-            time: "5 min",
-            type: "Beginner",
-          },
+          readTime: "5 min",
+          readType: "Beginner",
         },
         {
           title: "Install the CLI",
           description: "Learn how to install a tool that allows you to interact with the ZetaChain network.",
           href: "/developers/cli/setup",
-          read: {
-            time: "5 min",
-            type: "Beginner",
-          },
+          readTime: "5 min",
+          readType: "Beginner",
         },
         {
-          title: "Smart Contract Templates",
-          description: "Short description about this article that is at a maximum three lines.",
+          title: "Smart Contract Template",
+          description:
+            "ZetaChain comes with a smart contract template that makes it easy to get started building dapps.",
           href: "/developers/template",
-          read: {
-            time: "5 min",
-            type: "Beginner",
-          },
+          readTime: "5 min",
+          readType: "Beginner",
         },
         {
           title: "Omnichain Contracts",
           description:
             "Omnichain Smart Contracts are contracts deployed on ZetaChain that can use and orchestrate assets on connected chains, as well as on ZetaChain.",
           href: "/developers/omnichain/overview",
-          read: {
-            time: "5 min",
-            type: "Beginner",
-          },
+          readTime: "5 min",
+          readType: "Beginner",
         },
         {
           title: "Cross-Chain Messaging",
           description:
             "Cross-chain messaging makes the most sense for applications that generally need minimal logic or state to maintain across all chains.",
           href: "/developers/cross-chain-messaging/overview",
-          read: {
-            time: "5 min",
-            type: "Beginner",
-          },
+          readTime: "5 min",
+          readType: "Beginner",
         },
       ]}
     />

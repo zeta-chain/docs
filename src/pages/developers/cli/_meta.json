@@ -1,5 +1,8 @@
 {
-  "setup": "Installing the CLI",
+  "setup": {
+    "title": "Installing the CLI",
+    "description": "ZetaChain's CLI is a command line tool that allows you to interact with the ZetaChain network."
+  },
   "account": "Adding an Account",
   "balances": "Querying Balances",
   "delegate": "Delegating to a Validator",

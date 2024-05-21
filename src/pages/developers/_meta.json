@@ -4,6 +4,11 @@
   "addresses": "Account Addresses",
   "omnichain": "Omnichain Contracts",
   "cross-chain-messaging": "Cross-Chain Messaging",
-  "cli": "Using ZetaChain's CLI",
+  "cli": {
+    "title": "Using ZetaChain's CLI",
+    "description": "ZetaChain's CLI is a command line tool that allows you to interact with the ZetaChain network.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
   "tokens": "Types of Tokens"
 }

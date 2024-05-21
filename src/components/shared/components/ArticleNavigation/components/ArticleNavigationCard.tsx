@@ -7,10 +7,8 @@ export type ArticleNavigationCardProps = {
   title: string;
   description?: string;
   icon?: React.ReactNode;
-  read?: {
-    time: string;
-    type: string;
-  };
+  readTime?: string;
+  readType?: string;
   className?: string;
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
@@ -19,7 +17,8 @@ export const ArticleNavigationCard: React.FC<ArticleNavigationCardProps> = ({
   title,
   description,
   icon,
-  read,
+  readTime,
+  readType,
   className,
   ...linkProps
 }) => {
@@ -40,12 +39,14 @@ export const ArticleNavigationCard: React.FC<ArticleNavigationCardProps> = ({
           {description && <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3">{description}</p>}
         </div>
 
-        {read && (
+        {(readTime || readType) && (
           <div className="flex justify-between flex-wrap">
-            <p className="flex gap-1 items-center">
-              <IconTime /> <span className="text-black dark:text-white">{read.time}</span>
-            </p>
-            <p className="text-black dark:text-white">{read.type}</p>
+            {readTime && (
+              <p className="flex gap-1 items-center">
+                <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
+              </p>
+            )}
+            {readType && <p className="text-black dark:text-white">{readType}</p>}
           </div>
         )}
       </div>

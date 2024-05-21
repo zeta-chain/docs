@@ -2,7 +2,7 @@ import { getAllPages } from "nextra/context";
 import { useMemo } from "react";
 
 import { ArticleNavigation } from "~/components/shared";
-import { getPageDescription, getPageTitle } from "~/lib/helpers/nextra";
+import { getPageDescription, getPageReadTime, getPageReadType, getPageTitle } from "~/lib/helpers/nextra";
 
 /**
  * @description Used to exclude pages from the default tree as navigation blocks
@@ -39,10 +39,8 @@ export const NavigationBlocks: React.FC = () => {
                   title: getPageTitle(page),
                   description: getPageDescription(page),
                   href: page.route,
-                  // read: {
-                  //   time: "5 min",
-                  //   type: "Beginner",
-                  // },
+                  readTime: getPageReadTime(page),
+                  readType: getPageReadType(page),
                 }))
               : []
           }
