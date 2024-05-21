@@ -1,6 +1,12 @@
 import { IconArticleRandom, IconDocs, PrimaryLink } from "../../shared";
 
-const keyFeatures = [
+type KeyFeature = {
+  title: string;
+  description: string;
+  link?: React.ReactNode;
+};
+
+const keyFeatures: KeyFeature[] = [
   {
     title: "Decentralized and public",
     description:
@@ -21,7 +27,7 @@ const keyFeatures = [
     description:
       "A developer can pass messages (data and value) between chains and layers with simple function calls. Through message passing, a dApp developer can build powerful cross-chain applications by simply implementing a few functions within their existing smart contracts.",
     link: (
-      <PrimaryLink href="/developers" target="_blank" icon={<IconDocs />}>
+      <PrimaryLink href="/developers/cross-chain-messaging/overview" icon={<IconDocs />}>
         Start building dApps
       </PrimaryLink>
     ),
