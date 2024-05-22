@@ -8,3 +8,25 @@ export const getPageDescription = (page: Page) => (page.meta?.description ? Stri
 export const getPageReadTime = (page: Page) => (page.meta?.readTime ? String(page.meta?.readTime) : undefined);
 
 export const getPageReadType = (page: Page) => (page.meta?.readType ? String(page.meta?.readType) : undefined);
+
+export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]; maxPages: number }): Page[] => {
+  const mdxPages: Page[] = [];
+
+  const getInnerMdxPages = (pagesToProcess: Page[]) => {
+    for (const page of pagesToProcess) {
+      if (mdxPages.length >= maxPages) break;
+
+      if (page.kind === "Folder") {
+        getInnerMdxPages(page.children);
+      } else {
+        if (page.name === "index") continue;
+
+        mdxPages.push(page);
+      }
+    }
+  };
+
+  getInnerMdxPages(pages);
+
+  return mdxPages;
+};

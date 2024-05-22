@@ -1,17 +1,22 @@
 {
   "details": {
-    "title": "Network Details"
+    "title": "Network Details",
+    "description": "ZetaChain testnet and mainnet details."
   },
   "api": {
-    "title": "API / RPC Endpoints"
+    "title": "API / RPC Endpoints",
+    "description": "API endpoints that can be used to interact with ZetaChain."
   },
   "openapi": {
-    "title": "ZetaChain HTTP API"
+    "title": "ZetaChain HTTP API",
+    "description": "Swagger documentation for the API of ZetaChain."
   },
   "services": {
-    "title": "Services and Providers"
+    "title": "Services and Providers",
+    "description": "A list of ZetaChain-compatible services that provide useful functionality to developers."
   },
   "contracts": {
-    "title": "Contract Addresses"
+    "title": "Contract Addresses",
+    "description": "A list of contract addresses for ZetaChain."
   }
 }

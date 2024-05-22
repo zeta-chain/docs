@@ -2,7 +2,13 @@ import { getAllPages } from "nextra/context";
 import React, { useMemo } from "react";
 
 import { IconDocument, PageNavigationBlock } from "~/components/shared";
-import { getPageDescription, getPageReadTime, getPageReadType, getPageTitle } from "~/lib/helpers/nextra";
+import {
+  getPageDescription,
+  getPageReadTime,
+  getPageReadType,
+  getPageTitle,
+  getRecursivelyInnerMdxPages,
+} from "~/lib/helpers/nextra";
 
 import { WorkWithUs } from "./WorkWithUs";
 
@@ -34,33 +40,32 @@ export const HomeNavigationBlocks: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-20 sm:gap-[120px]">
-      {mainFolders.map((folder, index, folders) => (
-        <React.Fragment key={folder.route}>
-          {index === folders.length - 1 && <WorkWithUs />}
+      {mainFolders.map((folder, index, folders) => {
+        const innerPages =
+          "children" in folder
+            ? getRecursivelyInnerMdxPages({ pages: folder.children, maxPages: MAX_ARTICLE_CARDS })
+            : [];
 
-          <PageNavigationBlock
-            title={getPageTitle(folder)}
-            description={getPageDescription(folder)}
-            colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
-            link={
-              "children" in folder && folder.children.length > MAX_ARTICLE_CARDS
-                ? { title: "Explore more", href: folder.route, icon: <IconDocument /> }
-                : undefined
-            }
-            articles={
-              "children" in folder
-                ? folder.children.slice(0, MAX_ARTICLE_CARDS).map((page) => ({
-                    title: getPageTitle(page),
-                    description: getPageDescription(page),
-                    href: page.route,
-                    readTime: getPageReadTime(page),
-                    readType: getPageReadType(page),
-                  }))
-                : []
-            }
-          />
-        </React.Fragment>
-      ))}
+        return (
+          <React.Fragment key={folder.route}>
+            {index === folders.length - 1 && <WorkWithUs />}
+
+            <PageNavigationBlock
+              title={getPageTitle(folder)}
+              description={getPageDescription(folder)}
+              colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
+              link={{ title: "Explore more", href: folder.route, icon: <IconDocument /> }}
+              articles={innerPages.map((page) => ({
+                title: getPageTitle(page),
+                description: getPageDescription(page),
+                href: page.route,
+                readTime: getPageReadTime(page),
+                readType: getPageReadType(page),
+              }))}
+            />
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };
