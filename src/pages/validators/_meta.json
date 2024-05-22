@@ -1,12 +1,36 @@
 {
-  "requirements": "Technical Requirements",
-  "setup": "Setting Up a Node",
-  "state-sync": "Option 1: State-Sync",
-  "snapshot": "Option 2: Snapshot",
-  "ksync": "Option 3: KSYNC",
-  "node": "Running a Node in Production",
-  "cosmovisor": "Setting up Cosmovisor",
-  "monitoring": "Validators Monitoring",
-  "proposals": "Governance Upgrade Proposals",
-  "validator": "Create a Core Validator"
+  "index": {
+    "title": "Validate",
+    "description": "Become one of the important pieces of ZetaChain operation by validating transactions for the chain. It’s easy to get setup and started on our testnet and mainnet."
+  },
+  "requirements": {
+    "title": "Technical Requirements"
+  },
+  "setup": {
+    "title": "Setting Up a Node"
+  },
+  "state-sync": {
+    "title": "Option 1: State-Sync"
+  },
+  "snapshot": {
+    "title": "Option 2: Snapshot"
+  },
+  "ksync": {
+    "title": "Option 3: KSYNC"
+  },
+  "node": {
+    "title": "Running a Node in Production"
+  },
+  "cosmovisor": {
+    "title": "Setting up Cosmovisor"
+  },
+  "monitoring": {
+    "title": "Validators Monitoring"
+  },
+  "proposals": {
+    "title": "Governance Upgrade Proposals"
+  },
+  "validator": {
+    "title": "Create a Core Validator"
+  }
 }

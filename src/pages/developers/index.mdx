@@ -1,0 +1,24 @@
+---
+title: Build
+description: Start building on ZetaChain, the only decentralized blockchain and smart contract platform built for omnichain interoperability.
+imgUrl: /img/pages/build.svg
+imgMaxWidth: 688
+---
+
+import { WorkWithUs } from "~/components/Home";
+import { GetSupport } from "~/components/Support";
+
+import { BugBounty, CurrentPageNavigationBlocks, Hero } from "~/components/shared";
+
+<Hero />
+
+<div className="flex flex-col gap-20 sm:gap-[120px]">
+  <CurrentPageNavigationBlocks
+    injectedSection={{
+      index: 2,
+      component: <WorkWithUs />,
+    }}
+  />
+  <BugBounty />
+  <GetSupport />
+</div>

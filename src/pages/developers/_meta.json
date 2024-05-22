@@ -1,14 +1,30 @@
 {
-  "overview": "Start building with ZetaChain",
-  "template": "Smart Contract Template",
-  "addresses": "Account Addresses",
-  "omnichain": "Omnichain Contracts",
-  "cross-chain-messaging": "Cross-Chain Messaging",
+  "index": {
+    "title": "Build",
+    "description": "Start building on ZetaChain, the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+  },
+  "overview": {
+    "title": "Start building with ZetaChain"
+  },
+  "template": {
+    "title": "Smart Contract Template"
+  },
+  "addresses": {
+    "title": "Account Addresses"
+  },
+  "omnichain": {
+    "title": "Omnichain Contracts"
+  },
+  "cross-chain-messaging": {
+    "title": "Cross-Chain Messaging"
+  },
   "cli": {
     "title": "Using ZetaChain's CLI",
     "description": "ZetaChain's CLI is a command line tool that allows you to interact with the ZetaChain network.",
     "readTime": "5 min",
     "readType": "Beginner"
   },
-  "tokens": "Types of Tokens"
+  "tokens": {
+    "title": "Types of Tokens"
+  }
 }
