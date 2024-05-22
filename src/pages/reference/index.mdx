@@ -5,10 +5,14 @@ imgUrl: /img/pages/tools.svg
 imgMaxWidth: 574
 ---
 
-import { CurrentPageNavigationBlocks, Hero } from "~/components/shared";
+import { BugBounty, CurrentPageNavigationBlocks, Hero } from "~/components/shared";
 
 <Hero />
 
 <div className="flex flex-col gap-20 sm:gap-[120px]">
-  <CurrentPageNavigationBlocks />
+  <CurrentPageNavigationBlocks
+    injectedSection={{
+      component: <BugBounty />,
+    }}
+  />
 </div>
