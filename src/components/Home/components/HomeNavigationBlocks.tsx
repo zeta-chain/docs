@@ -1,5 +1,5 @@
 import { getAllPages } from "nextra/context";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { IconDocument, PageNavigationBlock } from "~/components/shared";
 import { getPageDescription, getPageReadTime, getPageReadType, getPageTitle } from "~/lib/helpers/nextra";
@@ -35,11 +35,10 @@ export const HomeNavigationBlocks: React.FC = () => {
   return (
     <div className="flex flex-col gap-20 sm:gap-[120px]">
       {mainFolders.map((folder, index, folders) => (
-        <>
+        <React.Fragment key={folder.route}>
           {index === folders.length - 1 && <WorkWithUs />}
 
           <PageNavigationBlock
-            key={folder.route}
             title={getPageTitle(folder)}
             description={getPageDescription(folder)}
             colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
@@ -60,7 +59,7 @@ export const HomeNavigationBlocks: React.FC = () => {
                 : []
             }
           />
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
