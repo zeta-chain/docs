@@ -1,78 +1,60 @@
-# System contract
+# System Contract
 
-To make your life easier we already deployed a system contract with some
-information you may need in your protocol. You can import this code into your
-project and instance with the deployed address. You can find the up-to-date
-address of the system contract using the ZetaChain's API:
+The System Contract on ZetaChain serves as the caller for universal apps when
+they are called from connected chains.
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/system_contract
+| Network      | System contract address                    |
+| ------------ | ------------------------------------------ |
+| Testnet      | 0xEdf1c3275d13489aCdC6cD6eD246E72458B8795B |
+| Mainnet Beta | 0x91d18e54DAf4F677cB28167158d6dd21F6aB3921 |
 
-In this contract you will find:
+The `onlySystem` modifier must be applied to the `onCrossChainCall` function to
+ensure that only the system contract can call this function.
 
-- wZetaContractAddress: ZRC20 version of Zeta Native Token
-- uniswapv2FactoryAddress and uniswapv2Router02Address: Uniswap v2 already
-  deployed on zEVM
-- gasZetaPoolByChainId and gasCoinZRC20ByChainId: helpers with ZRC20 data
-  indexed by chain ID
-- gasPriceByChainId: helper to estimate gas for an external transaction
+Useful values and functions in the system contract:
 
-```solidity filename="SystemContract.sol"
-contract SystemContract is SystemContractErrors {
-    mapping(uint256 => uint256) public gasPriceByChainId;
-    mapping(uint256 => address) public gasCoinZRC20ByChainId;
-    mapping(uint256 => address) public gasZetaPoolByChainId;
+- `wZetaContractAddress`: wrapped ZETA address.
+- `uniswapv2Router02Address`: address of the Uniswap v2 router, which powers the
+  internal liquidity pools.
+- `uniswapv2FactoryAddress`: address of the Uniswap v2 factory.
+- `gasZetaPoolByChainId`: returns a pool address of ZETA and a gas token of the
+  specified chain.
+- `gasCoinZRC20ByChainId`: returns a ZRC-20 address of the gas token of the
+  specified chain.
+- `gasPriceByChainId`: helper to estimate gas for transactions on connected
+  chains.
+- `zetaConnectorZEVMAddress`: address of the connector contract. (please, note
+  that this value is currently empty, but will be set with the actual connector
+  address in the next protocol upgrade)
 
-    address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6226aB;
-    address public immutable uniswapv2FactoryAddress;
-    address public immutable uniswapv2Router02Address;
-    address public wZetaContractAddress;
-    address public zetaConnectorZEVMAddress;
-    //...
-}
-```
+The system contract is inherited from `ZetaChain`, making it easily accessible
+from your universal app contract:
 
-Source:
-[`SystemContract.sol`](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/SystemContract.sol)
-
-Let's look at an example of how to use the system contract in your smart
-contract.
-
-Install the protocol contracts package:
-
-```
-yarn add --dev @zetachain/protocol-contracts
-```
-
-Import the system contract and create a reference to the system contract in the
-constructor:
-
-```solidity filename="Contract.sol"
+```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
+import "@zetachain/toolkit/contracts/ZetaChain.sol";
 
-contract SystemContractSample {
-    SystemContract public immutable systemContract;
+contract MyContract is ZetaChain {
+    constructor() ZetaChain() {}
 
-    constructor(address systemContractAddress) {
-        systemContract = SystemContract(systemContractAddress);
-    }
-
-    function getZRC20AddressByChainId(uint32 targetZRC20ChainId) public returns(address) {
-        return systemContract.gasCoinZRC20ByChainId(targetZRC20ChainId);
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external override onlySystem {
+        // systemContract.gasCoinZRC20ByChainId(context.chainID)
     }
 }
 ```
 
-In your deploy script, you can get the system contract address by using the
-`getAddress` helper function.
+To get the system contract address in a client-side application or script, use
+the `getAddress` function:
 
 ```ts
 import { getAddress } from "@zetachain/protocol-contracts";
 
 const SYSTEM_CONTRACT = getAddress("systemContract", "zeta_testnet");
 ```
-
-For an example of how the system contract can be used, please, refer to the
-[Swap example project](https://github.com/zeta-chain/example-contracts/tree/main/omnichain/swap).
