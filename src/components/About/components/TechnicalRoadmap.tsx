@@ -3,7 +3,7 @@ import { SectionTitle } from "../../shared";
 export const TechnicalRoadmap: React.FC = () => {
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
-      <SectionTitle title="Technical Roadmap" description="Key development milestones" colorClass="bg-[#00B8DD]" />
+      <SectionTitle title="Technical Roadmap" description="Key development milestones" colorClass="bg-[#E34ED6]" />
 
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-10 gap-5 md:gap-8 text-base leading-[160%] font-normal text-grey-400 dark:text-grey-300">
