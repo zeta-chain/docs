@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import tw, { styled } from "twin.macro";
 
-import { Navigation } from "./Navigation";
+import { NavigationLayout } from "./NavigationLayout";
 
 const LayoutContainer = styled.div`
   ${tw`bg-grey-50 dark:bg-grey-900`};
@@ -161,6 +161,6 @@ type LayoutProps = {
 
 export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => (
   <LayoutContainer className={className}>
-    <Navigation>{children}</Navigation>
+    <NavigationLayout>{children}</NavigationLayout>
   </LayoutContainer>
 );

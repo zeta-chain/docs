@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { createElement, useMemo } from "react";
 
-import { NavItem } from "../Navigation.constants";
+import { NavItem } from "../Layout.constants";
 import { NavigationItemWrapper } from "./NavigationItemWrapper";
 
 const nonSelectedColor =

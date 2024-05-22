@@ -10,11 +10,11 @@ import { getRevealProps } from "~/lib/helpers/animations";
 import { Footer } from "../../Footer";
 import { IconZetaDocsLogo } from "../../Icons";
 import { ThemeToggle } from "../../ThemeToggle";
-import { closeDrawerWidth, LeftNavDrawer, navBottomItems, navMainItems } from "../Navigation.constants";
+import { closeDrawerWidth, LeftNavDrawer, navBottomItems, navMainItems } from "../Layout.constants";
 import { Header } from "./Header";
 import { NavigationItem } from "./NavigationItem";
 
-export const Navigation: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);

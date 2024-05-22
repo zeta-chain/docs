@@ -2,7 +2,7 @@ import { ListItemButton } from "@mui/material";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { NavItem } from "../Navigation.constants";
+import { NavItem } from "../Layout.constants";
 
 interface NavigationItemWrapperProps {
   item: NavItem;
