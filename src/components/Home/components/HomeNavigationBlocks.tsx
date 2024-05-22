@@ -1,8 +1,10 @@
 import { getAllPages } from "nextra/context";
 import { useMemo } from "react";
 
-import { ArticleNavigation, IconDocument } from "~/components/shared";
+import { IconDocument, PageNavigationBlock } from "~/components/shared";
 import { getPageDescription, getPageReadTime, getPageReadType, getPageTitle } from "~/lib/helpers/nextra";
+
+import { WorkWithUs } from "./WorkWithUs";
 
 /**
  * @description Used to exclude pages from the default tree as navigation blocks
@@ -22,40 +24,44 @@ const MAX_ARTICLE_CARDS = 5;
 export const HomeNavigationBlocks: React.FC = () => {
   const pages = getAllPages();
 
-  const { navigationPages } = useMemo(() => {
-    const navigationPages = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_PAGES_NAMES.includes(page.name));
+  const { mainFolders } = useMemo(() => {
+    const mainFolders = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_PAGES_NAMES.includes(page.name));
 
     return {
-      navigationPages,
+      mainFolders,
     };
   }, [pages]);
 
   return (
-    <>
-      {navigationPages.map((page, index) => (
-        <ArticleNavigation
-          key={page.route}
-          title={getPageTitle(page)}
-          description={getPageDescription(page)}
-          colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
-          link={
-            "children" in page && page.children.length > MAX_ARTICLE_CARDS
-              ? { title: "Explore more", href: page.route, icon: <IconDocument /> }
-              : undefined
-          }
-          articles={
-            "children" in page
-              ? page.children.slice(0, MAX_ARTICLE_CARDS).map((page) => ({
-                  title: getPageTitle(page),
-                  description: getPageDescription(page),
-                  href: page.route,
-                  readTime: getPageReadTime(page),
-                  readType: getPageReadType(page),
-                }))
-              : []
-          }
-        />
+    <div className="flex flex-col gap-20 sm:gap-[120px]">
+      {mainFolders.map((folder, index, folders) => (
+        <>
+          {index === folders.length - 1 && <WorkWithUs />}
+
+          <PageNavigationBlock
+            key={folder.route}
+            title={getPageTitle(folder)}
+            description={getPageDescription(folder)}
+            colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
+            link={
+              "children" in folder && folder.children.length > MAX_ARTICLE_CARDS
+                ? { title: "Explore more", href: folder.route, icon: <IconDocument /> }
+                : undefined
+            }
+            articles={
+              "children" in folder
+                ? folder.children.slice(0, MAX_ARTICLE_CARDS).map((page) => ({
+                    title: getPageTitle(page),
+                    description: getPageDescription(page),
+                    href: page.route,
+                    readTime: getPageReadTime(page),
+                    readType: getPageReadType(page),
+                  }))
+                : []
+            }
+          />
+        </>
       ))}
-    </>
+    </div>
   );
 };

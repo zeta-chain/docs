@@ -1,8 +1,8 @@
-import { ArticleNavigation } from "~/components/shared";
+import { PageNavigationBlock } from "~/components/shared";
 
 export const GetStarted: React.FC = () => {
   return (
-    <ArticleNavigation
+    <PageNavigationBlock
       title="Get Started"
       description="Dive into the basics of ZetaChain"
       articles={[

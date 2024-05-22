@@ -1,13 +1,14 @@
 import clsx from "clsx";
 
 import { SectionTitle, SectionTitleProps } from "../../SectionTitle";
-import { ArticleNavigationCard, ArticleNavigationCardProps } from "./ArticleNavigationCard";
+import { PageNavigationCardLink, PageNavigationCardLinkProps } from "./PageNavigationCardLink";
 
-type ArticleNavigationProps = SectionTitleProps & {
-  articles: ArticleNavigationCardProps[];
+type ArticleNavigationProps = Omit<SectionTitleProps, "title"> & {
+  title?: string;
+  articles: PageNavigationCardLinkProps[];
 };
 
-export const ArticleNavigation: React.FC<ArticleNavigationProps> = ({
+export const PageNavigationBlock: React.FC<ArticleNavigationProps> = ({
   title,
   description,
   colorClass,
@@ -16,7 +17,7 @@ export const ArticleNavigation: React.FC<ArticleNavigationProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-10">
-      <SectionTitle title={title} description={description} colorClass={colorClass} link={link} />
+      {title && <SectionTitle title={title} description={description} colorClass={colorClass} link={link} />}
 
       <div
         className={clsx("grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-8", {
@@ -28,7 +29,7 @@ export const ArticleNavigation: React.FC<ArticleNavigationProps> = ({
         })}
       >
         {articles.map((article, index) => (
-          <ArticleNavigationCard key={index} {...article} />
+          <PageNavigationCardLink key={index} {...article} />
         ))}
       </div>
     </div>

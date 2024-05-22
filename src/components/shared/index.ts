@@ -1,6 +1,5 @@
 export * from "./components/Alert";
 export * from "./components/AppHead";
-export * from "./components/ArticleNavigation";
 export * from "./components/CodeBlock";
 export * from "./components/Error";
 export * from "./components/Footer";
@@ -10,6 +9,7 @@ export * from "./components/Icons";
 export * from "./components/Layout";
 export * from "./components/Link";
 export * from "./components/PageBlocked";
+export * from "./components/PageNavigation";
 export * from "./components/PreloadedFonts";
 export * from "./components/SectionTitle";
 export * from "./components/ThemeToggle";

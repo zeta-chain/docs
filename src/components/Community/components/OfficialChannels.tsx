@@ -1,6 +1,4 @@
 import {
-  ArticleNavigationCard,
-  ArticleNavigationCardProps,
   IconDiscord,
   IconGitHub,
   IconMedium,
@@ -8,11 +6,13 @@ import {
   IconTelegram,
   IconTwitter,
   IconYouTube,
+  PageNavigationCardLink,
+  PageNavigationCardLinkProps,
   SectionTitle,
 } from "~/components/shared";
 import { globalLinks } from "~/constants";
 
-const mainChannels: ArticleNavigationCardProps[] = [
+const mainChannels: PageNavigationCardLinkProps[] = [
   {
     title: "Telegram",
     description: "Keep up with the latest announcements.",
@@ -33,7 +33,7 @@ const mainChannels: ArticleNavigationCardProps[] = [
   },
 ];
 
-const otherChannels: ArticleNavigationCardProps[] = [
+const otherChannels: PageNavigationCardLinkProps[] = [
   {
     title: "Discord",
     description: "Announcements, Q&A and community support.",
@@ -71,13 +71,13 @@ export const OfficialChannels = () => {
       <div className="flex flex-col gap-5 lg:gap-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8">
           {mainChannels.map((item, index) => (
-            <ArticleNavigationCard key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" />
+            <PageNavigationCardLink key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" />
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-8">
           {otherChannels.map((item, index) => (
-            <ArticleNavigationCard key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" />
+            <PageNavigationCardLink key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" />
           ))}
         </div>
       </div>

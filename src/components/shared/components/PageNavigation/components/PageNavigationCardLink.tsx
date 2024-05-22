@@ -3,7 +3,7 @@ import Link, { LinkProps as NextLinkProps } from "next/link";
 
 import { IconArticleRandom, IconTime } from "../../Icons";
 
-export type ArticleNavigationCardProps = {
+export type PageNavigationCardLinkProps = {
   title: string;
   description?: string;
   icon?: React.ReactNode;
@@ -13,7 +13,7 @@ export type ArticleNavigationCardProps = {
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-export const ArticleNavigationCard: React.FC<ArticleNavigationCardProps> = ({
+export const PageNavigationCardLink: React.FC<PageNavigationCardLinkProps> = ({
   title,
   description,
   icon,
