@@ -8,6 +8,22 @@ const API: Record<NetworkType, string> = {
   mainnet: "https://zetachain-mainnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
 };
 
+const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
+const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
+
+const convertIpfsLink = (link: string, metadata: string) => {
+  const ipfsPrefix = "ipfs://";
+  const gatewayPrefix = "https://ipfs.io/ipfs/";
+
+  if (link.startsWith(ipfsPrefix)) return link.replace(ipfsPrefix, gatewayPrefix);
+  if (link.startsWith("https://")) return link;
+
+  if (metadata.startsWith(ipfsPrefix)) return metadata.replace(ipfsPrefix, gatewayPrefix);
+  if (metadata.startsWith("https://")) return metadata;
+
+  return link;
+};
+
 export const GovUpgradeProposals = () => {
   const [proposals, setProposals] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,18 +60,6 @@ export const GovUpgradeProposals = () => {
 
     fetchData();
   }, [activeTab]);
-
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
-  const convertIpfsLink = (link: string) => {
-    const ipfsPrefix = "ipfs://";
-    const gatewayPrefix = "https://ipfs.io/ipfs/";
-    if (link.startsWith(ipfsPrefix)) {
-      return link.replace(ipfsPrefix, gatewayPrefix);
-    }
-    return link;
-  };
 
   return (
     <div className="mt-6">
@@ -102,8 +106,12 @@ export const GovUpgradeProposals = () => {
                   <td>{proposal.plan.height}</td>
                   <td>{proposal.status}</td>
                   <td>
-                    <a href={convertIpfsLink(proposal.plan.info)} target="_blank" rel="noopener noreferrer">
-                      {convertIpfsLink(proposal.plan.info)}
+                    <a
+                      href={convertIpfsLink(proposal.plan.info, proposal.metadata)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {convertIpfsLink(proposal.plan.info, proposal.metadata)}
                     </a>
                   </td>
                 </tr>
