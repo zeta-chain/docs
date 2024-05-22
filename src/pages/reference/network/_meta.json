@@ -1,0 +1,17 @@
+{
+  "details": {
+    "title": "Network Details"
+  },
+  "api": {
+    "title": "API / RPC Endpoints"
+  },
+  "openapi": {
+    "title": "ZetaChain HTTP API"
+  },
+  "services": {
+    "title": "Services and Providers"
+  },
+  "contracts": {
+    "title": "Contract Addresses"
+  }
+}
