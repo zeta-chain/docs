@@ -4,33 +4,43 @@
     "description": "Become one of the important pieces of ZetaChain operation by validating transactions for the chain. It’s easy to get setup and started on our testnet and mainnet."
   },
   "requirements": {
-    "title": "Technical Requirements"
+    "title": "Technical Requirements",
+    "description": "Before you start validating, make sure you have the following technical requirements."
   },
   "setup": {
-    "title": "Setting Up a Node"
+    "title": "Setting Up a Node",
+    "description": "A guide to set up a ZetaChain Mainnet Beta or testnet node."
   },
   "state-sync": {
-    "title": "Option 1: State-Sync"
+    "title": "Option 1: State-Sync",
+    "description": "How to setup a RPC node using state-sync."
   },
   "snapshot": {
-    "title": "Option 2: Snapshot"
+    "title": "Option 2: Snapshot",
+    "description": "Syncing a node using a snapshot."
   },
   "ksync": {
-    "title": "Option 3: KSYNC"
+    "title": "Option 3: KSYNC",
+    "description": "How to sync a ZetaChain Mainnet Beta node with KSYNC."
   },
   "node": {
-    "title": "Running a Node in Production"
+    "title": "Running a Node in Production",
+    "description": "This document outlines the process for running a full ZetaChain node."
   },
   "cosmovisor": {
-    "title": "Setting up Cosmovisor"
+    "title": "Setting up Cosmovisor",
+    "description": "Cosmovisor is a process manager for Cosmos SDK application binaries that automates application binary switch at chain upgrades."
   },
   "monitoring": {
-    "title": "Validators Monitoring"
+    "title": "Validators Monitoring",
+    "description": "Monitoring your validator node is crucial to ensure it is running smoothly and securely."
   },
   "proposals": {
-    "title": "Governance Upgrade Proposals"
+    "title": "Governance Upgrade Proposals",
+    "description": "Validators are responsible for voting on proposals that affect the network."
   },
   "validator": {
-    "title": "Create a Core Validator"
+    "title": "Create a Core Validator",
+    "description": "Become a core validator on the ZetaChain network."
   }
 }
