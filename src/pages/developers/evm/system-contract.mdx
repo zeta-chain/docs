@@ -31,20 +31,18 @@ The system contract is inherited from `ZetaChain`, making it easily accessible
 from your universal app contract:
 
 ```solidity
-// SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
-
-import "@zetachain/toolkit/contracts/ZetaChain.sol";
-
-contract MyContract is ZetaChain {
-    constructor() ZetaChain() {}
-
+ 
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IZRC20.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+ 
+contract YourContract is zContract {
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external override onlySystem {
+    ) external virtual override {
         // systemContract.gasCoinZRC20ByChainId(context.chainID)
     }
 }
