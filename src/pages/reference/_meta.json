@@ -1,4 +1,8 @@
 {
+  "index": {
+    "title": "Tools",
+    "description": "Useful articles to help you get up and running, work with the network, api or simply learn key terms."
+  },
   "wallets": "Wallets",
   "get-testnet-zeta": "Get Testnet ZETA (Faucet)",
   "explorers": "ZetaScan",

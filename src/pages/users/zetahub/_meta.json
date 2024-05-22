@@ -1,10 +1,26 @@
 {
-  "create-wallet": "Create a Wallet in ZetaChain",
-  "connect-wallet": "Connect Wallet in ZetaHub",
-  "get-zeta": "Get ZETA",
-  "pool": "Pool your ZETA",
-  "stake": "Delegate/Stake ZETA",
-  "enroll-zeta-xp": "Enroll in Zeta XP",
-  "earn-zeta-xp": "Earn Zeta XP",
-  "send": "Send Assets"
+  "create-wallet": {
+    "title": "Create a Wallet in ZetaChain"
+  },
+  "connect-wallet": {
+    "title": "Connect a Wallet in ZetaHub"
+  },
+  "get-zeta": {
+    "title": "Get ZETA"
+  },
+  "pool": {
+    "title": "Pool ZETA"
+  },
+  "stake": {
+    "title": "Delegate/Stake ZETA"
+  },
+  "enroll-zeta-xp": {
+    "title": "Enroll in Zeta XP"
+  },
+  "earn-zeta-xp": {
+    "title": "Earn Zeta XP"
+  },
+  "send": {
+    "title": "Send Assets"
+  }
 }

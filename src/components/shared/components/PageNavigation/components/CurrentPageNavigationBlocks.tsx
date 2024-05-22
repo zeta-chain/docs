@@ -59,17 +59,19 @@ export const CurrentPageNavigationBlocks: React.FC<CurrentPageNavigationBlocksPr
 
   return (
     <div className="flex flex-col gap-20 sm:gap-[120px]">
-      <PageNavigationBlock
-        title={mainTitle}
-        description={mainDescription}
-        articles={navigationPages.map((page) => ({
-          title: getPageTitle(page),
-          description: getPageDescription(page),
-          href: page.route,
-          readTime: getPageReadTime(page),
-          readType: getPageReadType(page),
-        }))}
-      />
+      {!!navigationPages.length && (
+        <PageNavigationBlock
+          title={mainTitle}
+          description={mainDescription}
+          articles={navigationPages.map((page) => ({
+            title: getPageTitle(page),
+            description: getPageDescription(page),
+            href: page.route,
+            readTime: getPageReadTime(page),
+            readType: getPageReadType(page),
+          }))}
+        />
+      )}
 
       {navigationFolders.map((folder, index, folders) => {
         const shouldInjectSection =
