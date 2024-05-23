@@ -17,6 +17,11 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     extraContent: <ThemeToggle className="hidden sm:flex" />,
   },
 
+  // Add extra components to all rendered pages
+  // @todo - Add custom Hero component to all pages except the home page.
+  //         Need to update all mdx content to move main headings and descriptions (and some images) to the Hero component
+  // main: MainContent,
+
   // Remove nextra default theme switch in favor of custom theme toggle button
   darkMode: false,
 
