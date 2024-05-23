@@ -1,7 +1,8 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { AppHead, ThemeToggle } from "~/components/shared";
+import { AppHead, MainContent, ThemeToggle } from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
+
 /**
  * @description Custom Nextra Docs theme configuration
  * @see https://nextra.site/docs/docs-theme/theme-configuration
@@ -18,9 +19,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   },
 
   // Add extra components to all rendered pages
-  // @todo - Add custom Hero component to all pages except the home page.
-  //         Need to update all mdx content to move main headings and descriptions (and some images) to the Hero component
-  // main: MainContent,
+  main: MainContent,
 
   // Remove nextra default theme switch in favor of custom theme toggle button
   darkMode: false,
@@ -74,7 +73,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   // Remove last updated date
   gitTimestamp: undefined,
 
-  // Remove bottom page navigation
+  // Remove nextra bottom page navigation
   navigation: {
     prev: false,
     next: false,

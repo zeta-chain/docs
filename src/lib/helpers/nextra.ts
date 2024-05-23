@@ -30,3 +30,41 @@ export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]
 
   return mdxPages;
 };
+
+export type EnhancedPage = Page & {
+  title?: string;
+  description?: string;
+};
+
+export const getFlatDirectories = (allPages: Page[]) => {
+  const flatDirectories: EnhancedPage[] = [];
+  const directoriesByRoute: Record<string, { index: number } & EnhancedPage> = {};
+
+  const flattenDirectories = (pages: Page[]) => {
+    for (const page of pages) {
+      if (page.kind === "Folder") {
+        flattenDirectories(page.children);
+      } else {
+        const directory = {
+          ...(typeof page.meta?.title === "string" ? { title: page.meta?.title } : {}),
+          ...(typeof page.meta?.description === "string" ? { description: page.meta?.description } : {}),
+          ...page,
+        };
+
+        flatDirectories.push(directory);
+
+        directoriesByRoute[page.route] = {
+          index: flatDirectories.length - 1,
+          ...directory,
+        };
+      }
+    }
+  };
+
+  flattenDirectories(allPages);
+
+  return {
+    flatDirectories,
+    directoriesByRoute,
+  };
+};

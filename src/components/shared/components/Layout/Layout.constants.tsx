@@ -100,3 +100,8 @@ export const navBottomItems: NavItem[] = [
     url: "/community",
   },
 ];
+
+export const mainNavRoutes = [...navMainItems, ...navBottomItems]
+  .flat()
+  .map((item) => item.url)
+  .filter(Boolean);
