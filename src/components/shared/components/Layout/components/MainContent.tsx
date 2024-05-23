@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 
-// import { ContinueLearning } from "./ContinueLearning";
+import { ContinueLearning } from "./ContinueLearning";
 
 type MainContentProps = PropsWithChildren<{}>;
 
@@ -18,7 +18,7 @@ export const MainContent: React.FC<MainContentProps> = ({ children }) => {
     <>
       {/* {shouldRenderHero && <Hero />} */}
       {children}
-      {/* <ContinueLearning /> */}
+      <ContinueLearning />
     </>
   );
 };

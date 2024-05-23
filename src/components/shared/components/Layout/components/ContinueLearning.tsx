@@ -19,6 +19,8 @@ export const ContinueLearning: React.FC = () => {
   const { flatDirectories, directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
 
   const navigationPages = useMemo(() => {
+    if (!route || !directoriesByRoute[route]) return [];
+
     const currentDirectory = directoriesByRoute[route];
 
     const prevPage = flatDirectories[currentDirectory.index - 1];
@@ -49,7 +51,7 @@ export const ContinueLearning: React.FC = () => {
 
   const shouldRenderContinueLearning = !EXCLUDED_ROUTES.includes(route);
 
-  if (!shouldRenderContinueLearning) return null;
+  if (!shouldRenderContinueLearning || !navigationPages.length) return null;
 
   return (
     <div className="mb-[88px] mt-[152px]">
