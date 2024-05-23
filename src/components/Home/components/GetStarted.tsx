@@ -1,11 +1,11 @@
-import { PageNavigationBlock } from "~/components/shared";
+import { NavigationSection } from "~/components/shared";
 
 export const GetStarted: React.FC = () => {
   return (
-    <PageNavigationBlock
+    <NavigationSection
       title="Get Started"
       description="Dive into the basics of ZetaChain"
-      articles={[
+      navItems={[
         {
           title: "What is ZetaChain?",
           description: "Learn about the unparalleled blockchain enabling omnichain.",

@@ -3,7 +3,7 @@ import Link, { LinkProps as NextLinkProps } from "next/link";
 
 import { IconArticleRandom, IconTime } from "../../Icons";
 
-export type PageNavigationCardLinkProps = {
+export type NavigationCardLinkProps = {
   title: string;
   topTitle?: string;
   description?: string;
@@ -14,7 +14,7 @@ export type PageNavigationCardLinkProps = {
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-export const PageNavigationCardLink: React.FC<PageNavigationCardLinkProps> = ({
+export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   title,
   topTitle,
   description,
@@ -42,7 +42,9 @@ export const PageNavigationCardLink: React.FC<PageNavigationCardLinkProps> = ({
               {topTitle}
             </p>
           )}
+
           <h3 className="text-xl font-medium text-black dark:text-white">{title}</h3>
+
           {description && <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3">{description}</p>}
         </div>
 
@@ -53,6 +55,7 @@ export const PageNavigationCardLink: React.FC<PageNavigationCardLinkProps> = ({
                 <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
               </p>
             )}
+
             {readType && <p className="text-black dark:text-white">{readType}</p>}
           </div>
         )}

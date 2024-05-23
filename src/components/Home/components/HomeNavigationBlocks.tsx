@@ -1,7 +1,7 @@
 import { getAllPages } from "nextra/context";
 import React, { useMemo } from "react";
 
-import { IconDocument, PageNavigationBlock } from "~/components/shared";
+import { IconDocument, NavigationSection } from "~/components/shared";
 import {
   getPageDescription,
   getPageReadTime,
@@ -50,12 +50,12 @@ export const HomeNavigationBlocks: React.FC = () => {
           <React.Fragment key={folder.route}>
             {index === folders.length - 1 && <WorkWithUs />}
 
-            <PageNavigationBlock
+            <NavigationSection
               title={getPageTitle(folder)}
               description={getPageDescription(folder)}
               colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
               link={{ title: "Explore more", href: folder.route, icon: <IconDocument /> }}
-              articles={innerPages.map((page) => ({
+              navItems={innerPages.map((page) => ({
                 title: getPageTitle(page),
                 description: getPageDescription(page),
                 href: page.route,

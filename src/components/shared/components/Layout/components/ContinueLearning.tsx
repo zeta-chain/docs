@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { getFlatDirectories } from "~/lib/helpers/nextra";
 
-import { PageNavigationBlock } from "../../PageNavigation";
+import { NavigationSection } from "../../NavigationSection";
 import { mainNavRoutes } from "../Layout.constants";
 
 const EXCLUDED_ROUTES = ["/", ...mainNavRoutes];
@@ -53,10 +53,10 @@ export const ContinueLearning: React.FC = () => {
 
   return (
     <div className="mb-[88px] mt-[152px]">
-      <PageNavigationBlock
+      <NavigationSection
         title="Continue Learning"
         description="Continue with the next part or go back to the previous one"
-        articles={navigationPages}
+        navItems={navigationPages}
       />
     </div>
   );
