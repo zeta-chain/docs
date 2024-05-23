@@ -1,6 +1,6 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { AppHead, MainContent, ThemeToggle } from "~/components/shared";
+import { AppHead, MainContentWrapper, ThemeToggle } from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 
 /**
@@ -19,7 +19,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   },
 
   // Add extra components to all rendered pages
-  main: MainContent,
+  main: MainContentWrapper,
 
   // Remove nextra default theme switch in favor of custom theme toggle button
   darkMode: false,

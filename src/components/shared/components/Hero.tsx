@@ -7,7 +7,7 @@ import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { basePath } from "~/lib/app.constants";
 
 const StyledHero = styled.div`
-  ${tw`grid grid-cols-10 gap-8 lg:min-h-[520px] mb-20 sm:mb-[120px]`}
+  ${tw`grid grid-cols-10 gap-8 mb-20 sm:mb-[120px]`}
 
   h1 {
     ${tw`text-4xl sm:text-5xl md:text-[80px] md:leading-none md:-tracking-[2.4px] font-medium text-grey-900 dark:text-grey-50`}

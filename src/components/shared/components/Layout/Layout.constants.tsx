@@ -101,7 +101,13 @@ export const navBottomItems: NavItem[] = [
   },
 ];
 
-export const mainNavRoutes = [...navMainItems, ...navBottomItems]
-  .flat()
-  .map((item) => item.url)
-  .filter(Boolean);
+/**
+ * @description List of main/top-level routes. Used to render conditional components/styles for Articles or Sub-Category pages.
+ */
+export const mainNavRoutes = [
+  "/",
+  ...[...navMainItems, ...navBottomItems]
+    .flat()
+    .map((item) => item.url)
+    .filter(Boolean),
+];

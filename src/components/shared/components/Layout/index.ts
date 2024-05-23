@@ -1,2 +1,2 @@
 export * from "./components/Layout";
-export * from "./components/MainContent";
+export * from "./components/MainContentWrapper";

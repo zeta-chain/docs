@@ -3,6 +3,7 @@ export * from "./components/HeroIconLightBulb";
 export * from "./components/HeroIconMoon";
 export * from "./components/HeroIconSun";
 export * from "./components/IconAbout";
+export * from "./components/IconArrowNarrowRight";
 export * from "./components/IconArticle";
 export * from "./components/IconBug";
 export * from "./components/IconChat";
