@@ -24,11 +24,11 @@ export const StyledHero = styled.div`
  *
  * Example usage:
  * ---
- * hero:
- *   title: "Article Title"
- *   description: "Article Description"
- *   imgUrl: "img/image-path.svg"
- *   imgWidth: 123
+ * title: "Article Title"
+ * description: "Article Description"
+ * hero: true
+ * heroImgUrl: "img/image-path.svg"
+ * heroImgWidth: 123
  * ---
  */
 export const Hero: React.FC = () => {
@@ -38,13 +38,11 @@ export const Hero: React.FC = () => {
   const heroProps = useMemo(() => {
     if (!frontMatter.hero) return null;
 
-    const { hero } = frontMatter;
-
     return {
-      title: hero.title ? String(hero.title) : undefined,
-      description: hero.description ? String(hero.description) : undefined,
-      imgUrl: hero.imgUrl ? String(hero.imgUrl) : undefined,
-      imgWidth: hero.imgWidth ? Number(hero.imgWidth) : undefined,
+      title: frontMatter.title ? String(frontMatter.title) : undefined,
+      description: frontMatter.description ? String(frontMatter.description) : undefined,
+      imgUrl: frontMatter.heroImgUrl ? String(frontMatter.heroImgUrl) : undefined,
+      imgWidth: frontMatter.heroImgWidth ? Number(frontMatter.heroImgWidth) : undefined,
     };
   }, [frontMatter]);
 

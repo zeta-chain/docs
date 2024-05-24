@@ -21,6 +21,11 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   // Add extra components to all rendered pages
   main: MainContentWrapper,
 
+  components: {
+    // Render custom components for each html element
+    // ...
+  },
+
   // Remove nextra default theme switch in favor of custom theme toggle button
   darkMode: false,
 
