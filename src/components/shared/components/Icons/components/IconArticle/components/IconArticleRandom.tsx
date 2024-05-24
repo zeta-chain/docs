@@ -63,6 +63,18 @@ import { IconArticle060 } from "./IconArticle060";
 import { IconArticle061 } from "./IconArticle061";
 import { IconArticle062 } from "./IconArticle062";
 import { IconArticle063 } from "./IconArticle063";
+import { IconArticle064 } from "./IconArticle064";
+import { IconArticle065 } from "./IconArticle065";
+import { IconArticle066 } from "./IconArticle066";
+import { IconArticle067 } from "./IconArticle067";
+import { IconArticle068 } from "./IconArticle068";
+import { IconArticle069 } from "./IconArticle069";
+import { IconArticle070 } from "./IconArticle070";
+import { IconArticle071 } from "./IconArticle071";
+import { IconArticle072 } from "./IconArticle072";
+import { IconArticle073 } from "./IconArticle073";
+import { IconArticle074 } from "./IconArticle074";
+import { IconArticle075 } from "./IconArticle075";
 import { IconArticle076 } from "./IconArticle076";
 import { IconArticle077 } from "./IconArticle077";
 import { IconArticle078 } from "./IconArticle078";
@@ -154,6 +166,18 @@ const articleIcons = [
   <IconArticle061 />,
   <IconArticle062 />,
   <IconArticle063 />,
+  <IconArticle064 />,
+  <IconArticle065 />,
+  <IconArticle066 />,
+  <IconArticle067 />,
+  <IconArticle068 />,
+  <IconArticle069 />,
+  <IconArticle070 />,
+  <IconArticle071 />,
+  <IconArticle072 />,
+  <IconArticle073 />,
+  <IconArticle074 />,
+  <IconArticle075 />,
   <IconArticle076 />,
   <IconArticle077 />,
   <IconArticle078 />,
