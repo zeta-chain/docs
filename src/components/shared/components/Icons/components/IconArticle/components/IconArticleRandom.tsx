@@ -113,6 +113,18 @@ import { IconArticle110 } from "./IconArticle110";
 import { IconArticle111 } from "./IconArticle111";
 import { IconArticle112 } from "./IconArticle112";
 import { IconArticle113 } from "./IconArticle113";
+import { IconArticle114 } from "./IconArticle114";
+import { IconArticle115 } from "./IconArticle115";
+import { IconArticle116 } from "./IconArticle116";
+import { IconArticle117 } from "./IconArticle117";
+import { IconArticle118 } from "./IconArticle118";
+import { IconArticle119 } from "./IconArticle119";
+import { IconArticle120 } from "./IconArticle120";
+import { IconArticle121 } from "./IconArticle121";
+import { IconArticle122 } from "./IconArticle122";
+import { IconArticle123 } from "./IconArticle123";
+import { IconArticle124 } from "./IconArticle124";
+import { IconArticle125 } from "./IconArticle125";
 
 const articleIcons = [
   <IconArticle001 />,
@@ -228,6 +240,18 @@ const articleIcons = [
   <IconArticle111 />,
   <IconArticle112 />,
   <IconArticle113 />,
+  <IconArticle114 />,
+  <IconArticle115 />,
+  <IconArticle116 />,
+  <IconArticle117 />,
+  <IconArticle118 />,
+  <IconArticle119 />,
+  <IconArticle120 />,
+  <IconArticle121 />,
+  <IconArticle122 />,
+  <IconArticle123 />,
+  <IconArticle124 />,
+  <IconArticle125 />,
 ];
 
 export const IconArticleRandom: React.FC = () => {
