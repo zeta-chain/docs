@@ -13,12 +13,12 @@ import {
 import { WorkWithUs } from "./WorkWithUs";
 
 /**
- * @description Used to exclude pages from the default tree as navigation blocks
+ * @description Avoid rendering navigation sections for the following routes
  */
-const EXCLUDED_PAGES_NAMES = ["about"];
+const EXCLUDED_ROUTES = ["/about"];
 
 /**
- * @description Used to color the title of the navigation blocks
+ * @description Used to color the title of each navigation section
  */
 const BG_COLOR_CLASSES = ["bg-[#00C6EE]", "bg-[#E34ED6]", "bg-[#9AEA4A]", "bg-[#00A87D]"];
 
@@ -27,11 +27,11 @@ const BG_COLOR_CLASSES = ["bg-[#00C6EE]", "bg-[#E34ED6]", "bg-[#9AEA4A]", "bg-[#
  */
 const MAX_ARTICLE_CARDS = 5;
 
-export const HomeNavigationBlocks: React.FC = () => {
+export const HomeNavigationSections: React.FC = () => {
   const pages = getAllPages();
 
   const { mainFolders } = useMemo(() => {
-    const mainFolders = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_PAGES_NAMES.includes(page.name));
+    const mainFolders = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_ROUTES.includes(page.route));
 
     return {
       mainFolders,
