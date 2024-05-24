@@ -1,5 +1,6 @@
 import { Toolbar } from "@mui/material";
 import clsx from "clsx";
+import Link from "next/link";
 
 import { ClientOnlyPortal } from "../../ClientOnlyPortal";
 import { IconSearch, IconZetaDocsLogo } from "../../Icons";
@@ -22,7 +23,10 @@ export const Header: React.FC<{
             "border-b border-grey-200 dark:border-grey-700": !isLeftDrawerOpen,
           })}
         >
-          <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
+          <Link href="/">
+            <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
+          </Link>
+
           <MobileMenuButton
             className="mt-1.5 text-black dark:text-grey-50"
             isOpen={isLeftDrawerOpen}
