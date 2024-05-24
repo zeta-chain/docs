@@ -10,7 +10,8 @@ export const Header: React.FC<{
   className?: string;
   isLeftDrawerOpen: boolean;
   toggleDrawerOpen: () => void;
-}> = ({ isLeftDrawerOpen, toggleDrawerOpen }) => {
+  setIsLeftDrawerOpen: (isOpen: boolean) => void;
+}> = ({ isLeftDrawerOpen, toggleDrawerOpen, setIsLeftDrawerOpen }) => {
   return (
     <>
       <ClientOnlyPortal selector=".nextra-search">
@@ -23,7 +24,7 @@ export const Header: React.FC<{
             "border-b border-grey-200 dark:border-grey-700": !isLeftDrawerOpen,
           })}
         >
-          <Link href="/">
+          <Link href="/" onClick={() => setIsLeftDrawerOpen(false)}>
             <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
           </Link>
 

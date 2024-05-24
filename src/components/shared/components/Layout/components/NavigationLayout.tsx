@@ -94,7 +94,11 @@ export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) 
       </motion.div>
 
       <div className="min-h-screen flex flex-col sm:pl-[200px]">
-        <Header isLeftDrawerOpen={isLeftDrawerOpen} toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)} />
+        <Header
+          isLeftDrawerOpen={isLeftDrawerOpen}
+          toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)}
+          setIsLeftDrawerOpen={setIsLeftDrawerOpen}
+        />
 
         <motion.div {...getRevealProps({ y: 0 })} className={"flex-grow text-black dark:text-white pt-[62px] sm:pt-0"}>
           {children}
