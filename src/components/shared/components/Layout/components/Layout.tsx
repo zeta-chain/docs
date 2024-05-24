@@ -107,12 +107,14 @@ const LayoutContainer = styled.div`
     ${tw`text-green-100 bg-grey-100 dark:bg-grey-800`};
   }
 
-  input {
-    ${tw`focus:outline focus:outline-1 focus:outline-grey-200 dark:focus:outline-grey-600 focus:shadow-none focus:ring-0 focus:ring-offset-0`};
+  [tabindex]:not([tabindex="-1"]),
+  input,
+  button {
+    ${tw`outline-0 ring-0 ring-offset-0 shadow-none focus:outline-0 focus:ring-0 focus:ring-offset-0 focus:shadow-none`};
   }
 
-  button {
-    ${tw`focus:outline-none focus:shadow-none focus:ring-0 focus:ring-offset-0`};
+  input {
+    ${tw`focus:outline focus:outline-1 focus:outline-grey-200 dark:focus:outline-grey-600`};
   }
 
   img {

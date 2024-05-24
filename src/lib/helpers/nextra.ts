@@ -31,14 +31,22 @@ export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]
   return mdxPages;
 };
 
-export type EnhancedPage = Page & {
+type PageMeta = {
   title?: string;
   description?: string;
+  readTime?: string;
+  readType?: string;
 };
 
+type PageIndex = {
+  index: number;
+};
+
+type PageWithMeta = PageMeta & Page;
+
 export const getFlatDirectories = (allPages: Page[]) => {
-  const flatDirectories: EnhancedPage[] = [];
-  const directoriesByRoute: Record<string, { index: number } & EnhancedPage> = {};
+  const flatDirectories: PageWithMeta[] = [];
+  const directoriesByRoute: Record<string, PageIndex & PageWithMeta> = {};
 
   const flattenDirectories = (pages: Page[]) => {
     for (const page of pages) {
@@ -48,6 +56,8 @@ export const getFlatDirectories = (allPages: Page[]) => {
         const directory = {
           ...(typeof page.meta?.title === "string" ? { title: page.meta?.title } : {}),
           ...(typeof page.meta?.description === "string" ? { description: page.meta?.description } : {}),
+          ...(typeof page.meta?.readTime === "string" ? { readTime: page.meta?.readTime } : {}),
+          ...(typeof page.meta?.readType === "string" ? { readType: page.meta?.readType } : {}),
           ...page,
         };
 

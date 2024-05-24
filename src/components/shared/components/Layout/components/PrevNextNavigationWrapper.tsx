@@ -6,7 +6,7 @@ import { PropsWithChildren, useMemo } from "react";
 import { getFlatDirectories } from "~/lib/helpers/nextra";
 
 import { IconArrowNarrowRight } from "../../Icons";
-import { NavigationCardLinkProps, NavigationSection } from "../../NavigationSection";
+import { NavigationSection } from "../../NavigationSection";
 import { mainNavRoutes } from "../Layout.constants";
 
 type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
@@ -32,30 +32,6 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
     };
   }, [flatDirectories, directoriesByRoute, route]);
 
-  const continueLearningItems = useMemo<NavigationCardLinkProps[]>(() => {
-    const navigationPages = [];
-
-    if (prevPage) {
-      navigationPages.push({
-        topTitle: "Previous",
-        title: prevPage.title || "Previous Page",
-        description: prevPage.description,
-        href: prevPage?.route,
-      });
-    }
-
-    if (nextPage) {
-      navigationPages.push({
-        topTitle: "Next",
-        title: nextPage.title || "Next Page",
-        description: nextPage.description,
-        href: nextPage?.route,
-      });
-    }
-
-    return navigationPages;
-  }, [prevPage, nextPage]);
-
   const shouldRenderNavComponents = !mainNavRoutes.includes(route);
 
   return (
@@ -74,12 +50,21 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
 
       {children}
 
-      {shouldRenderNavComponents && !!continueLearningItems.length && (
+      {shouldRenderNavComponents && !!nextPage && (
         <div className="mb-16 mt-20 sm:mt-[120px]">
           <NavigationSection
             title="Continue Learning"
-            description="Continue with the next part or go back to the previous page"
-            navItems={continueLearningItems}
+            description="Continue with the next part or try a related tutorial"
+            navItems={[
+              {
+                topTitle: "Next",
+                title: nextPage.title || "Next Page",
+                description: nextPage.description,
+                readTime: nextPage.readTime,
+                readType: nextPage.readType,
+                href: nextPage.route,
+              },
+            ]}
           />
         </div>
       )}
