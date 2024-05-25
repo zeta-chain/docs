@@ -62,8 +62,8 @@ contract on ZetaChain make a token transfer to the TSS address on the connected
 chain and specify omnichain contract address as the first 20 bytes of the input
 data and provide a valid message.
 
-This is an example deposit and call of
-[the example omnichain swap contract](/developers/omnichain/tutorials/swap/).
+This is an example deposit and call of [the example omnichain swap
+contract](/developers/omnichain/tutorials/swap/).
 
 ```
 npx hardhat deposit --amount 3 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]'
@@ -76,8 +76,8 @@ https://sepolia.etherscan.io/tx/0xf291232b1fa6b6e9dd9dbfc4c09b22f32ed9ca61e6f778
 A single deposit and call transaction can result in multiple outbound
 transactions triggering outputs on multiple connected chains.
 
-This is an example deposit and call of
-[the example omnichain multioutput contract](/developers/omnichain/tutorials/single-input-multiple-output/).
+This is an example deposit and call of [the example omnichain multioutput
+contract](/developers/omnichain/tutorials/single-input-multiple-output/).
 
 ```
 npx hardhat deposit --amount 4 --network sepolia_testnet --recipient 0xa573Df1F0729FE6F1BD69b0a5dbFE393e6e09f47 --message '[["address", "bytes", "bytes"], ["0x4955a3F38ff86ae92A914445099caa8eA2B9bA32", "0x746231713873687a663761666333726877386e367736656333327338683665326d727730373764306767", "0x000000000000000000000000d97b1de3619ed2c6beb3860147e30ca8a7dc989100000000000000000000000065a45c57636f9bcced4fe193a602008578bca90b"]]'
@@ -87,7 +87,8 @@ https://sepolia.etherscan.io/tx/0xce9386cff141cfe64d38589bdd6d2de843aa07559beea1
 
 ### ❌ USDC with recipient and valid message
 
-<Alert variant="danger">This should succeed, but it fails: https://github.com/zeta-chain/node/issues/1906</Alert>
+<Alert variant="danger">This should succeed, but it fails:
+https://github.com/zeta-chain/node/issues/1906</Alert>
 
 ```
 npx hardhat deposit --amount 1 --network sepolia_testnet --recipient 0x20C4770A73DF5e2ab4B38c08d1055c2173034257 --message '[["address", "bytes"], ["0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891", "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32"]]' --erc20 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238
@@ -113,9 +114,9 @@ https://sepolia.etherscan.io/tx/0xecf2916c940a4fdf85f250ea822532bba92879cf615197
 To withdraw native gas tokens ZRC-20 from ZetaChain to a connected chain, call
 the `withdraw` method of the ZRC-20 token contract on ZetaChain.
 
-The withdraw amount must be higher than
-[the withdraw fee](/developers/omnichain/gas-fees/). Each ZRC-20 token has its
-own withdraw fee.
+The withdraw amount must be higher than [the withdraw
+fee](/developers/omnichain/gas-fees/). Each ZRC-20 token has its own withdraw
+fee.
 
 ```
 npx hardhat withdraw --amount 0.1 --zrc20 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 --network zeta_testnet
@@ -138,3 +139,43 @@ npx hardhat withdraw --amount 1 --zrc20 0xcC683A782f4B30c138787CB5576a86AF66fdc3
 ```
 
 https://athens.explorer.zetachain.com/evm/tx/0x540738849a6414809aeb0a9c959e3401b460aeae87c86bc9fd55bd6c1009b014
+
+## Sending ZETA with the Connector
+
+### ✅ ZETA Between Connected Chains
+
+```jsx
+npx hardhat send-zeta --amount 3 --network mumbai_testnet --destination bsc_testnet
+```
+
+https://mumbai.polygonscan.com/tx/0x217300fc78a04eaf9c6217749b3e20aa99548771de48638b5016efae853c9368
+
+### ❌ ZETA Between Connected Chains (insufficient amount)
+
+```jsx
+npx hardhat send-zeta --amount 0.1 --network mumbai_testnet --destination bsc_testnet --ignore-checks
+```
+
+https://mumbai.polygonscan.com/tx/0x9132a994cbf536486c1354a6333e6d8f59156971888eebe8f74f882d48d16770
+
+### ✅ ZETA to ZetaChain
+
+```jsx
+npx hardhat send-zeta --amount 3 --network mumbai_testnet --destination zeta_testnet
+```
+
+https://mumbai.polygonscan.com/tx/0x40038e68d3f997952c302c95bcf10f841f8d3e960db3e71249ae0fe2b81a2e6f
+
+### ✅ ZETA from ZetaChain
+
+```jsx
+npx hardhat send-zeta --amount 3 --network zeta_testnet --destination mumbai_testnet
+```
+
+https://athens.explorer.zetachain.com/cc/tx/0xa28ff75a237afcdc3a5ee7a8c79a4e813e899ab6d9b0c22d20e5cdf10e028a6a
+
+## Sending Messages with the Connector
+
+### ✅ Cross-chain messaging
+
+https://goerli.etherscan.io/tx/0x681173b17e4ddc557d496114601845edf4666087027e77f33df7bffe4954619f

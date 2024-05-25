@@ -1,12 +1,10 @@
 {
   "index": "Home",
   "about": "About ZetaChain",
-  "developers": "Developers",
-  "users": "Users",
-  "validators": "Validators",
-  "architecture": "Architecture",
+  "developers": "Build",
+  "users": "Use",
+  "validators": "Validate",
   "reference": "Tools",
-
   "github": {
     "title": "GitHub",
     "type": "page",

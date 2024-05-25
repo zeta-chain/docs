@@ -1,4 +1,5 @@
 import { AdminPolicy } from "~/components/Docs";
+
 import { Alert } from "~/components/shared";
 
 # Privileged Actions
@@ -35,12 +36,13 @@ the parameter of the observer module to the new policy accounts.
 To learn which policy accounts can send which privileged messages, check the
 module documentation and look for "Authorized" notice next to each message.
 
-<Alert variant="note">
-  You may notice that policy accounts below are called "Group1" and "Group2". These are just names that indicate the
-  level of permissions and are not related to the actual groups associated with policy accounts. As you can see in
-  testnet there are two entries ("Group1" and "Group2") and both point to the same policy account. This means that right
-  now even though there are two levels of permissions ("Group1" and "Group2") there is only one policy account that is
-  authorized to perform privileged actions. On mainnet this might change.
-</Alert>
+<Alert variant="note"> You may notice that policy accounts below are called
+  "Group1" and "Group2". These are just names that indicate the level of
+  permissions and are not related to the actual groups associated with policy
+  accounts. As you can see in testnet there are two entries ("Group1" and
+  "Group2") and both point to the same policy account. This means that right now
+  even though there are two levels of permissions ("Group1" and "Group2") there
+is only one policy account that is authorized to perform privileged actions. On
+mainnet this might change. </Alert>
 
 <AdminPolicy />

@@ -1,0 +1,14 @@
+{
+  "template": "Universal App Template",
+  "hello": "Your First Universal App",
+  "swap": "Swap",
+  "swap-zeta": "Swap to ZETA",
+  "staking": "Staking",
+  "nft": "NFT",
+  "bitcoin": "Bitcoin Frontend",
+  "multioutput": "Single Input, Multiple Outputs",
+  "zeta": "Connector: Send ZETA",
+  "message": "Connector Messaging",
+  "erc20": "Connector: ERC-20",
+  "connector-nft": "Connector: NFTs"
+}
