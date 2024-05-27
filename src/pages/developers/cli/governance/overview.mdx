@@ -1,13 +1,14 @@
 import { GovParams } from "~/components/Docs";
+
 import { Alert } from "~/components/shared";
 
 # Overview
 
-ZetaChain uses the standard Cosmos SDK
-[`gov` governance module](https://docs.cosmos.network/v0.46/modules/gov/) to
-manage the network. This module allows for the creation of proposals, which can
-be voted on by stakers of the network. This guide will walk you through the
-process of creating proposals using the ZetaChain's `zetacored` CLI.
+ZetaChain uses the standard Cosmos SDK [`gov` governance
+module](https://docs.cosmos.network/v0.46/modules/gov/) to manage the network.
+This module allows for the creation of proposals, which can be voted on by
+stakers of the network. This guide will walk you through the process of creating
+proposals using the ZetaChain's `zetacored` CLI.
 
 ## Governance Parameters
 
@@ -19,16 +20,15 @@ To make a proposal you will need to:
 
 - Create a `proposal.json` file. The contents of the proposal file depends on
   the type of a proposal: [text proposal](/developers/cli/governance/text),
-  [parameter change proposal](/developers/cli/governance/parameter),
-  [software upgrade proposal](/developers/cli/governance/upgrade), etc.
+  [parameter change proposal](/developers/cli/governance/parameter), [software
+  upgrade proposal](/developers/cli/governance/upgrade), etc.
 - Create and publish a `metadata.json` file to IPFS or the web and submit the
   proposal using `zetacored tx gov submit-proposal` command. Learn about this
   step on the [Submit a Proposal](/developers/cli/governance/submit) page
 
-<Alert variant="tip">
-  Check out the [text proposal](/developers/cli/governance/text) doc to learn more about the basics of how proposals are
-  structured.
-</Alert>
+<Alert variant="tip"> Check out the [text
+  proposal](/developers/cli/governance/text) doc to learn more about the basics
+  of how proposals are structured. </Alert>
 
 ## Proposal Stages
 
@@ -53,5 +53,5 @@ deposit period).
 
 ## Governance Module Docs
 
-To learn more about the governance module, refer to the
-[`gov` module documentation](https://docs.cosmos.network/v0.46/modules/gov/).
+To learn more about the governance module, refer to the [`gov` module
+documentation](https://docs.cosmos.network/v0.46/modules/gov/).
