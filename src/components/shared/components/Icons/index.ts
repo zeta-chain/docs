@@ -1,4 +1,3 @@
-export * from "./components/HeroIconFire";
 export * from "./components/HeroIconLightBulb";
 export * from "./components/HeroIconMoon";
 export * from "./components/HeroIconSun";
@@ -13,6 +12,7 @@ export * from "./components/IconCommunity";
 export * from "./components/IconDiscord";
 export * from "./components/IconDocs";
 export * from "./components/IconDocument";
+export * from "./components/IconExclamation";
 export * from "./components/IconExclamationCircle";
 export * from "./components/IconGitHub";
 export * from "./components/IconMedium";

@@ -2,13 +2,13 @@ import { Alert } from "~/components/shared";
 
 # Call Universal Apps from Bitcoin
 
-<Alert variant="tip">This section is important for wallet and app
-developers.</Alert>
+<Alert variant="tip">This section is important for wallet and app developers.</Alert>
 
-<Alert variant="tip"> All inputs and outputs of Bitcoin transactions sent to TSS
-  address must be a P2WPKH address (SegWit bech32 address, such as bc1xxx on
-  Bitcoin mainnet). Otherwise the transactions will not be observed and there
-  will be no refund, and may cause irreversible user fund loss. </Alert>
+<Alert variant="tip">
+  All inputs and outputs of Bitcoin transactions sent to TSS address must be a P2WPKH address (SegWit bech32 address,
+  such as bc1xxx on Bitcoin mainnet). Otherwise the transactions will not be observed and there will be no refund, and
+  may cause irreversible user fund loss.
+</Alert>
 
 To deposit BTC into ZetaChain's Universal EVM (and optionally call a smart
 contract), the Bitcoin transaction must conform to this specifications:
@@ -57,9 +57,10 @@ transfer, and `memo` is the recipient address on ZetaChain's EVM.
 
 ## Example 2: Deposit BTC and call a smart contract on ZetaChain's EVM
 
-<Alert variant="tip"> In order to test with Bitcoin, you will need to use a
-  wallet that allows setting an `OP_RETURN` and memos in a binary format. Please
-  see our wallet suggestions [here](/reference/wallets). </Alert>
+<Alert variant="tip">
+  In order to test with Bitcoin, you will need to use a wallet that allows setting an `OP_RETURN` and memos in a binary
+  format. Please see our wallet suggestions [here](/reference/wallets).
+</Alert>
 
 If invalid information is sent (i. e. invalid address), the assets may be lost
 and not recoverable.

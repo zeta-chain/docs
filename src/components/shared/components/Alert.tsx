@@ -1,55 +1,76 @@
-import { Alert as MuiAlert, AlertTitle, Typography } from "@mui/material";
 import clsx from "clsx";
+import { capitalize } from "lodash-es";
 import { PropsWithChildren, ReactNode } from "react";
 import tw, { styled } from "twin.macro";
 
-import { HeroIconFire, HeroIconLightBulb, IconExclamationCircle } from "./Icons";
+import { IconExclamation, IconExclamationCircle, IconSparkle } from "./Icons";
 
-type AlertVariant = "note" | "tip" | "danger" | "info";
+type AlertVariant = "note" | "tip" | "warning" | "danger";
 
 type AlertProps = PropsWithChildren<{
-  variant: AlertVariant;
+  variant?: AlertVariant;
   className?: string;
 }>;
 
 const variantToIcon: Record<AlertVariant, ReactNode> = {
-  note: <IconExclamationCircle className="text-black dark:text-grey-50" height={16} width={16} />,
-  tip: <HeroIconLightBulb className="text-black dark:text-grey-50" height={16} width={16} />,
-  danger: <HeroIconFire className="text-black dark:text-grey-50" height={16} width={16} />,
-  info: <IconExclamationCircle className="text-black dark:text-grey-50" height={16} width={16} />,
+  note: <IconExclamationCircle className="text-[#00A5C6] dark:text-[#B0FF61]" />,
+  tip: <IconSparkle className="text-[#00A5C6] dark:text-[#B0FF61]" />,
+  warning: <IconExclamationCircle className="text-black" />,
+  danger: <IconExclamation className="text-white" />,
 };
 
-const StyledAlertContent = styled.span`
-  &&,
-  p {
-    ${tw`text-sm text-black dark:text-grey-50 text-opacity-70`}
+const StyledAlert = styled.div<{ variant: AlertVariant }>`
+  ${tw`mt-6 p-4 md:p-8 rounded-lg flex items-center`}
+
+  ${({ variant }) => (variant === "note" || variant === "tip") && tw`border border-grey-200 dark:border-grey-600`};
+  ${({ variant }) => variant === "warning" && tw`bg-warning-500`};
+  ${({ variant }) => variant === "danger" && tw`bg-negative-500`};
+
+  .content {
+    ${tw`font-medium text-sm leading-[135%]`}
+
+    ${({ variant }) =>
+      (variant === "note" || variant === "tip") && tw`text-grey-400 dark:text-grey-300 mt-[3px] sm:flex gap-1`};
+    ${({ variant }) => variant === "warning" && tw`text-black mt-[3px]`};
+    ${({ variant }) => variant === "danger" && tw`text-white mt-0.5`};
+
+    a {
+      ${({ variant }) =>
+        (variant === "note" || variant === "tip") &&
+        tw`!text-[#00A5C6] dark:!text-[#B0FF61] hover:!text-[#00A5C6]/80 dark:hover:!text-[#B0FF61]/80`};
+      ${({ variant }) => variant === "warning" && tw`!underline !text-black`};
+      ${({ variant }) => variant === "danger" && tw`!underline !text-white`};
+    }
+
+    p {
+      ${tw`mt-0 inline font-medium text-sm leading-[135%]`}
+    }
   }
 `;
 
-export const Alert: React.FC<AlertProps> = ({ variant, className, children }) => {
+export const Alert: React.FC<AlertProps> = ({ variant = "note", className, children }) => {
   return (
-    <MuiAlert
-      className={clsx(
-        "mt-6 border-l-[5px] rounded-lg",
-        {
-          "bg-grey-100 dark:bg-grey-500 border-grey-300 dark:border-grey-200": variant === "note",
-          "bg-[#e6f6e6] dark:bg-[#003100] border-[#009400] dark:border-[#009400]": variant === "tip",
-          "bg-[#ffebec] dark:bg-[#4b1113] border-[#e13238] dark:border-[#e13238]": variant === "danger",
-          "bg-[#eef9fd] dark:bg-[#193c47] border-[#4cb2d4] dark:border-[#4cb2d4]": variant === "info",
-        },
-        className
-      )}
-      icon={false}
-    >
-      <AlertTitle className="flex items-center gap-1">
-        {variantToIcon[variant]}
+    <StyledAlert variant={variant} className={className}>
+      <div
+        className={clsx("flex", {
+          "gap-2 sm:gap-4": variant === "note" || variant === "tip",
+          "gap-2": variant === "warning" || variant === "danger",
+        })}
+      >
+        <div className="shrink-0">{variantToIcon[variant]}</div>
 
-        <Typography variant="caption" className="text-black dark:text-grey-50 uppercase tracking-wider font-medium">
-          {variant}
-        </Typography>
-      </AlertTitle>
-
-      <StyledAlertContent>{children}</StyledAlertContent>
-    </MuiAlert>
+        <div className="content">
+          <span
+            className={clsx({
+              "font-semibold": variant === "note" || variant === "tip",
+              uppercase: variant === "warning" || variant === "danger",
+            })}
+          >
+            {capitalize(variant)}:
+          </span>{" "}
+          <span>{children}</span>
+        </div>
+      </div>
+    </StyledAlert>
   );
 };
