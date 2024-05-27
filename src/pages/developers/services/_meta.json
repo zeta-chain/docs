@@ -1,5 +1,6 @@
 {
   "goldsky": "Goldsky: Subgraph",
   "pyth": "Pyth: Price and VRF Oracle",
-  "particle": "Particle: Account Abstraction"
+  "particle": "Particle: Account Abstraction",
+  "envio": "Envio: Real-Time Indexer"
 }
