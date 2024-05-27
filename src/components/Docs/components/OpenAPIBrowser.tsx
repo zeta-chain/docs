@@ -18,14 +18,13 @@ const StyledContainer = styled.div`
     ${tw`dark:[filter: invert(88%) hue-rotate(180deg);]`}
 
     table {
-      thead tr,
       tbody tr:nth-of-type(even) {
         ${tw`bg-grey-100/60 dark:bg-[transparent]`};
       }
 
       th,
       td {
-        ${tw`!p-2`};
+        ${tw`!p-2 border border-grey-200 dark:border-grey-600 text-left text-[#3b4151] dark:text-[#3b4151]`};
       }
     }
 

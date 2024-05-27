@@ -10,14 +10,25 @@ const LayoutContainer = styled.div`
   table {
     ${tw`border-collapse`};
 
-    thead tr,
     tbody tr:nth-of-type(even) {
-      ${tw`bg-grey-100 dark:bg-grey-800`};
+      ${tw`bg-[#FBFBFB] dark:bg-[#1B1F25]`};
+    }
+
+    tr {
+      ${tw`border-t-0 border-b border-grey-200 dark:border-grey-600`};
     }
 
     th,
     td {
-      ${tw`p-2 border border-grey-200 dark:border-grey-700`};
+      ${tw`px-6 border-none text-center text-base leading-[130%] text-grey-400 dark:text-grey-300`};
+    }
+
+    th {
+      ${tw`py-2 font-semibold`};
+    }
+
+    td {
+      ${tw`py-4 sm:py-6`};
     }
   }
 
