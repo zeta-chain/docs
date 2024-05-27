@@ -38,7 +38,7 @@ export const NavigationItemWrapper = ({ children, item, onClick }: NavigationIte
   // External link, we want an anchor tag with correct target and rel
   if (isExternalLink) {
     return (
-      <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={onClick}>
+      <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={onClick} className="hover:!text-green-100">
         <ListItemButton className={className}>{children}</ListItemButton>
       </a>
     );
@@ -46,7 +46,7 @@ export const NavigationItemWrapper = ({ children, item, onClick }: NavigationIte
 
   // Internal link, we want to use next/link
   return (
-    <Link href={item.url} onClick={onClick}>
+    <Link href={item.url} onClick={onClick} className="hover:!text-green-100">
       <ListItemButton className={className}>{children}</ListItemButton>
     </Link>
   );

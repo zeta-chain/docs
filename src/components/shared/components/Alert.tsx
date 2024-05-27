@@ -35,9 +35,6 @@ const StyledAlert = styled.div<{ variant: AlertVariant }>`
     ${({ variant }) => variant === "danger" && tw`text-white mt-0.5`};
 
     a {
-      ${({ variant }) =>
-        (variant === "note" || variant === "tip") &&
-        tw`!text-[#00A5C6] dark:!text-[#B0FF61] hover:!text-[#00A5C6]/80 dark:hover:!text-[#B0FF61]/80`};
       ${({ variant }) => variant === "warning" && tw`!underline !text-black`};
       ${({ variant }) => variant === "danger" && tw`!underline !text-white`};
     }

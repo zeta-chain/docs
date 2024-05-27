@@ -106,16 +106,16 @@ const LayoutContainer = styled.div`
   }
 
   .nx-text-primary-600 {
-    ${tw`text-green-100`};
+    ${tw`text-[#00A5C6] dark:text-[#B0FF61]`};
   }
 
   a[href] {
-    ${tw`hover:text-green-100 dark:hover:text-green-100 transition-all`};
+    ${tw`hover:text-[#00A5C6]/80 dark:hover:text-[#B0FF61]/80 transition-all`};
     text-decoration: auto;
   }
 
   li.active a {
-    ${tw`text-green-100 bg-grey-100 dark:bg-grey-800`};
+    ${tw`text-[#00A5C6] dark:text-[#B0FF61] bg-grey-100 dark:bg-grey-800`};
   }
 
   [tabindex]:not([tabindex="-1"]),

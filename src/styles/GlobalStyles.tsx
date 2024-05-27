@@ -8,7 +8,7 @@ const customStyles = css({
   },
 
   "::selection": {
-    ...tw`text-black dark:text-white bg-positive-500 dark:bg-green-600`,
+    ...tw`text-black dark:text-white bg-[#00A5C6]/20 dark:bg-[#B0FF61]/20`,
   },
 
   "::-webkit-scrollbar": {
