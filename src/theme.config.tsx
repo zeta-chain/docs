@@ -1,6 +1,6 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { AppHead, MainContentWrapper, ThemeToggle } from "~/components/shared";
+import { AppHead, HeadingLink, MainContentWrapper, ThemeToggle } from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 
 /**
@@ -32,6 +32,18 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     tr: (props) => <tr {...props} />,
     th: (props) => <th {...props} />,
     td: (props) => <td {...props} />,
+
+    h1: (props) => (
+      <h1
+        className="text-4xl sm:text-5xl md:text-[80px] md:leading-none md:-tracking-[2.4px] font-medium mb-20 sm:mb-[120px]"
+        {...props}
+      />
+    ),
+    h2: (props) => <HeadingLink tag="h2" {...props} />,
+    h3: (props) => <HeadingLink tag="h3" {...props} />,
+    h4: (props) => <HeadingLink tag="h4" {...props} />,
+    h5: (props) => <HeadingLink tag="h5" {...props} />,
+    h6: (props) => <HeadingLink tag="h6" {...props} />,
   },
 
   // Remove nextra default theme switch in favor of custom theme toggle button

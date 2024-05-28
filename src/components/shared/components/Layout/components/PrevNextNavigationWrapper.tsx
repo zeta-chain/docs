@@ -32,7 +32,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
     };
   }, [flatDirectories, directoriesByRoute, route]);
 
-  const shouldRenderNavComponents = !mainNavRoutes.includes(route);
+  const shouldRenderNavComponents = useMemo(() => !mainNavRoutes.includes(route), [route]);
 
   return (
     <>

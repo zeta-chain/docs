@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useConfig } from "nextra-theme-docs";
 import { useMemo } from "react";
 import tw, { styled } from "twin.macro";
@@ -7,8 +8,10 @@ import tw, { styled } from "twin.macro";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { basePath } from "~/lib/app.constants";
 
+import { mainNavRoutes } from "./Layout";
+
 export const StyledHero = styled.div`
-  ${tw`grid grid-cols-10 gap-8 lg:min-h-[520px] mb-20 sm:mb-[120px]`}
+  ${tw`grid grid-cols-10 gap-8 mb-20 sm:mb-[120px]`}
 
   h1 {
     ${tw`text-4xl sm:text-5xl md:text-[80px] md:leading-none md:-tracking-[2.4px] font-medium text-grey-900 dark:text-grey-50`}
@@ -32,8 +35,11 @@ export const StyledHero = styled.div`
  * ---
  */
 export const Hero: React.FC = () => {
+  const { route } = useRouter();
   const { upLg } = useCurrentBreakpoint();
   const { frontMatter } = useConfig();
+
+  const isMainPageHero = useMemo(() => mainNavRoutes.includes(route), [route]);
 
   const heroProps = useMemo(() => {
     if (!frontMatter.hero) return null;
@@ -51,7 +57,11 @@ export const Hero: React.FC = () => {
   const { title, description, imgUrl, imgWidth } = heroProps;
 
   return (
-    <StyledHero>
+    <StyledHero
+      className={clsx({
+        "lg:min-h-[520px]": isMainPageHero,
+      })}
+    >
       <div
         className={clsx("order-2 lg:order-1 flex flex-col justify-center gap-8 sm:gap-10", {
           "col-span-10 lg:col-span-5 xl:col-span-4": imgUrl,

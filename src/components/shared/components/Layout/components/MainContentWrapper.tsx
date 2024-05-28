@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 
 import { Hero } from "../../Hero";
+import { TableOfContentsWrapper } from "../../TOC";
 import { PrevNextNavigationWrapper } from "./PrevNextNavigationWrapper";
 
 type MainContentWrapperProps = PropsWithChildren<{}>;
@@ -13,7 +14,7 @@ export const MainContentWrapper: React.FC<MainContentWrapperProps> = ({ children
     <>
       <PrevNextNavigationWrapper>
         <Hero />
-        {children}
+        <TableOfContentsWrapper>{children}</TableOfContentsWrapper>
       </PrevNextNavigationWrapper>
     </>
   );

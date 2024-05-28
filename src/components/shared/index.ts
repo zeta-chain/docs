@@ -14,3 +14,4 @@ export * from "./components/PageBlocked";
 export * from "./components/PreloadedFonts";
 export * from "./components/SectionTitle";
 export * from "./components/ThemeToggle";
+export * from "./components/TOC";
