@@ -92,7 +92,7 @@ export const ContractAddresses = () => {
           <div key={chainName}>
             <h3 className="mt-6 mb-2 font-medium">{chainName}</h3>
 
-            <div className="overflow-auto">
+            <div className="overflow-x-auto">
               <table>
                 <thead>
                   <tr>

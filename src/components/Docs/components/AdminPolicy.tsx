@@ -92,7 +92,7 @@ export const AdminPolicy = () => {
           <div key={index}>
             <h3 className="mt-4 mb-2 font-semibold">Policy: {policy?.policy_type}</h3>
 
-            <div className="overflow-auto">
+            <div className="overflow-x-auto">
               <table>
                 <tbody>
                   <tr>
@@ -137,7 +137,7 @@ export const AdminPolicy = () => {
 
             <h3 className="mt-4 mb-2 font-semibold">Members</h3>
 
-            <div className="overflow-auto">
+            <div className="overflow-x-auto">
               <table>
                 <thead>
                   <tr>

@@ -41,7 +41,7 @@ const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
 const inactiveStyles = { fontWeight: "normal", textDecoration: "none" };
 
 const NetworkTable: React.FC<{ networkData: NetworkData }> = ({ networkData }) => (
-  <div className="overflow-auto">
+  <div className="overflow-x-auto">
     <table>
       <thead>
         <tr>

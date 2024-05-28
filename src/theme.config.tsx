@@ -24,6 +24,14 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   components: {
     // Render custom components for each html element
     // ...
+    table: (props) => (
+      <div className="mt-6 overflow-x-auto">
+        <table {...props} />
+      </div>
+    ),
+    tr: (props) => <tr {...props} />,
+    th: (props) => <th {...props} />,
+    td: (props) => <td {...props} />,
   },
 
   // Remove nextra default theme switch in favor of custom theme toggle button

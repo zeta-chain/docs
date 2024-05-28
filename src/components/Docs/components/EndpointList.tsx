@@ -86,7 +86,7 @@ export const EndpointList: React.FC = () => {
           className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
         />
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto">
           <table>
             <thead>
               <tr>

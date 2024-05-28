@@ -122,7 +122,7 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
           className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
         />
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto">
           <table>
             <thead>{renderTableHeaders()}</thead>
             <tbody>{renderTableRows()}</tbody>
