@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { PropsWithChildren } from "react";
+import tw, { styled } from "twin.macro";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 
@@ -9,6 +10,18 @@ import { handleHeadingLinkClick } from "../TOC.helpers";
 type HeadingLinkProps = PropsWithChildren<{
   tag: "h2" | "h3" | "h4" | "h5" | "h6";
 }>;
+
+const StyledLink = styled.a`
+  ${tw`!text-black dark:!text-white`}
+
+  &&:hover {
+    ${tw`!text-black dark:!text-white`}
+
+    .icon-link {
+      ${tw`text-[#00DDA5]`}
+    }
+  }
+`;
 
 export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) => {
   const { isSmallDevice } = useCurrentBreakpoint();
@@ -27,7 +40,7 @@ export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) 
         "mt-6": Tag === "h5" || Tag === "h6",
       })}
     >
-      <a
+      <StyledLink
         href={`#${generatedId}`}
         className={clsx("inline-block relative", {
           "text-2xl tracking-[-0.48px] font-medium": Tag === "h2",
@@ -40,9 +53,9 @@ export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) 
         <span className="mr-1">{children}</span>
 
         <span className="inline-block align-bottom">
-          <IconLink />
+          <IconLink className="text-grey-300 dark:text-grey-400 icon-link transition-all" />
         </span>
-      </a>
+      </StyledLink>
     </Tag>
   );
 };
