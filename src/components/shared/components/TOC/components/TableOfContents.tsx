@@ -44,7 +44,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) =>
         {headings.map((heading) => (
           <li
             key={heading.id}
-            style={{ marginLeft: `${(heading.level - 2) * 20}px` }}
+            style={{ marginLeft: `${(heading.level - 2) * 24}px` }}
             className={clsx("pl-6 py-[3px] relative")}
           >
             <div
@@ -56,9 +56,9 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ headings }) =>
 
             <a
               href={`#${heading.id}`}
-              className={clsx("leading-[130%] transition-all hover:!text-black dark:hover:!text-white", {
-                "text-grey-400 dark:text-grey-300 text-lg": heading.id !== activeId,
-                "text-black dark:text-white font-medium text-xl": heading.id === activeId,
+              className={clsx("text-lg leading-[130%] transition-all hover:!text-black dark:hover:!text-white", {
+                "text-grey-400 dark:text-grey-300": heading.id !== activeId,
+                "text-black dark:text-white font-medium": heading.id === activeId,
               })}
               onClick={(event) => handleHeadingLinkClick({ event, id: heading.id })}
             >
