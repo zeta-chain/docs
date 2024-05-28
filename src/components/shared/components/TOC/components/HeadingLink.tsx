@@ -29,7 +29,7 @@ export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) 
     >
       <a
         href={`#${generatedId}`}
-        className={clsx("inline-flex gap-1 items-center", {
+        className={clsx("inline-block relative", {
           "text-2xl tracking-[-0.48px] font-medium": Tag === "h2",
           "text-xl font-medium": Tag === "h3",
           "text-lg font-medium": Tag === "h4",
@@ -37,11 +37,11 @@ export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) 
         })}
         onClick={(event) => handleHeadingLinkClick({ event, id: generatedId, isMobile: isSmallDevice })}
       >
-        {children}
+        <span className="mr-1">{children}</span>
 
-        <div className="shrink-0">
+        <span className="inline-block align-bottom">
           <IconLink />
-        </div>
+        </span>
       </a>
     </Tag>
   );
