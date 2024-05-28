@@ -1,10 +1,10 @@
+---
+title: Cross-Chain ERC-20
+description: In this tutorial you will learn how to create a contract capable of minting ERC-20 tokens and sending them to a contract on a different chain using cross-chain messaging.
+hero: true
+---
+
 import { CodeBlock } from "~/components/shared";
-
-# Cross-Chain ERC-20
-
-In this tutorial you will learn how to create a contract capable of minting
-ERC-20 tokens and sending them to a contract on a different chain using
-cross-chain messaging.
 
 ## Set up your environment
 
@@ -42,7 +42,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // [!code highlight:2]
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract CrossChainERC20 is ERC20, ERC20Burnable, ZetaInteractor, ZetaReceiver { // [!code highlight]
-    error InsufficientBalance();
+error InsufficientBalance();
 
     event CrossChainERC20Event(address, uint256);
     event CrossChainERC20RevertedEvent(address, uint256);
