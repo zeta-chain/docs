@@ -1,19 +1,21 @@
+---
+title: Building Universal Apps
+description: A universal app is an EVM-compatible smart contract deployed on ZetaChain's universal EVM. These apps can interact seamlessly with multiple blockchains, including Ethereum and Bitcoin.
+hero: true
+---
+
 import { Alert } from "~/components/shared";
 
-# Building Universal Apps
-
-A universal app is an EVM-compatible smart contract deployed on ZetaChain's
-universal EVM. These apps can interact seamlessly with multiple blockchains,
-including Ethereum and Bitcoin.
+## Solidity Eample
 
 Below is a simple example of a universal app written in Solidity:
 
 ```solidity
 pragma solidity 0.8.7;
- 
+
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IZRC20.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
- 
+
 contract YourContract is zContract {
     function onCrossChainCall(
         zContext calldata context,
@@ -32,11 +34,11 @@ including both native gas tokens and supported ERC-20 tokens. When a universal
 app receives a contract call, the `onCrossChainCall` method is triggered. This
 method takes the following parameters:
 
-* Context: Contains the chain ID of the connected chain from which the universal
+- Context: Contains the chain ID of the connected chain from which the universal
   app was called, as well as the address of the original user.
-* ZRC-20: Represents the address of the token transferred to the universal app.
-* Amount: The amount of tokens transferred.
-* Message: Contains arbitrary message data.
+- ZRC-20: Represents the address of the token transferred to the universal app.
+- Amount: The amount of tokens transferred.
+- Message: Contains arbitrary message data.
 
 The following diagram illustrates the workflow of a universal app, showing how
 it interacts with various blockchains:
@@ -78,9 +80,10 @@ To call a universal app and transfer supported ERC-20 tokens, call the `deposit`
 method of the ERC-20 custody contract. The `recipient` is the universal app
 contract address.
 
-<Alert> Transferring ERC-20 ZETA is different from other tokens. To transfer
-ERC-20 ZETA tokens to and from universal apps, use the [Connector
-API](./connector).</Alert>
+<Alert>
+  Transferring ERC-20 ZETA is different from other tokens. To transfer ERC-20 ZETA tokens to and from universal apps,
+  use the [Connector API](./connector).
+</Alert>
 
 When tokens are transferred to the TSS address or ERC-20 custody contract on a
 connected chain, the original tokens get locked, and ZRC-20 versions of the same
