@@ -31,9 +31,7 @@ contract), the Bitcoin transaction must conform to this specifications:
 6. If the purpose of this Bitcoin transaction is to deposit BTC and also use the
    deposited amount to call a smart contract on ZetaChain's EVM, then the
    `[DATA]` field must consists of a smart contract address, and a binary
-   message that will be forwarded to the said smart contract: `[DATA] =
-   [ZetaChain's EVM contract address (20B)]
-   - [arbitrary binary message]`
+   message that will be forwarded to the said smart contract: `[DATA] = [ZetaChain's EVM contract address (20B)] + [arbitrary binary message]`
 
 ## Example 1: Deposit BTC into an account on ZetaChain's EVM
 

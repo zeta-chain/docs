@@ -52,6 +52,14 @@ const LayoutContainer = styled.div`
                focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300 text-sm pl-10`};
         }
 
+        .nx-text-primary-600 {
+          ${tw`text-[#00BC8D] dark:text-[#00BC8D]`};
+        }
+
+        a[href] {
+          ${tw`hover:text-[#00BC8D] dark:hover:text-[#00BC8D]`};
+        }
+
         ul.nextra-scrollbar {
           ${tw`left-0 max-w-[calc(100vw-32px)] sm:max-w-[min(calc(100vw-248px), 500px)]`};
 
@@ -80,19 +88,6 @@ const LayoutContainer = styled.div`
     }
   }
 
-  /* Custom styles for Nextra TOC component */
-  nav.nextra-toc {
-    ${tw`md:mr-14 md:pt-24`};
-
-    .nextra-scrollbar {
-      ${tw`pt-0`};
-
-      > p {
-        ${tw`hidden`};
-      }
-    }
-  }
-
   /* Custom styles for Nextra main content container */
   .nextra-content main {
     ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] md:pt-24 max-w-none`};
@@ -112,10 +107,6 @@ const LayoutContainer = styled.div`
   a[href] {
     ${tw`hover:text-[#00A5C6]/80 dark:hover:text-[#B0FF61]/80 transition-all`};
     text-decoration: auto;
-  }
-
-  li.active a {
-    ${tw`text-[#00A5C6] dark:text-[#B0FF61] bg-grey-100 dark:bg-grey-800`};
   }
 
   [tabindex]:not([tabindex="-1"]),

@@ -21,9 +21,9 @@ export const TableOfContentsWrapper: React.FC<TableOfContentsWrapperProps> = ({ 
 
   return (
     <div className="grid grid-cols-10 gap-8">
-      <div className="col-span-10 md:col-span-7 lg:col-span-6">{children}</div>
+      <div className="col-span-10 lg:col-span-6">{children}</div>
 
-      <div className="lg:col-start-8 col-span-3 hidden md:block">
+      <div className="col-start-8 col-span-3 hidden lg:block">
         <TableOfContents headings={headings} />
       </div>
     </div>
