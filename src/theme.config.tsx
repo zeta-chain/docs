@@ -33,12 +33,8 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     th: (props) => <th {...props} />,
     td: (props) => <td {...props} />,
 
-    h1: (props) => (
-      <h1
-        className="text-4xl sm:text-5xl md:text-[80px] md:leading-none md:-tracking-[2.4px] font-medium mb-20 sm:mb-[120px]"
-        {...props}
-      />
-    ),
+    // If there are any h1 (^#\s) rendered in the markdown, it will be rendered as h2 to avoid duplication with Hero component
+    h1: (props) => <HeadingLink tag="h2" {...props} />,
     h2: (props) => <HeadingLink tag="h2" {...props} />,
     h3: (props) => <HeadingLink tag="h3" {...props} />,
     h4: (props) => <HeadingLink tag="h4" {...props} />,

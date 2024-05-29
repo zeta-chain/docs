@@ -1,6 +1,5 @@
 ---
 title: Staking
-hero: true
 ---
 
 ## Overview
@@ -401,10 +400,7 @@ await contract.deployed();
 
 // ...
 
-task("deploy", "Deploy the contract", main).addParam(
-  "chain",
-  "Chain ID (use btc_testnet for Bitcoin Testnet)"
-);
+task("deploy", "Deploy the contract", main).addParam("chain", "Chain ID (use btc_testnet for Bitcoin Testnet)");
 ```
 
 ## Tasks to Interact with the Contract

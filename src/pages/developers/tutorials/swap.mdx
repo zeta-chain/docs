@@ -1,6 +1,5 @@
 ---
 title: Swap
-hero: true
 ---
 
 ## Overview
@@ -169,22 +168,15 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   let recipient;
   try {
     if (bech32.decode(args.recipient)) {
-      recipient = utils.solidityPack(
-        ["bytes"],
-        [utils.toUtf8Bytes(args.recipient)]
-      );
+      recipient = utils.solidityPack(["bytes"], [utils.toUtf8Bytes(args.recipient)]);
     }
   } catch (e) {
     recipient = args.recipient;
   }
 
-  const data = prepareData(
-    args.contract,
-    ["address", "bytes"],
-    [args.targetToken, recipient]
-  );
+  const data = prepareData(args.contract, ["address", "bytes"], [args.targetToken, recipient]);
   //...
-}
+};
 ```
 
 ## Create an Account and Request Tokens from the Faucet

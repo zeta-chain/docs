@@ -29,7 +29,6 @@ export const StyledHero = styled.div`
  * ---
  * title: "Article Title"
  * description: "Article Description"
- * hero: true
  * heroImgUrl: "/img/image-path.svg"
  * heroImgWidth: 123
  * ---
@@ -37,24 +36,21 @@ export const StyledHero = styled.div`
 export const Hero: React.FC = () => {
   const { route } = useRouter();
   const { upLg } = useCurrentBreakpoint();
-  const { frontMatter } = useConfig();
+  const { frontMatter, title: pageTitle } = useConfig();
 
   const isMainPageHero = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isHomePage = useMemo(() => ["/"].includes(route), [route]);
 
-  const heroProps = useMemo(() => {
-    if (!frontMatter.hero) return null;
-
+  const { title, description, imgUrl, imgWidth } = useMemo(() => {
     return {
-      title: frontMatter.title ? String(frontMatter.title) : undefined,
+      title: frontMatter.title ? String(frontMatter.title) : pageTitle ? String(pageTitle) : undefined,
       description: frontMatter.description ? String(frontMatter.description) : undefined,
       imgUrl: frontMatter.heroImgUrl ? String(frontMatter.heroImgUrl) : undefined,
       imgWidth: frontMatter.heroImgWidth ? Number(frontMatter.heroImgWidth) : undefined,
     };
   }, [frontMatter]);
 
-  if (!heroProps) return null;
-
-  const { title, description, imgUrl, imgWidth } = heroProps;
+  if (isHomePage || !title) return null;
 
   return (
     <StyledHero
@@ -70,7 +66,7 @@ export const Hero: React.FC = () => {
           "col-span-10": !imgUrl,
         })}
       >
-        {title && <h1>{title}</h1>}
+        <h1>{title}</h1>
         {description && <div className="description">{description}</div>}
       </div>
 

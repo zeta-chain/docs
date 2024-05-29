@@ -1,7 +1,6 @@
 ---
 title: Cross-Chain ERC-20
 description: In this tutorial you will learn how to create a contract capable of minting ERC-20 tokens and sending them to a contract on a different chain using cross-chain messaging.
-hero: true
 ---
 
 import { CodeBlock } from "~/components/shared";
@@ -115,6 +114,7 @@ error InsufficientBalance();
 
         emit CrossChainERC20RevertedEvent(to, value);
     }
+
 }`
 } />
 
