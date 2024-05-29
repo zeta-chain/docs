@@ -1,9 +1,11 @@
-import { PropsWithChildren } from "react";
+import { useRouter } from "next/router";
+import { PropsWithChildren, useMemo } from "react";
 import tw, { styled } from "twin.macro";
 
+import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
 
-const LayoutContainer = styled.div`
+const LayoutContainer = styled.div<{ isMainPage: boolean }>`
   ${tw`bg-grey-50 dark:bg-grey-900`};
 
   /* Base styles for rendered tables */
@@ -45,7 +47,9 @@ const LayoutContainer = styled.div`
 
       /* Custom styles for Nextra Search component */
       .nextra-search {
-        ${tw`block w-full sm:w-[250px]`};
+        ${tw`block w-full sm:w-[250px] transition-opacity`};
+
+        ${({ isMainPage }) => !isMainPage && tw`sm:opacity-0 sm:pointer-events-none`};
 
         input {
           ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
@@ -90,7 +94,9 @@ const LayoutContainer = styled.div`
 
   /* Custom styles for Nextra main content container */
   .nextra-content main {
-    ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] md:pt-24 max-w-none`};
+    ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] max-w-none`};
+
+    ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-12`)};
   }
 
   /* Hide Nextra docs theme components */
@@ -163,8 +169,13 @@ type LayoutProps = {
   className?: string;
 };
 
-export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => (
-  <LayoutContainer className={className}>
-    <NavigationLayout>{children}</NavigationLayout>
-  </LayoutContainer>
-);
+export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
+  const { route } = useRouter();
+  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+
+  return (
+    <LayoutContainer className={className} isMainPage={isMainPage}>
+      <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
+    </LayoutContainer>
+  );
+};

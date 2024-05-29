@@ -1,5 +1,6 @@
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
+import clsx from "clsx";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
@@ -14,10 +15,16 @@ import { closeDrawerWidth, LeftNavDrawer, navBottomItems, navMainItems } from ".
 import { Header } from "./Header";
 import { NavigationItem } from "./NavigationItem";
 
-export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+type NavigationLayoutProps = PropsWithChildren<{
+  isMainPage: boolean;
+}>;
+
+export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
+
+  const isNarrowDrawer = !isMainPage;
 
   // To prevent a flash of the drawer on first render given that useCurrentBreakpoint has an issue always returning false for the first render for upLg and others
   useEffect(() => {
@@ -34,13 +41,17 @@ export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) 
           closeDrawerWidth={upSm ? closeDrawerWidth : 0}
           classes={{
             paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
-              isLeftDrawerOpen ? `!w-screen sm:!w-[200px]` : ""
+              isLeftDrawerOpen && !isNarrowDrawer
+                ? `!w-screen sm:!w-[200px]`
+                : isLeftDrawerOpen && isNarrowDrawer
+                ? "!w-screen sm:!w-[72px]"
+                : ""
             }`,
           }}
         >
-          <div className="hidden sm:flex items-center sm:w-[200px] h-[104px] py-6 pl-4 sm:pl-6">
+          <div className="hidden sm:flex items-center h-[104px] py-6 pl-4 sm:pl-6">
             <Link href="/">
-              <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
+              <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" onlyZ={isNarrowDrawer} />
             </Link>
           </div>
 
@@ -57,6 +68,7 @@ export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) 
                         key={item.label}
                         item={item}
                         isOpen={isLeftDrawerOpen}
+                        withLabel={!isNarrowDrawer}
                         onClick={() => {
                           if (!upSm) setIsLeftDrawerOpen(false);
                         }}
@@ -78,6 +90,7 @@ export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) 
                     key={item.label}
                     item={item}
                     isOpen={isLeftDrawerOpen}
+                    withLabel={!isNarrowDrawer}
                     onClick={() => {
                       if (!upSm) setIsLeftDrawerOpen(false);
                     }}
@@ -93,7 +106,12 @@ export const NavigationLayout: React.FC<PropsWithChildren<{}>> = ({ children }) 
         </LeftNavDrawer>
       </motion.div>
 
-      <div className="min-h-screen flex flex-col sm:pl-[200px]">
+      <div
+        className={clsx("min-h-screen flex flex-col transition-all", {
+          "sm:pl-[200px]": !isNarrowDrawer,
+          "sm:pl-[72px] lg:pl-[160px]": isNarrowDrawer,
+        })}
+      >
         <Header
           isLeftDrawerOpen={isLeftDrawerOpen}
           toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)}

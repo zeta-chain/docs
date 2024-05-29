@@ -12,10 +12,11 @@ const nonSelectedColor =
 interface NavigationItemProps {
   item: NavItem;
   isOpen: boolean;
+  withLabel?: boolean;
   onClick?: () => void;
 }
 
-export const NavigationItem = ({ item, isOpen, onClick }: NavigationItemProps) => {
+export const NavigationItem = ({ item, isOpen, withLabel = true, onClick }: NavigationItemProps) => {
   const { label, url, icon } = item;
 
   const router = useRouter();
@@ -53,8 +54,9 @@ export const NavigationItem = ({ item, isOpen, onClick }: NavigationItemProps) =
 
         {isOpen && (
           <p
-            className={clsx("font-inter text-sm", {
+            className={clsx("font-inter text-sm transition-all", {
               [nonSelectedColor]: !isSelected,
+              "sm:opacity-0": !withLabel,
             })}
           >
             {label}
