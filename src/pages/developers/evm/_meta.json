@@ -1,6 +1,12 @@
 {
-  "system-contract": "System Contract",
-  "connector": "Connector",
+  "system-contract": {
+    "title": "System Contract",
+    "description": "The System Contract on ZetaChain serves as the caller for universal apps when they are called from connected chains."
+  },
+  "connector": {
+    "title": "Connector",
+    "description": "The connector contract enables contracts to send messages of arbitrary data and ZETA tokens between smart contract-enabled connected chains."
+  },
   "bitcoin": "Bitcoin Interoperability",
   "gas": "Gas Fees",
   "addresses": "Working with Addresses"
