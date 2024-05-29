@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { getAllPages } from "nextra/context";
+import { useConfig } from "nextra-theme-docs";
 import { PropsWithChildren, useMemo } from "react";
 
 import { getFlatDirectories } from "~/lib/helpers/nextra";
@@ -17,6 +18,7 @@ type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
  */
 export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps> = ({ children }) => {
   const { route } = useRouter();
+  const { frontMatter } = useConfig();
   const allPages = getAllPages();
 
   const { flatDirectories, directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
@@ -32,11 +34,14 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
     };
   }, [flatDirectories, directoriesByRoute, route]);
 
-  const shouldRenderNavComponents = useMemo(() => !mainNavRoutes.includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isSubCategoryPage = frontMatter?.pageType === "sub-category";
+  const shouldRenderPrevLink = !isMainPage && !!prevPage;
+  const shouldRenderNextSection = !isMainPage && !isSubCategoryPage && !!nextPage;
 
   return (
     <>
-      {shouldRenderNavComponents && !!prevPage && (
+      {shouldRenderPrevLink && (
         <div className="mb-8 sm:mb-10 md:mb-20 leading-[0]">
           <Link
             href={prevPage.route}
@@ -50,7 +55,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
 
       {children}
 
-      {shouldRenderNavComponents && !!nextPage && (
+      {shouldRenderNextSection && (
         <div className="mb-16 mt-20 sm:mt-[120px]">
           <NavigationSection
             title="Continue Learning"

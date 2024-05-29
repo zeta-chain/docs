@@ -38,8 +38,9 @@ export const Hero: React.FC = () => {
   const { upLg } = useCurrentBreakpoint();
   const { frontMatter, title: pageTitle } = useConfig();
 
-  const isMainPageHero = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
   const isHomePage = useMemo(() => ["/"].includes(route), [route]);
+  const isSubCategoryPage = frontMatter?.pageType === "sub-category";
 
   const { title, description, imgUrl, imgWidth } = useMemo(() => {
     return {
@@ -55,14 +56,14 @@ export const Hero: React.FC = () => {
   return (
     <StyledHero
       className={clsx({
-        "lg:min-h-[520px]": isMainPageHero,
-        "md:mb-[152px]": !isMainPageHero,
+        "lg:min-h-[520px]": isMainPage,
+        "md:mb-[152px]": !isMainPage,
       })}
     >
       <div
         className={clsx("order-2 lg:order-1 flex flex-col justify-center gap-8 sm:gap-10", {
-          "col-span-10 lg:col-span-5 xl:col-span-4": imgUrl && isMainPageHero,
-          "col-span-10 lg:col-span-5": imgUrl && !isMainPageHero,
+          "col-span-10 lg:col-span-5 xl:col-span-4": imgUrl && (isMainPage || isSubCategoryPage),
+          "col-span-10 lg:col-span-5": imgUrl && !isMainPage && !isSubCategoryPage,
           "col-span-10": !imgUrl,
         })}
       >
@@ -73,8 +74,8 @@ export const Hero: React.FC = () => {
       {imgUrl && (
         <div
           className={clsx("order-1 lg:order-2 col-span-10 flex lg:justify-center", {
-            "lg:col-span-5 xl:col-span-6": isMainPageHero,
-            "lg:col-span-5": !isMainPageHero,
+            "lg:col-span-5 xl:col-span-6": isMainPage || isSubCategoryPage,
+            "lg:col-span-5": !isMainPage && !isSubCategoryPage,
           })}
         >
           <Image

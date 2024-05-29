@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useConfig } from "nextra-theme-docs";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
 import { mainNavRoutes } from "../../Layout";
@@ -9,9 +10,13 @@ type TableOfContentsWrapperProps = PropsWithChildren<{}>;
 
 export const TableOfContentsWrapper: React.FC<TableOfContentsWrapperProps> = ({ children }) => {
   const { route } = useRouter();
+  const { frontMatter } = useConfig();
+
   const [headings, setHeadings] = useState<Heading[]>([]);
 
-  const shouldRenderTOC = useMemo(() => !mainNavRoutes.includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isSubCategoryPage = frontMatter?.pageType === "sub-category";
+  const shouldRenderTOC = !isMainPage && !isSubCategoryPage;
 
   useEffect(() => {
     if (shouldRenderTOC) setHeadings(getHeadings());
