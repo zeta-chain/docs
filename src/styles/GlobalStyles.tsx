@@ -5,6 +5,9 @@ const customStyles = css({
   body: {
     ...tw`antialiased font-primary text-black dark:text-white !bg-grey-50 dark:!bg-grey-900 min-w-[320px]`,
     scrollbarGutter: "stable",
+    "&.custom-bg": {
+      ...tw`!bg-[#EEE] dark:!bg-grey-900`,
+    },
   },
 
   "::selection": {

@@ -42,9 +42,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           classes={{
             paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
               isLeftDrawerOpen && !isNarrowDrawer
-                ? `!w-screen sm:!w-[200px]`
+                ? `!w-screen sm:!w-[200px] sm:shadow-[inset_0px_0px_0px_0px_#FFF]`
                 : isLeftDrawerOpen && isNarrowDrawer
-                ? "!w-screen sm:!w-[72px]"
+                ? "!w-screen sm:!w-[72px] sm:shadow-[inset_-30px_0px_30px_-30px_rgba(31,32,33,0.15)] sm:!border-r-0"
                 : ""
             }`,
           }}
@@ -108,8 +108,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
 
       <div
         className={clsx("min-h-screen flex flex-col transition-all", {
-          "sm:pl-[200px]": !isNarrowDrawer,
-          "sm:pl-[72px] lg:pl-[160px]": isNarrowDrawer,
+          "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
+          "sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800": isNarrowDrawer,
         })}
       >
         <Header

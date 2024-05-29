@@ -1,5 +1,8 @@
 import clsx from "clsx";
+import { useRouter } from "next/router";
+import { useMemo } from "react";
 
+import { mainNavRoutes } from "../../Layout";
 import { SectionTitle, SectionTitleProps } from "../../SectionTitle";
 import { NavigationCardLink, NavigationCardLinkProps } from "./NavigationCardLink";
 
@@ -15,6 +18,9 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
   link,
   navItems,
 }) => {
+  const { route } = useRouter();
+  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+
   return (
     <section className="flex flex-col gap-10">
       {title && <SectionTitle title={title} description={description} colorClass={colorClass} link={link} />}
@@ -29,7 +35,7 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
         })}
       >
         {navItems.map((article, index) => (
-          <NavigationCardLink key={index} {...article} />
+          <NavigationCardLink key={index} {...article} isMainPage={isMainPage} />
         ))}
       </div>
     </section>

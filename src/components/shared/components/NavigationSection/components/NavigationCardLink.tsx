@@ -11,6 +11,7 @@ export type NavigationCardLinkProps = {
   readTime?: string;
   readType?: string;
   className?: string;
+  isMainPage?: boolean;
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
@@ -22,14 +23,19 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   readTime,
   readType,
   className,
+  isMainPage,
   ...linkProps
 }) => {
   return (
     <Link
       {...linkProps}
       className={clsx(
-        `flex flex-col gap-6 sm:h-[304px] p-3 sm:p-6 justify-between rounded-lg border border-grey-200 dark:border-grey-600
-         hover:shadow-light hover:border-white dark:hover:bg-grey-800 dark:hover:border-grey-800 transition-all`,
+        `flex flex-col gap-6 sm:h-[304px] p-3 sm:p-6 justify-between rounded-lg border border-grey-200 
+         hover:shadow-light hover:border-white dark:bg-grey-900 transition-all`,
+        {
+          "dark:border-grey-600 dark:hover:bg-grey-800 dark:hover:border-grey-800": isMainPage,
+          "dark:border-grey-900 dark:hover:bg-grey-600 dark:hover:border-grey-600": !isMainPage,
+        },
         className
       )}
     >
