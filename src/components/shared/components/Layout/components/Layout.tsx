@@ -6,7 +6,7 @@ import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
 
 export const StyledOrderedList = styled.ol`
-  ${tw`mt-6 first:mt-0 list-none ml-[36px]`}
+  ${tw`mt-8 first:mt-0 list-none ml-[36px]`}
   counter-reset: ol;
 
   li::before {
@@ -17,7 +17,7 @@ export const StyledOrderedList = styled.ol`
 `;
 
 export const StyledUnorderedList = styled.ul`
-  ${tw`mt-6 first:mt-0 list-none ml-[36px]`}
+  ${tw`mt-8 first:mt-0 list-none ml-[36px]`}
 
   li::before {
     content: "";
@@ -146,7 +146,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
   }
 
   img {
-    ${tw`rounded-lg mt-6`};
+    ${tw`rounded-lg mt-8`};
   }
 
   /* Custom Shiki code block syntax highlighting styles */

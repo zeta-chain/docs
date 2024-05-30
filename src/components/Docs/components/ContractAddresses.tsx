@@ -90,7 +90,7 @@ export const ContractAddresses = () => {
       ) : (
         Object.entries(groupedData[activeTab]).map(([chainName, contracts]) => (
           <div key={chainName}>
-            <h3 className="mt-6 mb-2 font-medium">{chainName}</h3>
+            <h3 className="mt-8 mb-2 font-medium">{chainName}</h3>
 
             <div className="overflow-x-auto">
               <table>

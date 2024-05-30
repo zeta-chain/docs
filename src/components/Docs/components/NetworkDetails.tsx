@@ -67,7 +67,7 @@ export const NetworkDetails = () => {
   const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
 
   return (
-    <div className="mt-6">
+    <div className="mt-8">
       <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
         <button
           type="button"
