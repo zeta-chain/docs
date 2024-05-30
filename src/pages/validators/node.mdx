@@ -6,7 +6,7 @@ This document outlines the process for running a full ZetaChain node. It is
 intended for those who are familiar with the Linux operating system and the
 command line interface.
 
-It is expected that you are familer with [setup](./setup) and state sync.
+It is expected that you are familiar with [setup](./setup) and state sync.
 
 ## Set Limits on Open Files and Number of Processes
 
@@ -133,7 +133,7 @@ Run `systemctl enable --now zetacored` to start the service and to automatically
 ## Upgrades
 
 Follow the [#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486) and/or 
-[#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338) channels on discord to recieve
+[#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338) channels on discord to receive
 upgrade proposal notifications.
 
 Download the new binaries from the github release and install them into the cosmovisor upgrade directory.
@@ -157,7 +157,7 @@ In a production environment we recommend monitoring the node resources (CPU
 load, Memory Usage, Disk usage and Disk IO) for any performance degradation.
 
 ZetaChain Core generates a log that can be monitored for errors and used for
-troubleshooting. If you install Zetacore as a Systemd service using the
+troubleshooting. If you install zetacored as a Systemd service using the
 instructions above you can view this log with
 `journalctl -f -u zetacored`.
 
