@@ -12,16 +12,16 @@ const API: Record<NetworkType, string> = {
 };
 
 const modalStyles = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
-  overflow: 'scroll',
+  overflow: "scroll",
   minWidth: "75%",
 };
 
@@ -80,14 +80,9 @@ export const GovUpgradeProposals = () => {
 
   return (
     <div className="mt-6">
-      <Modal
-        open={isModalOpen}
-        onClose={handleModelClose}
-      >
-        <Box sx={{...modalStyles}}>
-          <pre style={{overflow: "scroll"}}>
-            {modalContents}
-          </pre>
+      <Modal open={isModalOpen} onClose={handleModelClose}>
+        <Box sx={{ ...modalStyles }}>
+          <pre style={{ overflow: "scroll" }}>{modalContents}</pre>
         </Box>
       </Modal>
       <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
@@ -136,31 +131,45 @@ export const GovUpgradeProposals = () => {
                     {proposal.plan.info.startsWith("{") ? (
                       <>
                         <Tooltip title="Raw Plan Info" arrow>
-                          <IconButton aria-label="Raw Plan Info" className="text-grey-500 dark:text-grey-300" onClick={() => {
-                            let plan = structuredClone(proposal.plan)
-                            plan.info = JSON.parse(proposal.plan.info);
-                            setModalContents(JSON.stringify(plan, null, 4))
-                            setIsModalOpen(true)
-                          }}>
+                          <IconButton
+                            aria-label="Raw Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            onClick={() => {
+                              let plan = structuredClone(proposal.plan);
+                              plan.info = JSON.parse(proposal.plan.info);
+                              setModalContents(JSON.stringify(plan, null, 4));
+                              setIsModalOpen(true);
+                            }}
+                          >
                             <InfoOutlined />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Github Release" arrow>
-                        <IconButton aria-label="Github Release" className="text-grey-500 dark:text-grey-300" href={proposal.metadata} target="_blank">
-                          <GitHub />
-                        </IconButton>
+                          <IconButton
+                            aria-label="Github Release"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={proposal.metadata}
+                            target="_blank"
+                          >
+                            <GitHub />
+                          </IconButton>
                         </Tooltip>
                       </>
                     ) : (
                       <>
-                      <Tooltip title="Plan Info" arrow>
-                        <IconButton aria-label="Plan Info" className="text-grey-500 dark:text-grey-300" href={convertIpfsLink(proposal.plan.info)} target="_blank" rel="noopener noreferrer">
-                          <InfoOutlined />
-                        </IconButton>
-                      </Tooltip>
-                    </>
-                    )
-                    }
+                        <Tooltip title="Plan Info" arrow>
+                          <IconButton
+                            aria-label="Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={convertIpfsLink(proposal.plan.info)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
