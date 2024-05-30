@@ -130,7 +130,26 @@ Run `systemctl daemon-reload` to load the service.
 
 Run `systemctl enable --now zetacored` to start the service and to automatically start it at boot.
 
-## 
+## Upgrades
+
+Follow the [#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486) and/or 
+[#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338) channels on discord to recieve
+upgrade proposal notifications.
+
+Download the new binaries from the github release and install them into the cosmovisor upgrade directory.
+The name of the directory must match the upgrade name. The upgrade name is **not** the the release name on github. Reference 
+the [Governance Upgrade Proposals](./proposals) page to easily see the upgrade names. Here are some examples:
+
+| Upgrade Name | `zetacored` Path                                          | git tag |
+|--------------|-----------------------------------------------------------|---------|
+| `v17-athens` | `~/.zetacored/cosmovisor/upgrades/v17-athens/bin/zetacored` | `v17.0.0` |
+| `v17` | `~/.zetacored/cosmovisor/upgrades/v17/bin/zetacored` | `v17.0.0` |
+| `v16` | `~/.zetacored/cosmovisor/upgrades/v16/bin/zetacored` | `v16.0.0` |
+
+After installing the binary, you should:
+
+- validate the checksum is correct
+- run `zetacored version` to validate that you can actually run the downloaded binary
 
 ## Monitoring
 
