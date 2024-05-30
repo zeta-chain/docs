@@ -154,14 +154,9 @@ export const GovUpgradeProposals = () => {
                     ) : (
                       <>
                       <Tooltip title="Plan Info" arrow>
-                        <IconButton aria-label="Plan Info" className="text-grey-500 dark:text-grey-300" href={convertIpfsLink(proposal.plan.info)} rel="noopener noreferrer">
+                        <IconButton aria-label="Plan Info" className="text-grey-500 dark:text-grey-300" href={convertIpfsLink(proposal.plan.info)} target="_blank" rel="noopener noreferrer">
                           <InfoOutlined />
                         </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Github Release" arrow>
-                      <IconButton aria-label="Github Release" className="text-grey-500 dark:text-grey-300" href={proposal.metadata} target="_blank">
-                        <GitHub />
-                      </IconButton>
                       </Tooltip>
                     </>
                     )
