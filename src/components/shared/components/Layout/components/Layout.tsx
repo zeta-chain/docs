@@ -132,7 +132,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
 
   a[href] {
     ${tw`hover:text-[#00A5C6]/80 dark:hover:text-[#B0FF61]/80 transition-all`};
-    text-decoration: auto;
+    text-decoration: none;
   }
 
   [tabindex]:not([tabindex="-1"]),

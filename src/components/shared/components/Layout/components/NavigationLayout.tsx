@@ -34,7 +34,13 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
 
   return (
     <>
-      <motion.div className="fixed z-[99] top-0 left-0 w-fit h-full" {...getRevealProps({ y: 0 })}>
+      <motion.div
+        className={clsx("fixed z-[99] top-0 left-0 h-full", {
+          "w-screen sm:w-[200px]": isLeftDrawerOpen && !isNarrowDrawer,
+          "w-screen sm:w-[72px]": isLeftDrawerOpen && isNarrowDrawer,
+        })}
+        {...getRevealProps({ y: 0 })}
+      >
         <LeftNavDrawer
           variant="permanent"
           open={isLeftDrawerOpen}
