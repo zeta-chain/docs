@@ -5,7 +5,6 @@
   "snapshot": "Option 2: Snapshot",
   "ksync": "Option 3: KSYNC",
   "node": "Running a Node in Production",
-  "cosmovisor": "Setting up Cosmovisor",
   "monitoring": "Validators Monitoring",
   "proposals": "Governance Upgrade Proposals",
   "validator": "Create a Core Validator"
