@@ -1,6 +1,18 @@
 {
-  "goldsky": "Goldsky: Subgraph",
-  "pyth": "Pyth: Price and VRF Oracle",
-  "particle": "Particle: Account Abstraction",
-  "envio": "Envio: Real-Time Indexer"
+  "goldsky": {
+    "title": "Goldsky",
+    "description": "Subgraph indexer"
+  },
+  "pyth": {
+    "title": "Pyth",
+    "description": "Price and VRF Oracle"
+  },
+  "particle": {
+    "title": "Particle Network",
+    "description": "Account Abstraction"
+  },
+  "envio": {
+    "title": "Envio",
+    "description": "Real-time data indexer"
+  }
 }

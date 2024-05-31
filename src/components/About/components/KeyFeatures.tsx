@@ -8,26 +8,26 @@ type KeyFeature = {
 
 const keyFeatures: KeyFeature[] = [
   {
-    title: "Decentralized and public",
+    title: "Chain Abstraction Framework",
     description:
-      "ZetaChain is a decentralized and public blockchain network. It is built on Cosmos SDK and Tendermint Consensus. While many cross-chain solutions like bridges have to vary, often centralized trust models that have a track record for being susceptible to exploits and hacks, ZetaChain is a Proof-of-Stake blockchain, where all transactions and activity on the platform – even cross-chain transactions – are fully transparent, verifiable, and function in a trust-minimized manner.",
+      "ZetaChain is a decentralized and public blockchain network. It is built on Cosmos SDK and Comet BFT consensus. The unique feature of ZetaChain is the Chain Abstraction Framework (CAF), which enables omnichain connectivity of the network to any blockchain. This framework is accessible through the Universal EVM, which is a synchronous environment that can be called from any chain, manage native assets on any chain, and access asynchronous arbitrary messaging to call contracts on other chains. Developing with the CAF offers the ability to build robust state management combined with multi-leg, multi-chain apps' needs, all in the familiar EVM development environment. The resulting user experience is unbounded, where the majority of apps can be used entirely from any single network while the rest of the app logic can be affordably, securely, and performantly abstracted.",
   },
   {
     title: "Hyper-connected nodes",
     description:
-      "ZetaChain's nodes have observers that monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on every connected chain as a wallet can. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless omnichain environment for developers to build novel and powerful cross-chain applications on top of.",
+      "ZetaChain's nodes have observers that monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on every connected chain. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless Chain Abstraction Framework for developers to build novel and powerful cross-chain applications.",
   },
   {
     title: "Omnichain smart contracts",
     description:
-      "Smart contracts can be deployed natively on ZetaChain that can read/write to connected chains. ZetaChain is the only public blockchain to support smart contracts with this capability, enabling a new paradigm of app development.",
+      "Smart contracts deployed natively on ZetaChain can read/write to connected chains. ZetaChain is the only public blockchain to support smart contracts with this capability, enabling a new paradigm of app development.",
   },
   {
     title: "Cross-chain message passing",
     description:
-      "A developer can pass messages (data and value) between chains and layers with simple function calls. Through message passing, a dApp developer can build powerful cross-chain applications by simply implementing a few functions within their existing smart contracts.",
+      "A developer can pass messages (data and value) between chains and layers with simple function calls. Through message passing, a dApp developer can build powerful cross-chain applications by simply implementing a few functions within their existing smart contracts. By composing messaging capabilities with Omnichain Smart Contracts, apps can abstract multi-leg cross-chain transactions in tandem with native asset movements and interactions. For example, a contract on ZetaChain could be called by a user on Bitcoin and also enact external contract calls on Ethereum and BNB Chain, and more legs thereafter — all in just one step for the user.",
     link: (
-      <PrimaryLink href="/developers/cross-chain-messaging/overview" icon={<IconDocs />}>
+      <PrimaryLink href="/developers/tutorials/message" icon={<IconDocs />}>
         Start building dApps
       </PrimaryLink>
     ),

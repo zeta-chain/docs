@@ -62,9 +62,7 @@ export const Alert: React.FC<AlertProps> = ({ variant = "note", className, child
               "font-semibold": variant === "note" || variant === "tip",
               uppercase: variant === "warning" || variant === "danger",
             })}
-          >
-            {capitalize(variant)}:
-          </span>{" "}
+          ></span>
           <span>{children}</span>
         </div>
       </div>

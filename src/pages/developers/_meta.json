@@ -4,14 +4,12 @@
     "description": "Start building on ZetaChain, the only decentralized blockchain and smart contract platform built for omnichain interoperability."
   },
   "apps": {
-    "title": "Building Universal Apps"
-  },
-  "overview": {
-    "title": "ZetaChain Overview",
-    "description": "ZetaChain is a blockchain for universal omnichain apps that span across any blockchain, from Ethereum and Cosmos to Bitcoin and beyond."
+    "title": "Building Universal Apps",
+    "description": "Dive into the basics of building on ZetaChain"
   },
   "evm": {
-    "title": "Universal EVM"
+    "title": "Universal EVM",
+    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps"
   },
   "tutorials": {
     "title": "Tutorials"

@@ -1,6 +1,6 @@
 ---
-title: First Omnichain Contract
-description: In this tutorial you will create a simple omnnichain contract, deploy it on ZetaChain and make a contract call from a connected chain.
+title: Your First Univeral App
+description: In this tutorial you will create a simple universal app contract, deploy it on ZetaChain and make a contract call from a connected chain.
 ---
 
 ## Prerequisites
@@ -21,12 +21,13 @@ Install dependencies:
 
 ```
 cd template
+
 yarn
 ```
 
 ## Create the Contract
 
-To create a new omnichain contract you will use the `omnichain` Hardhat task
+To create a new universal app contract, use the `omnichain` Hardhat task
 available by default in the template.
 
 ```
@@ -40,14 +41,14 @@ you will create a contract that does not accept any arguments.
 
 The `omnichain` task has created:
 
-- `contracts/MyContract.sol`: a Solidity omnichain smart contract
+- `contracts/MyContract.sol`: a Solidity universal app contract
 - `tasks/deploy.ts`: a Hardhat task to deploy the contract
 - `tasks/interact.ts`: a Hardhat task to interact with the contract
 
 It also modified `hardhat.config.ts` to import both `deploy` and `interact`
 tasks.
 
-## Omnichain Contract
+## Universal App Contract
 
 Let's review the contents of the `MyContract` contract:
 
@@ -77,11 +78,11 @@ contract MyContract is zContract, OnlySystem {
 }
 ```
 
-`MyContract` is a simple contract that inherits from the
-[`zContract` interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol).
+`MyContract` is a simple contract that inherits from the [`zContract`
+interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol).
 
 The contract declares a state variable of type `SystemContract` that stores a
-reference to the [system contract](/developers/omnichain/system-contract).
+reference to the [system contract](/developers/evm/system-contract).
 
 The constructor function accepts the address of the system contract and stores
 it in the `systemContract` state variable.
@@ -312,8 +313,8 @@ Using the `faucet` task you can get ZETA tokens on ZetaChain as well as ZETA
 tokens on connected chains.
 
 You will, however, need to request native tokens on connected chains from one of
-the
-[publicly available faucets](/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
+the [publicly available
+faucets](/reference/get-testnet-zeta/#getting-additional-testnet-gas-assets).
 
 ## Check Token Balances
 
@@ -324,8 +325,8 @@ the connected chains:
 npx hardhat balances
 ```
 
-Learn more about these and other ZetaChain toolkit commands
-[avaialble in the template](/developers/template/).
+Learn more about these and other ZetaChain toolkit commands [avaialble in the
+template](/developers/template/).
 
 ## Deploy the Contract
 
