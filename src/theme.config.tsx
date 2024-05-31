@@ -2,8 +2,10 @@ import { DocsThemeConfig } from "nextra-theme-docs";
 
 import {
   AppHead,
+  Code,
   HeadingLink,
   MainContentWrapper,
+  Pre,
   StyledOrderedList,
   StyledUnorderedList,
   ThemeToggle,
@@ -63,8 +65,8 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
         {...props}
       />
     ),
-
-    // code: (props) => <code className="py-1.5 px-2.5 rounded-lg bg-grey-100 dark:bg-grey-900 break-words" {...props} />,
+    pre: Pre,
+    code: Code,
   },
 
   // Remove nextra default theme switch in favor of custom theme toggle button
