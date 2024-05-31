@@ -18,7 +18,7 @@ const StyledLink = styled.a`
     ${tw`!text-black dark:!text-white`}
 
     .icon-link {
-      ${tw`text-[#00DDA5]`}
+      ${tw`text-[#00A5C6] dark:text-[#B0FF61]`}
     }
   }
 `;
