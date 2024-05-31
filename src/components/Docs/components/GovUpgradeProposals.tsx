@@ -1,4 +1,7 @@
-import { Skeleton } from "@mui/material";
+import { GitHub, InfoOutlined } from "@mui/icons-material";
+import { Box, Button, Icon, IconButton, Modal, Skeleton, Toolbar, Tooltip } from "@mui/material";
+import { Code } from "nextra/components";
+import React from "react";
 import { useEffect, useState } from "react";
 
 import { NetworkType } from "~/lib/app.types";
@@ -8,10 +11,28 @@ const API: Record<NetworkType, string> = {
   mainnet: "https://zetachain-mainnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
 };
 
+const modalStyles = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  overflow: "scroll",
+  minWidth: "75%",
+};
+
 export const GovUpgradeProposals = () => {
   const [proposals, setProposals] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [modalContents, setModalContents] = useState<any>(undefined);
+  const handleModelClose = () => setIsModalOpen(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -59,6 +80,11 @@ export const GovUpgradeProposals = () => {
 
   return (
     <div className="mt-6">
+      <Modal open={isModalOpen} onClose={handleModelClose}>
+        <Box sx={{ ...modalStyles }}>
+          <pre style={{ overflow: "scroll" }}>{modalContents}</pre>
+        </Box>
+      </Modal>
       <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
         <button
           type="button"
@@ -102,9 +128,48 @@ export const GovUpgradeProposals = () => {
                   <td>{proposal.plan.height}</td>
                   <td>{proposal.status}</td>
                   <td>
-                    <a href={convertIpfsLink(proposal.plan.info)} target="_blank" rel="noopener noreferrer">
-                      {convertIpfsLink(proposal.plan.info)}
-                    </a>
+                    {proposal.plan.info.startsWith("{") ? (
+                      <>
+                        <Tooltip title="Raw Plan Info" arrow>
+                          <IconButton
+                            aria-label="Raw Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            onClick={() => {
+                              let plan = structuredClone(proposal.plan);
+                              plan.info = JSON.parse(proposal.plan.info);
+                              setModalContents(JSON.stringify(plan, null, 4));
+                              setIsModalOpen(true);
+                            }}
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Github Release" arrow>
+                          <IconButton
+                            aria-label="Github Release"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={proposal.metadata}
+                            target="_blank"
+                          >
+                            <GitHub />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      <>
+                        <Tooltip title="Plan Info" arrow>
+                          <IconButton
+                            aria-label="Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={convertIpfsLink(proposal.plan.info)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
