@@ -1,8 +1,12 @@
+import { Alert } from "~/components/shared";
+
 # Running a Node in Production
 
 This document outlines the process for running a full ZetaChain node. It is
 intended for those who are familiar with the Linux operating system and the
 command line interface.
+
+It is expected that you are familiar with [setup](./setup) and state sync.
 
 ## Set Limits on Open Files and Number of Processes
 
@@ -25,7 +29,46 @@ Edit `/etc/sysctl.conf` to include the following:
 fs.file-max=262144
 ```
 
-## Create "zetachain" User Account
+## Installing Cosmovisor
+
+From the [cosmos docs](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor):
+
+> cosmovisor is a process manager for Cosmos SDK application binaries that automates application binary switch at chain upgrades. It polls the upgrade-info.json file that is created by the x/upgrade module at upgrade height, and then can automatically download the new binary, stop the current binary, switch from the old binary to the new one, and finally restart the node with the new binary.
+
+### From Source
+
+```bash
+go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
+mv $(go env GOPATH)/bin/cosmovisor /usr/local/bin/cosmovisor
+```
+
+### From Precompiled Binaries
+
+Download the correct binary from the [cosmovisor v1.5.0 release](https://github.com/cosmos/cosmos-sdk/releases/tag/cosmovisor%2Fv1.5.0). For example:
+
+```bash
+wget https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.5.0/cosmovisor-v1.5.0-linux-arm64.tar.gz
+tar xf cosmovisor-v1.5.0-linux-arm64.tar.gz
+mv cosmovisor /usr/local/bin
+```
+
+## Setting Up Cosmovisor
+
+### Create `cosmovisor` Directories
+
+```bash
+mkdir -p ~/.zetacored/config
+mkdir -p ~/.zetacored/cosmovisor/genesis/bin
+mkdir -p ~/.zetacored/cosmovisor/upgrades
+```
+
+### Install the Current `zetacored` Binary
+
+Find the current `zetacored` binary as specific in [setup](./setup). Place it in `~/.zetacored/cosmovisor/genesis/bin` rather than `$PATH`.
+
+## Configure `zetacored` systemd service
+
+### Create "zetachain" User Account
 
 We recommend running ZetaChain binary files with a user account rather than as
 root.
@@ -40,44 +83,73 @@ This is needed to store ZetaChain binary and configuration files.
 
 ```bash
 sudo su zetachain
-mkdir -p /home/zetachain/.zetacored/bin
 mkdir /home/zetachain/.zetacored/config
 ```
 
-## Create a Systemd Unit File
+### Configure a Systemd Unit File
 
-We recommend using Systemd to start and stop ZetaChain binary files and view the
-logs. You can create a Systemd unit file at the following location
-`/etc/systemd/system/zetacored.service`:
+Create the file `/etc/systemd/system/zetacored.service` with the following contents:
 
-```bash
+```
 [Unit]
-Description=Zetacored Service
+Description=zetacored (running under cosmovisor)
 After=multi-user.target
 StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 [Service]
+WorkingDirectory=/home/zetachain/.zetacored/cosmovisor
+Environment="DAEMON_HOME=/home/zetachain/.zetacored"
+Environment="DAEMON_NAME=zetacored"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="DAEMON_DATA_BACKUP_DIR=/home/zetachain/.zetacored"
+Environment="CLIENT_DAEMON_NAME=zetaclientd"
+Environment="CLIENT_SKIP_UPGRADE=false"
+Environment="CLIENT_START_PROCESS=false"
+Environment="UNSAFE_SKIP_BACKUP=true"
 Type=simple
 Restart=always
-RestartSec=90
+RestartSec=600
 User=zetachain
 LimitNOFILE=262144
-ExecStart=zetacored start --home /home/zetachain/.zetacored/ --log_format json  --log_level info --moniker <YOUR_NODE_NAME_HERE>
+ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
 ```
 
-Then start the service with `systemctl start zetacored`.
+<Alert variant="danger">
+    In this example, we have set `DAEMON_ALLOW_DOWNLOAD_BINARIES=true`. This instructs `cosmovisor` to automatically 
+    download the new binaries specified in the upgrade proposal. This would fail if the github api is down.
 
-You can view the logs with `journalctl -o cat -f -u zetacored`.
+    We suggest keeping this feature enabled, but preloading and validating any new binaries before the upgrade to
+    minimize risk. If you have already preloaded the binaries, none will be downloaded.
 
-## CLI
+    Read more about [cosmovisor Auto-Download here](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download).
+</Alert>
 
-ZetaChain Core is built with the Cosmos SDK. There is an `--help` flag that can
-be used with any subcommand to learn its use and syntax.
+Run `systemctl daemon-reload` to load the service.
 
-```bash
-zetacored --help
-```
+Run `systemctl enable --now zetacored` to start the service and to automatically start it at boot.
+
+## Upgrades
+
+Follow the [#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486) and/or 
+[#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338) channels on discord to receive
+upgrade proposal notifications.
+
+Download the new binaries from the github release and install them into the cosmovisor upgrade directory.
+The name of the directory must match the upgrade name. The upgrade name is **not** the the release name on github. Reference 
+the [Governance Upgrade Proposals](./proposals) page to easily see the upgrade names. Here are some examples:
+
+| Upgrade Name | `zetacored` Path                                          | git tag |
+|--------------|-----------------------------------------------------------|---------|
+| `v17-athens` | `~/.zetacored/cosmovisor/upgrades/v17-athens/bin/zetacored` | `v17.0.0` |
+| `v17` | `~/.zetacored/cosmovisor/upgrades/v17/bin/zetacored` | `v17.0.0` |
+| `v16` | `~/.zetacored/cosmovisor/upgrades/v16/bin/zetacored` | `v16.0.0` |
+
+After installing the binary, you should:
+
+- validate the checksum is correct
+- run `zetacored version` to validate that you can actually run the downloaded binary
 
 ## Monitoring
 
@@ -85,9 +157,9 @@ In a production environment we recommend monitoring the node resources (CPU
 load, Memory Usage, Disk usage and Disk IO) for any performance degradation.
 
 ZetaChain Core generates a log that can be monitored for errors and used for
-troubleshooting. If you install Zetacore as a Systemd service using the
+troubleshooting. If you install zetacored as a Systemd service using the
 instructions above you can view this log with
-`journalctl -o cat -f -u zetacored`.
+`journalctl -f -u zetacored`.
 
 Prometheus can be enabled to serve metrics which can be consumed by Prometheus
 collector(s). Telemetry include Prometheus metrics can be enabled in the

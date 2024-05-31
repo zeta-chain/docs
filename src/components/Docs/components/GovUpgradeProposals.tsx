@@ -88,7 +88,7 @@ export const GovUpgradeProposals = () => {
           <table>
             <thead>
               <tr>
-                <th>ZetaChain Version</th>
+                <th>Upgrade Name</th>
                 <th>Upgrade Height</th>
                 <th>Status</th>
                 <th>Details</th>
