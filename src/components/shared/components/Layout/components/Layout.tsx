@@ -30,7 +30,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
 
   /* Base styles for rendered tables */
   table {
-    ${tw`border-collapse`};
+    ${tw`border-collapse w-full`};
 
     tbody tr:nth-of-type(even) {
       ${tw`bg-[#FBFBFB] dark:bg-[#1B1F25]`};

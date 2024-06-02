@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { NavTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 type NetworkData = Array<{ name: string; value: string }>;
@@ -36,12 +37,8 @@ const networkDetails: Record<NetworkType, NetworkData> = {
   ],
 };
 
-// Styles for active and inactive tabs
-const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyles = { fontWeight: "normal", textDecoration: "none" };
-
 const NetworkTable: React.FC<{ networkData: NetworkData }> = ({ networkData }) => (
-  <div className="overflow-x-auto">
+  <div className="overflow-x-auto mt-8">
     <table>
       <thead>
         <tr>
@@ -64,29 +61,13 @@ const NetworkTable: React.FC<{ networkData: NetworkData }> = ({ networkData }) =
 );
 
 export const NetworkDetails = () => {
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   return (
     <div className="mt-8">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
-
-      <NetworkTable networkData={networkDetails[activeTab]} />
+      <NetworkTable networkData={networkDetails[activeTab.networkType]} />
     </div>
   );
 };

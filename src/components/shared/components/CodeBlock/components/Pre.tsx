@@ -40,7 +40,7 @@ export const Pre = ({
 
       <pre
         className={cn(
-          "bg-grey-100 dark:bg-grey-900 mb-8 overflow-x-auto rounded-lg nx-subpixel-antialiased text-base leading-[160%] text-black dark:text-white",
+          "bg-grey-100 dark:bg-grey-900 overflow-x-auto rounded-lg nx-subpixel-antialiased text-base leading-[160%] text-black dark:text-white",
           filename ? "px-4 pt-[90px] pb-8" : "px-4 py-8",
           className
         )}

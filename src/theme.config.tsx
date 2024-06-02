@@ -34,7 +34,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     // Render custom components for each html element
     // ...
     table: (props) => (
-      <div className="mt-8 overflow-x-auto">
+      <div className="overflow-x-auto mt-8">
         <table {...props} />
       </div>
     ),

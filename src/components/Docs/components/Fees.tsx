@@ -1,11 +1,10 @@
 /* eslint-disable react/no-array-index-key */
-import { Skeleton } from "@mui/material";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { ZetaChainClient } from "@zetachain/toolkit/client";
 import { useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
 
 type FeesState = {
   messaging: any[];
@@ -18,12 +17,14 @@ type FeesProps = {
 
 export const Fees: React.FC<FeesProps> = ({ type }) => {
   const [fees, setFees] = useState<FeesState>({ messaging: [], omnichain: [] });
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    const client = new ZetaChainClient({ network: activeTab });
+
+    const client = new ZetaChainClient({ network: activeTab.networkType });
+
     client
       .getFees(500000)
       .then((data: any) => {
@@ -45,7 +46,7 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
         console.error("Error fetching fees:", error);
         setIsLoading(false);
       });
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   const renderTableHeaders = () => {
     if (type === "messaging") {
@@ -92,37 +93,14 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
     ));
   };
 
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
   return (
     <div className="mt-8">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={type === "messaging" ? 2 : 7} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>{renderTableHeaders()}</thead>
             <tbody>{renderTableRows()}</tbody>

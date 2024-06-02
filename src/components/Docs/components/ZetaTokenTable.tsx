@@ -1,6 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 const API: Record<NetworkType, string> = {
@@ -19,14 +19,14 @@ type AddressData = {
 export const ZetaTokenTable = () => {
   const [zetaTokens, setZetaTokens] = useState<AddressData>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
     setZetaTokens([]);
     const fetchData = async () => {
       try {
-        const response = await fetch(API[activeTab]);
+        const response = await fetch(API[activeTab.networkType]);
         const data: AddressData = await response.json();
 
         const zetaTokenContracts = data.filter((item) => item.type === "zetaToken");
@@ -40,39 +40,16 @@ export const ZetaTokenTable = () => {
     };
 
     fetchData();
-  }, [activeTab]);
-
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
+  }, [activeTab.networkType]);
 
   return (
     <div className="mt-8">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={4} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>
@@ -98,8 +75,13 @@ export const ZetaTokenTable = () => {
 
       <p className="mt-4">
         Source:{" "}
-        <a href={API[activeTab]} target="_blank" rel="noopener noreferrer" className="text-green-100">
-          {API[activeTab]}
+        <a
+          href={API[activeTab.networkType]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#00A5C6] dark:text-[#B0FF61]"
+        >
+          {API[activeTab.networkType]}
         </a>
       </p>
     </div>
