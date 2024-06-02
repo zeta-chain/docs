@@ -24,12 +24,11 @@ export const Pre = ({
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(false);
   const preRef = useRef<HTMLPreElement | null>(null);
 
-  const codeContent = preRef.current?.querySelector("code")?.textContent || "";
-
   useEffect(() => {
+    const codeContent = preRef.current?.querySelector("code")?.textContent || "";
     const lineCount = codeContent.split("\n").filter((line) => line.trim() !== "").length;
     setShowWrapButton(lineCount >= MIN_LINES_TO_WRAP);
-  }, [codeContent]);
+  }, []);
 
   return (
     <div className="relative mt-8 first:mt-0">
@@ -59,7 +58,7 @@ export const Pre = ({
           filename ? "top-[90px]" : "top-8"
         )}
       >
-        {hasCopyCode && <CopyToClipboard getValue={() => codeContent} />}
+        {hasCopyCode && <CopyToClipboard getValue={() => preRef.current?.querySelector("code")?.textContent || ""} />}
 
         {showWrapButton && (
           <button
