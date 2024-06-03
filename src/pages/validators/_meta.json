@@ -37,10 +37,6 @@
     "title": "Running a Node in Production",
     "description": "This document outlines the process for running a full ZetaChain node."
   },
-  "cosmovisor": {
-    "title": "Setting up Cosmovisor",
-    "description": "Cosmovisor is a process manager for Cosmos SDK application binaries that automates application binary switch at chain upgrades."
-  },
   "monitoring": {
     "title": "Validators Monitoring",
     "description": "Monitoring your validator node is crucial to ensure it is running smoothly and securely."

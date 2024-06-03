@@ -1,3 +1,5 @@
+import { GitHub, InfoOutlined } from "@mui/icons-material";
+import { Box, IconButton, Modal, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
@@ -8,23 +10,37 @@ const API: Record<NetworkType, string> = {
   mainnet: "https://zetachain-mainnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
 };
 
-const convertIpfsLink = (link: string, metadata: string) => {
+const convertIpfsLink = (link: string) => {
   const ipfsPrefix = "ipfs://";
   const gatewayPrefix = "https://ipfs.io/ipfs/";
-
-  if (link.startsWith(ipfsPrefix)) return link.replace(ipfsPrefix, gatewayPrefix);
-  if (link.startsWith("https://")) return link;
-
-  if (metadata.startsWith(ipfsPrefix)) return metadata.replace(ipfsPrefix, gatewayPrefix);
-  if (metadata.startsWith("https://")) return metadata;
-
+  if (link.startsWith(ipfsPrefix)) {
+    return link.replace(ipfsPrefix, gatewayPrefix);
+  }
   return link;
+};
+
+const modalStyles = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  overflow: "scroll",
+  minWidth: "75%",
 };
 
 export const GovUpgradeProposals = () => {
   const [proposals, setProposals] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContents, setModalContents] = useState<any>(undefined);
+  const handleModalClose = () => setIsModalOpen(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -60,6 +76,12 @@ export const GovUpgradeProposals = () => {
 
   return (
     <div className="mt-8">
+      <Modal open={isModalOpen} onClose={handleModalClose}>
+        <Box sx={{ ...modalStyles }}>
+          <pre style={{ overflow: "scroll" }}>{modalContents}</pre>
+        </Box>
+      </Modal>
+
       <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
@@ -69,7 +91,7 @@ export const GovUpgradeProposals = () => {
           <table>
             <thead>
               <tr>
-                <th>ZetaChain Version</th>
+                <th>Upgrade Name</th>
                 <th>Upgrade Height</th>
                 <th>Status</th>
                 <th>Details</th>
@@ -83,13 +105,48 @@ export const GovUpgradeProposals = () => {
                   <td>{proposal.plan.height}</td>
                   <td>{proposal.status}</td>
                   <td>
-                    <a
-                      href={convertIpfsLink(proposal.plan.info, proposal.metadata)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {convertIpfsLink(proposal.plan.info, proposal.metadata)}
-                    </a>
+                    {proposal.plan.info.startsWith("{") ? (
+                      <>
+                        <Tooltip title="Raw Plan Info" arrow>
+                          <IconButton
+                            aria-label="Raw Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            onClick={() => {
+                              let plan = structuredClone(proposal.plan);
+                              plan.info = JSON.parse(proposal.plan.info);
+                              setModalContents(JSON.stringify(plan, null, 4));
+                              setIsModalOpen(true);
+                            }}
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Github Release" arrow>
+                          <IconButton
+                            aria-label="Github Release"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={proposal.metadata}
+                            target="_blank"
+                          >
+                            <GitHub />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      <>
+                        <Tooltip title="Plan Info" arrow>
+                          <IconButton
+                            aria-label="Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={convertIpfsLink(proposal.plan.info)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

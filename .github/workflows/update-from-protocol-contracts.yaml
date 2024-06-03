@@ -1,0 +1,44 @@
+name: Update protocol contract docs
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # scheduled to run every day at midnight
+  workflow_dispatch:
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Checkout zeta-chain/protocol-contracts repository
+        uses: actions/checkout@v2
+        with:
+          repository: zeta-chain/protocol-contracts
+          path: protocol-contracts
+
+      - name: Update docs
+        run: |
+          mkdir -p src/pages/architecture/contracts
+          rm -rf src/pages/architecture/contracts/*
+          cp -r protocol-contracts/docs/src/* src/pages/architecture/contracts/
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git add src/pages/architecture/contracts
+          git diff --cached --exit-code || echo "::set-output name=changed::true"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "docs: update protocol contract docs"
+          body: |
+            This PR contains updates to the protocol contract docs.
+          commit-message: |
+            "docs: update protocol contract docs"
+          base: main
+          branch: docs/updates-from-protocol-contracts
+        if: steps.check-changes.outputs.changed == 'true'
