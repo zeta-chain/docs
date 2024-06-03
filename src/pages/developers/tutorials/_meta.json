@@ -1,6 +1,11 @@
 {
   "template": "Universal App Template",
-  "hello": "Your First Universal App",
+  "hello": {
+    "title": "Your First Universal App",
+    "description": "In this tutorial you will create a simple omnnichain contract, deploy it on ZetaChain and make a contract call from a connected chain.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
   "swap": "Swap",
   "swap-zeta": "Swap to ZETA",
   "staking": "Staking",

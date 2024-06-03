@@ -10,6 +10,14 @@ export const getPageReadTime = (page: Page) => (page.meta?.readTime ? String(pag
 
 export const getPageReadType = (page: Page) => (page.meta?.readType ? String(page.meta.readType) : undefined);
 
+export type NavigationSectionVariant = "default" | "fancy";
+
+export const getPageNavigationSectionVariant = (page: Page): NavigationSectionVariant =>
+  page.meta?.variant && page.meta?.variant === "fancy" ? "fancy" : "default";
+
+export const getPageNavigationSectionImage = (page: Page) =>
+  page.meta?.navImgUrl ? String(page.meta.navImgUrl) : undefined;
+
 export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]; maxPages: number }): Page[] => {
   const mdxPages: Page[] = [];
 

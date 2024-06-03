@@ -5,23 +5,33 @@
   },
   "requirements": {
     "title": "Technical Requirements",
-    "description": "Before you start validating, make sure you have the following technical requirements."
+    "description": "Before you start validating, make sure you have the following technical requirements.",
+    "readTime": "5 min",
+    "readType": "Beginner"
   },
   "setup": {
     "title": "Setting Up a Node",
-    "description": "A guide to set up a ZetaChain Mainnet Beta or testnet node."
+    "description": "A guide to set up a ZetaChain Mainnet Beta or testnet node.",
+    "readTime": "5 min",
+    "readType": "Beginner"
   },
   "state-sync": {
     "title": "Option 1: State-Sync",
-    "description": "How to setup a RPC node using state-sync."
+    "description": "How to setup a RPC node using state-sync.",
+    "readTime": "5 min",
+    "readType": "Beginner"
   },
   "snapshot": {
     "title": "Option 2: Snapshot",
-    "description": "Syncing a node using a snapshot."
+    "description": "Syncing a node using a snapshot.",
+    "readTime": "5 min",
+    "readType": "Beginner"
   },
   "ksync": {
     "title": "Option 3: KSYNC",
-    "description": "How to sync a ZetaChain Mainnet Beta node with KSYNC."
+    "description": "How to sync a ZetaChain Mainnet Beta node with KSYNC.",
+    "readTime": "5 min",
+    "readType": "Beginner"
   },
   "node": {
     "title": "Running a Node in Production",

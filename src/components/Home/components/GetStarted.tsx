@@ -1,6 +1,21 @@
-import { NavigationSection } from "~/components/shared";
+import { getAllPages } from "nextra/context";
+import { useMemo } from "react";
 
-const getStartedPages = [
+import { NavigationSection } from "~/components/shared";
+import { getFlatDirectories } from "~/lib/helpers/nextra";
+
+/**
+ * @description
+ * - Get started pages to display in the Home page.
+ * - Can override the title, description, read time, and read type, otherwise it will be fetched from the page's meta data.
+ */
+const getStartedPages: {
+  title?: string;
+  description?: string;
+  href: string;
+  readTime?: string;
+  readType?: string;
+}[] = [
   {
     title: "What is ZetaChain?",
     description: "Learn about the unparalleled blockchain enabling omnichain.",
@@ -9,39 +24,53 @@ const getStartedPages = [
     readType: "Beginner",
   },
   {
-    title: "Install the CLI",
-    description: "Learn how to install a tool that allows you to interact with the ZetaChain network.",
     href: "/developers/cli/setup",
     readTime: "5 min",
     readType: "Beginner",
   },
   {
-    title: "Smart Contract Template",
-    description: "ZetaChain comes with a smart contract template that makes it easy to get started building dapps.",
-    href: "/developers/template",
+    href: "/developers/apps",
     readTime: "5 min",
     readType: "Beginner",
   },
   {
-    title: "Omnichain Contracts",
-    description:
-      "Omnichain Smart Contracts are contracts deployed on ZetaChain that can use and orchestrate assets on connected chains, as well as on ZetaChain.",
-    href: "/developers/omnichain/overview",
-    readTime: "5 min",
-    readType: "Beginner",
+    href: "/developers/tutorials/hello",
   },
   {
-    title: "Cross-Chain Messaging",
-    description:
-      "Cross-chain messaging makes the most sense for applications that generally need minimal logic or state to maintain across all chains.",
-    href: "/developers/cross-chain-messaging/overview",
-    readTime: "5 min",
-    readType: "Beginner",
+    href: "/developers/architecture/modules/crosschain/overview",
   },
 ];
 
 export const GetStarted: React.FC = () => {
+  const allPages = getAllPages();
+
+  const { directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
+
+  const pagesWithMeta = useMemo(
+    () =>
+      getStartedPages.map((page) => {
+        const title = page.title || directoriesByRoute[page.href].meta?.title;
+        const description = page.description || directoriesByRoute[page.href].meta?.description;
+        const readTime = page.readTime || directoriesByRoute[page.href].meta?.readTime;
+        const readType = page.readType || directoriesByRoute[page.href].meta?.readType;
+
+        return {
+          title,
+          description,
+          href: page.href,
+          readTime,
+          readType,
+        };
+      }),
+    [directoriesByRoute]
+  );
+
   return (
-    <NavigationSection title="Get Started" description="Dive into the basics of ZetaChain" navItems={getStartedPages} />
+    <NavigationSection
+      title="Get Started"
+      description="Dive into the basics of ZetaChain"
+      navItems={pagesWithMeta}
+      lastItemEmbellishment
+    />
   );
 };
