@@ -54,11 +54,18 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
           </div>
 
           <div className="col-span-1 flex flex-col gap-8">
-            <NavigationCardLink {...navItems[1]} isMainPage={isMainPage} variant="fancy" />
+            <div className="flex-grow">
+              <NavigationCardLink {...navItems[1]} isMainPage={isMainPage} variant="fancy" className="h-full" />
+            </div>
 
-            <div className="relative">
+            <div className="flex-grow relative">
               <div className="absolute bg-[#00BC8D] w-[72px] h-[72px] -right-[16px] -top-[16px]" />
-              <NavigationCardLink {...navItems[2]} isMainPage={isMainPage} variant="fancy" className="relative" />
+              <NavigationCardLink
+                {...navItems[2]}
+                isMainPage={isMainPage}
+                variant="fancy"
+                className="relative h-full"
+              />
             </div>
           </div>
         </div>
