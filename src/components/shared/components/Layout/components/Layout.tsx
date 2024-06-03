@@ -42,7 +42,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
 
     th,
     td {
-      ${tw`px-6 border-none text-center text-base leading-[130%] text-grey-400 dark:text-grey-300`};
+      ${tw`px-6 border-none text-left text-base leading-[130%] text-grey-400 dark:text-grey-300`};
     }
 
     th {
