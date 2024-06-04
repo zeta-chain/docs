@@ -53,9 +53,11 @@ type PageIndex = {
 
 type PageWithMeta = PageMeta & Page;
 
+type DirectoriesByRoute = Record<string, PageIndex & PageWithMeta>;
+
 export const getFlatDirectories = (allPages: Page[]) => {
   const flatDirectories: PageWithMeta[] = [];
-  const directoriesByRoute: Record<string, PageIndex & PageWithMeta> = {};
+  const directoriesByRoute: DirectoriesByRoute = {};
 
   const flattenDirectories = (pages: Page[]) => {
     for (const page of pages) {
@@ -86,4 +88,33 @@ export const getFlatDirectories = (allPages: Page[]) => {
     flatDirectories,
     directoriesByRoute,
   };
+};
+
+export const countRouteSegments = (route: string) => route.split("/").filter(Boolean).length;
+
+export const getValidParentDirectory = ({
+  directoriesByRoute,
+  currentRoute,
+}: {
+  directoriesByRoute: DirectoriesByRoute;
+  currentRoute: string;
+}) => {
+  // Split the route into segments
+  const segments = currentRoute.split("/").filter(Boolean);
+
+  // If no segments, return null
+  if (segments.length === 0) return null;
+
+  // Start checking from the parent route
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const parentRoute = "/" + segments.slice(0, i).join("/");
+
+    // if a valid parent route is found, return the directory
+    if (directoriesByRoute[parentRoute]) {
+      return directoriesByRoute[parentRoute];
+    }
+  }
+
+  // If no valid parent route is found, return null
+  return null;
 };

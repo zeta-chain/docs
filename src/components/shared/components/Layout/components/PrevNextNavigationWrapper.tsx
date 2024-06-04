@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { getAllPages } from "nextra/context";
 import { useConfig } from "nextra-theme-docs";
 import { PropsWithChildren, useMemo } from "react";
+import { usePrevious } from "react-use";
 
-import { getFlatDirectories } from "~/lib/helpers/nextra";
+import { countRouteSegments, getFlatDirectories, getValidParentDirectory } from "~/lib/helpers/nextra";
 
 import { IconArrowNarrowRight } from "../../Icons";
 import { NavigationSection } from "../../NavigationSection";
@@ -21,6 +22,8 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
   const { frontMatter } = useConfig();
   const allPages = getAllPages();
 
+  const prevRoute = usePrevious(route);
+
   const { flatDirectories, directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
 
   const { prevPage, nextPage } = useMemo(() => {
@@ -28,11 +31,35 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
 
     const currentDirectory = directoriesByRoute[route];
 
+    const isPrevRouteCurrent = prevRoute === route;
+    const isPrevRouteChildren = prevRoute ? countRouteSegments(prevRoute) > countRouteSegments(route) : false;
+    const isPrevRouteValid = prevRoute && !isPrevRouteCurrent && !isPrevRouteChildren;
+    const prevDirectory = isPrevRouteValid ? directoriesByRoute[prevRoute] : null;
+
+    const nextPage = flatDirectories[currentDirectory.index + 1] || null;
+
+    let prevPage = null;
+
+    if (prevDirectory && prevDirectory.route !== nextPage.route) {
+      prevPage = {
+        title: directoriesByRoute[prevDirectory.route].title,
+        route: prevDirectory.route,
+      };
+    } else {
+      const parentDirectory = getValidParentDirectory({ directoriesByRoute, currentRoute: currentDirectory.route });
+      const parentRoute = parentDirectory?.route || "/";
+
+      prevPage = {
+        title: directoriesByRoute[parentRoute].title,
+        route: directoriesByRoute[parentRoute].route,
+      };
+    }
+
     return {
-      prevPage: flatDirectories[currentDirectory.index - 1] || null,
-      nextPage: flatDirectories[currentDirectory.index + 1] || null,
+      prevPage,
+      nextPage,
     };
-  }, [flatDirectories, directoriesByRoute, route]);
+  }, [flatDirectories, directoriesByRoute, route, prevRoute]);
 
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
   const isSubCategoryPage = frontMatter?.pageType === "sub-category";
