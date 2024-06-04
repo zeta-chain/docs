@@ -1,13 +1,22 @@
 {
   "system-contract": {
     "title": "System Contract",
-    "description": "The System Contract on ZetaChain serves as the caller for universal apps when they are called from connected chains."
+    "description": "Stores useful values and functions used by universal apps"
   },
   "connector": {
-    "title": "Connector",
-    "description": "The connector contract enables contracts to send messages of arbitrary data and ZETA tokens between smart contract-enabled connected chains."
+    "title": "Connector Contract",
+    "description": "Enables message passing and ZETA transfer to and from universal apps"
   },
-  "bitcoin": "Bitcoin Interoperability",
-  "gas": "Gas Fees",
-  "addresses": "Working with Addresses"
+  "bitcoin": {
+    "title": "Bitcoin Interoperability",
+    "description": "Learn about how universal apps can be called from Bitcoin"
+  },
+  "gas": {
+    "title": "Gas Fees",
+    "description": "Learn about ZRC-20 withdraw fees, message passing fees"
+  },
+  "addresses": {
+    "title": "Account Addresses",
+    "description": "Learn about types of account address, how to use and convert between them"
+  }
 }
