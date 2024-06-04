@@ -28,7 +28,7 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          git add src/pages/architecture/contracts
+          git add src/pages/developers/architecture/contracts
           git diff --cached --exit-code || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
