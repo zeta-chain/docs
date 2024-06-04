@@ -21,9 +21,9 @@ jobs:
 
       - name: Update docs
         run: |
-          mkdir -p src/pages/architecture/contracts
-          rm -rf src/pages/architecture/contracts/*
-          cp -r protocol-contracts/docs/src/* src/pages/architecture/contracts/
+          mkdir -p src/pages/developers/architecture/contracts
+          rm -rf src/pages/developers/architecture/contracts/*
+          cp -r protocol-contracts/docs/src/* src/pages/developers/architecture/contracts/
 
       - name: Check for changes
         id: check-changes
