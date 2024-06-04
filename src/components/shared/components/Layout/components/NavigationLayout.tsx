@@ -1,9 +1,9 @@
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import clsx from "clsx";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { getRevealProps } from "~/lib/helpers/animations";
@@ -32,24 +32,20 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
     else setIsLeftDrawerOpen(false);
   }, [upSm]);
 
-  // animate the main content layout
-  const layoutAnimationControls = useAnimation();
-
-  useEffect(() => {
-    if (!upSm) return;
-
-    if (isNarrowDrawer) {
-      layoutAnimationControls.set({ opacity: 0, x: 128 });
-      layoutAnimationControls.start({
+  const variants = useMemo(() => {
+    return {
+      open: {
         opacity: 1,
         x: 0,
         transition: { duration: 0.225, ease: [0.4, 0, 0.6, 1], delay: 0 },
-      });
-    } else {
-      layoutAnimationControls.set({ x: -72 });
-      layoutAnimationControls.start({ x: 0, transition: { duration: 0.225, ease: [0.4, 0, 0.6, 1], delay: 0 } });
-    }
-  }, [isNarrowDrawer, layoutAnimationControls]);
+      },
+      closed: {
+        opacity: 1,
+        x: 0,
+        transition: { duration: 0.3, ease: [0.4, 0, 0.6, 1], delay: 0 },
+      },
+    };
+  }, []);
 
   return (
     <>
@@ -132,8 +128,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
       </motion.div>
 
       <motion.div
-        initial={false}
-        animate={layoutAnimationControls}
+        key={!upSm ? "open" : isNarrowDrawer ? "open" : "closed"}
+        initial={!upSm ? { opacity: 1, x: 0 } : isNarrowDrawer ? { opacity: 0, x: 128 } : { opacity: 0, x: -72 }}
+        animate={!upSm ? "open" : isNarrowDrawer ? "open" : "closed"}
+        variants={variants}
         className={clsx("relative min-h-screen flex flex-col", {
           "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
           "sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800": isNarrowDrawer,
