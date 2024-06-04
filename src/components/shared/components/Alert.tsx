@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { capitalize } from "lodash-es";
 import { PropsWithChildren, ReactNode } from "react";
 import tw, { styled } from "twin.macro";
 
@@ -29,8 +28,7 @@ const StyledAlert = styled.div<{ variant: AlertVariant }>`
   .content {
     ${tw`font-medium text-sm leading-[135%]`}
 
-    ${({ variant }) =>
-      (variant === "note" || variant === "tip") && tw`text-grey-400 dark:text-grey-300 mt-[3px] sm:flex gap-1`};
+    ${({ variant }) => (variant === "note" || variant === "tip") && tw`text-grey-400 dark:text-grey-300 mt-[3px]`};
     ${({ variant }) => variant === "warning" && tw`text-black mt-[3px]`};
     ${({ variant }) => variant === "danger" && tw`text-white dark:text-black mt-0.5`};
 
@@ -56,15 +54,7 @@ export const Alert: React.FC<AlertProps> = ({ variant = "note", className, child
       >
         <div className="shrink-0">{variantToIcon[variant]}</div>
 
-        <div className="content">
-          <span
-            className={clsx({
-              "font-semibold": variant === "note" || variant === "tip",
-              uppercase: variant === "warning" || variant === "danger",
-            })}
-          ></span>
-          <span>{children}</span>
-        </div>
+        <div className="content">{children}</div>
       </div>
     </StyledAlert>
   );
