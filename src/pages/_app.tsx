@@ -8,6 +8,7 @@ import Script from "next/script";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
+import { useAppAnalytics } from "~/hooks/useAppAnalytics";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
 import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
 import { useHydrateTheme } from "~/lib/theme/useHydrateTheme";
@@ -17,7 +18,9 @@ import { GlobalStyles } from "~/styles/GlobalStyles";
 const clientSideEmotionCache = createEmotionCache();
 
 const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: EmotionCache }) => {
-  const { emotionCache = clientSideEmotionCache } = rest;
+  const { emotionCache = clientSideEmotionCache, router } = rest;
+
+  useAppAnalytics(router);
 
   const appDispatch = useAppDispatch();
   const { theme } = useHydrateTheme({ appDispatch });
