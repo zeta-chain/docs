@@ -1,7 +1,7 @@
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import clsx from "clsx";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
 
@@ -31,6 +31,25 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
     if (upSm) setIsLeftDrawerOpen(true);
     else setIsLeftDrawerOpen(false);
   }, [upSm]);
+
+  // animate the main content layout
+  const layoutAnimationControls = useAnimation();
+
+  useEffect(() => {
+    if (!upSm) return;
+
+    if (isNarrowDrawer) {
+      layoutAnimationControls.set({ opacity: 0, x: 128 });
+      layoutAnimationControls.start({
+        opacity: 1,
+        x: 0,
+        transition: { duration: 0.225, ease: [0.4, 0, 0.6, 1], delay: 0 },
+      });
+    } else {
+      layoutAnimationControls.set({ x: -72 });
+      layoutAnimationControls.start({ x: 0, transition: { duration: 0.225, ease: [0.4, 0, 0.6, 1], delay: 0 } });
+    }
+  }, [isNarrowDrawer, layoutAnimationControls]);
 
   return (
     <>
@@ -112,8 +131,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         </LeftNavDrawer>
       </motion.div>
 
-      <div
-        className={clsx("min-h-screen flex flex-col transition-all", {
+      <motion.div
+        initial={false}
+        animate={layoutAnimationControls}
+        className={clsx("relative min-h-screen flex flex-col", {
           "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
           "sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800": isNarrowDrawer,
         })}
@@ -129,7 +150,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         </motion.div>
 
         <Footer />
-      </div>
+      </motion.div>
     </>
   );
 };

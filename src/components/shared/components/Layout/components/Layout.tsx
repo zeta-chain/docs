@@ -26,6 +26,7 @@ export const StyledUnorderedList = styled.ul`
 `;
 
 const LayoutContainer = styled.div<{ isMainPage: boolean }>`
+  ${tw`overflow-x-hidden`};
   ${({ isMainPage }) => (isMainPage ? tw`bg-grey-50 dark:bg-grey-900` : tw`bg-[#EEE] dark:bg-grey-900`)};
 
   /* Base styles for rendered tables */
