@@ -24,6 +24,7 @@ jobs:
           mkdir -p src/pages/developers/architecture/contracts
           rm -rf src/pages/developers/architecture/contracts/*
           cp -r protocol-contracts/docs/src/* src/pages/developers/architecture/contracts/
+          rm -rf protocol-contracts
 
       - name: Check for changes
         id: check-changes
