@@ -24,7 +24,7 @@ const getStartedPages: {
     readType: "Beginner",
   },
   {
-    href: "/developers/cli/setup",
+    href: "/users/cli/setup",
     readTime: "5 min",
     readType: "Beginner",
   },
@@ -46,24 +46,41 @@ export const GetStarted: React.FC = () => {
 
   const { directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
 
-  const pagesWithMeta = useMemo(
-    () =>
-      getStartedPages.map((page) => {
-        const title = page.title || directoriesByRoute[page.href].meta?.title;
-        const description = page.description || directoriesByRoute[page.href].meta?.description;
-        const readTime = page.readTime || directoriesByRoute[page.href].meta?.readTime;
-        const readType = page.readType || directoriesByRoute[page.href].meta?.readType;
+  const pagesWithMeta = useMemo(() => {
+    const pages = getStartedPages.map((page) => {
+      const directory = directoriesByRoute[page.href];
 
-        return {
-          title,
-          description,
-          href: page.href,
-          readTime,
-          readType,
-        };
-      }),
-    [directoriesByRoute]
-  );
+      if (!directory) {
+        console.error(`Get Started ERROR - Page under route "${page.href}" not found.`);
+        return null;
+      }
+
+      const title = page.title || directory.meta?.title;
+      const description = page.description || directory.meta?.description;
+      const readTime = page.readTime || directory.meta?.readTime;
+      const readType = page.readType || directory.meta?.readType;
+
+      return {
+        title,
+        description,
+        href: page.href,
+        readTime,
+        readType,
+      };
+    });
+
+    const filteredPages = pages.filter(Boolean) as {
+      title: string;
+      description: string;
+      href: string;
+      readTime: string;
+      readType: string;
+    }[];
+
+    return filteredPages;
+  }, [directoriesByRoute]);
+
+  if (!directoriesByRoute) return null;
 
   return (
     <NavigationSection
