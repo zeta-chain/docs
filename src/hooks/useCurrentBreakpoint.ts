@@ -11,6 +11,7 @@ type UseCurrentBreakpoint = () => {
   upSm: boolean;
   upMd: boolean;
   downXl: boolean;
+  upXl: boolean;
 };
 
 export const useCurrentBreakpoint: UseCurrentBreakpoint = () => {
@@ -51,15 +52,21 @@ export const useCurrentBreakpoint: UseCurrentBreakpoint = () => {
    * >1200px
    */
   const upLg = useMediaQuery(theme.breakpoints.up("lg"));
+
   /**
    * <1200px
    */
   const downLg = useMediaQuery(theme.breakpoints.down("lg"));
 
   /**
-   * <1536px
+   * <1512px
    */
-  const downXl = useMediaQuery(theme.breakpoints.down("xl"));
+  const downXl = useMediaQuery("@media (max-width:1512px)");
+
+  /**
+   * >1512px
+   */
+  const upXl = useMediaQuery("@media (min-width:1512px)");
 
   /**
    * <900px
@@ -82,5 +89,6 @@ export const useCurrentBreakpoint: UseCurrentBreakpoint = () => {
     upSm,
     upMd,
     downXl,
+    upXl,
   };
 };

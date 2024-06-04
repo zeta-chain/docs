@@ -16,15 +16,15 @@ const variantToIcon: Record<AlertVariant, ReactNode> = {
   note: <IconExclamationCircle className="text-[#00A5C6] dark:text-[#B0FF61]" />,
   tip: <IconSparkle className="text-[#00A5C6] dark:text-[#B0FF61]" />,
   warning: <IconExclamationCircle className="text-black" />,
-  danger: <IconExclamation className="text-white" />,
+  danger: <IconExclamation className="text-white dark:text-black" />,
 };
 
 const StyledAlert = styled.div<{ variant: AlertVariant }>`
-  ${tw`mt-6 p-4 md:p-8 rounded-lg flex items-center`}
+  ${tw`mt-8 p-4 md:p-8 rounded-lg flex items-center`}
 
   ${({ variant }) => (variant === "note" || variant === "tip") && tw`border border-grey-200 dark:border-grey-600`};
-  ${({ variant }) => variant === "warning" && tw`bg-warning-500`};
-  ${({ variant }) => variant === "danger" && tw`bg-negative-500`};
+  ${({ variant }) => variant === "warning" && tw`bg-warning-500 dark:bg-warning-200`};
+  ${({ variant }) => variant === "danger" && tw`bg-negative-500 dark:bg-negative-400`};
 
   .content {
     ${tw`font-medium text-sm leading-[135%]`}
@@ -32,15 +32,15 @@ const StyledAlert = styled.div<{ variant: AlertVariant }>`
     ${({ variant }) =>
       (variant === "note" || variant === "tip") && tw`text-grey-400 dark:text-grey-300 mt-[3px] sm:flex gap-1`};
     ${({ variant }) => variant === "warning" && tw`text-black mt-[3px]`};
-    ${({ variant }) => variant === "danger" && tw`text-white mt-0.5`};
+    ${({ variant }) => variant === "danger" && tw`text-white dark:text-black mt-0.5`};
 
     a {
       ${({ variant }) => variant === "warning" && tw`!underline !text-black`};
-      ${({ variant }) => variant === "danger" && tw`!underline !text-white`};
+      ${({ variant }) => variant === "danger" && tw`!underline !text-white dark:!text-black`};
     }
 
     p {
-      ${tw`mt-0 inline font-medium text-sm leading-[135%]`}
+      ${tw`mt-0 inline font-medium text-sm leading-[135%] text-current`}
     }
   }
 `;

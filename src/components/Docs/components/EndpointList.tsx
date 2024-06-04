@@ -1,7 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
 
 const networksURL = "https://raw.githubusercontent.com/zeta-chain/networks/main/data/networks.json";
 
@@ -22,12 +21,9 @@ const extractProvider = (url: string) => {
   return providerName.charAt(0).toUpperCase() + providerName.slice(1);
 };
 
-const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
 export const EndpointList: React.FC = () => {
   const [fetchedData, setFetchedData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +34,7 @@ export const EndpointList: React.FC = () => {
       try {
         const res = await fetch(networksURL);
         const data = await res.json();
-        const networkData = data[`zeta_${activeTab}`];
+        const networkData = data[`zeta_${activeTab.networkType}`];
 
         const sortedData = networkData?.api?.sort((a: any, b: any) => {
           const providerA = extractProvider(a.url);
@@ -57,36 +53,16 @@ export const EndpointList: React.FC = () => {
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={12} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

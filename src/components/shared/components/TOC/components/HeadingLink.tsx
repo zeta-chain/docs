@@ -18,7 +18,7 @@ const StyledLink = styled.a`
     ${tw`!text-black dark:!text-white`}
 
     .icon-link {
-      ${tw`text-[#00DDA5]`}
+      ${tw`text-[#00A5C6] dark:text-[#B0FF61]`}
     }
   }
 `;
@@ -36,8 +36,8 @@ export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) 
       className={clsx("heading-link first:mt-0", {
         "mt-20 sm:mt-[136px]": Tag === "h2",
         "mt-10 sm:mt-20": Tag === "h3",
-        "mt-6 sm:mt-10": Tag === "h4",
-        "mt-6": Tag === "h5" || Tag === "h6",
+        "mt-8 sm:mt-10": Tag === "h4",
+        "mt-8": Tag === "h5" || Tag === "h6",
       })}
     >
       <StyledLink

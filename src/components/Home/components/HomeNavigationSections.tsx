@@ -4,6 +4,8 @@ import React, { useMemo } from "react";
 import { IconDocument, NavigationSection } from "~/components/shared";
 import {
   getPageDescription,
+  getPageNavigationSectionImage,
+  getPageNavigationSectionVariant,
   getPageReadTime,
   getPageReadType,
   getPageTitle,
@@ -41,6 +43,7 @@ export const HomeNavigationSections: React.FC = () => {
   return (
     <div className="flex flex-col gap-20 sm:gap-[120px]">
       {mainFolders.map((folder, index, folders) => {
+        const variant = getPageNavigationSectionVariant(folder);
         const innerPages =
           "children" in folder
             ? getRecursivelyInnerMdxPages({ pages: folder.children, maxPages: MAX_ARTICLE_CARDS })
@@ -55,6 +58,8 @@ export const HomeNavigationSections: React.FC = () => {
               description={getPageDescription(folder)}
               colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
               link={{ title: "Explore more", href: folder.route, icon: <IconDocument /> }}
+              variant={variant}
+              navImgUrl={getPageNavigationSectionImage(folder)}
               navItems={innerPages.map((page) => ({
                 title: getPageTitle(page),
                 description: getPageDescription(page),

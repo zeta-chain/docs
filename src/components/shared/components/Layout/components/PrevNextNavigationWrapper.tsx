@@ -45,7 +45,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
         <div className="mb-8 sm:mb-10 md:mb-20 leading-[0]">
           <Link
             href={prevPage.route}
-            className="inline-flex items-center gap-2 text-lg leading-[130%] text-grey-400 dark:text-grey-300 hover:!text-grey-300 dark:hover:!text-grey-400"
+            className="inline-flex items-center gap-2 text-lg leading-[130%] text-grey-400 dark:text-grey-300 hover:!text-grey-300 dark:hover:!text-white transition-all"
           >
             <IconArrowNarrowRight className="text-current" />
             {prevPage.title || "Previous Page"}

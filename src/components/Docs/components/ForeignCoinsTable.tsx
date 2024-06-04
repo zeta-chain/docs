@@ -1,7 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type ForeignCoin = {
   symbol: string;
@@ -23,15 +22,8 @@ type ChainsData = {
   }[];
 };
 
-const API: Record<NetworkType, string> = {
-  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
-  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
-};
-
 const COINS = "/zeta-chain/fungible/foreign_coins";
 const CHAINS = "/zeta-chain/observer/supportedChains";
-
-const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
 
 const formatString = (str: string) => {
   return str
@@ -45,15 +37,15 @@ const formatString = (str: string) => {
 export const ForeignCoinsTable = () => {
   const [coins, setCoins] = useState<(ForeignCoin & { chainName: string })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
     setCoins([]);
     const fetchData = async () => {
       try {
-        const COINS_URL = `${API[activeTab]}${COINS}`;
-        const CHAINS_URL = `${API[activeTab]}${CHAINS}`;
+        const COINS_URL = `${rpcByNetworkType[activeTab.networkType]}${COINS}`;
+        const CHAINS_URL = `${rpcByNetworkType[activeTab.networkType]}${CHAINS}`;
 
         const responseCoins = await fetch(COINS_URL);
         const coinsData: CoinsData = await responseCoins.json();
@@ -81,36 +73,16 @@ export const ForeignCoinsTable = () => {
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyles : {}}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyles : {}}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={7} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>
@@ -142,8 +114,13 @@ export const ForeignCoinsTable = () => {
 
       <p className="my-4">
         Source:{" "}
-        <a href={`${API[activeTab]}${COINS}`} target="_blank" rel="noopener noreferrer" className="text-green-100">
-          {API[activeTab]}
+        <a
+          href={`${rpcByNetworkType[activeTab.networkType]}${COINS}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#00A5C6] dark:text-[#B0FF61]"
+        >
+          {rpcByNetworkType[activeTab.networkType]}
           {COINS}
         </a>
       </p>

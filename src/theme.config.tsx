@@ -1,6 +1,15 @@
 import { DocsThemeConfig } from "nextra-theme-docs";
 
-import { AppHead, HeadingLink, MainContentWrapper, ThemeToggle } from "~/components/shared";
+import {
+  AppHead,
+  Code,
+  HeadingLink,
+  MainContentWrapper,
+  Pre,
+  StyledOrderedList,
+  StyledUnorderedList,
+  ThemeToggle,
+} from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 
 /**
@@ -25,7 +34,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     // Render custom components for each html element
     // ...
     table: (props) => (
-      <div className="mt-6 overflow-x-auto">
+      <div className="overflow-x-auto mt-8">
         <table {...props} />
       </div>
     ),
@@ -40,6 +49,24 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     h4: (props) => <HeadingLink tag="h4" {...props} />,
     h5: (props) => <HeadingLink tag="h5" {...props} />,
     h6: (props) => <HeadingLink tag="h6" {...props} />,
+
+    p: (props) => (
+      <p className="text-base leading-[160%] text-grey-400 dark:text-grey-300 mt-8 first:mt-0" {...props} />
+    ),
+    ul: (props) => <StyledUnorderedList {...props} />,
+    ol: (props) => <StyledOrderedList {...props} />,
+    li: (props) => (
+      <li className="my-2 text-base leading-[160%] text-grey-400 dark:text-grey-300 relative" {...props} />
+    ),
+    hr: (props) => <hr className="my-8 border-t border-grey-200 dark:border-grey-600" {...props} />,
+    blockquote: (props) => (
+      <blockquote
+        className="mt-8 first:mt-0 py-4 px-6 border-l border-[#E34ED6] dark:border-[#00C6EE] text-grey-400 dark:text-grey-300"
+        {...props}
+      />
+    ),
+    pre: Pre,
+    code: Code,
   },
 
   // Remove nextra default theme switch in favor of custom theme toggle button

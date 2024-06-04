@@ -9,7 +9,9 @@
   },
   "validators": {
     "title": "Start Validating",
-    "description": "Setup and run a ZetaChain node"
+    "description": "Setup and run a ZetaChain node",
+    "variant": "fancy",
+    "navImgUrl": "/img/pages/validate.svg"
   },
   "users": {
     "title": "Using our Products",

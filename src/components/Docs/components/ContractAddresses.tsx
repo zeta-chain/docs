@@ -1,6 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 type ContractAddressData = {
@@ -32,11 +32,8 @@ const sortGroupedData = (groupedData: ContractAddressesByChain) => {
   return groupedData;
 };
 
-const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
 export const ContractAddresses = () => {
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [isLoading, setIsLoading] = useState(true);
   const [groupedData, setGroupedData] = useState<Record<NetworkType, ContractAddressesByChain>>({
     testnet: {},
@@ -62,37 +59,17 @@ export const ContractAddresses = () => {
   }, []);
 
   return (
-    <div className="mt-4">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={12} />
       ) : (
-        Object.entries(groupedData[activeTab]).map(([chainName, contracts]) => (
+        Object.entries(groupedData[activeTab.networkType]).map(([chainName, contracts]) => (
           <div key={chainName}>
-            <h3 className="mt-6 mb-2 font-medium">{chainName}</h3>
+            <h3 className="text-xl mt-8 font-medium">{chainName}</h3>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mt-8">
               <table>
                 <thead>
                   <tr>
@@ -120,8 +97,13 @@ export const ContractAddresses = () => {
 
       <p className="mt-4">
         Source:{" "}
-        <a href={addressesUrl[activeTab]} target="_blank" rel="noopener noreferrer" className="text-green-100">
-          {addressesUrl[activeTab]}
+        <a
+          href={addressesUrl[activeTab.networkType]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#00A5C6] dark:text-[#B0FF61]"
+        >
+          {addressesUrl[activeTab.networkType]}
         </a>
       </p>
     </div>

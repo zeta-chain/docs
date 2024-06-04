@@ -1,13 +1,7 @@
-import { Skeleton } from "@mui/material";
 import { bech32 } from "bech32";
 import { useCallback, useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
-
-const APIs: Record<NetworkType, string> = {
-  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
-  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
-};
+import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 const convertToValoper = (address: any) => {
   try {
@@ -21,19 +15,16 @@ const convertToValoper = (address: any) => {
   return address;
 };
 
-const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyles = { fontWeight: "normal", textDecoration: "none" };
-
 export const ObserverList = () => {
   const [observers, setObservers] = useState<any>([]);
   const [validators, setValidators] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   const fetchObservers = useCallback(async () => {
     setIsLoading(true);
     try {
-      const api = APIs[activeTab];
+      const api = rpcByNetworkType[activeTab.networkType];
       const response = await fetch(`${api}/zeta-chain/observer/nodeAccount`);
       const data = await response.json();
       const processedData = data.NodeAccount.map((observer: any) => ({
@@ -46,14 +37,14 @@ export const ObserverList = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   const fetchValidators = useCallback(
     async (key = "") => {
       setIsLoading(true);
 
       try {
-        const api = APIs[activeTab];
+        const api = rpcByNetworkType[activeTab.networkType];
         const endpoint = "/cosmos/staking/v1beta1/validators";
         const query = key ? `pagination.key=${encodeURIComponent(key)}` : "";
         const url = `${api}${endpoint}?${query}`;
@@ -74,7 +65,7 @@ export const ObserverList = () => {
         setIsLoading(false);
       }
     },
-    [activeTab]
+    [activeTab.networkType]
   );
 
   useEffect(() => {
@@ -102,33 +93,13 @@ export const ObserverList = () => {
   }, [findMoniker, observers]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={9} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

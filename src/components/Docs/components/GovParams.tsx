@@ -1,7 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type AccountsData = {
   accounts: {
@@ -43,7 +42,7 @@ type TallyingData = {
 };
 
 export const GovParams = () => {
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [govAddress, setGovAddress] = useState("");
   const [votingParams, setVotingParams] = useState<VotingParams | {}>({});
   const [depositParams, setDepositParams] = useState<DepositParams | {}>({});
@@ -53,10 +52,7 @@ export const GovParams = () => {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
 
-    const baseUrl =
-      activeTab === "testnet"
-        ? "https://zetachain-athens.blockpi.network/lcd/v1/public"
-        : "https://zetachain.blockpi.network/lcd/v1/public";
+    const baseUrl = rpcByNetworkType[activeTab.networkType];
 
     try {
       // Fetch gov account address
@@ -113,40 +109,20 @@ export const GovParams = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? { fontWeight: "bold", textDecoration: "underline" } : {}}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? { fontWeight: "bold", textDecoration: "underline" } : {}}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={7} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

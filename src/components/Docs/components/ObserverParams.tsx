@@ -1,6 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 type Chain = {
@@ -23,11 +23,13 @@ const APIs: Record<NetworkType, string> = {
 export const ObserverParams = () => {
   const [data, setData] = useState<ObserverParamsType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
-    const API = APIs[activeTab];
+    const API = APIs[activeTab.networkType];
+
     setIsLoading(true);
+
     fetch(API)
       .then((response) => response.json())
       .then((json) => {
@@ -38,39 +40,16 @@ export const ObserverParams = () => {
         console.error("Error fetching data: ", error);
         setIsLoading(false);
       });
-  }, [activeTab]);
-
-  const active = { fontWeight: "bold", textDecoration: "underline" };
-  const inactive = { fontWeight: "normal", textDecoration: "none" };
+  }, [activeTab.networkType]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? active : inactive}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? active : inactive}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={3} />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>
@@ -97,8 +76,13 @@ export const ObserverParams = () => {
 
           <div className="mt-4">
             Source:{" "}
-            <a href={APIs[activeTab]} target="_blank" rel="noopener noreferrer" className="text-green-100">
-              {APIs[activeTab]}
+            <a
+              href={APIs[activeTab.networkType]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#00A5C6] dark:text-[#B0FF61]"
+            >
+              {APIs[activeTab.networkType]}
             </a>
           </div>
         </div>

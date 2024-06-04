@@ -62,9 +62,8 @@ export const Hero: React.FC = () => {
     >
       <div
         className={clsx("order-2 lg:order-1 flex flex-col justify-center gap-8 sm:gap-10", {
-          "col-span-10 lg:col-span-5 xl:col-span-4": imgUrl && (isMainPage || isSubCategoryPage),
-          "col-span-10 lg:col-span-5": imgUrl && !isMainPage && !isSubCategoryPage,
-          "col-span-10": !imgUrl,
+          "col-span-10 lg:col-span-5 xl:col-span-4": isMainPage || isSubCategoryPage,
+          "col-span-10 lg:col-span-6": !isMainPage && !isSubCategoryPage,
         })}
       >
         <h1>{title}</h1>
@@ -73,9 +72,9 @@ export const Hero: React.FC = () => {
 
       {imgUrl && (
         <div
-          className={clsx("order-1 lg:order-2 col-span-10 flex lg:justify-center", {
-            "lg:col-span-5 xl:col-span-6": isMainPage || isSubCategoryPage,
-            "lg:col-span-5": !isMainPage && !isSubCategoryPage,
+          className={clsx("order-1 lg:order-2 flex lg:justify-center", {
+            "col-span-10 lg:col-span-5 xl:col-span-6": isMainPage || isSubCategoryPage,
+            "col-span-10 lg:col-span-4": !isMainPage && !isSubCategoryPage,
           })}
         >
           <Image

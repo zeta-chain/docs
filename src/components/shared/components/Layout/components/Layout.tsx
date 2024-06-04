@@ -1,14 +1,36 @@
-import { PropsWithChildren } from "react";
+import { useRouter } from "next/router";
+import { PropsWithChildren, useEffect, useMemo } from "react";
 import tw, { styled } from "twin.macro";
 
+import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
 
-const LayoutContainer = styled.div`
-  ${tw`bg-grey-50 dark:bg-grey-900`};
+export const StyledOrderedList = styled.ol`
+  ${tw`mt-8 first:mt-0 list-none ml-[36px]`}
+  counter-reset: ol;
+
+  li::before {
+    counter-increment: ol;
+    content: counter(ol) ". ";
+    ${tw`absolute top-0 -left-[20px] text-base leading-[160%] font-medium text-grey-400 dark:text-grey-300`};
+  }
+`;
+
+export const StyledUnorderedList = styled.ul`
+  ${tw`mt-8 first:mt-0 list-none ml-[36px]`}
+
+  li::before {
+    content: "";
+    ${tw`absolute top-[11px] -left-[20px] w-1 h-1 bg-grey-400 dark:bg-grey-300 rounded-full block`}
+  }
+`;
+
+const LayoutContainer = styled.div<{ isMainPage: boolean }>`
+  ${({ isMainPage }) => (isMainPage ? tw`bg-grey-50 dark:bg-grey-900` : tw`bg-[#EEE] dark:bg-grey-900`)};
 
   /* Base styles for rendered tables */
   table {
-    ${tw`border-collapse`};
+    ${tw`border-collapse w-full`};
 
     tbody tr:nth-of-type(even) {
       ${tw`bg-[#FBFBFB] dark:bg-[#1B1F25]`};
@@ -20,7 +42,7 @@ const LayoutContainer = styled.div`
 
     th,
     td {
-      ${tw`px-6 border-none text-center text-base leading-[130%] text-grey-400 dark:text-grey-300`};
+      ${tw`px-6 border-none text-left text-base leading-[130%] text-grey-400 dark:text-grey-300`};
     }
 
     th {
@@ -45,7 +67,9 @@ const LayoutContainer = styled.div`
 
       /* Custom styles for Nextra Search component */
       .nextra-search {
-        ${tw`block w-full sm:w-[250px]`};
+        ${tw`block w-full sm:w-[250px] transition-opacity`};
+
+        ${({ isMainPage }) => !isMainPage && tw`sm:opacity-0 sm:pointer-events-none`};
 
         input {
           ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
@@ -90,7 +114,9 @@ const LayoutContainer = styled.div`
 
   /* Custom styles for Nextra main content container */
   .nextra-content main {
-    ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] md:pt-24 max-w-none`};
+    ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] max-w-none`};
+
+    ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-12`)};
   }
 
   /* Hide Nextra docs theme components */
@@ -106,7 +132,7 @@ const LayoutContainer = styled.div`
 
   a[href] {
     ${tw`hover:text-[#00A5C6]/80 dark:hover:text-[#B0FF61]/80 transition-all`};
-    text-decoration: auto;
+    text-decoration: none;
   }
 
   [tabindex]:not([tabindex="-1"]),
@@ -120,7 +146,7 @@ const LayoutContainer = styled.div`
   }
 
   img {
-    ${tw`rounded-lg mt-6`};
+    ${tw`rounded-lg mt-8`};
   }
 
   /* Custom Shiki code block syntax highlighting styles */
@@ -163,8 +189,22 @@ type LayoutProps = {
   className?: string;
 };
 
-export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => (
-  <LayoutContainer className={className}>
-    <NavigationLayout>{children}</NavigationLayout>
-  </LayoutContainer>
-);
+export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
+  const { route } = useRouter();
+  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+
+  useEffect(() => {
+    if (isMainPage) document.body.classList.remove("custom-bg");
+    else document.body.classList.add("custom-bg");
+
+    return () => {
+      document.body.classList.remove("custom-bg");
+    };
+  }, [isMainPage]);
+
+  return (
+    <LayoutContainer className={className} isMainPage={isMainPage}>
+      <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
+    </LayoutContainer>
+  );
+};
