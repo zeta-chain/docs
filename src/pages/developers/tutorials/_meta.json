@@ -1,19 +1,46 @@
 {
-  "template": "Universal App Template",
   "hello": {
-    "title": "Your First Universal App",
-    "description": "In this tutorial you will create a simple omnnichain contract, deploy it on ZetaChain and make a contract call from a connected chain.",
-    "readTime": "5 min",
-    "readType": "Beginner"
+    "title": "First Universal App",
+    "description": "Learn how to create, deploy and interact with a universal app"
   },
-  "swap": "Swap",
-  "swap-zeta": "Swap to ZETA",
-  "staking": "Staking",
-  "nft": "NFT",
-  "bitcoin": "Bitcoin Frontend",
-  "multioutput": "Single Input, Multiple Outputs",
-  "zeta": "Connector: Send ZETA",
-  "message": "Connector Messaging",
-  "erc20": "Connector: ERC-20",
-  "connector-nft": "Connector: NFTs"
+  "swap": {
+    "title": "Swap",
+    "description": "Implement an omnichain swap app compatible with chains like Ethereum, BNB and Bitcoin"
+  },
+  "swap-zeta": {
+    "title": "Swap to ZETA",
+    "description": "Enhance the omnichain swap app with the ability to swap any token to ZETA"
+  },
+  "staking": {
+    "title": "Staking",
+    "description": "Explore how universal apps can be used for omnichain staking"
+  },
+  "nft": {
+    "title": "NFT",
+    "description": "Learn how to create a client-side UI for your universal app with Next.js and TypeScript"
+  },
+  "bitcoin": {
+    "title": "Bitcoin Frontend",
+    "description": "Learn how to make calls to universal apps from Bitcoin with wallets like XDEFI and UniSat"
+  },
+  "multioutput": {
+    "title": "Single Input, Multiple Outputs",
+    "description": "Learn how a single call to a universal app can create multiple outbound transactions"
+  },
+  "zeta": {
+    "title": "Connector: Send ZETA",
+    "description": "Learn how to send ZETA tokens to and from a universal app using the Connector API"
+  },
+  "message": {
+    "title": "Connector: Messaging",
+    "description": "Use the Connector API to send arbitrary messages to and from a universal app"
+  },
+  "erc20": {
+    "title": "Connector: ERC-20",
+    "description": "Use the Connector API to send any ERC-20 token to and from a universal app"
+  },
+  "connector-nft": {
+    "title": "Connector: NFTs",
+    "description": "Use the Connector API to send any NFTs to and from a universal app"
+  }
 }

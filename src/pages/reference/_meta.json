@@ -1,7 +1,7 @@
 {
   "index": {
     "title": "Tools",
-    "description": "Useful articles to help you get up and running, work with the network, api or simply learn key terms."
+    "description": "Useful articles to help you get up and running, work with the network, APIs or simply learn key terms."
   },
   "wallets": {
     "title": "Wallets",
@@ -21,6 +21,6 @@
   },
   "learn": {
     "title": "Learn",
-    "description": "Common terms, questions and answers for Zetachain"
+    "description": "Common terms, questions and answers for ZetaChain"
   }
 }
