@@ -1,15 +1,12 @@
 import { AnalyticsBrowser } from "@segment/analytics-next";
 
 import { environment } from "../env.cjs";
+import { isClient, isNodeEnvProd, isVercelProd } from "./app.constants";
 
 const samplingRate = 0.5;
 const shouldLoadAnalytics = Math.random() < samplingRate;
 
-const isClientProd = typeof window !== "undefined" && window.origin.includes("zetachain.com");
-
-if (!isClientProd) {
-  console.error("Not on zetachain.com domain, not loading analytics.");
-}
+const isClientProd = isNodeEnvProd && isVercelProd && isClient;
 
 export enum AnalyticsTrackEvents {
   DocsLinkClicked = "docs link clicked",
