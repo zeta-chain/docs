@@ -96,7 +96,7 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
           if (lastItemEmbellishment && isLastItem) {
             return (
               <div className="relative" key={index}>
-                <div className="absolute bg-[#00C6EE] w-[152px] h-[72px] -right-[24px] -top-[42px]">
+                <div className="hidden xl:block absolute bg-[#00C6EE] w-[152px] h-[72px] -right-[24px] -top-[42px]">
                   <div className="absolute bg-[#9AEA4A] w-4 h-4 right-4 top-4" />
                   <div className="absolute bg-[#9AEA4A] w-4 h-4 right-12 top-4" />
                   <div className="absolute bg-[#9AEA4A] w-4 h-4 right-20 top-4" />
