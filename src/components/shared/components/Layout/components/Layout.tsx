@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect, useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import tw, { styled } from "twin.macro";
 
 import { mainNavRoutes } from "../Layout.constants";
@@ -26,8 +26,7 @@ export const StyledUnorderedList = styled.ul`
 `;
 
 const LayoutContainer = styled.div<{ isMainPage: boolean }>`
-  ${tw`overflow-x-clip`};
-  ${({ isMainPage }) => (isMainPage ? tw`bg-grey-50 dark:bg-grey-900` : tw`bg-[#EEE] dark:bg-grey-900`)};
+  ${tw`overflow-x-clip bg-grey-50 dark:bg-grey-900`};
 
   /* Base styles for rendered tables */
   table {
@@ -193,15 +192,6 @@ type LayoutProps = {
 export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
   const { route } = useRouter();
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
-
-  useEffect(() => {
-    if (isMainPage) document.body.classList.remove("custom-bg");
-    else document.body.classList.add("custom-bg");
-
-    return () => {
-      document.body.classList.remove("custom-bg");
-    };
-  }, [isMainPage]);
 
   return (
     <LayoutContainer className={className} isMainPage={isMainPage}>

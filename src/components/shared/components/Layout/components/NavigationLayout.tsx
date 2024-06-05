@@ -63,9 +63,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           classes={{
             paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
               isLeftDrawerOpen && !isNarrowDrawer
-                ? `!w-screen sm:!w-[200px] sm:shadow-[inset_0px_0px_0px_0px_#FFF]`
+                ? `!w-screen sm:!w-[200px]`
                 : isLeftDrawerOpen && isNarrowDrawer
-                ? "!w-screen sm:!w-[72px] sm:shadow-[inset_-30px_0px_30px_-30px_rgba(31,32,33,0.15)] sm:!border-r-0"
+                ? "!w-screen sm:!w-[72px] sm:!border-r-0"
                 : ""
             }`,
           }}
@@ -132,10 +132,14 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         initial={!upSm ? { opacity: 1, x: 0 } : isNarrowDrawer ? { opacity: 0, x: 128 } : { opacity: 0, x: -72 }}
         animate={!upSm ? "open" : isNarrowDrawer ? "open" : "closed"}
         variants={variants}
-        className={clsx("relative min-h-screen flex flex-col", {
-          "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
-          "sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800": isNarrowDrawer,
-        })}
+        className={clsx(
+          "relative min-h-screen flex flex-col sm:fixed sm:top-0 sm:right-0 sm:h-full sm:overflow-y-auto",
+          {
+            "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
+            "sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800 sm:z-[100] sm:shadow-[0_0_30px_0_rgba(31,32,33,0.15)]":
+              isNarrowDrawer,
+          }
+        )}
       >
         <Header
           isLeftDrawerOpen={isLeftDrawerOpen}
