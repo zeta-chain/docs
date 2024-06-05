@@ -174,7 +174,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           setIsLeftDrawerOpen={setIsLeftDrawerOpen}
         />
 
-        <motion.div {...getRevealProps({ y: 0 })} className={"flex-grow text-black dark:text-white pt-[62px] sm:pt-0"}>
+        <motion.div
+          {...getRevealProps({ y: 0 })}
+          className="relative flex-grow text-black dark:text-white pt-[62px] sm:pt-0"
+        >
           {children}
         </motion.div>
 

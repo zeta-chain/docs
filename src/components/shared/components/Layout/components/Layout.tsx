@@ -1,6 +1,10 @@
+import clsx from "clsx";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import tw, { styled } from "twin.macro";
+
+import { themeSelectors } from "~/lib/theme/theme.redux.selectors";
 
 import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
@@ -26,7 +30,7 @@ export const StyledUnorderedList = styled.ul`
 `;
 
 const LayoutContainer = styled.div<{ isMainPage: boolean }>`
-  ${tw`overflow-x-clip bg-grey-50 dark:bg-grey-900`};
+  ${tw`overflow-x-clip bg-grey-50 dark:bg-grey-900 relative`};
 
   /* Base styles for rendered tables */
   table {
@@ -193,8 +197,21 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
   const { route } = useRouter();
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
 
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
+  const isDarkMode = useSelector(themeSelectors.selectIsDarkMode);
+
   return (
     <LayoutContainer className={className} isMainPage={isMainPage}>
+      {!isMounted && (
+        <div
+          className={clsx("absolute inset-0 z-[999999999] w-screen h-screen", {
+            "bg-black": isDarkMode,
+            "bg-white": !isDarkMode,
+          })}
+        />
+      )}
       <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>
   );
