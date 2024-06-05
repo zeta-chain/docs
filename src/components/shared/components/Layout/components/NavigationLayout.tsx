@@ -19,10 +19,35 @@ type NavigationLayoutProps = PropsWithChildren<{
   isMainPage: boolean;
 }>;
 
+const mainLayoutAnimationVariants = {
+  open: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.15, delay: 0 },
+  },
+  closed: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.15, delay: 0 },
+  },
+};
+
+const leftDrawerAnimationVariants = {
+  full: {
+    width: "200px",
+    transition: { duration: 0.15, delay: 0 },
+  },
+  narrow: {
+    width: "72px",
+    transition: { duration: 0.15, delay: 0 },
+  },
+};
+
 export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
+  const [isHoveringDrawer, setIsHoveringDrawer] = useState(false);
 
   const isNarrowDrawer = !isMainPage;
 
@@ -32,20 +57,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
     else setIsLeftDrawerOpen(false);
   }, [upSm]);
 
-  const variants = useMemo(() => {
-    return {
-      open: {
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.225, ease: [0.4, 0, 0.6, 1], delay: 0 },
-      },
-      closed: {
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.3, ease: [0.4, 0, 0.6, 1], delay: 0 },
-      },
-    };
-  }, []);
+  const LeftNavComponent = useMemo(() => (upSm ? motion.div : LeftNavDrawer), [upSm]);
 
   return (
     <>
@@ -53,13 +65,23 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         className={clsx("fixed z-[99] top-0 left-0 h-full", {
           "w-screen sm:w-[200px]": isLeftDrawerOpen && !isNarrowDrawer,
           "w-screen sm:w-[72px]": isLeftDrawerOpen && isNarrowDrawer,
+          "sm:!w-[200px]": isNarrowDrawer && isHoveringDrawer,
         })}
         {...getRevealProps({ y: 0 })}
       >
-        <LeftNavDrawer
+        <LeftNavComponent
+          key={isNarrowDrawer ? "narrow" : "full"}
+          initial={isNarrowDrawer ? { width: "200px" } : { width: "72px" }}
+          animate={isNarrowDrawer ? "narrow" : "full"}
+          variants={leftDrawerAnimationVariants}
           variant="permanent"
           open={isLeftDrawerOpen}
           closeDrawerWidth={upSm ? closeDrawerWidth : 0}
+          className={clsx("sm:h-full sm:flex sm:flex-col sm:overflow-hidden sm:transition-all sm:ease-linear", {
+            "sm:w-[200px] sm:border-r sm:border-grey-200 dark:sm:border-grey-700": !isNarrowDrawer,
+            "sm:w-[72px] sm:border-r-0": isNarrowDrawer,
+            "sm:!w-[200px]": isNarrowDrawer && isHoveringDrawer,
+          })}
           classes={{
             paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
               isLeftDrawerOpen && !isNarrowDrawer
@@ -69,10 +91,15 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                 : ""
             }`,
           }}
+          onMouseEnter={() => setIsHoveringDrawer(true)}
+          onMouseLeave={() => setIsHoveringDrawer(false)}
         >
           <div className="hidden sm:flex items-center h-[104px] py-6 pl-4 sm:pl-6">
             <Link href="/">
-              <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" onlyZ={isNarrowDrawer} />
+              <IconZetaDocsLogo
+                className="text-green-700 dark:text-grey-50"
+                onlyZ={isNarrowDrawer && !isHoveringDrawer}
+              />
             </Link>
           </div>
 
@@ -89,7 +116,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                         key={item.label}
                         item={item}
                         isOpen={isLeftDrawerOpen}
-                        withLabel={!isNarrowDrawer}
+                        withLabel={!isNarrowDrawer || isHoveringDrawer}
                         onClick={() => {
                           if (!upSm) setIsLeftDrawerOpen(false);
                         }}
@@ -111,7 +138,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                     key={item.label}
                     item={item}
                     isOpen={isLeftDrawerOpen}
-                    withLabel={!isNarrowDrawer}
+                    withLabel={!isNarrowDrawer || isHoveringDrawer}
                     onClick={() => {
                       if (!upSm) setIsLeftDrawerOpen(false);
                     }}
@@ -124,20 +151,21 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
               </div>
             </div>
           </div>
-        </LeftNavDrawer>
+        </LeftNavComponent>
       </motion.div>
 
       <motion.div
         key={!upSm ? "open" : isNarrowDrawer ? "open" : "closed"}
         initial={!upSm ? { opacity: 1, x: 0 } : isNarrowDrawer ? { opacity: 0, x: 128 } : { opacity: 0, x: -72 }}
         animate={!upSm ? "open" : isNarrowDrawer ? "open" : "closed"}
-        variants={variants}
+        variants={mainLayoutAnimationVariants}
         className={clsx(
-          "relative min-h-screen flex flex-col sm:fixed sm:top-0 sm:right-0 sm:h-full sm:overflow-y-auto",
+          "relative min-h-screen flex flex-col sm:fixed sm:top-0 sm:right-0 sm:h-full sm:overflow-y-auto sm:transition-all sm:ease-linear",
           {
             "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
             "sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800 sm:z-[100] sm:shadow-[0_0_30px_0_rgba(31,32,33,0.15)]":
               isNarrowDrawer,
+            "sm:!translate-x-[128px]": isNarrowDrawer && isHoveringDrawer,
           }
         )}
       >
