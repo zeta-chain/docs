@@ -65,22 +65,21 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         className={clsx("fixed z-[99] top-0 left-0 h-full", {
           "w-screen sm:w-[200px]": isLeftDrawerOpen && !isNarrowDrawer,
           "w-screen sm:w-[72px]": isLeftDrawerOpen && isNarrowDrawer,
-          "sm:!w-[200px]": isNarrowDrawer && isHoveringDrawer,
+          "sm:!w-[200px]": isHoveringDrawer,
         })}
         {...getRevealProps({ y: 0 })}
       >
         <LeftNavComponent
-          key={isNarrowDrawer ? "narrow" : "full"}
-          initial={isNarrowDrawer ? { width: "200px" } : { width: "72px" }}
-          animate={isNarrowDrawer ? "narrow" : "full"}
+          key={isNarrowDrawer && !isHoveringDrawer ? "narrow" : "full"}
+          initial={isNarrowDrawer && !isHoveringDrawer ? { width: "200px" } : { width: "72px" }}
+          animate={isNarrowDrawer && !isHoveringDrawer ? "narrow" : "full"}
           variants={leftDrawerAnimationVariants}
           variant="permanent"
           open={isLeftDrawerOpen}
           closeDrawerWidth={upSm ? closeDrawerWidth : 0}
-          className={clsx("sm:h-full sm:flex sm:flex-col sm:overflow-hidden sm:transition-all sm:ease-linear", {
+          className={clsx("sm:h-full sm:flex sm:flex-col sm:overflow-hidden", {
             "sm:w-[200px] sm:border-r sm:border-grey-200 dark:sm:border-grey-700": !isNarrowDrawer,
             "sm:w-[72px] sm:border-r-0": isNarrowDrawer,
-            "sm:!w-[200px]": isNarrowDrawer && isHoveringDrawer,
           })}
           classes={{
             paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
