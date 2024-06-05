@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type Subspace = {
   subspace: string;
@@ -46,7 +46,7 @@ export const SubspaceKeyTable = () => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
         <LoadingTable rowCount={40} />

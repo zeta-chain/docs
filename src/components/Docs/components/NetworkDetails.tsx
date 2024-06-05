@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { NavTabs, networkTypeTabs } from "~/components/shared";
+import { NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 type NetworkData = Array<{ name: string; value: string }>;
@@ -65,7 +65,7 @@ export const NetworkDetails = () => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <NetworkTable networkData={networkDetails[activeTab.networkType]} />
     </div>

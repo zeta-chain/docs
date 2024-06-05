@@ -2,7 +2,7 @@ import { GitHub, InfoOutlined } from "@mui/icons-material";
 import { Box, IconButton, Modal, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 const API: Record<NetworkType, string> = {
@@ -82,7 +82,7 @@ export const GovUpgradeProposals = () => {
         </Box>
       </Modal>
 
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
         <LoadingTable rowCount={8} />

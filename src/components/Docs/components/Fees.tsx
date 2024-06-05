@@ -4,7 +4,7 @@
 import { ZetaChainClient } from "@zetachain/toolkit/client";
 import { useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 
 type FeesState = {
   messaging: any[];
@@ -95,7 +95,7 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
         <LoadingTable rowCount={type === "messaging" ? 2 : 7} />

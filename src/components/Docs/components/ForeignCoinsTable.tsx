@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type ForeignCoin = {
   symbol: string;
@@ -77,7 +77,7 @@ export const ForeignCoinsTable = () => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
         <LoadingTable rowCount={7} />

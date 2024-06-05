@@ -6,7 +6,7 @@ import tw, { styled } from "twin.macro";
 
 import { getRevealProps } from "~/lib/helpers/animations";
 
-type Tab = { label: string };
+import { Tab } from "../Tabs.constants";
 
 const StyledUnderline = styled(motion.div)`
   ${tw`absolute bg-[#00A5C6] dark:bg-[#B0FF61] h-[1px] left-0 right-0 mt-2`}

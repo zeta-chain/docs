@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 const API: Record<NetworkType, string> = {
@@ -44,7 +44,7 @@ export const ZetaTokenTable = () => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
         <LoadingTable rowCount={4} />

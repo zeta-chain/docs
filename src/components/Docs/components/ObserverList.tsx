@@ -1,7 +1,7 @@
 import { bech32 } from "bech32";
 import { useCallback, useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 const convertToValoper = (address: any) => {
   try {
@@ -94,7 +94,7 @@ export const ObserverList = () => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
         <LoadingTable rowCount={9} />

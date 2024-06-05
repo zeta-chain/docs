@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { LoadingTable, NavTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 function capitalizeFirstLetter(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -59,7 +59,7 @@ export const AdminPolicy = () => {
 
   return (
     <div className="mt-8">
-      <NavTabs tabs={networkTypeTabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {adminPolicies.length > 0 ? (
         adminPolicies.map((policy: any, index) => (
