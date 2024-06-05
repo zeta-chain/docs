@@ -27,7 +27,7 @@ const keyFeatures: KeyFeature[] = [
     description:
       "A developer can pass messages (data and value) between chains and layers with simple function calls. Through message passing, a dApp developer can build powerful cross-chain applications by simply implementing a few functions within their existing smart contracts. By composing messaging capabilities with Omnichain Smart Contracts, apps can abstract multi-leg cross-chain transactions in tandem with native asset movements and interactions. For example, a contract on ZetaChain could be called by a user on Bitcoin and also enact external contract calls on Ethereum and BNB Chain, and more legs thereafter — all in just one step for the user.",
     link: (
-      <PrimaryLink href="/developers/tutorials/message" icon={<IconDocs />}>
+      <PrimaryLink href="/developers/tutorials/hello" icon={<IconDocs />}>
         Start building dApps
       </PrimaryLink>
     ),
