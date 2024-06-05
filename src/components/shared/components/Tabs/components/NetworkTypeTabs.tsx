@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "react-use";
 
 import { NetworkType } from "~/lib/app.types";
@@ -20,6 +20,12 @@ export const NetworkTypeTabs: React.FC<NetworkTypeTabsProps> = ({ activeTab, set
     [activeTab, selectedNetworkType]
   );
 
+  const [tabToUse, setTabToUse] = useState(activeTab);
+
+  useEffect(() => {
+    setTabToUse(selectedTab);
+  }, [selectedTab]);
+
   const handleSetActiveTab = useCallback(
     (item: NetworkTypeTab) => {
       setActiveTab(item);
@@ -29,6 +35,6 @@ export const NetworkTypeTabs: React.FC<NetworkTypeTabsProps> = ({ activeTab, set
   );
 
   return (
-    <NavTabs tabs={networkTypeTabs} activeTab={selectedTab} setActiveTab={handleSetActiveTab} className={className} />
+    <NavTabs tabs={networkTypeTabs} activeTab={tabToUse} setActiveTab={handleSetActiveTab} className={className} />
   );
 };
