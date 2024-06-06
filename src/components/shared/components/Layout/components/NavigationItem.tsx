@@ -7,7 +7,7 @@ import { NavItem } from "../Layout.constants";
 import { NavigationItemWrapper } from "./NavigationItemWrapper";
 
 const nonSelectedColor =
-  "text-grey-500 group-hover:text-grey-300 dark:text-grey-300 dark:group-hover:text-grey-100 transition-all";
+  "text-grey-500 group-hover:text-green-100 dark:text-grey-300 dark:group-hover:text-green-100 transition-all";
 
 interface NavigationItemProps {
   item: NavItem;
