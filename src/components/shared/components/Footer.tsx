@@ -19,8 +19,8 @@ const links = [
     target: "_blank",
   },
   {
-    text: "Blog",
-    href: globalLinks.blogUrl,
+    text: "Bug Bounty",
+    href: globalLinks.bugBountyLink,
     target: "_blank",
   },
   {
