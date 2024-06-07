@@ -158,15 +158,12 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         initial={!upSm ? { opacity: 1, x: 0 } : isNarrowDrawer ? { opacity: 0, x: 128 } : { opacity: 0, x: -72 }}
         animate={!upSm ? "open" : isNarrowDrawer ? "open" : "closed"}
         variants={mainLayoutAnimationVariants}
-        className={clsx(
-          "relative min-h-screen flex flex-col sm:fixed sm:top-0 sm:right-0 sm:h-full sm:overflow-y-auto sm:transition-all sm:ease-linear",
-          {
-            "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
-            "sm:w-[calc(100%-72px)] sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800 sm:z-[100] sm:shadow-[0_0_30px_0_rgba(31,32,33,0.15)]":
-              isNarrowDrawer,
-            "sm:!translate-x-[128px]": isNarrowDrawer && isHoveringDrawer,
-          }
-        )}
+        className={clsx("relative min-h-screen flex flex-col sm:transition-all sm:ease-linear", {
+          "sm:pl-[200px] bg-grey-50 dark:bg-grey-900": !isNarrowDrawer,
+          "sm:w-[calc(100%-72px)] sm:ml-[72px] lg:pl-[88px] sm:rounded-l-2xl bg-grey-50 dark:bg-grey-800 sm:z-[100] sm:shadow-[0_0_30px_0_rgba(31,32,33,0.15)]":
+            isNarrowDrawer,
+          "sm:!translate-x-[128px]": isNarrowDrawer && isHoveringDrawer,
+        })}
       >
         <Header
           isLeftDrawerOpen={isLeftDrawerOpen}
