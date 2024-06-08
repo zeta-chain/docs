@@ -3,22 +3,11 @@
     "title": "Tools",
     "description": "Useful articles to help you get up and running, work with the network, APIs or simply learn key terms."
   },
-  "wallets": {
-    "title": "Wallets",
-    "description": "Which EVM and Cosmos wallets can be used to sign transactions and interact with ZetaChain."
-  },
-  "get-testnet-zeta": {
-    "title": "Get Testnet ZETA (Faucet)",
-    "description": "How to obtain testnet ZETA and other assets for development."
-  },
-  "explorers": {
-    "title": "ZetaScan",
-    "description": "ZetaScan is a blockchain explorer maintained by the ZetaChain team."
-  },
   "network": {
     "title": "Network & APIs",
     "description": "The basics of working with our APIs, RPC Endpoints and the network"
   },
+  "apps": "Apps & Services",
   "learn": {
     "title": "Learn",
     "description": "Common terms, questions and answers for ZetaChain"

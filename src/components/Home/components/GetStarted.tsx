@@ -18,26 +18,15 @@ const getStartedPages: {
 }[] = [
   {
     title: "What is ZetaChain?",
-    description: "Learn about the unparalleled blockchain enabling omnichain.",
     href: "/about",
     readTime: "5 min",
     readType: "Beginner",
   },
   {
-    href: "/users/cli/setup",
-    readTime: "5 min",
-    readType: "Beginner",
+    href: "/about/token-utility/token",
   },
   {
-    href: "/developers/apps",
-    readTime: "5 min",
-    readType: "Beginner",
-  },
-  {
-    href: "/developers/tutorials/hello",
-  },
-  {
-    href: "/developers/architecture/modules/crosschain/overview",
+    href: "/about/token-utility/distribution",
   },
 ];
 
