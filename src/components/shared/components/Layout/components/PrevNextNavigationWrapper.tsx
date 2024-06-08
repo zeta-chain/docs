@@ -95,6 +95,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
                 readTime: nextPage.readTime,
                 readType: nextPage.readType,
                 href: nextPage.route,
+                withScrollToTop: true,
               },
             ]}
           />
