@@ -34,7 +34,7 @@ specify which token address is needed.
 To view a table of all contracts visit the [Contract Addresses](https://www.zetachain.com/docs/reference/contracts/) page in the docs.
 
 Importing
-[`ZetaInterfaces`](https://www.zetachain.com/docs/developers/cross-chain-messaging/connector/)
+[`ZetaInterfaces`](https://www.zetachain.com/docs/developers/architecture/contracts/contracts/evm/interfaces/ZetaInterfaces.sol/interface.ZetaInterfaces)
 and `ZetaInteractor` for cross-chain messaging:
 
 ```solidity
@@ -44,7 +44,7 @@ import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 
 Importing [ZRC20](https://www.zetachain.com/docs/developers/tokens/zrc20/)
 and the [system
-contract](https://www.zetachain.com/docs/developers/omnichain/system-contract/)
+contract](https://www.zetachain.com/docs/developers/architecture/contracts/contracts/zevm/SystemContract.sol/contract.SystemContract)
 for omni-chain smart contracts:
 
 ```solidity
