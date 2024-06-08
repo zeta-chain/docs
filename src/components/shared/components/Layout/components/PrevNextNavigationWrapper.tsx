@@ -40,7 +40,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
 
     let prevPage = null;
 
-    if (prevDirectory && prevDirectory.route !== nextPage.route) {
+    if (prevDirectory && prevDirectory.route !== nextPage?.route) {
       prevPage = {
         title: directoriesByRoute[prevDirectory.route].title,
         route: prevDirectory.route,

@@ -39,7 +39,7 @@ export const HomeHero: React.FC = () => {
           alt="ZetaChain Documentation"
           width={448}
           height={520}
-          className="w-auto sm:w-full !rounded-none !mt-0 max-h-[250px] sm:max-h-[unset] sm:max-w-[250px] lg:max-w-[448px]"
+          className="w-auto lg:w-full !rounded-none !mt-0 max-h-[150px] sm:max-h-[200px] lg:max-h-[unset] lg:max-w-[448px]"
           priority
         />
       </div>
