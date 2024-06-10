@@ -4,6 +4,7 @@ import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import tw, { styled } from "twin.macro";
 
+import { useScrollToPageTop } from "~/hooks/useScrollToPageTop";
 import { themeSelectors } from "~/lib/theme/theme.redux.selectors";
 
 import { mainNavRoutes } from "../Layout.constants";
@@ -196,6 +197,8 @@ type LayoutProps = {
 export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
   const { route } = useRouter();
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+
+  useScrollToPageTop();
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);

@@ -82,7 +82,7 @@ export const Hero: React.FC = () => {
             alt={imgUrl}
             width={imgWidth || 570}
             height={520}
-            className="w-auto lg:w-full max-h-[200px] sm:max-h-[250px] lg:max-h-[unset] !rounded-none !mt-0"
+            className="w-auto lg:w-full max-h-[100px] sm:max-h-[150px] lg:max-h-[unset] !rounded-none !mt-0"
             priority
             style={{
               ...(upLg && { maxWidth: `${imgWidth || 570}px` }),

@@ -1,12 +1,11 @@
 import { AnalyticsBrowser } from "@segment/analytics-next";
 
-import { environment } from "../env.cjs";
-import { isClient, isNodeEnvProd, isVercelProd } from "./app.constants";
+import { isClient, isNodeEnvProd } from "./app.constants";
 
 const samplingRate = 0.5;
 const shouldLoadAnalytics = Math.random() < samplingRate;
 
-const isClientProd = isNodeEnvProd && isVercelProd && isClient;
+const isClientProd = isNodeEnvProd && isClient;
 
 export enum AnalyticsTrackEvents {
   DocsLinkClicked = "docs link clicked",
@@ -16,7 +15,7 @@ export enum AnalyticsProperties {}
 
 type AnalyticsPropertiesRecord = Partial<Record<AnalyticsProperties, string | null>>;
 
-const segmentKey = environment.NEXT_PUBLIC_SEGMENT_KEY || "";
+const segmentKey = process.env.NEXT_PUBLIC_SEGMENT_KEY || "";
 
 const analytics =
   isClientProd && shouldLoadAnalytics && segmentKey

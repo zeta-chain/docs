@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import Link, { LinkProps as NextLinkProps } from "next/link";
 
+import { useAppDispatch } from "~/lib/app.store";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
+import { setShouldScrollToPageTop } from "~/lib/scroll-to-page-top/scroll-to-page-top.redux";
 
 import { IconArticleRandom, IconTime } from "../../Icons";
 
@@ -15,6 +17,7 @@ export type NavigationCardLinkProps = {
   className?: string;
   isMainPage?: boolean;
   variant?: NavigationSectionVariant;
+  withScrollToTop?: boolean;
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
@@ -28,8 +31,11 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   className,
   isMainPage,
   variant = "default",
+  withScrollToTop = false,
   ...linkProps
 }) => {
+  const dispatch = useAppDispatch();
+
   return (
     <Link
       {...linkProps}
@@ -44,6 +50,11 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
         },
         className
       )}
+      onClick={() => {
+        if (withScrollToTop) {
+          dispatch(setShouldScrollToPageTop(true));
+        }
+      }}
     >
       <div className={clsx({ "flex-grow": variant === "default" })}>{icon || <IconArticleRandom />}</div>
 
