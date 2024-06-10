@@ -15,20 +15,14 @@
     "readTime": "5 min",
     "readType": "Beginner"
   },
-  "state-sync": {
-    "title": "Option 1: State-Sync",
-    "description": "How to setup a RPC node using state-sync.",
-    "readTime": "5 min",
-    "readType": "Beginner"
-  },
   "snapshot": {
-    "title": "Option 2: Snapshot",
+    "title": "Option 1: Snapshot",
     "description": "Syncing a node using a snapshot.",
     "readTime": "5 min",
     "readType": "Beginner"
   },
   "ksync": {
-    "title": "Option 3: KSYNC",
+    "title": "Option 2: KSYNC",
     "description": "How to sync a ZetaChain Mainnet Beta node with KSYNC.",
     "readTime": "5 min",
     "readType": "Beginner"
