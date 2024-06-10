@@ -7,7 +7,7 @@ export const AddressConverter = () => {
   const [convertedAddress, setConvertedAddress] = useState("");
 
   return (
-    <div className="mt-6">
+    <div className="mt-8">
       <div className="flex items-center gap-3 mb-3">
         <input
           type="text"

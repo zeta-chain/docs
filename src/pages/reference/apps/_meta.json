@@ -1,0 +1,12 @@
+{
+  "wallets": {
+    "title": "Wallets",
+    "description": "Supported EVM, Bitcoin and Cosmos wallets"
+  },
+  "services": {
+    "title": "Services & Providers",
+    "description": "Oracles, subgraphs, data providers, account abstraction and more"
+  },
+  "get-testnet-zeta": "Faucet: Get testnet ZETA",
+  "explorers": "ZetaScan"
+}

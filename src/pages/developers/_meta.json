@@ -1,11 +1,29 @@
 {
-  "overview": "Overview",
-  "apps": "Building Universal Apps",
-  "evm": "Universal EVM",
-  "tutorials": "Tutorials",
-  "services": "Apps and Services",
-  "tokens": "Working with Tokens",
-  "cli": "Using ZetaChain's CLI",
-  "transactions": "Types of Transactions",
-  "architecture": "Architecture"
+  "index": {
+    "title": "Build",
+    "description": "Start building on ZetaChain, the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+  },
+  "apps": {
+    "title": "Building Universal Apps",
+    "description": "Dive into the basics of building on ZetaChain"
+  },
+  "evm": {
+    "title": "Universal EVM",
+    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps"
+  },
+  "tutorials": {
+    "title": "Tutorials"
+  },
+  "services": {
+    "title": "Apps and Services"
+  },
+  "tokens": {
+    "title": "Working with Tokens"
+  },
+  "cli": {
+    "title": "Using ZetaChain's CLI"
+  },
+  "architecture": {
+    "title": "Architecture"
+  }
 }

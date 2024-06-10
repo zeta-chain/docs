@@ -1,13 +1,15 @@
 {
-  "details": "Network Details",
-  "api": "API/RPC endpoints",
-  "contracts": "Contract Addresses",
-  "bugbounty": "Bug Bounty",
-  "wallets": "Wallets",
-  "get-testnet-zeta": "Get Testnet ZETA (faucet)",
-  "faq": "FAQ",
-  "glossary": "Glossary",
-  "explorers": "ZetaScan",
-  "openapi": "ZetaChain HTTP API",
-  "services": "Services and Providers"
+  "index": {
+    "title": "Tools",
+    "description": "Useful articles to help you get up and running, work with the network, APIs or simply learn key terms."
+  },
+  "network": {
+    "title": "Network & APIs",
+    "description": "The basics of working with our APIs, RPC Endpoints and the network"
+  },
+  "apps": "Apps & Services",
+  "learn": {
+    "title": "Learn",
+    "description": "Common terms, questions and answers for ZetaChain"
+  }
 }

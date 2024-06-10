@@ -1,4 +1,6 @@
-# Single Input Multiple Output
+---
+title: Single Input Multiple Output
+---
 
 ## Overview
 
@@ -255,27 +257,17 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
     bitcoinAddress = args.btcRecipient;
   }
 
-  const bitcoinAddressBytes = utils.solidityPack(
-    ["bytes"],
-    [utils.toUtf8Bytes(bitcoinAddress)]
-  );
+  const bitcoinAddressBytes = utils.solidityPack(["bytes"], [utils.toUtf8Bytes(bitcoinAddress)]);
 
   const tokensBytes = ethers.utils.concat(
-    destinationTokens.map((address) =>
-      utils.defaultAbiCoder.encode(["address"], [address])
-    )
+    destinationTokens.map((address) => utils.defaultAbiCoder.encode(["address"], [address]))
   );
 
-  data = prepareData(
-    args.contract,
-    ["address", "bytes", "bytes"],
-    [args.recipient, bitcoinAddressBytes, tokensBytes]
-  );
+  data = prepareData(args.contract, ["address", "bytes", "bytes"], [args.recipient, bitcoinAddressBytes, tokensBytes]);
   //...
 };
 
-task("interact", "Interact with the contract", main)
-  .addOptionalParam("btcRecipient", "The bitcoin address to send to");
+task("interact", "Interact with the contract", main).addOptionalParam("btcRecipient", "The bitcoin address to send to");
 ```
 
 ## Create an Account and Request Tokens from the Faucet

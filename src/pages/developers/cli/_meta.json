@@ -1,8 +1,0 @@
-{
-  "setup": "Installing the CLI",
-  "account": "Adding an Account",
-  "balances": "Querying Balances",
-  "delegate": "Delegating to a Validator",
-  "rewards": "Withdrawing Rewards",
-  "governance": "Governance"
-}

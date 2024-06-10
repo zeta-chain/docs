@@ -1,10 +1,9 @@
+---
+title: Running a Node in Production
+description: This document outlines the process for running a full ZetaChain node. It is intended for those who are familiar with the Linux operating system and the command line interface.
+---
+
 import { Alert } from "~/components/shared";
-
-# Running a Node in Production
-
-This document outlines the process for running a full ZetaChain node. It is
-intended for those who are familiar with the Linux operating system and the
-command line interface.
 
 It is expected that you are familiar with [setup](./setup) and state sync.
 
@@ -77,7 +76,7 @@ root.
 useradd -m -s /bin/bash zetachain
 ```
 
-### Create ZetaChain Directory Structure
+## Create ZetaChain Directory Structure
 
 This is needed to store ZetaChain binary and configuration files.
 
@@ -124,6 +123,7 @@ ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format j
     minimize risk. If you have already preloaded the binaries, none will be downloaded.
 
     Read more about [cosmovisor Auto-Download here](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download).
+
 </Alert>
 
 Run `systemctl daemon-reload` to load the service.
@@ -132,19 +132,19 @@ Run `systemctl enable --now zetacored` to start the service and to automatically
 
 ## Upgrades
 
-Follow the [#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486) and/or 
+Follow the [#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486) and/or
 [#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338) channels on discord to receive
 upgrade proposal notifications.
 
 Download the new binaries from the github release and install them into the cosmovisor upgrade directory.
-The name of the directory must match the upgrade name. The upgrade name is **not** the the release name on github. Reference 
+The name of the directory must match the upgrade name. The upgrade name is **not** the the release name on github. Reference
 the [Governance Upgrade Proposals](./proposals) page to easily see the upgrade names. Here are some examples:
 
-| Upgrade Name | `zetacored` Path                                          | git tag |
-|--------------|-----------------------------------------------------------|---------|
+| Upgrade Name | `zetacored` Path                                            | git tag   |
+| ------------ | ----------------------------------------------------------- | --------- |
 | `v17-athens` | `~/.zetacored/cosmovisor/upgrades/v17-athens/bin/zetacored` | `v17.0.0` |
-| `v17` | `~/.zetacored/cosmovisor/upgrades/v17/bin/zetacored` | `v17.0.0` |
-| `v16` | `~/.zetacored/cosmovisor/upgrades/v16/bin/zetacored` | `v16.0.0` |
+| `v17`        | `~/.zetacored/cosmovisor/upgrades/v17/bin/zetacored`        | `v17.0.0` |
+| `v16`        | `~/.zetacored/cosmovisor/upgrades/v16/bin/zetacored`        | `v16.0.0` |
 
 After installing the binary, you should:
 

@@ -1,4 +1,6 @@
-# System Contract
+---
+title: System Contract
+---
 
 The System Contract on ZetaChain serves as the caller for universal apps when
 they are called from connected chains.
@@ -32,10 +34,10 @@ from your universal app contract:
 
 ```solidity
 pragma solidity 0.8.7;
- 
+
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IZRC20.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
- 
+
 contract YourContract is zContract {
     function onCrossChainCall(
         zContext calldata context,

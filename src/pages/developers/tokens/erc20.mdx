@@ -1,12 +1,17 @@
-import { Alert } from "~/components/shared";
+---
+title: ERC-20 on ZetaChain
+---
 
-# ERC-20 on ZetaChain
+import { Alert } from "~/components/shared";
 
 ZetaChain is fully compatible with the Ethereum Virtual Machine (EVM) and
 [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20) token
 contracts can be deployed to ZetaChain permissionlessly.
 
-<Alert variant="note">
-  An ERC-20 token deployed to ZetaChain **does not** have the properties of [ZRC-20](/developers/tokens/zrc20),
-  specifically, it can't be withdrawn from ZetaChain to a connected chain.
-</Alert>
+<Alert variant="note"> An ERC-20 token deployed to ZetaChain **does not** have
+  the properties of [ZRC-20](/developers/tokens/zrc20), specifically, it can't
+  be withdrawn from ZetaChain to a connected chain. </Alert>
+
+If a specific ERC-20 token on a connected chain is not a supported ZRC-20, you
+can still transfer this ERC-20 to and from a universal app using the connector
+API. Check out the [ERC-20 tutorial](/developers/tutorials/erc20) to learn more.

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useTheme as useNextraTheme } from "nextra-theme-docs";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -8,7 +9,7 @@ import { updateThemeMode } from "~/lib/theme/theme.redux.thunks";
 
 import { HeroIconMoon, HeroIconSun } from "./Icons";
 
-export const ThemeToggle: React.FC = () => {
+export const ThemeToggle: React.FC<{ className?: string }> = ({ className }) => {
   const dispatch = useAppDispatch();
 
   const isDarkMode = useSelector(themeSelectors.selectIsDarkMode);
@@ -22,11 +23,11 @@ export const ThemeToggle: React.FC = () => {
   return (
     <button
       type="button"
-      className="flex items-center justify-center bg-[transparent] py-2 px-4 rounded transition-all"
+      className={clsx("flex items-center justify-center bg-[transparent] p-2 rounded transition-all", className)}
       onClick={() => dispatch(updateThemeMode())}
     >
-      {isDarkMode && <HeroIconMoon className="text-current w-5 h-5 shrink-0" />}
-      {!isDarkMode && <HeroIconSun className="text-current w-5 h-5 shrink-0" />}
+      {isDarkMode && <HeroIconMoon className="text-current w-6 h-6 shrink-0" />}
+      {!isDarkMode && <HeroIconSun className="text-current w-6 h-6 shrink-0" />}
     </button>
   );
 };

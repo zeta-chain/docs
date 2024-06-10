@@ -1,0 +1,98 @@
+---
+title: Making a Deposit
+---
+
+## Overview
+
+For a proposal to progress into the voting period, it must meet the minimum
+deposit requirement. The min deposit amount is specified
+[parameters of governance module](/developers/cli/governance/overview/). If the
+deposit amount is less than the minimum required deposit amount, the proposal
+will enter the "deposit period" and will wait for the required amount of tokens
+to be deposited within the "max deposit period".
+
+Any use can make a deposit to a proposal.
+
+## Querying a proposal
+
+Query a proposal by proposal ID to confirm that the proposal is in the deposit
+period:
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+deposit_end_time: "2024-02-14T02:18:32.334547494Z"
+```
+
+```yaml
+deposit_end_time: "2024-02-14T02:18:32.334547494Z"
+final_tally_result:
+  abstain_count: "0"
+  no_count: "0"
+  no_with_veto_count: "0"
+  yes_count: "0"
+id: "58"
+messages:
+  - "@type": /cosmos.gov.v1.MsgExecLegacyContent
+    authority: zeta10d07y265gmmuvt4z0w9aw880jnsr700jvxasvr
+    content:
+      "@type": /cosmos.gov.v1beta1.TextProposal
+      description: Description of the proposal
+      title: Important Proposal
+metadata: https://example.org/metadata.json
+status: PROPOSAL_STATUS_DEPOSIT_PERIOD
+submit_time: "2024-02-13T14:18:32.334547494Z"
+total_deposit:
+  - amount: "0"
+    denom: azeta
+voting_end_time: null
+voting_start_time: null
+```
+
+You can see that the total deposit amount is 0. This means that the proposal is
+in the deposit period and waiting for the required amount of tokens to be
+deposited.
+
+## Making a Deposit
+
+Let's say the current "min deposit amount" value is 1000000azeta. You can make a
+deposit to the proposal using the following command:
+
+```
+zetacored tx gov deposit 58 1000000azeta --from alice --node https://zetachain-athens.blockpi.network:443/rpc/v1/public --chain-id athens_7001-1
+```
+
+Once your transaction is successfully executed, you can query the proposal to
+confirm that the deposit has been made:
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+deposit_end_time: "2024-02-14T02:18:32.334547494Z"
+```
+
+```yaml
+status: PROPOSAL_STATUS_VOTING_PERIOD
+total_deposit:
+  - amount: "1001000"
+    denom: azeta
+```
+
+You can see that the proposal is now in the voting period and the total deposit
+amount is 1000000azeta. This means that the proposal has met the minimum
+deposit.
+
+## Querying Individual Deposits
+
+You can query individual deposits to a proposal using the following command:
+
+```
+zetacored q gov deposits 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+deposits:
+  - amount:
+      - amount: "1000000"
+        denom: azeta
+    depositor: zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+    proposal_id: "58"
+```

@@ -3,12 +3,12 @@ import tw, { css } from "twin.macro";
 
 const customStyles = css({
   body: {
-    ...tw`antialiased font-primary text-black dark:text-white bg-grey-50 dark:bg-grey-900 min-w-[320px]`,
+    ...tw`antialiased font-primary text-black dark:text-white !bg-grey-50 dark:!bg-grey-900 min-w-[320px]`,
     scrollbarGutter: "stable",
   },
 
   "::selection": {
-    ...tw`text-black dark:text-white bg-positive-500 dark:bg-green-600`,
+    ...tw`text-black dark:text-white bg-[#00A5C6]/20 dark:bg-[#B0FF61]/20`,
   },
 
   "::-webkit-scrollbar": {

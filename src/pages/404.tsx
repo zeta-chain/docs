@@ -2,10 +2,6 @@ import type { NextPage } from "next";
 
 import { PageNotFound } from "~/components/shared";
 
-const Custom404: NextPage = () => (
-  <div className="w-full h-full flex items-center justify-center">
-    <PageNotFound />
-  </div>
-);
+const Custom404: NextPage = () => <PageNotFound />;
 
 export default Custom404;

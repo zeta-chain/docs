@@ -1,0 +1,62 @@
+---
+title: Governance
+---
+
+import { GovParams } from "~/components/Docs";
+
+import { Alert } from "~/components/shared";
+
+## Overview
+
+ZetaChain uses the standard Cosmos SDK [`gov` governance
+module](https://docs.cosmos.network/v0.46/modules/gov/) to manage the network.
+This module allows for the creation of proposals, which can be voted on by
+stakers of the network. This guide will walk you through the process of creating
+proposals using the ZetaChain's `zetacored` CLI.
+
+## Governance Parameters
+
+<GovParams />
+
+## Making a Proposal
+
+To make a proposal you will need to:
+
+- Create a `proposal.json` file. The contents of the proposal file depends on
+  the type of a proposal: [text proposal](/developers/cli/governance/text),
+  [parameter change proposal](/developers/cli/governance/parameter), [software
+  upgrade proposal](/developers/cli/governance/upgrade), etc.
+- Create and publish a `metadata.json` file to IPFS or the web and submit the
+  proposal using `zetacored tx gov submit-proposal` command. Learn about this
+  step on the [Submit a Proposal](/developers/cli/governance/submit) page
+
+<Alert variant="tip">
+  Check out the [text proposal](/developers/cli/governance/text) doc to learn more about the basics of how proposals are
+  structured.
+</Alert>
+
+## Proposal Stages
+
+The lifecycle of a proposal consists of the following stages:
+
+1. **Deposit Period**: During this period, any user can deposit tokens to a
+   proposal. If the proposal reaches the required deposit amount, it will move
+   to the **voting period**. If the proposal does not reach the required deposit
+   amount, it will be marked as "Rejected". As a creator of a proposal, you can
+   supply your proposal with the deposit (equal or higher than the min deposit
+   param) to immediately move to the voting period.
+2. **Voting Period**: During this period, stakers can vote on the proposal. If
+   the proposal does not reach the required quorum or does not pass until the
+   voting period ends, it will be marked as "Rejected". If the proposal reaches
+   the required quorum and passes, it will be executed. If the proposal executed
+   successfully, it will be marked as "Passed". If the proposal executed
+   unsuccessfully, it will be marked as "Failed".
+
+The deposit amounts will be returned to the depositors, unless the proposal was
+vetoed, or never entered voting period (minimum deposit not reached within
+deposit period).
+
+## Governance Module Docs
+
+To learn more about the governance module, refer to the [`gov` module
+documentation](https://docs.cosmos.network/v0.46/modules/gov/).

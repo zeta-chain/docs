@@ -1,5 +1,10 @@
 {
-  "zetachain": "What is ZetaChain?",
-  "roadmap": "Technical Roadmap",
-  "token-utility": "ZETA Token Utility"
+  "index": {
+    "title": "About",
+    "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain."
+  },
+  "token-utility": {
+    "title": "About ZETA Token",
+    "description": "Understand more about the token underpinning ZetaChain"
+  }
 }

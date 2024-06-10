@@ -1,6 +1,8 @@
-import { ZetaTokenTable } from "~/components/Docs";
+---
+title: ZETA
+---
 
-# ZETA
+import { ZetaTokenTable } from "~/components/Docs";
 
 ## Native ZETA Token on ZetaChain
 
@@ -41,7 +43,7 @@ primarily used in internal liquidity pools on ZetaChain paired with native gas
 tokens of connected blockchains (for example, sETH/WZETA pair).
 
 To wrap native ZETA and turn it into WZETA, send it to or use the `deposit`
-method of the `zetaToken` [contract on ZetaChain](/reference/contracts).
+method of the `zetaToken` [contract on ZetaChain](/reference/network/contracts).
 
 ## ZETA on Connected Blockchains
 
@@ -49,6 +51,6 @@ ZETA tokens on EVM-compatible connected blockchains (like Ethereum, Polygon and
 BSC) are implemented as
 [ERC-20](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/Zeta.eth.sol)
 tokens. You can find the contract addresses of the `zetaToken` on a connected
-blockchain on the [contracts page](/reference/contracts).
+blockchain on the [contracts page](/reference/network/contracts).
 
 <ZetaTokenTable />
