@@ -1,10 +1,46 @@
 {
-  "requirements": "Technical Requirements",
-  "setup": "Setting Up a Node",
-  "snapshot": "Option 1: Snapshot",
-  "ksync": "Option 2: KSYNC",
-  "node": "Running a Node in Production",
-  "monitoring": "Validators Monitoring",
-  "proposals": "Governance Upgrade Proposals",
-  "validator": "Create a Core Validator"
+  "index": {
+    "title": "Validate",
+    "description": "Become one of the important pieces of ZetaChain operation by validating transactions for the chain. It’s easy to get setup and started on our testnet and mainnet."
+  },
+  "requirements": {
+    "title": "Technical Requirements",
+    "description": "Before you start validating, make sure you have the following technical requirements.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "setup": {
+    "title": "Setting Up a Node",
+    "description": "A guide to set up a ZetaChain Mainnet Beta or testnet node.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "snapshot": {
+    "title": "Option 1: Snapshot",
+    "description": "Syncing a node using a snapshot.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "ksync": {
+    "title": "Option 2: KSYNC",
+    "description": "How to sync a ZetaChain Mainnet Beta node with KSYNC.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "node": {
+    "title": "Running a Node in Production",
+    "description": "This document outlines the process for running a full ZetaChain node."
+  },
+  "monitoring": {
+    "title": "Validators Monitoring",
+    "description": "Monitoring your validator node is crucial to ensure it is running smoothly and securely."
+  },
+  "proposals": {
+    "title": "Governance Upgrade Proposals",
+    "description": "Validators are responsible for voting on proposals that affect the network."
+  },
+  "validator": {
+    "title": "Create a Core Validator",
+    "description": "Become a core validator on the ZetaChain network."
+  }
 }

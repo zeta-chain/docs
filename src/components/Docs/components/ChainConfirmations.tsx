@@ -1,7 +1,6 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type ChainData = {
   chains: {
@@ -24,25 +23,20 @@ type ChainParams = {
   confirmation_count: string;
 }[];
 
-const API: Record<NetworkType, string> = {
-  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
-  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
-};
-
 const CHAIN_PARAMS = "/zeta-chain/observer/get_chain_params";
 const SUPPORTED_CHAINS = "/zeta-chain/observer/supportedChains";
 
 export const ChainConfirmations = () => {
   const [chainParams, setChainParams] = useState<ChainParams>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const paramsUrl = `${API[activeTab]}${CHAIN_PARAMS}`;
-        const chainsUrl = `${API[activeTab]}${SUPPORTED_CHAINS}`;
+        const paramsUrl = `${rpcByNetworkType[activeTab.networkType]}${CHAIN_PARAMS}`;
+        const chainsUrl = `${rpcByNetworkType[activeTab.networkType]}${SUPPORTED_CHAINS}`;
 
         // Fetch supported chains first
         const responseChains = await fetch(chainsUrl);
@@ -71,39 +65,16 @@ export const ChainConfirmations = () => {
     };
 
     fetchData();
-  }, [activeTab]);
-
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
+  }, [activeTab.networkType]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+    <div className="mt-8">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={3} />
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

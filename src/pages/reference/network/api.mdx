@@ -1,0 +1,74 @@
+---
+title: API/RPC endpoints
+---
+
+import { EndpointList } from "~/components/Docs";
+
+## Private endpoints
+
+If you are a developer we highly recommend signing up for a free private
+endpoint through [AllThatNode](https://www.allthatnode.com/zetachain.dsrv),
+[BlockPI](https://blockpi.io/zeta), [InfStones](https://infstones.com/fast-api),
+[Blast API](https://blastapi.io/chains/zetachain) or one of our other RPC
+partners. The private endpoints have higher throughput, less restrictions, and
+will provide a more consistent experience than the public RPCs.
+
+## Public endpoints
+
+Below is a list of public API endpoints that can be used to interact with
+ZetaChain from wallet software or web application frontend. Public endpoints are
+not to be used for backend services or high traffic applications.
+
+<EndpointList />
+
+## EVM RPC
+
+ZetaChain is an EVM-compatible blockchain. EVM RPC allows you to connect to the
+ZetaChain blockchain and interact with the EVM. This gives you direct access to
+reading Ethereum-formatted transactions or sending them to the network
+
+For example, querying the latest block number:
+
+```
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' https://zetachain-athens-evm.blockpi.network/v1/rpc/public
+```
+
+## Tendermint HTTP
+
+ZetaChain is powered by the Tendermint Core BFT consensus engine. The Tendermint
+HTTP API allows you to query blocks, information about validators, genesis file,
+etc.
+
+For example, querying a genesis file:
+
+https://zetachain-athens.blockpi.network/rpc/v1/public/genesis
+
+## Tendermint RPC
+
+Tendermint RPC API allows broadcasting transactions and querying the blockchain
+through an JSON RPC interface.
+
+For example, requesting a specific block:
+
+```
+curl --header "Content-Type: application/json" --request POST --data '{"method": "block", "params": ["3336883"], "id": 1}' https://rpc.ankr.com/zetachain_tendermint_athens_testnet
+```
+
+## Tendermint WebSocket
+
+Tendermint WebSocket API provides access to JSON RPC via WebSockets.
+
+For example, connecting to the WebSocket with `wscat`
+
+```
+wscat -c wss://zetachain-athens.blockpi.network/rpc/v1/public/websocket
+```
+
+## Cosmos SDK HTTP
+
+ZetaChain is built with Cosmos SDK. Cosmos SDK HTTP API allows querying the
+state of the ZetaChain blockchain and broadcast transactions.
+
+For example, querying the latest block:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public//cosmos/base/tendermint/v1beta1/blocks/latest

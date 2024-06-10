@@ -2,7 +2,7 @@ import createEmotionServer from "@emotion/server/create-instance";
 import Document, { DocumentContext, Head, Html, Main, NextScript } from "next/document";
 import React from "react";
 
-import { createEmotionCache } from "~/lib/createEmotionCache";
+import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -35,14 +35,11 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html className="dark">
+      <Html>
         <Head />
 
         <body className="no-scrollbar">
           <Main />
-          <div id="price-chart-crosshair-container" />
-          <div id="tooltip-container" />
-          <div id="button-tooltip-container" />
           <NextScript />
         </body>
       </Html>

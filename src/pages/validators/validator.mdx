@@ -1,10 +1,15 @@
+---
+title: Creating a Core Validator
+---
+
 import { Alert } from "~/components/shared";
 
-# Creating a Core Validator
+## Overview
 
-<Alert variant="note"> This guide assumes you've completed the "[Setting Up Your
-  Node](/validators/setup)" step and synced the node using of the provided
-  options. </Alert>
+<Alert variant="note">
+  This guide assumes you've completed the [Setting Up Your Node](/validators/setup) step and synced the node using of
+  the provided options.
+</Alert>
 
 This guide is design for simplicity and does not cover the intricacies of secure
 key management. We recommend you follow best practices when it comes to secure
@@ -108,8 +113,7 @@ zetacored query staking validator $(zetacored keys show operator --bech val -a)
 ```
 
 It's possible that you don’t have enough **_azeta_** tokens to be part of the
-active set of validators in the beginning. If the status is unbonded `status:
-BOND_STATUS_UNBONDED`, you didn’t stake enough tokens `amount` when you created
+active set of validators in the beginning. If the status is unbonded `status: BOND_STATUS_UNBONDED`, you didn’t stake enough tokens `amount` when you created
 your validator.
 
 In this case, your validator is not in the active set. It cannot sign blocks and

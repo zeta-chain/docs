@@ -1,0 +1,10 @@
+{
+  "index": "Governance",
+  "overview": "Governance",
+  "text": "Text Proposal",
+  "parameter": "Parameter Change Proposal",
+  "upgrade": "Software Upgrade Proposal",
+  "submit": "Submit a Proposal",
+  "deposit": "Making a Deposit",
+  "voting": "Voting on a Proposal"
+}

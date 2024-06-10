@@ -1,38 +1,28 @@
 {
-  "index": "Home",
-  "about": "About ZetaChain",
-  "developers": "Build",
-  "users": "Use",
-  "validators": "Validate",
-  "reference": "Tools",
-  "github": {
-    "title": "GitHub",
-    "type": "page",
-    "href": "https://github.com/zeta-chain",
-    "newWindow": true
+  "index": {
+    "title": "ZetaChain Documentation",
+    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
   },
-  "whitepaper": {
-    "title": "Whitepaper",
-    "type": "page",
-    "href": "https://www.zetachain.com/whitepaper.pdf",
-    "newWindow": true
+  "developers": {
+    "title": "Build",
+    "description": "Learn how to build on ZetaChain"
   },
-  "explorer": {
-    "title": "Explorer",
-    "type": "page",
-    "href": "https://explorer.zetachain.com",
-    "newWindow": true
+  "validators": {
+    "title": "Start Validating",
+    "description": "Setup and run a ZetaChain node",
+    "variant": "fancy",
+    "navImgUrl": "/img/pages/validate.svg"
   },
-  "community": {
-    "title": "Community",
-    "type": "page",
-    "href": "https://link3.to/zetachain",
-    "newWindow": true
+  "users": {
+    "title": "Using our Products",
+    "description": "Start using our many products"
   },
-  "blog": {
-    "title": "Blog",
-    "type": "page",
-    "href": "https://blog.zetachain.com/",
-    "newWindow": true
+  "reference": {
+    "title": "Tools",
+    "description": "Useful articles to help get you up and running"
+  },
+  "about": {
+    "title": "About",
+    "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain."
   }
 }

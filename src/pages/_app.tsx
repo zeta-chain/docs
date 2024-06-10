@@ -10,7 +10,7 @@ import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
 import { useAppAnalytics } from "~/hooks/useAppAnalytics";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
-import { createEmotionCache } from "~/lib/createEmotionCache";
+import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
 import { useHydrateTheme } from "~/lib/theme/useHydrateTheme";
 import { withProviders } from "~/lib/withProviders";
 import { GlobalStyles } from "~/styles/GlobalStyles";

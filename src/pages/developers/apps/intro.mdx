@@ -1,0 +1,58 @@
+---
+title: Universal Apps
+---
+
+import { Alert } from "~/components/shared";
+
+## Overview
+
+A universal app is a smart contract on ZetaChain that is natively connected to
+other blockchains like Ethereum, BNB and Bitcoin.
+
+Unlike a regular contract, a universal app can accept contract calls, messages
+and token transfers from any connected chain. It can also trigger contract
+calls, and make token transfers on connected chains. These abilities enable
+universal apps to orchestrate complex multi-step transactions that span across
+chains.
+
+For example, a Bitcoin user can interact with a universal app to send USDC to a
+recipient on Ethereum. An Ethereum user can buy an NFT on ZetaChain and send it
+to to their account on the BNB chain.
+
+Universal apps are deployed on ZetaChain's universal EVM, which extends the EVM
+with omnichain interoperability features. This means your existing contracts
+will work out of the box on ZetaChain, and with some modifications, they can
+gain powerful omnichain capabilities.
+
+Here's an example universal app:
+
+```solidity
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+
+contract YourContract is zContract {
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // ...
+    }
+}
+```
+
+It's implemented in Solidity and uses ZetaChain's universal EVM features (like
+`onCrossChainCall`) to handle calls from connected chains.
+
+<Alert variant="tip"> For a quick hands-on introduction to building omnichain
+  apps check out "[Your First Universal App](/developers/tutorials/hello)"
+  tutorial. </Alert>
+
+One of the key advantages of a universal app is that it requires deploying only
+a single contract on ZetaChain, eliminating the need for separate contracts on
+each connected chain. This reduces development time, lowers deployment costs,
+and minimizes the potential for errors. You can focus on creating robust,
+feature-rich applications without worrying about the complexities of managing
+multiple contracts across different blockchains.

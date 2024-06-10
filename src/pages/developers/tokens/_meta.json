@@ -1,5 +1,14 @@
 {
-  "zeta": "ZETA",
-  "zrc20": "ZRC-20 on ZetaChain",
-  "erc20": "ERC-20 on ZetaChain"
+  "zeta": {
+    "title": "ZETA",
+    "description": "ZETA is the native staking, gas and governance token of ZetaChain"
+  },
+  "zrc20": {
+    "title": "ZRC-20",
+    "description": "Native gas and supported ERC-20 tokens from connected chains are represented as ZRC-20 on ZetaChain"
+  },
+  "erc20": {
+    "title": "ERC-20",
+    "description": "ZetaChain's universal EVM supports standard ERC-20 tokens"
+  }
 }

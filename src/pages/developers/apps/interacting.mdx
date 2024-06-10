@@ -1,0 +1,177 @@
+---
+title: Interacting with a Universal App
+---
+
+import { Alert } from "~/components/shared";
+
+## Calling a Universal App
+
+To call a universal app and transfer native gas tokens from a connected chain, a
+user makes a token transfer transaction to a special address called TSS.
+
+```mermaid
+flowchart LR
+  subgraph Ethereum ["Ethereum (or other EVM chain)"]
+    direction LR
+    User("User")
+    TSS("TSS Address")
+    User -- "ETH and message" --> TSS
+  end
+  subgraph Bitcoin ["Bitcoin"]
+    userBTC("User")
+    TSSBTC("TSS Address")
+    userBTC -- BTC and message --> TSSBTC
+  end
+  subgraph ZetaChain
+    systemContract("System Contract")
+    subgraph universalApp ["Universal App"]
+      onCrossChainCall("onCrossChainCall")
+    end
+    TSS --> systemContract
+    TSSBTC --> systemContract
+    systemContract --> universalApp
+  end
+```
+
+To call a universal app and transfer supported ERC-20 tokens from a connected
+chain, a user calls the `deposit` method of the ERC-20 custody contract.
+
+```mermaid
+flowchart LR
+  subgraph Ethereum ["Ethereum (or other EVM chain)"]
+    direction LR
+    User("User")
+    erc20Custody("ERC-20 Custody")
+    User -- "ERC-20 and message" --> erc20Custody
+  end
+  subgraph ZetaChain
+    systemContract("System Contract")
+    subgraph universalApp ["Universal App"]
+      onCrossChainCall("onCrossChainCall")
+    end
+    erc20Custody --> systemContract
+    systemContract --> universalApp
+  end
+```
+
+Calling a universal app executes the `onCrossChainCall` method.
+
+The message is passed as the `bytes calldata message` argument and can contain
+arbitrary data.
+
+Native gas or supported ERC-20 tokens get locked in the TSS address or ERC-20
+custody contract on connected chain. `onCrossChainCall` receives representations
+of these tokens called [ZRC-20](/developers/tokens/zrc20). For example, if you
+make a call with 1 ETH on Ethereum, a universal app will receive 1 ZRC-20 ETH.
+
+Advantages:
+
+- Bitcoin support
+- Sending messages to a TSS address is cheaper than general message passing
+- Does not require deploying contracts on connected chains. For example, a user
+  on Ethereum can call a universal app by sending ETH and a message to a TSS
+  address.
+
+Limitations:
+
+- ERC-20 custody contract accepts only supported tokens.
+- Messages can only be sent to universal apps, not from them.
+
+## Withdrawing ZRC-20 Tokens
+
+Native gas and tokens ERC-20 tokens transferred to a universal app are
+represented as ZRC-20 tokens. ZRC-20 extends ERC-20 with a `withdraw` method.
+
+```mermaid
+flowchart LR
+  subgraph ZetaChain
+    User
+    ZRC20("ZRC-20")
+  end
+  subgraph Ethereum ["Connected chain"]
+    TSS
+    erc20Custody("ERC-20 Custody")
+    Recipient1("Recipient")
+    Recipient2("Recipient")
+  end
+  User -- withdraw --> ZRC20
+  ZRC20 --> TSS --> Recipient1
+  ZRC20 --> erc20Custody --> Recipient2
+```
+
+Call the `withdraw` method to send ZRC-20 tokens back to the chain from which
+they originate. The withdrawer must have sufficient tokens to cover the
+[withdraw fee](/developers/evm/gas).
+
+## Sending Messages to/from a Universal App
+
+To send a message to or from a universal app you can also use a connector API.
+Connector is an API that offers two features:
+
+- General message passing to and from universal apps
+- Transfer of ZETA tokens to and from universal apps
+
+```mermaid
+flowchart LR
+  subgraph ZetaChain ["ZetaChain"]
+    direction LR
+    subgraph universalApp ["Universal App"]
+      onZetaMessage("onZetaMessage")
+    end
+    connector("Connector")
+    universalApp -- "ZETA and message" --> connector
+  end
+  subgraph connectedChain ["Connected chain"]
+    TSS
+    Contract("Contract")
+    connector --> TSS
+    TSS --> Contract
+  end
+```
+
+```mermaid
+flowchart LR
+  subgraph connectedChain ["Connected chain"]
+    direction LR
+    Contract("Contract")
+    connector("Connector")
+    Contract -- "ZETA and message" --> connector
+  end
+  subgraph ZetaChain ["ZetaChain"]
+    systemContract("System Contract")
+    subgraph universalApp ["Universal App"]
+      onZetaMessage("onZetaMessage")
+    end
+    connector --> systemContract
+    systemContract --> universalApp
+  end
+```
+
+Advantages:
+
+- Messages can be sent to and from universal apps
+- Messages can be sent between messaging contracts on connected chains. For
+  example, a messaging contract on Ethereum can send a message to a contract on
+  BNB chain.
+
+Limitations:
+
+- Contracts need to be deployed on connected chains to receive and send messages
+
+## Summary
+
+- Universal apps are contracts deployed on ZetaChain's EVM that can accept
+  contract calls, messages and token transfers from connected chains.
+- Universal apps can contract calls, and make token transfers on connected
+  chains.
+- A universal app can be implemented as a single contract on ZetaChain. You
+  don't need to have contracts on all connected chains.
+- You can use the connector API for general message passing to and from
+  universal apps.
+
+## Hands-on Practice
+
+Eager to start building universal apps? 🙌
+
+Jump directly into the tutorials section, and [create your first universal
+app](/developers/tutorials/hello).

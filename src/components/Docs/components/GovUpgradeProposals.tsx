@@ -1,14 +1,22 @@
 import { GitHub, InfoOutlined } from "@mui/icons-material";
-import { Box, Button, Icon, IconButton, Modal, Skeleton, Toolbar, Tooltip } from "@mui/material";
-import { Code } from "nextra/components";
-import React from "react";
+import { Box, IconButton, Modal, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
 const API: Record<NetworkType, string> = {
   testnet: "https://zetachain-testnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
   mainnet: "https://zetachain-mainnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
+};
+
+const convertIpfsLink = (link: string) => {
+  const ipfsPrefix = "ipfs://";
+  const gatewayPrefix = "https://ipfs.io/ipfs/";
+  if (link.startsWith(ipfsPrefix)) {
+    return link.replace(ipfsPrefix, gatewayPrefix);
+  }
+  return link;
 };
 
 const modalStyles = {
@@ -28,17 +36,17 @@ const modalStyles = {
 export const GovUpgradeProposals = () => {
   const [proposals, setProposals] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContents, setModalContents] = useState<any>(undefined);
-  const handleModelClose = () => setIsModalOpen(false);
+  const handleModalClose = () => setIsModalOpen(false);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const response = await fetch(API[activeTab]);
+        const response = await fetch(API[activeTab.networkType]);
         const data = await response.json();
         const softwareUpgradeProposals = data.proposals
           .filter(
@@ -64,53 +72,22 @@ export const GovUpgradeProposals = () => {
     };
 
     fetchData();
-  }, [activeTab]);
-
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
-  const convertIpfsLink = (link: string) => {
-    const ipfsPrefix = "ipfs://";
-    const gatewayPrefix = "https://ipfs.io/ipfs/";
-    if (link.startsWith(ipfsPrefix)) {
-      return link.replace(ipfsPrefix, gatewayPrefix);
-    }
-    return link;
-  };
+  }, [activeTab.networkType]);
 
   return (
-    <div className="mt-6">
-      <Modal open={isModalOpen} onClose={handleModelClose}>
+    <div className="mt-8">
+      <Modal open={isModalOpen} onClose={handleModalClose}>
         <Box sx={{ ...modalStyles }}>
           <pre style={{ overflow: "scroll" }}>{modalContents}</pre>
         </Box>
       </Modal>
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
 
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <LoadingTable rowCount={8} />
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

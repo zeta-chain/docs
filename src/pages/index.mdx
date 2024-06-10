@@ -1,28 +1,15 @@
-import { DocsHighlightBlockRack, SocialButtonsRack } from "~/components/Docs";
+---
+title: ZetaChain Documentation
+description: ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.
+---
 
-# Welcome to ZetaChain docs
+import { GetStarted, HomeHero, HomeNavigationSections } from "~/components/Home";
+import { GetSupport } from "~/components/Support";
 
-Welcome to the official documentation of ZetaChain, the Universal Blockchain and
-EVM. ZetaChain is the only decentralized blockchain and smart contract platform
-built for chain abstraction. ZetaChain supports a truly fluid, multi-chain
-crypto ecosystem, where users and developers can use and appreciate the benefits
-of any blockchain.
+<HomeHero />
 
-<DocsHighlightBlockRack />
-
-## Join our community
-
-Stay updated on the latest ZetaChain news and participate in discussions on the
-protocol, omnichain dApps, and more.
-
-<SocialButtonsRack />
-
-## Need Help?
-
-Can’t find what you’re looking for? Feel free to ask a question on our
-[Discord](https://discord.gg/zetachain). Our team and community are on there and
-ready to help.
-
-Having problems? Check [status.zetachain.com](https://status.zetachain.com) to
-see the latest status of the network and subscribe for automatic notifications
-in the future.
+<div className="flex flex-col gap-20 sm:gap-[120px]">
+  <GetStarted />
+  <HomeNavigationSections />
+  <GetSupport />
+</div>

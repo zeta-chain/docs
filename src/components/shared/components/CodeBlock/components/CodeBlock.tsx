@@ -1,10 +1,11 @@
 import { Skeleton } from "@mui/material";
 import { random, range } from "lodash-es";
-import { Code, Pre } from "nextra/components";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import tw, { styled } from "twin.macro";
 
 import { highlightCode, SupportedLanguage } from "../CodeBlock.helpers";
+import { Code } from "./Code";
+import { Pre } from "./Pre";
 
 type CodeBlockPropsBase = {
   language?: SupportedLanguage;

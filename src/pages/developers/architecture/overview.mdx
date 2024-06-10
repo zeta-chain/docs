@@ -1,6 +1,12 @@
+---
+title: Architecture
+---
+
 import Image from "next/image";
 
-# Overview
+import { basePath } from "~/lib/app.constants";
+
+## Overview
 
 At a high level, ZetaChain is a Proof of Stake (PoS) blockchain built on the
 Cosmos SDK and Tendermint PBFT consensus engine. As a result, ZetaChain enjoys
@@ -28,7 +34,7 @@ can become a node operator to participate in validation provided that enough
 bonds are staked.
 
 <Image
-  src="/img/graphs/zetachain-architecture-overview-graph.svg"
+  src={`${basePath}/img/graphs/zetachain-architecture-overview-graph.svg`}
   alt="high-level-architecture"
   width={498}
   height={387}

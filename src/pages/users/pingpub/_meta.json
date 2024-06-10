@@ -1,3 +1,5 @@
 {
-  "delegate": "Delegating to a Validator"
+  "delegate": {
+    "title": "Delegating to a Validator"
+  }
 }

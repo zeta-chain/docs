@@ -1,10 +1,34 @@
 {
-  "create-wallet": "Create a Wallet in ZetaChain",
-  "connect-wallet": "Connect Wallet in ZetaHub",
-  "get-zeta": "Get ZETA",
-  "pool": "Pool your ZETA",
-  "stake": "Delegate/Stake ZETA",
-  "enroll-zeta-xp": "Enroll in Zeta XP",
-  "earn-zeta-xp": "Earn Zeta XP",
-  "send": "Send Assets"
+  "create-wallet": {
+    "title": "Add ZetaChain to your Wallet",
+    "description": "How to add the ZetaChain network to your wallet."
+  },
+  "connect-wallet": {
+    "title": "Connect a Wallet in ZetaHub",
+    "description": "How to connect your wallet and use it in ZetaHub."
+  },
+  "get-zeta": {
+    "title": "Get ZETA",
+    "description": "How to get ZETA tokens."
+  },
+  "pool": {
+    "title": "Pool ZETA",
+    "description": "Explore ZetaChain liquidity pools."
+  },
+  "stake": {
+    "title": "Delegate/Stake ZETA",
+    "description": "Explore ZetaChain validators and delegate ZETA."
+  },
+  "enroll-zeta-xp": {
+    "title": "Enroll in Zeta XP",
+    "description": "Who to participate in the Zeta XP program. ZetaHub’s way to track your activity on the app."
+  },
+  "earn-zeta-xp": {
+    "title": "Earn Zeta XP",
+    "description": "Who to earn XP in the Zeta XP program. ZetaHub’s way to track your activity on the app."
+  },
+  "send": {
+    "title": "Send Assets",
+    "description": "The Send page allows you to move your assets in and out of the ZetaChain network."
+  }
 }

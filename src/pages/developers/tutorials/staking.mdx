@@ -1,4 +1,8 @@
-# Staking
+---
+title: Staking
+---
+
+## Overview
 
 In this tutorial you will create an omnichain contract that will be capable of
 receiving tokens from connected chains and staking them on ZetaChain. Native
@@ -396,10 +400,7 @@ await contract.deployed();
 
 // ...
 
-task("deploy", "Deploy the contract", main).addParam(
-  "chain",
-  "Chain ID (use btc_testnet for Bitcoin Testnet)"
-);
+task("deploy", "Deploy the contract", main).addParam("chain", "Chain ID (use btc_testnet for Bitcoin Testnet)");
 ```
 
 ## Tasks to Interact with the Contract

@@ -1,31 +1,26 @@
 import "swagger-ui-react/swagger-ui.css";
 
-import { Skeleton } from "@mui/material";
 import axios from "axios";
 import yaml from "js-yaml";
 import { useEffect, useState } from "react";
 import SwaggerUI from "swagger-ui-react";
 import tw, { styled } from "twin.macro";
 
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { basePath } from "~/lib/app.constants";
-import { NetworkType } from "~/lib/app.types";
-
-const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyles = { fontWeight: "normal", textDecoration: "none" };
 
 const StyledContainer = styled.div`
   .swagger-ui {
     ${tw`dark:[filter: invert(88%) hue-rotate(180deg);]`}
 
     table {
-      thead tr,
       tbody tr:nth-of-type(even) {
         ${tw`bg-grey-100/60 dark:bg-[transparent]`};
       }
 
       th,
       td {
-        ${tw`!p-2`};
+        ${tw`!p-2 border border-grey-200 dark:border-grey-600 text-left text-[#3b4151] dark:text-[#3b4151]`};
       }
     }
 
@@ -52,7 +47,7 @@ const StyledContainer = styled.div`
 `;
 
 export const OpenAPIBrowser = () => {
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [swaggerUrl, setSwaggerUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,7 +65,7 @@ export const OpenAPIBrowser = () => {
           const modifiedSwagger = { ...swaggerJson };
 
           modifiedSwagger.host =
-            activeTab === "testnet"
+            activeTab.networkType === "testnet"
               ? "zetachain-athens.blockpi.network/lcd/v1/public"
               : "zetachain.blockpi.network/lcd/v1/public";
           modifiedSwagger.schemes = ["https"];
@@ -92,37 +87,13 @@ export const OpenAPIBrowser = () => {
     };
 
     fetchSwaggerFile();
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   return (
-    <StyledContainer className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
+    <StyledContainer className="mt-8">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
-      </div>
-
-      {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
-      ) : (
-        <SwaggerUI url={swaggerUrl} />
-      )}
+      {isLoading ? <LoadingTable rowCount={1} /> : <SwaggerUI url={swaggerUrl} />}
     </StyledContainer>
   );
 };
