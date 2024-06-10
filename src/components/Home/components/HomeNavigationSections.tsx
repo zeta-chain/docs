@@ -52,7 +52,6 @@ export const HomeNavigationSections: React.FC = () => {
         return (
           <React.Fragment key={folder.route}>
             {index === folders.length - 1 && <WorkWithUs />}
-
             <NavigationSection
               title={getPageTitle(folder)}
               description={getPageDescription(folder)}
