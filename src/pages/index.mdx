@@ -5,11 +5,13 @@ description: ZetaChain is the only decentralized blockchain and smart contract p
 
 import { GetStarted, HomeHero, HomeNavigationSections } from "~/components/Home";
 import { GetSupport } from "~/components/Support";
+import { SearchModal } from "~/components/shared/components/SearchModal";
 
 <HomeHero />
 
 <div className="flex flex-col gap-20 sm:gap-[120px]">
   <GetStarted />
+  <SearchModal open handleClose={() => {}} />
   <HomeNavigationSections />
   <GetSupport />
 </div>
