@@ -4,12 +4,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useChat } from "ai/react";
-import React, { FormEvent, useState } from "react";
-
-interface ChatMessage {
-  sender: string;
-  text: string;
-}
+import React, { FormEvent } from "react";
 
 const Chat: React.FC = () => {
   const { messages, handleSubmit, input, handleInputChange } = useChat();
