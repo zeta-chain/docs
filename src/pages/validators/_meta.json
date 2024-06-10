@@ -1,9 +1,8 @@
 {
   "requirements": "Technical Requirements",
   "setup": "Setting Up a Node",
-  "state-sync": "Option 1: State-Sync",
-  "snapshot": "Option 2: Snapshot",
-  "ksync": "Option 3: KSYNC",
+  "snapshot": "Option 1: Snapshot",
+  "ksync": "Option 2: KSYNC",
   "node": "Running a Node in Production",
   "monitoring": "Validators Monitoring",
   "proposals": "Governance Upgrade Proposals",
