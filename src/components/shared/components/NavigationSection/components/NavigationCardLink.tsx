@@ -76,7 +76,7 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
           )}
 
           <h3
-            className={clsx("text-xl font-medium text-black dark:text-white", {
+            className={clsx("text-xl font-medium text-black dark:text-white line-clamp-2", {
               "flex-grow text-right": variant === "fancy",
             })}
           >
@@ -84,12 +84,12 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
           </h3>
 
           {variant === "default" && description && (
-            <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3">{description}</p>
+            <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3 sm:h-[55px]">{description}</p>
           )}
         </div>
 
-        {(readTime || readType) && (
-          <div className="flex justify-between flex-wrap">
+        {(readTime || readType || description) && (
+          <div className="flex justify-between gap-2 flex-wrap h-[24px] overflow-hidden">
             {readTime && (
               <p className="flex gap-1 items-center">
                 <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
