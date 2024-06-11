@@ -68,7 +68,8 @@
     "@next/eslint-plugin-next": "12.3.4",
     "@types/eslint": "8.56.2",
     "@types/lodash-es": "4.17.12",
-    "@types/node": "17.0.45",
+    "@types/node": "20.14.2",
+    "@types/puppeteer": "7.0.4",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
     "@types/swagger-ui-react": "4.18.3",
@@ -92,6 +93,7 @@
     "eslint-plugin-unused-imports": "3.0.0",
     "postcss": "8.4.33",
     "prettier": "2.6.2",
+    "puppeteer": "22.10.0",
     "rimraf": "5.0.5"
   },
   "resolutions": {
