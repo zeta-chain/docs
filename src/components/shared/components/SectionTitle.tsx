@@ -49,7 +49,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
       <div className="h-full flex flex-col justify-between gap-6">
         <div className="flex items-center flex-grow relative">
           {navImgUrl && (
-            <Image src={`$${basePath}${navImgUrl}`} alt={title} layout="fill" objectFit="contain" className="!m-0" />
+            <Image src={`${basePath}${navImgUrl}`} alt={title} layout="fill" objectFit="contain" className="!m-0" />
           )}
         </div>
 
