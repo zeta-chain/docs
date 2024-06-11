@@ -18,6 +18,7 @@ export type NavigationCardLinkProps = {
   isMainPage?: boolean;
   variant?: NavigationSectionVariant;
   withScrollToTop?: boolean;
+  withMetaProps?: boolean;
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
@@ -32,6 +33,7 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   isMainPage,
   variant = "default",
   withScrollToTop = false,
+  withMetaProps = true,
   ...linkProps
 }) => {
   const dispatch = useAppDispatch();
@@ -88,7 +90,7 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
           )}
         </div>
 
-        {(readTime || readType || description) && (
+        {withMetaProps && (readTime || readType || description) && (
           <div className="flex justify-between gap-2 flex-wrap h-[24px] overflow-hidden">
             {readTime && (
               <p className="flex gap-1 items-center">
