@@ -8,6 +8,7 @@ import { NavigationSectionVariant } from "~/lib/helpers/nextra";
 import { mainNavRoutes } from "../../Layout";
 import { SectionTitle, SectionTitleProps } from "../../SectionTitle";
 import { NavigationCardLink, NavigationCardLinkProps } from "./NavigationCardLink";
+import { basePath } from "~/lib/app.constants";
 
 type NavigationSectionProps = Omit<SectionTitleProps, "title"> & {
   title?: string;
@@ -42,7 +43,7 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
               colorClass={colorClass}
               link={link}
               variant={variant}
-              navImgUrl={navImgUrl}
+              navImgUrl={`${basePath}${navImgUrl}`}
             />
           )}
         </div>
