@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { basePath } from "~/lib/app.constants";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
 
 import { mainNavRoutes } from "../../Layout";
 import { SectionTitle, SectionTitleProps } from "../../SectionTitle";
 import { NavigationCardLink, NavigationCardLinkProps } from "./NavigationCardLink";
-import { basePath } from "~/lib/app.constants";
 
 type NavigationSectionProps = Omit<SectionTitleProps, "title"> & {
   title?: string;
