@@ -2,6 +2,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import { useMemo } from "react";
 
+import { basePath } from "~/lib/app.constants";
+
 import { PrimaryLink } from "./Link";
 
 export type SectionTitleLink = {
@@ -46,7 +48,9 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
     return (
       <div className="h-full flex flex-col justify-between gap-6">
         <div className="flex items-center flex-grow relative">
-          {navImgUrl && <Image src={navImgUrl} alt={title} layout="fill" objectFit="contain" className="!m-0" />}
+          {navImgUrl && (
+            <Image src={`${basePath}${navImgUrl}`} alt={title} layout="fill" objectFit="contain" className="!m-0" />
+          )}
         </div>
 
         {titleComponent}
