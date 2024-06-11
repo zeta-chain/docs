@@ -3,6 +3,7 @@ import { DocsThemeConfig } from "nextra-theme-docs";
 import {
   AppHead,
   Code,
+  Heading,
   HeadingLink,
   MainContentWrapper,
   Pre,
@@ -45,10 +46,10 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     // If there are any h1 (^#\s) rendered in the markdown, it will be rendered as h2 to avoid duplication with Hero component
     h1: (props) => <HeadingLink tag="h2" {...props} />,
     h2: (props) => <HeadingLink tag="h2" {...props} />,
-    h3: (props) => <HeadingLink tag="h3" {...props} />,
-    h4: (props) => <HeadingLink tag="h4" {...props} />,
-    h5: (props) => <HeadingLink tag="h5" {...props} />,
-    h6: (props) => <HeadingLink tag="h6" {...props} />,
+    h3: (props) => <Heading tag="h3" {...props} />,
+    h4: (props) => <Heading tag="h4" {...props} />,
+    h5: (props) => <Heading tag="h5" {...props} />,
+    h6: (props) => <Heading tag="h6" {...props} />,
 
     p: (props) => (
       <p className="text-base leading-[160%] text-grey-400 dark:text-grey-300 mt-8 first:mt-0" {...props} />
