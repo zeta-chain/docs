@@ -29,7 +29,7 @@ const StyledAlert = styled.div<{ variant: AlertVariant }>`
     ${tw`font-medium text-sm leading-[135%]`}
 
     ${({ variant }) => (variant === "note" || variant === "tip") && tw`text-grey-400 dark:text-grey-300 mt-[3px]`};
-    ${({ variant }) => variant === "warning" && tw`text-black mt-[3px]`};
+    ${({ variant }) => variant === "warning" && tw`text-black mt-0.5`};
     ${({ variant }) => variant === "danger" && tw`text-white dark:text-black mt-0.5`};
 
     .styled-code {

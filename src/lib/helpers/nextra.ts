@@ -41,10 +41,15 @@ export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]
 };
 
 export type PageMeta = {
-  title?: string;
-  description?: string;
-  readTime?: string;
-  readType?: string;
+  meta?: {
+    title?: string;
+    description?: string;
+    readTime?: string;
+    readType?: string;
+    relatedTutorialUrl?: string;
+    heroImgUrl?: string;
+    heroImgWidth?: number;
+  };
 };
 
 export type PageIndex = {
@@ -66,19 +71,11 @@ export const getDirectories = (allPages: Page[]) => {
       if (page.kind === "Folder") {
         flattenDirectories(page.children);
       } else {
-        const directory = {
-          ...(typeof page.meta?.title === "string" ? { title: page.meta?.title } : {}),
-          ...(typeof page.meta?.description === "string" ? { description: page.meta?.description } : {}),
-          ...(typeof page.meta?.readTime === "string" ? { readTime: page.meta?.readTime } : {}),
-          ...(typeof page.meta?.readType === "string" ? { readType: page.meta?.readType } : {}),
-          ...page,
-        };
-
-        flatDirectories.push(directory);
+        flatDirectories.push(page);
 
         directoriesByRoute[page.route] = {
           index: flatDirectories.length - 1,
-          ...directory,
+          ...page,
         };
       }
     }

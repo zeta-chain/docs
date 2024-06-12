@@ -25,7 +25,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
   const flatDirectories = useSelector(selectFlatDirectories);
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
-  const { prevPage, nextPage } = useMemo(() => {
+  const { prevPage, nextPage, relatedTutorial } = useMemo(() => {
     const currentDirectory = directoriesByRoute[route];
 
     if (!route || !currentDirectory) return { prevPage: null, nextPage: null };
@@ -41,7 +41,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
 
     if (prevDirectory && prevDirectory.route !== nextPage?.route) {
       prevPage = {
-        title: directoriesByRoute[prevDirectory.route].title,
+        title: directoriesByRoute[prevDirectory.route].meta?.title,
         route: prevDirectory.route,
       };
     } else {
@@ -49,14 +49,25 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
       const parentRoute = parentDirectory?.route || "/";
 
       prevPage = {
-        title: directoriesByRoute[parentRoute].title,
+        title: directoriesByRoute[parentRoute].meta?.title,
         route: directoriesByRoute[parentRoute].route,
       };
     }
 
+    const { frontMatter, meta } = currentDirectory;
+
+    const relatedTutorialRoute = frontMatter?.relatedTutorialUrl
+      ? String(frontMatter.relatedTutorialUrl)
+      : meta?.relatedTutorialUrl
+      ? String(meta.relatedTutorialUrl)
+      : undefined;
+
+    const relatedTutorial = relatedTutorialRoute ? directoriesByRoute[relatedTutorialRoute] : null;
+
     return {
       prevPage,
       nextPage,
+      relatedTutorial,
     };
   }, [flatDirectories, directoriesByRoute, route, prevRoute]);
 
@@ -67,8 +78,38 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
     [directoriesByRoute, route]
   );
 
+  const continueLearningNavItems = useMemo(() => {
+    const navItems = [];
+
+    if (nextPage) {
+      navItems.push({
+        topTitle: "Next",
+        title: nextPage.meta?.title || "Next Page",
+        description: nextPage.meta?.description,
+        readTime: nextPage.meta?.readTime,
+        readType: nextPage.meta?.readType,
+        href: nextPage.route,
+        withScrollToTop: true,
+      });
+    }
+
+    if (relatedTutorial) {
+      navItems.push({
+        topTitle: "Tutorial",
+        title: relatedTutorial.meta?.title || "Related Tutorial",
+        description: relatedTutorial.meta?.description,
+        readTime: relatedTutorial.meta?.readTime,
+        readType: relatedTutorial.meta?.readType,
+        href: relatedTutorial.route,
+        withScrollToTop: true,
+      });
+    }
+
+    return navItems;
+  }, [nextPage, relatedTutorial]);
+
   const shouldRenderPrevLink = !isMainPage && !!prevPage;
-  const shouldRenderNextSection = !isMainPage && !isSubCategoryPage && !!nextPage;
+  const shouldRenderNextSection = !isMainPage && !isSubCategoryPage && !!continueLearningNavItems.length;
 
   return (
     <>
@@ -91,17 +132,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
           <NavigationSection
             title="Continue Learning"
             description="Continue with the next part or try a related tutorial"
-            navItems={[
-              {
-                topTitle: "Next",
-                title: nextPage.title || "Next Page",
-                description: nextPage.description,
-                readTime: nextPage.readTime,
-                readType: nextPage.readType,
-                href: nextPage.route,
-                withScrollToTop: true,
-              },
-            ]}
+            navItems={continueLearningNavItems}
           />
         </div>
       )}

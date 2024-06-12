@@ -54,25 +54,47 @@ export const Hero: React.FC = () => {
   const { title, description, readTime, readType, imgUrl, imgWidth } = useMemo(() => {
     if (!currentDirectory) return {};
 
-    const {
-      frontMatter,
-      title: pageTitle,
-      description: pageDescription,
-      readTime: pageReadTime,
-      readType: pageReadType,
-    } = currentDirectory;
+    const { frontMatter, meta } = currentDirectory;
+
+    const title = frontMatter?.title ? String(frontMatter.title) : meta?.title ? String(meta.title) : undefined;
+
+    const description = frontMatter?.description
+      ? String(frontMatter.description)
+      : meta?.description
+      ? String(meta.description)
+      : undefined;
+
+    const readTime = frontMatter?.readTime
+      ? String(frontMatter.readTime)
+      : meta?.readTime
+      ? String(meta.readTime)
+      : undefined;
+
+    const readType = frontMatter?.readType
+      ? String(frontMatter.readType)
+      : meta?.readType
+      ? String(meta.readType)
+      : undefined;
+
+    const imgUrl = frontMatter?.heroImgUrl
+      ? String(frontMatter.heroImgUrl)
+      : meta?.heroImgUrl
+      ? String(meta.heroImgUrl)
+      : undefined;
+
+    const imgWidth = frontMatter?.heroImgWidth
+      ? Number(frontMatter.heroImgWidth)
+      : meta?.heroImgWidth
+      ? Number(meta.heroImgWidth)
+      : undefined;
 
     return {
-      title: frontMatter?.title ? String(frontMatter.title) : pageTitle ? String(pageTitle) : undefined,
-      description: frontMatter?.description
-        ? String(frontMatter.description)
-        : pageDescription
-        ? String(pageDescription)
-        : undefined,
-      readTime: frontMatter?.readTime ? String(frontMatter.readTime) : pageReadTime ? String(pageReadTime) : undefined,
-      readType: frontMatter?.readType ? String(frontMatter.readType) : pageReadType ? String(pageReadType) : undefined,
-      imgUrl: frontMatter?.heroImgUrl ? String(frontMatter.heroImgUrl) : undefined,
-      imgWidth: frontMatter?.heroImgWidth ? Number(frontMatter.heroImgWidth) : undefined,
+      title,
+      description,
+      readTime,
+      readType,
+      imgUrl,
+      imgWidth,
     };
   }, [currentDirectory]);
 
