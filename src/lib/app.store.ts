@@ -5,12 +5,10 @@ import { useDispatch } from "react-redux";
 import { isVercelProd } from "./app.constants";
 import { directoriesReducer } from "./directories/directories.redux";
 import { scrollToPageTopReducer } from "./scroll-to-page-top/scroll-to-page-top.redux";
-import { themeReducer } from "./theme/theme.redux";
 
 export const makeStore = () =>
   configureStore({
     reducer: {
-      theme: themeReducer,
       directories: directoriesReducer,
       scrollToPageTop: scrollToPageTopReducer,
     },

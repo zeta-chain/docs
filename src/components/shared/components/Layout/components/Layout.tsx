@@ -1,11 +1,8 @@
-import clsx from "clsx";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { PropsWithChildren, useMemo } from "react";
 import tw, { styled } from "twin.macro";
 
 import { useScrollToPageTop } from "~/hooks/useScrollToPageTop";
-import { themeSelectors } from "~/lib/theme/theme.redux.selectors";
 
 import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
@@ -198,21 +195,8 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
 
   useScrollToPageTop();
 
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
-
-  const isDarkMode = useSelector(themeSelectors.selectIsDarkMode);
-
   return (
     <LayoutContainer className={className} isMainPage={isMainPage}>
-      {!isMounted && (
-        <div
-          className={clsx("absolute inset-0 z-[999999999] w-screen h-screen", {
-            "bg-black": isDarkMode,
-            "bg-white": !isDarkMode,
-          })}
-        />
-      )}
       <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>
   );

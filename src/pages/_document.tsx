@@ -35,7 +35,7 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html className="dark">
         <Head />
 
         <body className="no-scrollbar">
