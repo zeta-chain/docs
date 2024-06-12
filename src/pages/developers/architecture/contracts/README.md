@@ -20,7 +20,7 @@ import { getAddress } from "@zetachain/protocol-contracts";
 getAddress("tss", "zeta_testnet");
 ```
 
-Getting a ZRC-20 BSC USDT on ZetaChain Mainnet Beta:
+Getting a ZRC-20 BSC USDT on ZetaChain Mainnet:
 
 ```ts
 import { getAddress } from "@zetachain/protocol-contracts";
