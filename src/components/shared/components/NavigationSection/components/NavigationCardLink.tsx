@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import Link, { LinkProps as NextLinkProps } from "next/link";
 
+import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { useAppDispatch } from "~/lib/app.store";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
 import {
@@ -37,6 +38,8 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   withScrollToTop = false,
   ...linkProps
 }) => {
+  const { upSm } = useCurrentBreakpoint();
+
   const dispatch = useAppDispatch();
 
   return (
@@ -89,20 +92,22 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
             {title}
           </h3>
 
-          {variant === "default" && description && (
+          {variant === "default" && (upSm || (!upSm && description)) && (
             <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3 sm:h-[55px]">{description}</p>
           )}
         </div>
 
-        {(readTime || readType || description) && (
-          <div className="flex justify-between gap-2 flex-wrap h-[24px] overflow-hidden">
-            {readTime && (
-              <p className="flex gap-1 items-center">
-                <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
-              </p>
-            )}
+        {(upSm || (!upSm && (readTime || readType))) && (
+          <div className="flex justify-between gap-2 flex-wrap sm:h-[24px] overflow-hidden">
+            <p className="flex gap-1 items-center">
+              {readTime && (
+                <>
+                  <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
+                </>
+              )}
+            </p>
 
-            {readType && <p className="text-black dark:text-white">{readType}</p>}
+            <p className="text-black dark:text-white">{readType}</p>
           </div>
         )}
       </div>
