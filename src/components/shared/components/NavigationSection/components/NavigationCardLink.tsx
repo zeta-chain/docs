@@ -1,15 +1,18 @@
 import clsx from "clsx";
 import Link, { LinkProps as NextLinkProps } from "next/link";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { useAppDispatch } from "~/lib/app.store";
+import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
 import {
   setScrollPositionFromBottom,
   setShouldScrollToPageTop,
 } from "~/lib/scroll-to-page-top/scroll-to-page-top.redux";
 
-import { IconArticleRandom, IconTime } from "../../Icons";
+import { DeterministicIconArticle, IconTime } from "../../Icons";
 
 export type NavigationCardLinkProps = {
   title: string;
@@ -42,6 +45,9 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
 
   const dispatch = useAppDispatch();
 
+  const directoriesByRoute = useSelector(selectDirectoriesByRoute);
+  const articleIndex = useMemo(() => directoriesByRoute[linkProps.href]?.index, [directoriesByRoute, linkProps.href]);
+
   return (
     <Link
       {...linkProps}
@@ -65,7 +71,9 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
         }
       }}
     >
-      <div className={clsx({ "flex-grow": variant === "default" })}>{icon || <IconArticleRandom />}</div>
+      <div className={clsx({ "flex-grow": variant === "default" })}>
+        {icon || <DeterministicIconArticle index={articleIndex} />}
+      </div>
 
       <div
         className={clsx("flex flex-col", {
