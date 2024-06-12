@@ -19,7 +19,7 @@ const variantToIcon: Record<AlertVariant, ReactNode> = {
 };
 
 const StyledAlert = styled.div<{ variant: AlertVariant }>`
-  ${tw`mt-8 p-4 md:p-8 rounded-lg flex items-center`}
+  ${tw`mt-8 first:mt-0 p-4 md:p-8 rounded-lg flex items-center`}
 
   ${({ variant }) => (variant === "note" || variant === "tip") && tw`border border-grey-200 dark:border-grey-600`};
   ${({ variant }) => variant === "warning" && tw`bg-warning-500 dark:bg-warning-200`};

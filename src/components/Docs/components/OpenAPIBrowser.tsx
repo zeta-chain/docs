@@ -90,7 +90,7 @@ export const OpenAPIBrowser = () => {
   }, [activeTab.networkType]);
 
   return (
-    <StyledContainer className="mt-8">
+    <StyledContainer className="mt-8 first:mt-0">
       <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? <LoadingTable rowCount={1} /> : <SwaggerUI url={swaggerUrl} />}

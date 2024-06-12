@@ -93,7 +93,7 @@ export const ObserverList = () => {
   }, [findMoniker, observers]);
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 first:mt-0">
       <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {isLoading ? (

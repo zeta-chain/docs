@@ -35,7 +35,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     // Render custom components for each html element
     // ...
     table: (props) => (
-      <div className="overflow-x-auto mt-8">
+      <div className="overflow-x-auto mt-8 first:mt-0">
         <table {...props} />
       </div>
     ),
@@ -59,7 +59,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     li: (props) => (
       <li className="my-2 text-base leading-[160%] text-grey-400 dark:text-grey-300 relative" {...props} />
     ),
-    hr: (props) => <hr className="my-8 border-t border-grey-200 dark:border-grey-600" {...props} />,
+    hr: (props) => <hr className="my-8 first:mt-0 border-t border-grey-200 dark:border-grey-600" {...props} />,
     blockquote: (props) => (
       <blockquote
         className="mt-8 first:mt-0 py-4 px-6 border-l border-[#E34ED6] dark:border-[#00C6EE] text-grey-400 dark:text-grey-300"

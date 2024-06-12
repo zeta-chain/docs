@@ -64,7 +64,7 @@ export const NetworkDetails = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 first:mt-0">
       <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <NetworkTable networkData={networkDetails[activeTab.networkType]} />

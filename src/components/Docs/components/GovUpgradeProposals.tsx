@@ -75,7 +75,7 @@ export const GovUpgradeProposals = () => {
   }, [activeTab.networkType]);
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 first:mt-0">
       <Modal open={isModalOpen} onClose={handleModalClose}>
         <Box sx={{ ...modalStyles }}>
           <pre style={{ overflow: "scroll" }}>{modalContents}</pre>
