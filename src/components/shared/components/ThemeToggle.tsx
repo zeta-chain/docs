@@ -1,6 +1,4 @@
 import clsx from "clsx";
-import { useTheme as useNextraTheme } from "nextra-theme-docs";
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { useAppDispatch } from "~/lib/app.store";
@@ -13,12 +11,6 @@ export const ThemeToggle: React.FC<{ className?: string }> = ({ className }) => 
   const dispatch = useAppDispatch();
 
   const isDarkMode = useSelector(themeSelectors.selectIsDarkMode);
-
-  const { setTheme: setNextraTheme } = useNextraTheme();
-
-  useEffect(() => {
-    setNextraTheme(isDarkMode ? "dark" : "light");
-  }, [isDarkMode, setNextraTheme]);
 
   return (
     <button
