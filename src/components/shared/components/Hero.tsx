@@ -1,13 +1,15 @@
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useConfig } from "nextra-theme-docs";
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import tw, { styled } from "twin.macro";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { basePath } from "~/lib/app.constants";
+import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
+import { IconTime } from "./Icons";
 import { mainNavRoutes } from "./Layout";
 
 export const StyledHero = styled.div`
@@ -23,12 +25,14 @@ export const StyledHero = styled.div`
 `;
 
 /**
- * @description Hero component rendered at the top of a page that has frontMatter configuration.
+ * @description Hero component rendered at the top of a page. Configured with _meta.json, or overwritten with frontMatter.
  *
  * Example usage:
  * ---
  * title: "Article Title"
  * description: "Article Description"
+ * readTime: "5 min"
+ * readType: "Beginner"
  * heroImgUrl: "/img/image-path.svg"
  * heroImgWidth: 123
  * ---
@@ -36,20 +40,41 @@ export const StyledHero = styled.div`
 export const Hero: React.FC = () => {
   const { route } = useRouter();
   const { upLg } = useCurrentBreakpoint();
-  const { frontMatter, title: pageTitle } = useConfig();
+
+  const directoriesByRoute = useSelector(selectDirectoriesByRoute);
+  const currentDirectory = useMemo(() => directoriesByRoute[route], [directoriesByRoute, route]);
 
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
   const isHomePage = useMemo(() => ["/"].includes(route), [route]);
-  const isSubCategoryPage = frontMatter?.pageType === "sub-category";
+  const isSubCategoryPage = useMemo(
+    () => currentDirectory?.frontMatter?.pageType === "sub-category",
+    [currentDirectory]
+  );
 
-  const { title, description, imgUrl, imgWidth } = useMemo(() => {
+  const { title, description, readTime, readType, imgUrl, imgWidth } = useMemo(() => {
+    if (!currentDirectory) return {};
+
+    const {
+      frontMatter,
+      title: pageTitle,
+      description: pageDescription,
+      readTime: pageReadTime,
+      readType: pageReadType,
+    } = currentDirectory;
+
     return {
-      title: frontMatter.title ? String(frontMatter.title) : pageTitle ? String(pageTitle) : undefined,
-      description: frontMatter.description ? String(frontMatter.description) : undefined,
-      imgUrl: frontMatter.heroImgUrl ? String(frontMatter.heroImgUrl) : undefined,
-      imgWidth: frontMatter.heroImgWidth ? Number(frontMatter.heroImgWidth) : undefined,
+      title: frontMatter?.title ? String(frontMatter.title) : pageTitle ? String(pageTitle) : undefined,
+      description: frontMatter?.description
+        ? String(frontMatter.description)
+        : pageDescription
+        ? String(pageDescription)
+        : undefined,
+      readTime: frontMatter?.readTime ? String(frontMatter.readTime) : pageReadTime ? String(pageReadTime) : undefined,
+      readType: frontMatter?.readType ? String(frontMatter.readType) : pageReadType ? String(pageReadType) : undefined,
+      imgUrl: frontMatter?.heroImgUrl ? String(frontMatter.heroImgUrl) : undefined,
+      imgWidth: frontMatter?.heroImgWidth ? Number(frontMatter.heroImgWidth) : undefined,
     };
-  }, [frontMatter]);
+  }, [currentDirectory]);
 
   if (isHomePage || !title) return null;
 
@@ -67,7 +92,23 @@ export const Hero: React.FC = () => {
         })}
       >
         <h1>{title}</h1>
+
         {description && <div className="description">{description}</div>}
+
+        {(readTime || readType) && (
+          <div className="flex gap-2">
+            {readTime && (
+              <p className="flex gap-1 items-center">
+                <IconTime className="text-grey-300 dark:text-grey-400" />
+                <span className="text-black dark:text-grey-300">{readTime}</span>
+              </p>
+            )}
+
+            <div className="relative top-[3px] w-[1px] h-[calc(100%-6px)] bg-grey-200 dark:bg-grey-600" />
+
+            {readType && <p className="text-black dark:text-grey-300">{readType}</p>}
+          </div>
+        )}
       </div>
 
       {imgUrl && (

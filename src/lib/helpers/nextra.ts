@@ -53,7 +53,9 @@ export type PageIndex = {
 
 export type PageWithMeta = PageMeta & Page;
 
-export type DirectoriesByRoute = Record<string, PageIndex & PageWithMeta>;
+export type Directory = PageIndex & PageWithMeta & { frontMatter?: { [key: string]: any } };
+
+export type DirectoriesByRoute = Record<string, Directory>;
 
 export const getDirectories = (allPages: Page[]) => {
   const flatDirectories: PageWithMeta[] = [];

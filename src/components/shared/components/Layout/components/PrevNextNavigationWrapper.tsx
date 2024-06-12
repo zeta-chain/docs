@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useConfig } from "nextra-theme-docs";
 import { PropsWithChildren, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { usePrevious } from "react-use";
@@ -20,7 +19,6 @@ type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
  */
 export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps> = ({ children }) => {
   const { route } = useRouter();
-  const { frontMatter } = useConfig();
 
   const prevRoute = usePrevious(route);
 
@@ -28,9 +26,9 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
   const { prevPage, nextPage } = useMemo(() => {
-    if (!route || !directoriesByRoute[route]) return { prevPage: null, nextPage: null };
-
     const currentDirectory = directoriesByRoute[route];
+
+    if (!route || !currentDirectory) return { prevPage: null, nextPage: null };
 
     const isPrevRouteCurrent = prevRoute === route;
     const isPrevRouteChildren = prevRoute ? countRouteSegments(prevRoute) > countRouteSegments(route) : false;
@@ -63,7 +61,12 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
   }, [flatDirectories, directoriesByRoute, route, prevRoute]);
 
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
-  const isSubCategoryPage = frontMatter?.pageType === "sub-category";
+
+  const isSubCategoryPage = useMemo(
+    () => directoriesByRoute[route]?.frontMatter?.pageType === "sub-category",
+    [directoriesByRoute, route]
+  );
+
   const shouldRenderPrevLink = !isMainPage && !!prevPage;
   const shouldRenderNextSection = !isMainPage && !isSubCategoryPage && !!nextPage;
 
