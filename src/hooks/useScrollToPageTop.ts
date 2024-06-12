@@ -3,8 +3,14 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { useAppDispatch } from "../lib/app.store";
-import { setShouldScrollToPageTop } from "../lib/scroll-to-page-top/scroll-to-page-top.redux";
-import { selectShouldScrollToTop } from "../lib/scroll-to-page-top/scroll-to-page-top.selectors";
+import {
+  setScrollPositionFromBottom,
+  setShouldScrollToPageTop,
+} from "../lib/scroll-to-page-top/scroll-to-page-top.redux";
+import {
+  selectScrollPositionFromBottom,
+  selectShouldScrollToTop,
+} from "../lib/scroll-to-page-top/scroll-to-page-top.selectors";
 
 export const useScrollToPageTop = () => {
   const router = useRouter();
@@ -12,17 +18,19 @@ export const useScrollToPageTop = () => {
   const dispatch = useAppDispatch();
 
   const shouldScrollToTop = useSelector(selectShouldScrollToTop);
+  const scrollPositionFromBottom = useSelector(selectScrollPositionFromBottom);
 
   useEffect(() => {
     const handleRouteChangeComplete = () => {
       if (shouldScrollToTop) {
-        window.scrollTo(0, document.body.scrollHeight);
+        window.scrollTo(0, document.documentElement.scrollHeight - scrollPositionFromBottom);
 
         setTimeout(() => {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }, 100);
 
         dispatch(setShouldScrollToPageTop(false));
+        dispatch(setScrollPositionFromBottom(0));
       }
     };
 

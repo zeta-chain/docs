@@ -3,7 +3,10 @@ import Link, { LinkProps as NextLinkProps } from "next/link";
 
 import { useAppDispatch } from "~/lib/app.store";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
-import { setShouldScrollToPageTop } from "~/lib/scroll-to-page-top/scroll-to-page-top.redux";
+import {
+  setScrollPositionFromBottom,
+  setShouldScrollToPageTop,
+} from "~/lib/scroll-to-page-top/scroll-to-page-top.redux";
 
 import { IconArticleRandom, IconTime } from "../../Icons";
 
@@ -52,6 +55,9 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
       )}
       onClick={() => {
         if (withScrollToTop) {
+          const scrollPositionFromBottom = document.documentElement.scrollHeight - window.scrollY;
+
+          dispatch(setScrollPositionFromBottom(scrollPositionFromBottom));
           dispatch(setShouldScrollToPageTop(true));
         }
       }}
