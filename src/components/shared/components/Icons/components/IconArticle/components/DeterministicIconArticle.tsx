@@ -280,7 +280,7 @@ const shuffledIcons = shuffleArray(articleIcons, ARTICLE_ITEM_SEED);
 function getIconForId(shuffledIcons: JSX.Element[], index?: number): JSX.Element | null {
   if (typeof index !== "number") return null;
 
-  const iconIndex = index % (articleIcons.length - 1);
+  const iconIndex = index % articleIcons.length;
 
   return shuffledIcons[iconIndex];
 }
