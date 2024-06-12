@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import tw, { styled } from "twin.macro";
 
 import { useScrollToPageTop } from "~/hooks/useScrollToPageTop";
@@ -195,8 +195,12 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
 
   useScrollToPageTop();
 
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
   return (
     <LayoutContainer className={className} isMainPage={isMainPage}>
+      {!isMounted && <div className="absolute inset-0 z-[999999999] w-screen h-screen initial-overlay" />}
       <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>
   );
