@@ -25,6 +25,7 @@ export type NavigationCardLinkProps = {
   isMainPage?: boolean;
   variant?: NavigationSectionVariant;
   withScrollToTop?: boolean;
+  itemIndex?: number;
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
@@ -39,6 +40,7 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   isMainPage,
   variant = "default",
   withScrollToTop = false,
+  itemIndex,
   ...linkProps
 }) => {
   const { upSm } = useCurrentBreakpoint();
@@ -46,7 +48,10 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   const dispatch = useAppDispatch();
 
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
-  const articleIndex = useMemo(() => directoriesByRoute[linkProps.href]?.index, [directoriesByRoute, linkProps.href]);
+  const articleIndex = useMemo(
+    () => directoriesByRoute[linkProps.href]?.index || itemIndex || 0,
+    [directoriesByRoute, linkProps.href]
+  );
 
   return (
     <Link
