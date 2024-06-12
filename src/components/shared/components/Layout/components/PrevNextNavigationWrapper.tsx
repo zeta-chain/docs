@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { getAllPages } from "nextra/context";
 import { useConfig } from "nextra-theme-docs";
 import { PropsWithChildren, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { usePrevious } from "react-use";
 
-import { countRouteSegments, getFlatDirectories, getValidParentDirectory } from "~/lib/helpers/nextra";
+import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directories/directories.selectors";
+import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
 
 import { IconArrowNarrowRight } from "../../Icons";
 import { NavigationSection } from "../../NavigationSection";
@@ -20,11 +21,11 @@ type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
 export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps> = ({ children }) => {
   const { route } = useRouter();
   const { frontMatter } = useConfig();
-  const allPages = getAllPages();
 
   const prevRoute = usePrevious(route);
 
-  const { flatDirectories, directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
+  const flatDirectories = useSelector(selectFlatDirectories);
+  const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
   const { prevPage, nextPage } = useMemo(() => {
     if (!route || !directoriesByRoute[route]) return { prevPage: null, nextPage: null };

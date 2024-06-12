@@ -1,4 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+const SCROLL_TO_PAGE_SLICE_NAME = "scroll-to-page-top";
 
 type ScrollToPageTopState = {
   shouldScrollToTop: boolean;
@@ -9,11 +11,11 @@ const initialState: ScrollToPageTopState = {
 };
 
 export const scrollToPageTopSlice = createSlice({
-  name: "scroll-to-page-top",
+  name: SCROLL_TO_PAGE_SLICE_NAME,
   initialState,
   reducers: {
-    setShouldScrollToPageTop: (state, action) => {
-      state.shouldScrollToTop = action.payload;
+    setShouldScrollToPageTop: (state, { payload }: PayloadAction<boolean>) => {
+      state.shouldScrollToTop = payload;
     },
   },
 });

@@ -40,22 +40,22 @@ export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]
   return mdxPages;
 };
 
-type PageMeta = {
+export type PageMeta = {
   title?: string;
   description?: string;
   readTime?: string;
   readType?: string;
 };
 
-type PageIndex = {
+export type PageIndex = {
   index: number;
 };
 
-type PageWithMeta = PageMeta & Page;
+export type PageWithMeta = PageMeta & Page;
 
-type DirectoriesByRoute = Record<string, PageIndex & PageWithMeta>;
+export type DirectoriesByRoute = Record<string, PageIndex & PageWithMeta>;
 
-export const getFlatDirectories = (allPages: Page[]) => {
+export const getDirectories = (allPages: Page[]) => {
   const flatDirectories: PageWithMeta[] = [];
   const directoriesByRoute: DirectoriesByRoute = {};
 
