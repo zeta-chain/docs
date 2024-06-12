@@ -33,7 +33,7 @@ const getStartedPages: {
 export const GetStarted: React.FC = () => {
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
-  const pagesWithMeta = useMemo(() => {
+  const getStartedItems = useMemo(() => {
     const pages = getStartedPages.map((page) => {
       const directory = directoriesByRoute[page.href];
 
@@ -64,13 +64,13 @@ export const GetStarted: React.FC = () => {
     return filteredPages;
   }, [directoriesByRoute]);
 
-  if (!directoriesByRoute || !pagesWithMeta.length) return null;
+  if (!directoriesByRoute || !getStartedItems.length) return null;
 
   return (
     <NavigationSection
       title="Get Started"
       description="Dive into the basics of ZetaChain"
-      navItems={pagesWithMeta}
+      navItems={getStartedItems}
       lastItemEmbellishment
     />
   );
