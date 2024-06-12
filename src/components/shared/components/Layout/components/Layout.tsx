@@ -74,8 +74,6 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
       .nextra-search {
         ${tw`block w-full sm:w-[250px] transition-opacity`};
 
-        ${({ isMainPage }) => !isMainPage && tw`sm:opacity-0 sm:pointer-events-none`};
-
         input {
           ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
                focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300 text-sm pl-10`};
@@ -121,7 +119,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
   .nextra-content main {
     ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] max-w-none`};
 
-    ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-12`)};
+    ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-[120px]`)};
   }
 
   /* Hide Nextra docs theme components */
