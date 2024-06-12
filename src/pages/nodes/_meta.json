@@ -1,30 +1,14 @@
 {
   "index": {
     "title": "Operate",
-    "description": "Become one of the important pieces of ZetaChain operation by validating transactions for the chain. It's easy to get setup and started on our testnet and mainnet."
+    "description": "Become an important part of the ZetaChain network by operating an node. It’s easy to get started on Testnet or Mainnet"
   },
-  "requirements": {
-    "title": "Technical Requirements",
-    "description": "Before you start running a node, make sure you have the following technical requirements.",
-    "readTime": "5 min",
-    "readType": "Beginner"
+  "start-here": {
+    "title": "Start Here",
+    "description": "These docs will provide you with all the necessary steps to successfully set up your node"
   },
-  "setup": {
-    "title": "Setting Up a Node",
-    "description": "A guide to set up a ZetaChain Mainnet or Testnet node.",
-    "readTime": "30 min",
-    "readType": "Intermediate"
-  },
-  "syncing": {
-    "title": "Syncing a Node",
-    "description": "Syncing a node using snapshots or KSYNC.",
-    "readTime": "15 min",
-    "readType": "Beginner"
-  },
-  "validator": {
-    "title": "Create a Core Validator",
-    "description": "Become a core validator on the ZetaChain network.",
-    "readTime": "1 hr",
-    "readType": "Advanced"
+  "validate": {
+    "title": "Validate",
+    "description": "Start validating transactions for the chain."
   }
 }

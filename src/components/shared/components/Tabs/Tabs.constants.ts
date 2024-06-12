@@ -9,7 +9,7 @@ export type NetworkTypeTab = Tab & {
 };
 
 export const networkTypeTabs: NetworkTypeTab[] = [
-  { label: "Mainnet", networkType: "mainnet" },
+  { label: "Mainnet Beta", networkType: "mainnet" },
   { label: "Testnet", networkType: "testnet" },
 ];
 
