@@ -126,7 +126,9 @@ export const Hero: React.FC = () => {
               </p>
             )}
 
-            <div className="relative top-[3px] w-[1px] h-[calc(100%-6px)] bg-grey-200 dark:bg-grey-600" />
+            {readTime && readType && (
+              <div className="relative top-[3px] w-[1px] h-[calc(100%-6px)] bg-grey-200 dark:bg-grey-600" />
+            )}
 
             {readType && <p className="text-black dark:text-grey-300">{readType}</p>}
           </div>
