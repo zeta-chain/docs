@@ -32,6 +32,13 @@ const StyledAlert = styled.div<{ variant: AlertVariant }>`
     ${({ variant }) => variant === "warning" && tw`text-black mt-[3px]`};
     ${({ variant }) => variant === "danger" && tw`text-white dark:text-black mt-0.5`};
 
+    .styled-code {
+      ${tw`text-sm leading-[135%]`}
+
+      ${({ variant }) => variant === "warning" && tw`text-black dark:text-white bg-[#FBEFB0] dark:bg-[#AC9100]`};
+      ${({ variant }) => variant === "danger" && tw`text-black dark:text-white bg-negative-300 dark:bg-negative-500`};
+    }
+
     a {
       ${({ variant }) => variant === "warning" && tw`!underline !text-black`};
       ${({ variant }) => variant === "danger" && tw`!underline !text-white dark:!text-black`};

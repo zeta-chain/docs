@@ -14,7 +14,7 @@ export const Code = ({ children, className, ...props }: ComponentProps<"code">) 
   return (
     <StyledCode
       className={clsx(
-        "py-1.5 px-2.5 rounded-lg bg-grey-100 dark:bg-grey-900 break-words",
+        "py-1.5 px-2.5 rounded-lg bg-grey-100 dark:bg-grey-900 break-words styled-code",
         { "[counter-reset:line]": hasLineNumbers },
         className
       )}
