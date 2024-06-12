@@ -2,7 +2,7 @@ import { CSSObject, styled, Theme } from "@mui/material";
 import MuiDrawer, { DrawerProps } from "@mui/material/Drawer";
 import { ComponentProps } from "react";
 
-import { IconAbout, IconClaim, IconCode, IconCommunity, IconStaking, IconSupport, IconTools } from "../Icons";
+import { IconAbout, IconClaim, IconCode, IconCommunity, IconServer, IconSupport, IconTools } from "../Icons";
 
 export const openDrawerWidth = 200;
 export const closeDrawerWidth = 75;
@@ -65,7 +65,7 @@ export const navMainItems: NavItem[][] = [
     },
     {
       label: "Validate",
-      icon: IconStaking,
+      icon: IconServer,
       url: "/validators",
     },
     {
