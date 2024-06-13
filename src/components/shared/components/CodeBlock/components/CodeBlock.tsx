@@ -45,6 +45,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   showLineNumbers = false,
   ...codeSource
 }) => {
+  console.log(language, filename, copy, showLineNumbers, codeSource);
   const code = "code" in codeSource ? codeSource.code : undefined;
   const codeUrl = "codeUrl" in codeSource ? codeSource.codeUrl : undefined;
 
