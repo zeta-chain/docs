@@ -7,6 +7,7 @@ import type { AppProps } from "next/app";
 import Script from "next/script";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
+import { CommandMenuProvider } from "~/components/shared/components/Cmdk";
 import { environment } from "~/env.cjs";
 import { useAppAnalytics } from "~/hooks/useAppAnalytics";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
@@ -29,12 +30,14 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
     <>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
-          <GlobalStyles />
-          <HeadProgressBar />
+          <CommandMenuProvider site="docs">
+            <GlobalStyles />
+            <HeadProgressBar />
 
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </CommandMenuProvider>
         </ThemeProvider>
       </CacheProvider>
 
