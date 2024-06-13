@@ -125,7 +125,7 @@ valid. Then it approves the contract to spend an amount of ZETA
 [Cross-chain messaging fees](/developers/evm/gas/#cross-chain-messaging-fees) are
 paid in ZETA tokens. This is convenient if the caller has ZETA tokens on the
 source chain. However, many users might only have native gas tokens. In this
-case it's more convenient for a contract to accept native gas token, and swap it
+case it’s more convenient for a contract to accept native gas token, and swap it
 for ZETA.
 
 To choose which token your contract accepts, use the `--fees` flag.
@@ -147,7 +147,7 @@ with the following arguments wrapped in a struct:
   destination chain (expressed in bytes since it can be non-EVM)
 - `destinationGasLimit`: gas limit for the destination chain's transaction
 - `message`: arbitrary message to be parsed by the receiving contract on the
-  destination chain. In this example it's empty as we're only sending ZETA, not
+  destination chain. In this example it’s empty as we're only sending ZETA, not
   arbitrary data.
 - `zetaValueAndGas`: amount of ZETA tokens to be sent to the destination chain,
   ZetaChain gas fees, and destination chain gas fees (expressed in ZETA tokens)

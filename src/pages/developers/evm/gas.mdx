@@ -130,7 +130,7 @@ You can add ZETA tokens to the contract and the contract will use these tokens
 when sending cross chain messages.
 
 This is easier for end-users, because they don't have to think about using ZETA
-tokens, but it's more complex for the contract developer because they have to
+tokens, but it’s more complex for the contract developer because they have to
 ensure that the contract has enough ZETA tokens.
 
 ```solidity
@@ -156,7 +156,7 @@ function sendMessage(uint256 destinationChainId, bytes calldata destinationAddre
 Your contract can accept any token and swap it to ZETA internally.
 
 This approach is more complex, because you need to add a swap logic to your
-contract and take market price fluctuations into account. But it's more
+contract and take market price fluctuations into account. But it’s more
 convenient for end-users, because they can use any token to pay for cross chain
 messages without even knowing that ZETA is being used under the hood.
 

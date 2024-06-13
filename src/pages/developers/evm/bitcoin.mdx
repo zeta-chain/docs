@@ -69,7 +69,7 @@ In summary, a ZetaChain's EVM BTC transaction would look like this:
    saying (colloquially) “deposit to 0x1337”.
 2. Upon receiving this tx, the ZetaCore state machine calls the deposit (0x1337,
    1e8) to mint and credit 0x1337 with 1 zBTC minus fees.
-3. If 0x1337 is an Externally Owned Account (EOA), that's it. If it's a
+3. If 0x1337 is an Externally Owned Account (EOA), that's it. If it’s a
    contract, ZetaCore will call the `onCrossChainMessage` function sending the
    message that was specified in the `OP_RETURN` memo.
 

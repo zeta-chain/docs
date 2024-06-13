@@ -1,12 +1,24 @@
 {
   "wallets": {
     "title": "Wallets",
-    "description": "Supported EVM, Bitcoin and Cosmos wallets"
+    "description": "Supported EVM, Bitcoin and Cosmos wallets",
+    "readTime": "5 min"
   },
   "services": {
     "title": "Services & Providers",
-    "description": "Oracles, subgraphs, data providers, account abstraction and more"
+    "description": "Oracles, subgraphs, data providers, account abstraction and more",
+    "readTime": "5 min"
   },
-  "get-testnet-zeta": "Faucet: Get testnet ZETA",
-  "explorers": "ZetaScan"
+  "get-testnet-zeta": {
+    "title": "Faucet: Get testnet ZETA",
+    "description": "A guide to get Testnet ZETA through the Faucet",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "explorers": {
+    "title": "ZetaScan",
+    "description": "Explorer information and also instructions for verifying smart contracts.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  }
 }
