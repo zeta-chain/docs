@@ -115,19 +115,19 @@ The contract expects to receive two values in the `message`:
 When the contract is called from an EVM chain, the `message` is encoded as a
 `bytes` array using the ABI encoding.
 
-When the contract is called from Bitcoin it's up to us to encode and then decode
+When the contract is called from Bitcoin it’s up to us to encode and then decode
 the message.
 
 Use `context.chainID` to determine the connected chain from which the contract
 is called.
 
-If it's Bitcoin, the first 20 bytes of the `message` are the
+If it’s Bitcoin, the first 20 bytes of the `message` are the
 `targetTokenAddress` encoded as an `address`. Use `bytesToAddress` helper method
 to get the target token address. To get the recipient address, use the same
 helper method with an offset of 20 bytes and then use `abi.encodePacked` to
 convert the address to `bytes`.
 
-If it's an EVM chain, use `abi.decode` to decode the `message` into the
+If it’s an EVM chain, use `abi.decode` to decode the `message` into the
 `targetToken` and `recipient` variables.
 
 Next, get the gas fee and the gas coin address from the target token. The gas
@@ -153,7 +153,7 @@ To support both EVM and Bitcoin addresses, we need to check if the recipient is
 a valid Bitcoin address. If it is, we need to encode it as `bytes` using
 `utils.solidityPack`.
 
-If it's not a valid bech32 address, then we assume it's an EVM address and use
+If it’s not a valid bech32 address, then we assume it’s an EVM address and use
 `args.recipient` as the value for the recipient.
 
 Finally, update the `prepareData` function call to use the `bytes` type for the

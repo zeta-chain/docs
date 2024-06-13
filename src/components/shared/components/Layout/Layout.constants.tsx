@@ -64,9 +64,9 @@ export const navMainItems: NavItem[][] = [
       url: "/developers",
     },
     {
-      label: "Validate",
+      label: "Operate",
       icon: IconServer,
-      url: "/validators",
+      url: "/nodes",
     },
     {
       label: "Use",

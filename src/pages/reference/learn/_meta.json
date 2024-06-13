@@ -2,13 +2,11 @@
   "glossary": {
     "title": "Glossary",
     "description": "Common terms used with ZetaChain.",
-    "readTime": "5 min",
-    "readType": "Beginner"
+    "readTime": "5 min"
   },
   "faq": {
     "title": "FAQs",
     "description": "Frequently asked questions about building on Zetachain.",
-    "readTime": "5 min",
-    "readType": "Beginner"
+    "readTime": "5 min"
   }
 }

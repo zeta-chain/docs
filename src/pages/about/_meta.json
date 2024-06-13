@@ -1,10 +1,12 @@
 {
   "index": {
     "title": "About",
-    "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain."
+    "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain.",
+    "readTime": "10 min"
   },
   "token-utility": {
     "title": "About ZETA Token",
-    "description": "Understand more about the token underpinning ZetaChain"
+    "description": "Understand more about the token underpinning ZetaChain",
+    "readTime": "5 min"
   }
 }

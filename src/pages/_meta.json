@@ -5,21 +5,21 @@
   },
   "developers": {
     "title": "Build",
-    "description": "Learn how to build on ZetaChain"
+    "description": "Learn how to build on ZetaChain."
   },
-  "validators": {
-    "title": "Start Validating",
-    "description": "Setup and run a ZetaChain node",
+  "nodes": {
+    "title": "Start Operating",
+    "description": "Setup and run a ZetaChain node.",
     "variant": "fancy",
-    "navImgUrl": "/img/pages/validate.svg"
+    "navImgUrl": "/img/pages/operate.svg"
   },
   "users": {
     "title": "Using our Products",
-    "description": "Start using our many products"
+    "description": "Start using our many products."
   },
   "reference": {
     "title": "Tools",
-    "description": "Useful articles to help get you up and running"
+    "description": "Useful articles to help get you up and running."
   },
   "about": {
     "title": "About",

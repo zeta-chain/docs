@@ -1,0 +1,14 @@
+{
+  "index": {
+    "title": "Operate",
+    "description": "Become an important part of the ZetaChain network by operating an node. It’s easy to get started on Testnet or Mainnet"
+  },
+  "start-here": {
+    "title": "Start Here",
+    "description": "These docs will provide you with all the necessary steps to successfully set up your node"
+  },
+  "validate": {
+    "title": "Validate",
+    "description": "Start validating transactions for the chain."
+  }
+}
