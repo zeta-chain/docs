@@ -1,4 +1,5 @@
 import { Dialog, DialogContent } from "@mui/material";
+import clsx from "clsx";
 import { Command as CommandPrimitive } from "cmdk";
 import { AlertTriangle } from "lucide-react";
 import * as React from "react";
@@ -62,7 +63,7 @@ export const CommandDialog = ({ children, onKeyDown, page, setIsOpen, ...props }
   }, [page]);
 
   return (
-    <Dialog {...props} open={props.visible || props.open} classes={{ paper: "max-w-[850px] w-[850px]" }}>
+    <Dialog {...props} open={props.visible || props.open} classes={{ paper: "max-w-[850px] w-[850px] p-0" }}>
       <DialogContent
         onInteractOutside={(e) => {
           // Only hide menu when clicking outside, not focusing outside
@@ -74,6 +75,7 @@ export const CommandDialog = ({ children, onKeyDown, page, setIsOpen, ...props }
         hideClose
         size={"xlarge"}
         className={cn(
+          "p-0",
           "!bg-overlay/90 backdrop-filter backdrop-blur-sm",
           "!border-overlay/90",
           "transition ease-out",
@@ -141,7 +143,7 @@ export const CommandList = React.forwardRef<CommandPrimitiveListElement, Command
   ({ className, ...props }, ref) => (
     <CommandPrimitive.List
       ref={ref}
-      className={cn("overflow-y-auto overflow-x-hidden bg-transparent", className)}
+      className={cn("overflow-y-auto overflow-x-hidden bg-transparent mx-0 !my-0 px-6 py-2", className)}
       {...props}
     />
   )
@@ -209,7 +211,7 @@ export const CommandItem = React.forwardRef<CommandPrimitiveItemElement, Command
   ({ className, type, children, badge, ...props }, ref) => (
     <CommandPrimitive.Item
       ref={ref}
-      className={cn(
+      className={clsx(
         "cursor-default",
         "select-none",
         "items-center",
@@ -228,16 +230,16 @@ export const CommandItem = React.forwardRef<CommandPrimitiveItemElement, Command
         px-5
         transition-all
         outline-none
-        aria-selected:border-overlay
-        aria-selected:bg-overlay-hover/90
-        aria-selected:shadow-sm
-        aria-selected:scale-[100.3%]
         data-[disabled]:pointer-events-none data-[disabled]:opacity-50`
           : type === "link"
           ? `
         px-2
         transition-all
         outline-none
+        aria-selected:border-overlay
+        aria-selected:bg-overlay-hover/90
+        aria-selected:shadow-sm
+        aria-selected:scale-[100.3%]
         aria-selected:bg-overlay-hover/90
         data-[disabled]:pointer-events-none data-[disabled]:opacity-50`
           : `
@@ -267,7 +269,7 @@ export const CommandItemStale = React.forwardRef<CommandPrimitiveItemElement, Co
     <CommandPrimitive.Item
       ref={ref}
       className={cn(
-        "text-foreground-light relative flex cursor-default select-none items-center rounded-md py-1.5 px-2 text-sm outline-none aria-selected:bg-overlay-selection data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "text-foreground-light relative flex cursor-default select-none items-center rounded-md py-1.5 px-2 text-sm outline-none hover:bg-overlay-selection data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
       {...props}

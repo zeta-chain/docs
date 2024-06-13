@@ -6,7 +6,6 @@ import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
-import { CodeBlock } from "../../CodeBlock";
 import { MarkdownCodeBlock } from "./MarkdownCodeBlock";
 
 const StyledMarkdownMessage = styled.div``;
@@ -48,6 +47,9 @@ export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ message }) => 
               {children}
             </li>
           );
+        },
+        img: ({ children, ...args }) => {
+          return <img className="my-6" {...args} style={{ maxWidth: "100%", height: "auto" }} />;
         },
         mark: ({ children, ...args }) => {
           return (

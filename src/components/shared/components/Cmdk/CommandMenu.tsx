@@ -1,21 +1,11 @@
+import clsx from "clsx";
 import { useRouter } from "next/router";
 import * as React from "react";
 
 import AiCommand from "./AiCommand";
 import APIKeys from "./APIKeys";
-import ChildItem from "./ChildItem";
-import { BadgeExperimental } from "./Command.Badges";
 import { COMMAND_ROUTES } from "./Command.constants";
-import { AiIcon } from "./Command.icons";
-import {
-  CommandDialog,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandLabel,
-  CommandList,
-  copyToClipboard,
-} from "./Command.utils";
+import { CommandDialog, CommandGroup, CommandInput, CommandItem, CommandList } from "./Command.utils";
 import { useCommandMenu } from "./CommandMenuProvider";
 import CommandMenuShortcuts from "./CommandMenuShortcuts";
 import DocsSearch from "./DocsSearch";
@@ -26,14 +16,10 @@ import { IconBook } from "./ui/src/components/Icon/icons/IconBook";
 import { IconColumns } from "./ui/src/components/Icon/icons/IconColumns";
 import { IconHome } from "./ui/src/components/Icon/icons/IconHome";
 import { IconInbox } from "./ui/src/components/Icon/icons/IconInbox";
-import { IconKey } from "./ui/src/components/Icon/icons/IconKey";
-import { IconLifeBuoy } from "./ui/src/components/Icon/icons/IconLifeBuoy";
-import { IconLink } from "./ui/src/components/Icon/icons/IconLink";
 import { IconMonitor } from "./ui/src/components/Icon/icons/IconMonitor";
 import { IconPhone } from "./ui/src/components/Icon/icons/IconPhone";
 import { IconUser } from "./ui/src/components/Icon/icons/IconUser";
 import { AiIconAnimation } from "./ui/src/layout/ai-icon-animation/ai-icon-animation";
-import sharedItems from "./utils/shared-nav-items.json";
 
 export const CHAT_ROUTES = [
   COMMAND_ROUTES.AI, // this one is temporary
@@ -122,6 +108,12 @@ const CommandMenu = () => {
                   type="command"
                   onSelect={() => setPages([...pages, COMMAND_ROUTES.DOCS_SEARCH])}
                   forceMount={true}
+                  className={clsx(
+                    "hover:border-overlay",
+                    "hover:bg-grey-700",
+                    "hover:shadow-sm",
+                    "hover:scale-[100.3%]"
+                  )}
                 >
                   <IconBook />
 
@@ -142,15 +134,22 @@ const CommandMenu = () => {
                   onSelect={() => {
                     setPages([...pages, COMMAND_ROUTES.AI]);
                   }}
+                  aria-selected={true ? "true" : "false"}
+                  className={clsx(
+                    "hover:border-overlay",
+                    "hover:bg-grey-700",
+                    "hover:shadow-sm",
+                    "hover:scale-[100.3%]"
+                  )}
                   forceMount={true}
                 >
                   <AiIconAnimation />
-                  <span className="text-brand">
+                  <span className="text-brand flex items-center ml-[-8px]">
+                    <img src="zeta-bot.png" className="w-[24px] h-[24px] mr-2" />
                     Ask Zeta AI
                     {search ? (
                       <>
-                        {": "}
-                        <span className="text-foreground font-semibold">{search}</span>
+                        {":"} <span className="ml-1 text-foreground font-semibold">{`${search}`}</span>
                       </>
                     ) : (
                       "..."
@@ -159,154 +158,7 @@ const CommandMenu = () => {
                 </CommandItem>
               </CommandGroup>
 
-              {site === "docs" && (
-                <CommandGroup heading="Quickstarts">
-                  {sharedItems.quickstarts.map((item) => (
-                    <CommandItem key={item.url} type="link" onSelect={() => router.push(item.url)}>
-                      <IconArrowRight className="text-foreground-muted" />
-                      <CommandLabel>
-                        Start with <span className="font-bold"> {item.label}</span>
-                      </CommandLabel>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {site === "docs" && (
-                <CommandGroup heading="Projects">
-                  {sharedItems.projectTools.map((item) => (
-                    <CommandItem
-                      key={item.url}
-                      type="link"
-                      onSelect={() => window.open(`https://supabase.com/dashboard${item.url}`, "_blank")}
-                    >
-                      <IconArrowRight className="text-foreground-muted" />
-                      <CommandLabel>
-                        <span className="font-bold"> {item.label}</span>
-                      </CommandLabel>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {site === "docs" && (
-                <CommandGroup heading="Studio tools">
-                  {sharedItems.tools.map((item) => (
-                    <CommandItem
-                      key={item.url}
-                      type="link"
-                      onSelect={() => window.open(`https://supabase.com/dashboard${item.url}`, "_blank")}
-                    >
-                      <IconArrowRight className="text-foreground-muted" />
-                      <CommandLabel>
-                        Go to <span className="font-bold"> {item.label}</span>
-                      </CommandLabel>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {site === "studio" && (
-                <CommandGroup heading="Experimental">
-                  <CommandItem
-                    type="command"
-                    badge={<BadgeExperimental />}
-                    onSelect={() => setPages([...pages, COMMAND_ROUTES.GENERATE_SQL])}
-                  >
-                    <AiIcon className="text-foreground-light" />
-                    <CommandLabel>Generate SQL with Supabase AI</CommandLabel>
-                  </CommandItem>
-                </CommandGroup>
-              )}
-
-              {site === "studio" && (
-                <CommandGroup heading="Project tools">
-                  <CommandItem
-                    type="command"
-                    onSelect={() => {
-                      setSearch("");
-                      setPages([...pages, COMMAND_ROUTES.API_KEYS]);
-                    }}
-                  >
-                    <IconKey className="text-foreground-light" />
-                    <CommandLabel>Get API keys</CommandLabel>
-                  </CommandItem>
-                  {project?.apiUrl !== undefined && (
-                    <ChildItem
-                      isSubItem={false}
-                      onSelect={() => {
-                        copyToClipboard(project?.apiUrl ?? "");
-                        setIsOpen(false);
-                      }}
-                      className="space-x-2"
-                    >
-                      <IconLink className="text-foreground-light" />
-                      <CommandLabel>Copy API URL</CommandLabel>
-                    </ChildItem>
-                  )}
-                </CommandGroup>
-              )}
-
-              {site === "studio" && (
-                <CommandGroup heading="Navigate">
-                  {sharedItems.tools.map((item) => {
-                    const itemUrl = item.url;
-
-                    return (
-                      <CommandItem
-                        key={item.url}
-                        type="link"
-                        onSelect={() => {
-                          router.push(itemUrl);
-                          setIsOpen(false);
-                        }}
-                      >
-                        <IconArrowRight className="text-foreground-muted" />
-                        <CommandLabel>
-                          Go to <span className="font-bold"> {item.label}</span>
-                        </CommandLabel>
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              )}
-
               {/* <DashboardTableEditor /> */}
-
-              <CommandGroup heading="Support">
-                {sharedItems.support.map((item) => (
-                  <CommandItem key={item.url} type="link" onSelect={() => router.push(item.url)}>
-                    <IconLifeBuoy className="text-foreground-muted" />
-                    <CommandLabel>
-                      Go to <span className="font-bold"> {item.label}</span>
-                    </CommandLabel>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-
-              {site === "docs" && (
-                <CommandGroup heading="General">
-                  {sharedItems.docsGeneral.map((item) => (
-                    <CommandItem key={item.url} type="link" onSelect={() => router.push(item.url)}>
-                      {item?.icon && iconPicker[item.icon]}
-                      <CommandLabel>{item.label}</CommandLabel>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              <CommandGroup heading="Settings">
-                <CommandItem
-                  type="link"
-                  onSelect={() => {
-                    setSearch("");
-                    setPages([...pages, "Theme"]);
-                  }}
-                >
-                  <IconMonitor />
-                  Change theme
-                </CommandItem>
-              </CommandGroup>
 
               <ThemeOptions isSubItem />
               {site === "studio" && search && <SearchableStudioItems />}

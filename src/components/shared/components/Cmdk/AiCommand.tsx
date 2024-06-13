@@ -159,7 +159,7 @@ const AiCommand = () => {
                   <div className="flex px-4 mb-8 overflow-auto">
                     <div className="mr-4">
                       <div className="w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
-                        <IconUser strokeWidth={1.5} size={16} />
+                        <img src="zeta-bot.png" className="w-[16px] h-[16px]" />
                       </div>
                     </div>
                     <div>
@@ -204,7 +204,7 @@ const AiCommand = () => {
         {error && (
           <div className="p-6 flex flex-col items-center gap-6 mt-4">
             <IconAlertTriangle className="text-amber-900" strokeWidth={1.5} size={21} />
-            <p className="text-lg text-foreground text-center">Sorry, looks like Clippy is having a hard time!</p>
+            <p className="text-lg text-foreground text-center">Sorry, looks like Zeta AI is having a hard time!</p>
             <p className="text-sm text-foreground-muted text-center">Please try again in a bit.</p>
             <Button size="tiny" type="secondary" onClick={handleReset}>
               Try again?
