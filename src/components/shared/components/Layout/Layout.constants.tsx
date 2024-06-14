@@ -64,7 +64,7 @@ export const navMainItems: NavItem[][] = [
       url: "/developers",
     },
     {
-      label: "Operate",
+      label: "Run a Node",
       icon: IconServer,
       url: "/nodes",
     },
