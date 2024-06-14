@@ -72,14 +72,7 @@ const CommandMenu = () => {
 
   return (
     <>
-      <CommandDialog
-        setIsOpen={setIsOpen}
-        page={currentPage}
-        visible={isOpen}
-        onOpenChange={() => {
-          setIsOpen(!isOpen);
-        }}
-      >
+      <CommandDialog setIsOpen={setIsOpen} page={currentPage} visible={isOpen} open={isOpen}>
         {pages.length > 0 && <CommandMenuShortcuts />}
         {showCommandInput && (
           <CommandInput
@@ -108,12 +101,7 @@ const CommandMenu = () => {
                   type="command"
                   onSelect={() => setPages([...pages, COMMAND_ROUTES.DOCS_SEARCH])}
                   forceMount={true}
-                  className={clsx(
-                    "hover:border-overlay",
-                    "hover:bg-grey-700",
-                    "hover:shadow-sm",
-                    "hover:scale-[100.3%]"
-                  )}
+                  className={clsx("hover:border-overlay", "hover:bg-grey-700", "hover:shadow-sm", "cursor-pointer")}
                 >
                   <IconBook />
 
@@ -135,12 +123,7 @@ const CommandMenu = () => {
                     setPages([...pages, COMMAND_ROUTES.AI]);
                   }}
                   aria-selected={true ? "true" : "false"}
-                  className={clsx(
-                    "hover:border-overlay",
-                    "hover:bg-grey-700",
-                    "hover:shadow-sm",
-                    "hover:scale-[100.3%]"
-                  )}
+                  className={clsx("hover:border-overlay", "hover:bg-grey-700", "hover:shadow-sm", "cursor-pointer")}
                   forceMount={true}
                 >
                   <AiIconAnimation />

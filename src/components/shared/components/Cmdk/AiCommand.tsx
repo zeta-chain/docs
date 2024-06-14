@@ -1,4 +1,5 @@
 import { useChat } from "ai/react";
+import clsx from "clsx";
 import type OpenAI from "openai";
 import { Dispatch, SetStateAction, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -156,13 +157,13 @@ const AiCommand = () => {
                 );
               case MessageRole.Assistant:
                 return (
-                  <div className="flex px-4 mb-8 overflow-auto">
-                    <div className="mr-4">
+                  <div className="flex px-4 pb-12 overflow-hidden">
+                    <div className="mr-6">
                       <div className="w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
                         <img src="zeta-bot.png" className="w-[16px] h-[16px]" />
                       </div>
                     </div>
-                    <div>
+                    <div className="max-w-[95%]">
                       <MarkdownMessage message={message} />
                     </div>
                   </div>
@@ -192,6 +193,7 @@ const AiCommand = () => {
                       append({ content: question, role: "user" });
                     }
                   }}
+                  className={clsx("hover:border-overlay", "hover:bg-grey-700", "hover:shadow-sm", "cursor-pointer")}
                   key={key}
                 >
                   <AiIconAnimation />
@@ -214,7 +216,7 @@ const AiCommand = () => {
 
         <div className="[overflow-anchor:auto] h-px w-full"></div>
       </div>
-      <div className="absolute bottom-0 w-full bg-background py-3">
+      <div className="absolute bottom-0 bg-background py-3 w-full pt-0 bg-[#15191e]">
         <Input
           className="bg-alternative rounded mx-3 [&_input]:pr-32 md:[&_input]:pr-40"
           inputRef={inputRef}

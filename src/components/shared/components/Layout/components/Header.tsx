@@ -20,13 +20,6 @@ export const Header: React.FC<{
       <ClientOnlyPortal selector=".nextra-search">
         <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-grey-400 dark:text-grey-300" />
       </ClientOnlyPortal>
-      <div
-        onClick={() => {
-          setIsOpen(!isOpen);
-        }}
-      >
-        Search
-      </div>
 
       <Toolbar className="sm:hidden fixed z-[100] flex items-stretch w-full p-0 bg-grey-50 dark:bg-grey-900">
         <div

@@ -12,6 +12,8 @@ import {
 } from "~/components/shared";
 import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 
+import { SearchBar } from "./components/shared/components/SearchBar";
+
 /**
  * @description Custom Nextra Docs theme configuration
  * @see https://nextra.site/docs/docs-theme/theme-configuration
@@ -93,6 +95,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
 
   // Edit search component in the navbar
   search: {
+    component: SearchBar,
     placeholder: "Search the docs",
   },
 

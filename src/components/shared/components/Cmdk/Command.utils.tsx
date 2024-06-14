@@ -25,9 +25,7 @@ export const copyToClipboard = (str: string, callback = () => {}) => {
 };
 
 export const Command = React.forwardRef<CommandPrimitiveElement, CommandPrimitiveProps>(
-  ({ className, ...props }, ref) => (
-    <CommandPrimitive ref={ref} className={cn("flex h-full w-full flex-col overflow-hidden", className)} {...props} />
-  )
+  ({ className, ...props }, ref) => <CommandPrimitive {...props} />
 );
 
 Command.displayName = CommandPrimitive.displayName;
@@ -54,7 +52,7 @@ interface CommandDialogProps extends React.ComponentProps<typeof Dialog> {
   setIsOpen: (open: boolean) => void;
 }
 
-export const CommandDialog = ({ children, onKeyDown, page, setIsOpen, ...props }: CommandDialogProps) => {
+export const CommandDialog = ({ children, onKeyDown, page, setIsOpen, open, ...props }: CommandDialogProps) => {
   const [animateBounce, setAnimateBounce] = React.useState(false);
 
   React.useEffect(() => {
@@ -63,17 +61,15 @@ export const CommandDialog = ({ children, onKeyDown, page, setIsOpen, ...props }
   }, [page]);
 
   return (
-    <Dialog {...props} open={props.visible || props.open} classes={{ paper: "max-w-[850px] w-[850px] p-0" }}>
+    <Dialog
+      open={open}
+      classes={{ paper: "max-w-[850px] w-[850px] p-0" }}
+      onClose={() => {
+        setIsOpen(false);
+      }}
+      {...props}
+    >
       <DialogContent
-        onInteractOutside={(e) => {
-          // Only hide menu when clicking outside, not focusing outside
-          // Prevents Firefox dropdown issue that immediately closes menu after opening
-          if (e.type === "dismissableLayer.pointerDownOutside") {
-            setIsOpen(!open);
-          }
-        }}
-        hideClose
-        size={"xlarge"}
         className={cn(
           "p-0",
           "!bg-overlay/90 backdrop-filter backdrop-blur-sm",
@@ -85,19 +81,7 @@ export const CommandDialog = ({ children, onKeyDown, page, setIsOpen, ...props }
         )}
       >
         <ErrorBoundary FallbackComponent={CommandError}>
-          <Command
-            className={[
-              "[&_[cmdk-group]]:px-2 [&_[cmdk-group]]:!bg-transparent [&_[cmdk-group-heading]]:!bg-transparent [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-border-stronger [&_[cmdk-input]]:h-12",
-              "[&_[cmdk-item]_svg]:h-5",
-              "[&_[cmdk-item]_svg]:w-5",
-              "[&_[cmdk-input-wrapper]_svg]:h-5",
-              "[&_[cmdk-input-wrapper]_svg]:w-5",
-
-              "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
-            ].join(" ")}
-          >
-            {children}
-          </Command>
+          <Command>{children}</Command>
         </ErrorBoundary>
       </DialogContent>
     </Dialog>
@@ -143,7 +127,7 @@ export const CommandList = React.forwardRef<CommandPrimitiveListElement, Command
   ({ className, ...props }, ref) => (
     <CommandPrimitive.List
       ref={ref}
-      className={cn("overflow-y-auto overflow-x-hidden bg-transparent mx-0 !my-0 px-6 py-2", className)}
+      className={cn("overflow-y-auto overflow-x-hidden bg-transparent mx-0 !my-0 p-0", className)}
       {...props}
     />
   )
