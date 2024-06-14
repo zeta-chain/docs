@@ -17,13 +17,15 @@ export const NavTabs = <T extends Tab>({
   activeTab,
   setActiveTab,
   className,
+  layoutIdPrefix,
 }: {
   tabs: T[];
   activeTab: T;
   setActiveTab: (item: T) => void;
   className?: string;
+  layoutIdPrefix?: string;
 }) => {
-  const layoutId = useMemo(() => uniqueId(), []);
+  const layoutId = useMemo(() => uniqueId(layoutIdPrefix), [layoutIdPrefix]);
 
   return (
     <nav className={clsx("flex justify-center", className)}>

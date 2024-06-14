@@ -1,6 +1,6 @@
 import { GitHub, InfoOutlined } from "@mui/icons-material";
 import { Box, IconButton, Modal, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
@@ -34,7 +34,9 @@ const modalStyles = {
 };
 
 export const GovUpgradeProposals = () => {
-  const [proposals, setProposals] = useState<any>([]);
+  const [mainnetProposals, setMainnetProposals] = useState<any>([]);
+  const [testnetProposals, setTestnetProposals] = useState<any>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
@@ -48,6 +50,7 @@ export const GovUpgradeProposals = () => {
       try {
         const response = await fetch(API[activeTab.networkType]);
         const data = await response.json();
+
         const softwareUpgradeProposals = data.proposals
           .filter(
             (proposal: any) =>
@@ -63,7 +66,8 @@ export const GovUpgradeProposals = () => {
           .filter((proposal: any) => proposal.plan.name)
           .sort((a: any, b: any) => b.plan.height - a.plan.height);
 
-        setProposals(softwareUpgradeProposals);
+        if (activeTab.networkType === "mainnet") setMainnetProposals(softwareUpgradeProposals);
+        if (activeTab.networkType === "testnet") setTestnetProposals(softwareUpgradeProposals);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -74,6 +78,10 @@ export const GovUpgradeProposals = () => {
     fetchData();
   }, [activeTab.networkType]);
 
+  const proposals = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetProposals : testnetProposals;
+  }, [activeTab.networkType, mainnetProposals, testnetProposals]);
+
   return (
     <div className="mt-8 first:mt-0">
       <Modal open={isModalOpen} onClose={handleModalClose}>
@@ -82,7 +90,7 @@ export const GovUpgradeProposals = () => {
         </Box>
       </Modal>
 
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="gov-up-proposal-" />
 
       {isLoading ? (
         <LoadingTable rowCount={8} />

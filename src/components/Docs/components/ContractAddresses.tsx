@@ -60,7 +60,7 @@ export const ContractAddresses = () => {
 
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="contract-addresses-" />
 
       {isLoading ? (
         <LoadingTable rowCount={12} />

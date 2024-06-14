@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
@@ -21,7 +21,9 @@ const APIs: Record<NetworkType, string> = {
 };
 
 export const ObserverParams = () => {
-  const [data, setData] = useState<ObserverParamsType[]>([]);
+  const [mainnetData, setMainnetData] = useState<ObserverParamsType[]>([]);
+  const [testnetData, setTestnetData] = useState<ObserverParamsType[]>([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
@@ -33,18 +35,25 @@ export const ObserverParams = () => {
     fetch(API)
       .then((response) => response.json())
       .then((json) => {
-        setData(json.params.observer_params);
+        if (activeTab.networkType === "mainnet") setMainnetData(json.params.observer_params);
+        if (activeTab.networkType === "testnet") setTestnetData(json.params.observer_params);
         setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
+        if (activeTab.networkType === "mainnet") setMainnetData([]);
+        if (activeTab.networkType === "testnet") setTestnetData([]);
         setIsLoading(false);
       });
   }, [activeTab.networkType]);
 
+  const data = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetData : testnetData;
+  }, [activeTab.networkType, mainnetData, testnetData]);
+
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="observer-params-" />
 
       {isLoading ? (
         <LoadingTable rowCount={3} />

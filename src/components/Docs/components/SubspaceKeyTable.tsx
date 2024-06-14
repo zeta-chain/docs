@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -13,8 +13,10 @@ type SubspacesData = {
 
 export const SubspaceKeyTable = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
-  const [subspacesData, setSubspacesData] = useState<Subspace[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [mainnetSubspacesData, setMainnetSubspacesData] = useState<Subspace[]>([]);
+  const [testnetSubspacesData, setTestnetSubspacesData] = useState<Subspace[]>([]);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -31,10 +33,12 @@ export const SubspaceKeyTable = () => {
 
       const data: SubspacesData = await response.json();
 
-      setSubspacesData(data.subspaces);
+      if (activeTab.networkType === "mainnet") setMainnetSubspacesData(data.subspaces);
+      if (activeTab.networkType === "testnet") setTestnetSubspacesData(data.subspaces);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setSubspacesData([]);
+      if (activeTab.networkType === "mainnet") setMainnetSubspacesData([]);
+      if (activeTab.networkType === "testnet") setTestnetSubspacesData([]);
     } finally {
       setIsLoading(false);
     }
@@ -44,9 +48,13 @@ export const SubspaceKeyTable = () => {
     fetchData();
   }, [fetchData]);
 
+  const subspacesData = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetSubspacesData : testnetSubspacesData;
+  }, [activeTab.networkType, mainnetSubspacesData, testnetSubspacesData]);
+
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="subspace-key-" />
 
       {isLoading ? (
         <LoadingTable rowCount={40} />

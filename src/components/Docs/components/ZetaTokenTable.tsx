@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
@@ -17,13 +17,15 @@ type AddressData = {
 }[];
 
 export const ZetaTokenTable = () => {
-  const [zetaTokens, setZetaTokens] = useState<AddressData>([]);
+  const [mainnetZetaTokens, setMainnetZetaTokens] = useState<AddressData>([]);
+  const [testnetZetaTokens, setTestnetZetaTokens] = useState<AddressData>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
-    setZetaTokens([]);
+
     const fetchData = async () => {
       try {
         const response = await fetch(API[activeTab.networkType]);
@@ -31,9 +33,12 @@ export const ZetaTokenTable = () => {
 
         const zetaTokenContracts = data.filter((item) => item.type === "zetaToken");
 
-        setZetaTokens(zetaTokenContracts);
+        if (activeTab.networkType === "mainnet") setMainnetZetaTokens(zetaTokenContracts);
+        if (activeTab.networkType === "testnet") setTestnetZetaTokens(zetaTokenContracts);
       } catch (error) {
         console.error("Error fetching data:", error);
+        if (activeTab.networkType === "mainnet") setMainnetZetaTokens([]);
+        if (activeTab.networkType === "testnet") setTestnetZetaTokens([]);
       } finally {
         setIsLoading(false);
       }
@@ -42,9 +47,13 @@ export const ZetaTokenTable = () => {
     fetchData();
   }, [activeTab.networkType]);
 
+  const zetaTokens = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetZetaTokens : testnetZetaTokens;
+  }, [activeTab.networkType, mainnetZetaTokens, testnetZetaTokens]);
+
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="zeta-token-table-" />
 
       {isLoading ? (
         <LoadingTable rowCount={4} />

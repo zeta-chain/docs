@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 
@@ -22,13 +22,14 @@ const extractProvider = (url: string) => {
 };
 
 export const EndpointList: React.FC = () => {
-  const [fetchedData, setFetchedData] = useState<any>(null);
+  const [mainnetData, setMainnetData] = useState<any>(null);
+  const [testnetData, setTestnetData] = useState<any>(null);
+
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-    setFetchedData(null);
 
     const fetchData = async () => {
       try {
@@ -44,9 +45,12 @@ export const EndpointList: React.FC = () => {
           return 0;
         });
 
-        setFetchedData({ api: sortedData });
+        if (activeTab.networkType === "mainnet") setMainnetData({ api: sortedData });
+        if (activeTab.networkType === "testnet") setTestnetData({ api: sortedData });
       } catch (e) {
         console.error("Error fetching data:", e);
+        if (activeTab.networkType === "mainnet") setMainnetData(null);
+        if (activeTab.networkType === "testnet") setTestnetData(null);
       } finally {
         setIsLoading(false);
       }
@@ -55,9 +59,13 @@ export const EndpointList: React.FC = () => {
     fetchData();
   }, [activeTab.networkType]);
 
+  const fetchedData = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetData : testnetData;
+  }, [activeTab.networkType, mainnetData, testnetData]);
+
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="endpoint-list-" />
 
       {isLoading ? (
         <LoadingTable rowCount={12} />

@@ -65,7 +65,7 @@ export const NetworkDetails = () => {
 
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="network-details-" />
 
       <NetworkTable networkData={networkDetails[activeTab.networkType]} />
     </div>

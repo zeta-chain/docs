@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -43,10 +43,17 @@ type TallyingData = {
 
 export const GovParams = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
-  const [govAddress, setGovAddress] = useState("");
-  const [votingParams, setVotingParams] = useState<VotingParams | {}>({});
-  const [depositParams, setDepositParams] = useState<DepositParams | {}>({});
-  const [tallyingParams, setTallyingParams] = useState<TallyParams | {}>({});
+
+  const [mainnetGovAddress, setMainnetGovAddress] = useState("");
+  const [mainnetVotingParams, setMainnetVotingParams] = useState<VotingParams | {}>({});
+  const [mainnetDepositParams, setMainnetDepositParams] = useState<DepositParams | {}>({});
+  const [mainnetTallyingParams, setMainnetTallyingParams] = useState<TallyParams | {}>({});
+
+  const [testnetGovAddress, setTestnetGovAddress] = useState("");
+  const [testnetVotingParams, setTestnetVotingParams] = useState<VotingParams | {}>({});
+  const [testnetDepositParams, setTestnetDepositParams] = useState<DepositParams | {}>({});
+  const [testnetTallyingParams, setTestnetTallyingParams] = useState<TallyParams | {}>({});
+
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -66,7 +73,8 @@ export const GovParams = () => {
 
       const govAccount = accountsData.accounts.find((account) => account.name === "gov");
 
-      setGovAddress(govAccount?.base_account?.address || "Not found");
+      if (activeTab.networkType === "mainnet") setMainnetGovAddress(govAccount?.base_account?.address || "Not found");
+      if (activeTab.networkType === "testnet") setTestnetGovAddress(govAccount?.base_account?.address || "Not found");
 
       // Fetch voting parameters
       const votingResponse = await fetch(`${baseUrl}/cosmos/gov/v1beta1/params/voting`);
@@ -77,7 +85,8 @@ export const GovParams = () => {
 
       const votingData: VotingData = await votingResponse.json();
 
-      setVotingParams(votingData.voting_params);
+      if (activeTab.networkType === "mainnet") setMainnetVotingParams(votingData.voting_params);
+      if (activeTab.networkType === "testnet") setTestnetVotingParams(votingData.voting_params);
 
       // Fetch deposit parameters
       const depositResponse = await fetch(`${baseUrl}/cosmos/gov/v1beta1/params/deposit`);
@@ -88,7 +97,8 @@ export const GovParams = () => {
 
       const depositData: DepositData = await depositResponse.json();
 
-      setDepositParams(depositData.deposit_params);
+      if (activeTab.networkType === "mainnet") setMainnetDepositParams(depositData.deposit_params);
+      if (activeTab.networkType === "testnet") setTestnetDepositParams(depositData.deposit_params);
 
       // Fetch tallying parameters
       const tallyingResponse = await fetch(`${baseUrl}/cosmos/gov/v1beta1/params/tallying`);
@@ -99,13 +109,24 @@ export const GovParams = () => {
 
       const tallyingData: TallyingData = await tallyingResponse.json();
 
-      setTallyingParams(tallyingData.tally_params);
+      if (activeTab.networkType === "mainnet") setMainnetTallyingParams(tallyingData.tally_params);
+      if (activeTab.networkType === "testnet") setTestnetTallyingParams(tallyingData.tally_params);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setGovAddress("Error fetching address");
-      setVotingParams({});
-      setDepositParams({});
-      setTallyingParams({});
+
+      if (activeTab.networkType === "mainnet") {
+        setMainnetGovAddress("Error fetching address");
+        setMainnetVotingParams({});
+        setMainnetDepositParams({});
+        setMainnetTallyingParams({});
+      }
+
+      if (activeTab.networkType === "testnet") {
+        setTestnetGovAddress("Error fetching address");
+        setTestnetVotingParams({});
+        setTestnetDepositParams({});
+        setTestnetTallyingParams({});
+      }
     } finally {
       setIsLoading(false);
     }
@@ -115,9 +136,25 @@ export const GovParams = () => {
     fetchData();
   }, [fetchData]);
 
+  const govAddress = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetGovAddress : testnetGovAddress;
+  }, [activeTab.networkType, mainnetGovAddress, testnetGovAddress]);
+
+  const votingParams = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetVotingParams : testnetVotingParams;
+  }, [activeTab.networkType, mainnetVotingParams, testnetVotingParams]) as VotingParams;
+
+  const depositParams = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetDepositParams : testnetDepositParams;
+  }, [activeTab.networkType, mainnetDepositParams, testnetDepositParams]) as DepositParams;
+
+  const tallyingParams = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetTallyingParams : testnetTallyingParams;
+  }, [activeTab.networkType, mainnetTallyingParams, testnetTallyingParams]) as TallyParams;
+
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="gov-params-" />
 
       {isLoading ? (
         <LoadingTable rowCount={7} />

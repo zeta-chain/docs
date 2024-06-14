@@ -2,7 +2,7 @@ import "swagger-ui-react/swagger-ui.css";
 
 import axios from "axios";
 import yaml from "js-yaml";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SwaggerUI from "swagger-ui-react";
 import tw, { styled } from "twin.macro";
 
@@ -48,8 +48,10 @@ const StyledContainer = styled.div`
 
 export const OpenAPIBrowser = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
-  const [swaggerUrl, setSwaggerUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  const [mainnetSwaggerUrl, setMainnetSwaggerUrl] = useState("");
+  const [testnetSwaggerUrl, setTestnetSwaggerUrl] = useState("");
 
   useEffect(() => {
     const fetchSwaggerFile = async () => {
@@ -77,10 +79,13 @@ export const OpenAPIBrowser = () => {
 
           const url = URL.createObjectURL(blob);
 
-          setSwaggerUrl(url);
+          if (activeTab.networkType === "mainnet") setMainnetSwaggerUrl(url);
+          if (activeTab.networkType === "testnet") setTestnetSwaggerUrl(url);
         }
       } catch (error) {
         console.error("Error fetching or modifying Swagger file:", error);
+        if (activeTab.networkType === "mainnet") setMainnetSwaggerUrl("");
+        if (activeTab.networkType === "testnet") setTestnetSwaggerUrl("");
       } finally {
         setIsLoading(false);
       }
@@ -89,9 +94,13 @@ export const OpenAPIBrowser = () => {
     fetchSwaggerFile();
   }, [activeTab.networkType]);
 
+  const swaggerUrl = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetSwaggerUrl : testnetSwaggerUrl;
+  }, [activeTab.networkType, mainnetSwaggerUrl, testnetSwaggerUrl]);
+
   return (
     <StyledContainer className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="open-api-browser-" />
 
       {isLoading ? <LoadingTable rowCount={1} /> : <SwaggerUI url={swaggerUrl} />}
     </StyledContainer>

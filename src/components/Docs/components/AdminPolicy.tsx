@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -16,11 +16,14 @@ function formatDate(dateString: string) {
 }
 
 export const AdminPolicy = () => {
-  const [adminPolicies, setAdminPolicies] = useState<any[]>([]);
+  const [mainnetAdminPolicies, setMainnetAdminPolicies] = useState<any[]>([]);
+  const [testnetAdminPolicies, setTestnetAdminPolicies] = useState<any[]>([]);
+
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
-    setAdminPolicies([]);
+    setMainnetAdminPolicies([]);
+    setTestnetAdminPolicies([]);
 
     const baseUrl = rpcByNetworkType[activeTab.networkType];
 
@@ -35,19 +38,37 @@ export const AdminPolicy = () => {
               fetch(`${baseUrl}/cosmos/group/v1/group_members/${detailData.info.group_id}`)
                 .then((response) => response.json())
                 .then((membersData) => {
-                  setAdminPolicies((prevPolicies) => [
-                    ...prevPolicies,
-                    {
-                      ...detailData.info,
-                      created_at: formatDate(detailData.info.created_at),
-                      policy_type: capitalizeFirstLetter(policy.policy_type),
-                      members: membersData.members.map((m: any) => ({
-                        ...m.member,
-                        addedAt: formatDate(m.member.added_at),
-                      })),
-                      decision_policy: detailData.info.decision_policy,
-                    },
-                  ]);
+                  if (activeTab.networkType === "mainnet") {
+                    setMainnetAdminPolicies((prevPolicies) => [
+                      ...prevPolicies,
+                      {
+                        ...detailData.info,
+                        created_at: formatDate(detailData.info.created_at),
+                        policy_type: capitalizeFirstLetter(policy.policy_type),
+                        members: membersData.members.map((m: any) => ({
+                          ...m.member,
+                          addedAt: formatDate(m.member.added_at),
+                        })),
+                        decision_policy: detailData.info.decision_policy,
+                      },
+                    ]);
+                  }
+
+                  if (activeTab.networkType === "testnet") {
+                    setTestnetAdminPolicies((prevPolicies) => [
+                      ...prevPolicies,
+                      {
+                        ...detailData.info,
+                        created_at: formatDate(detailData.info.created_at),
+                        policy_type: capitalizeFirstLetter(policy.policy_type),
+                        members: membersData.members.map((m: any) => ({
+                          ...m.member,
+                          addedAt: formatDate(m.member.added_at),
+                        })),
+                        decision_policy: detailData.info.decision_policy,
+                      },
+                    ]);
+                  }
                 });
             });
         });
@@ -57,9 +78,13 @@ export const AdminPolicy = () => {
       });
   }, [activeTab.networkType]);
 
+  const adminPolicies = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetAdminPolicies : testnetAdminPolicies;
+  }, [activeTab.networkType, mainnetAdminPolicies, testnetAdminPolicies]);
+
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="admin-policy-" />
 
       {adminPolicies.length > 0 ? (
         adminPolicies.map((policy: any, index) => (
