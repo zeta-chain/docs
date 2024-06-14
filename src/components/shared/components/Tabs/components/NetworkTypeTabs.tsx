@@ -10,9 +10,15 @@ type NetworkTypeTabsProps = {
   activeTab: NetworkTypeTab;
   setActiveTab: (item: NetworkTypeTab) => void;
   className?: string;
+  layoutIdPrefix?: string;
 };
 
-export const NetworkTypeTabs: React.FC<NetworkTypeTabsProps> = ({ activeTab, setActiveTab, className }) => {
+export const NetworkTypeTabs: React.FC<NetworkTypeTabsProps> = ({
+  activeTab,
+  setActiveTab,
+  className,
+  layoutIdPrefix,
+}) => {
   const [selectedNetworkType, setSelectedNetworkType] = useLocalStorage<NetworkType>(lsSelectedNetworkType);
 
   const selectedTab = useMemo(
@@ -24,6 +30,7 @@ export const NetworkTypeTabs: React.FC<NetworkTypeTabsProps> = ({ activeTab, set
 
   useEffect(() => {
     setTabToUse(selectedTab);
+    if (selectedTab.networkType !== activeTab.networkType) setActiveTab(selectedTab);
   }, [selectedTab]);
 
   const handleSetActiveTab = useCallback(
@@ -35,6 +42,12 @@ export const NetworkTypeTabs: React.FC<NetworkTypeTabsProps> = ({ activeTab, set
   );
 
   return (
-    <NavTabs tabs={networkTypeTabs} activeTab={tabToUse} setActiveTab={handleSetActiveTab} className={className} />
+    <NavTabs
+      tabs={networkTypeTabs}
+      activeTab={tabToUse}
+      setActiveTab={handleSetActiveTab}
+      className={className}
+      layoutIdPrefix={layoutIdPrefix}
+    />
   );
 };

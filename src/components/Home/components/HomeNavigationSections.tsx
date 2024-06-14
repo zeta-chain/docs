@@ -1,7 +1,8 @@
-import { getAllPages } from "nextra/context";
 import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 import { IconDocument, NavigationSection } from "~/components/shared";
+import { selectPages } from "~/lib/directories/directories.selectors";
 import {
   getPageDescription,
   getPageNavigationSectionImage,
@@ -30,7 +31,7 @@ const BG_COLOR_CLASSES = ["bg-[#00C6EE]", "bg-[#E34ED6]", "bg-[#9AEA4A]", "bg-[#
 const MAX_ARTICLE_CARDS = 5;
 
 export const HomeNavigationSections: React.FC = () => {
-  const pages = getAllPages();
+  const pages = useSelector(selectPages);
 
   const { mainFolders } = useMemo(() => {
     const mainFolders = pages.filter((page) => page.kind === "Folder" && !EXCLUDED_ROUTES.includes(page.route));

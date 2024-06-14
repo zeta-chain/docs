@@ -3,6 +3,7 @@ import { DocsThemeConfig } from "nextra-theme-docs";
 import {
   AppHead,
   Code,
+  Heading,
   HeadingLink,
   MainContentWrapper,
   Pre,
@@ -34,7 +35,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     // Render custom components for each html element
     // ...
     table: (props) => (
-      <div className="overflow-x-auto mt-8">
+      <div className="overflow-x-auto mt-8 first:mt-0">
         <table {...props} />
       </div>
     ),
@@ -45,10 +46,10 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     // If there are any h1 (^#\s) rendered in the markdown, it will be rendered as h2 to avoid duplication with Hero component
     h1: (props) => <HeadingLink tag="h2" {...props} />,
     h2: (props) => <HeadingLink tag="h2" {...props} />,
-    h3: (props) => <HeadingLink tag="h3" {...props} />,
-    h4: (props) => <HeadingLink tag="h4" {...props} />,
-    h5: (props) => <HeadingLink tag="h5" {...props} />,
-    h6: (props) => <HeadingLink tag="h6" {...props} />,
+    h3: (props) => <Heading tag="h3" {...props} />,
+    h4: (props) => <Heading tag="h4" {...props} />,
+    h5: (props) => <Heading tag="h5" {...props} />,
+    h6: (props) => <Heading tag="h6" {...props} />,
 
     p: (props) => (
       <p className="text-base leading-[160%] text-grey-400 dark:text-grey-300 mt-8 first:mt-0" {...props} />
@@ -58,7 +59,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     li: (props) => (
       <li className="my-2 text-base leading-[160%] text-grey-400 dark:text-grey-300 relative" {...props} />
     ),
-    hr: (props) => <hr className="my-8 border-t border-grey-200 dark:border-grey-600" {...props} />,
+    hr: (props) => <hr className="my-8 first:mt-0 border-t border-grey-200 dark:border-grey-600" {...props} />,
     blockquote: (props) => (
       <blockquote
         className="mt-8 first:mt-0 py-4 px-6 border-l border-[#E34ED6] dark:border-[#00C6EE] text-grey-400 dark:text-grey-300"

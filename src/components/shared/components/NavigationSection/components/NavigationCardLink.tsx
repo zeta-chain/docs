@@ -1,11 +1,18 @@
 import clsx from "clsx";
 import Link, { LinkProps as NextLinkProps } from "next/link";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
+import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { useAppDispatch } from "~/lib/app.store";
+import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
-import { setShouldScrollToPageTop } from "~/lib/scroll-to-page-top/scroll-to-page-top.redux";
+import {
+  setScrollPositionFromBottom,
+  setShouldScrollToPageTop,
+} from "~/lib/scroll-to-page-top/scroll-to-page-top.redux";
 
-import { IconArticleRandom, IconTime } from "../../Icons";
+import { DeterministicIconArticle, IconTime } from "../../Icons";
 
 export type NavigationCardLinkProps = {
   title: string;
@@ -18,6 +25,7 @@ export type NavigationCardLinkProps = {
   isMainPage?: boolean;
   variant?: NavigationSectionVariant;
   withScrollToTop?: boolean;
+  itemIndex?: number;
 } & NextLinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
@@ -32,9 +40,18 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
   isMainPage,
   variant = "default",
   withScrollToTop = false,
+  itemIndex,
   ...linkProps
 }) => {
+  const { upSm } = useCurrentBreakpoint();
+
   const dispatch = useAppDispatch();
+
+  const directoriesByRoute = useSelector(selectDirectoriesByRoute);
+  const articleIndex = useMemo(
+    () => directoriesByRoute[linkProps.href]?.index || itemIndex || 0,
+    [directoriesByRoute, linkProps.href]
+  );
 
   return (
     <Link
@@ -52,11 +69,16 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
       )}
       onClick={() => {
         if (withScrollToTop) {
+          const scrollPositionFromBottom = document.documentElement.scrollHeight - window.scrollY;
+
+          dispatch(setScrollPositionFromBottom(scrollPositionFromBottom));
           dispatch(setShouldScrollToPageTop(true));
         }
       }}
     >
-      <div className={clsx({ "flex-grow": variant === "default" })}>{icon || <IconArticleRandom />}</div>
+      <div className={clsx({ "flex-grow": variant === "default" })}>
+        {icon || <DeterministicIconArticle index={articleIndex} />}
+      </div>
 
       <div
         className={clsx("flex flex-col", {
@@ -76,27 +98,29 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
           )}
 
           <h3
-            className={clsx("text-xl font-medium text-black dark:text-white", {
+            className={clsx("text-xl font-medium text-black dark:text-white line-clamp-2", {
               "flex-grow text-right": variant === "fancy",
             })}
           >
             {title}
           </h3>
 
-          {variant === "default" && description && (
-            <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3">{description}</p>
+          {variant === "default" && (upSm || (!upSm && description)) && (
+            <p className="text-sm text-grey-400 dark:text-grey-300 line-clamp-3 sm:h-[55px]">{description}</p>
           )}
         </div>
 
-        {(readTime || readType) && (
-          <div className="flex justify-between flex-wrap">
-            {readTime && (
-              <p className="flex gap-1 items-center">
-                <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
-              </p>
-            )}
+        {(upSm || (!upSm && (readTime || readType))) && (
+          <div className="flex justify-between gap-2 flex-wrap sm:h-[24px] overflow-hidden">
+            <p className="flex gap-1 items-center">
+              {readTime && (
+                <>
+                  <IconTime /> <span className="text-black dark:text-white">{readTime}</span>
+                </>
+              )}
+            </p>
 
-            {readType && <p className="text-black dark:text-white">{readType}</p>}
+            <p className="text-black dark:text-white">{readType}</p>
           </div>
         )}
       </div>

@@ -50,12 +50,18 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
         <div className={clsx("col-span-6 grid grid-cols-2 gap-8")}>
           <div className="col-span-1 relative">
             <div className="absolute rounded-full bg-[#00A5C6] w-[72px] h-[72px] -left-[36px] -top-[39px]" />
-            <NavigationCardLink {...navItems[0]} isMainPage={isMainPage} className="relative" />
+            <NavigationCardLink {...navItems[0]} isMainPage={isMainPage} className="relative" itemIndex={0} />
           </div>
 
           <div className="col-span-1 flex flex-col gap-8">
             <div className="flex-grow">
-              <NavigationCardLink {...navItems[1]} isMainPage={isMainPage} variant="fancy" className="h-full" />
+              <NavigationCardLink
+                {...navItems[1]}
+                isMainPage={isMainPage}
+                variant="fancy"
+                className="h-full"
+                itemIndex={1}
+              />
             </div>
 
             <div className="flex-grow relative">
@@ -65,13 +71,14 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
                 isMainPage={isMainPage}
                 variant="fancy"
                 className="relative h-full"
+                itemIndex={2}
               />
             </div>
           </div>
         </div>
 
         <div className="col-span-2">
-          <NavigationCardLink {...navItems[3]} isMainPage={isMainPage} />
+          <NavigationCardLink {...navItems[3]} isMainPage={isMainPage} itemIndex={3} />
         </div>
       </section>
     );
@@ -102,12 +109,18 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
                   <div className="absolute bg-[#9AEA4A] w-4 h-4 right-20 top-4" />
                 </div>
 
-                <NavigationCardLink key={index} {...article} isMainPage={isMainPage} className="relative" />
+                <NavigationCardLink
+                  key={index}
+                  {...article}
+                  isMainPage={isMainPage}
+                  className="relative"
+                  itemIndex={index}
+                />
               </div>
             );
           }
 
-          return <NavigationCardLink key={index} {...article} isMainPage={isMainPage} />;
+          return <NavigationCardLink key={index} {...article} isMainPage={isMainPage} itemIndex={index} />;
         })}
       </div>
     </section>

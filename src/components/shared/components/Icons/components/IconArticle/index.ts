@@ -1,1 +1,1 @@
-export * from "./components/IconArticleRandom";
+export * from "./components/DeterministicIconArticle";

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -35,13 +35,15 @@ const formatString = (str: string) => {
 };
 
 export const ForeignCoinsTable = () => {
-  const [coins, setCoins] = useState<(ForeignCoin & { chainName: string })[]>([]);
+  const [mainnetCoins, setMainnetCoins] = useState<(ForeignCoin & { chainName: string })[]>([]);
+  const [testnetCoins, setTestnetCoins] = useState<(ForeignCoin & { chainName: string })[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
-    setCoins([]);
+
     const fetchData = async () => {
       try {
         const COINS_URL = `${rpcByNetworkType[activeTab.networkType]}${COINS}`;
@@ -64,9 +66,13 @@ export const ForeignCoinsTable = () => {
         }));
 
         const sortedCoins = enrichedCoins.sort((a, b) => a.chainName.localeCompare(b.chainName));
-        setCoins(sortedCoins);
+
+        if (activeTab.networkType === "mainnet") setMainnetCoins(sortedCoins);
+        if (activeTab.networkType === "testnet") setTestnetCoins(sortedCoins);
       } catch (error) {
         console.error("Error fetching data:", error);
+        if (activeTab.networkType === "mainnet") setMainnetCoins([]);
+        if (activeTab.networkType === "testnet") setTestnetCoins([]);
       } finally {
         setIsLoading(false);
       }
@@ -75,9 +81,13 @@ export const ForeignCoinsTable = () => {
     fetchData();
   }, [activeTab.networkType]);
 
+  const coins = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetCoins : testnetCoins;
+  }, [activeTab.networkType, mainnetCoins, testnetCoins]);
+
   return (
-    <div className="mt-8">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="mt-8 first:mt-0">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="foreign-coins-" />
 
       {isLoading ? (
         <LoadingTable rowCount={7} />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { IconArticle001 } from "./IconArticle001";
 import { IconArticle002 } from "./IconArticle002";
@@ -254,13 +254,39 @@ const articleIcons = [
   <IconArticle125 />,
 ];
 
-export const IconArticleRandom: React.FC = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+const ARTICLE_ITEM_SEED = 123456;
 
-  const randomIndex = useMemo(() => Math.floor(Math.random() * articleIcons.length), []);
+// Linear Congruential Generator (LCG)
+function lcg(seed: number) {
+  return function () {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+}
 
-  if (!isMounted) return null;
+// Deterministic shuffle using LCG
+function shuffleArray<T>(array: T[], seed: number): T[] {
+  const prng = lcg(seed);
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(prng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
-  return articleIcons[randomIndex];
+const shuffledIcons = shuffleArray(articleIcons, ARTICLE_ITEM_SEED);
+
+function getIconForId(shuffledIcons: JSX.Element[], index?: number): JSX.Element | null {
+  if (typeof index !== "number") return null;
+
+  const iconIndex = index % articleIcons.length;
+
+  return shuffledIcons[iconIndex];
+}
+
+export const DeterministicIconArticle: React.FC<{ index?: number }> = ({ index }) => {
+  const articleIcon = useMemo(() => getIconForId(shuffledIcons, index), [index]);
+
+  return articleIcon;
 };

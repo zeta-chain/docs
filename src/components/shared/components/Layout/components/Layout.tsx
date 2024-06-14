@@ -1,11 +1,8 @@
-import clsx from "clsx";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import tw, { styled } from "twin.macro";
 
 import { useScrollToPageTop } from "~/hooks/useScrollToPageTop";
-import { themeSelectors } from "~/lib/theme/theme.redux.selectors";
 
 import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
@@ -74,8 +71,6 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
       .nextra-search {
         ${tw`block w-full sm:w-[250px] transition-opacity`};
 
-        ${({ isMainPage }) => !isMainPage && tw`sm:opacity-0 sm:pointer-events-none`};
-
         input {
           ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
                focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300 text-sm pl-10`};
@@ -121,7 +116,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
   .nextra-content main {
     ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] max-w-none`};
 
-    ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-12`)};
+    ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-[120px]`)};
   }
 
   /* Hide Nextra docs theme components */
@@ -203,18 +198,9 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
-  const isDarkMode = useSelector(themeSelectors.selectIsDarkMode);
-
   return (
     <LayoutContainer className={className} isMainPage={isMainPage}>
-      {!isMounted && (
-        <div
-          className={clsx("absolute inset-0 z-[999999999] w-screen h-screen", {
-            "bg-black": isDarkMode,
-            "bg-white": !isDarkMode,
-          })}
-        />
-      )}
+      {!isMounted && <div className="absolute inset-0 z-[999999999] w-screen h-screen initial-overlay" />}
       <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>
   );

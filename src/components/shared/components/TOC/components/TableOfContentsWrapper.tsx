@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
-import { useConfig } from "nextra-theme-docs";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+
+import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
 import { mainNavRoutes } from "../../Layout";
 import { getHeadings, Heading } from "../TOC.helpers";
@@ -10,12 +12,16 @@ type TableOfContentsWrapperProps = PropsWithChildren<{}>;
 
 export const TableOfContentsWrapper: React.FC<TableOfContentsWrapperProps> = ({ children }) => {
   const { route } = useRouter();
-  const { frontMatter } = useConfig();
+  const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
   const [headings, setHeadings] = useState<Heading[]>([]);
 
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
-  const isSubCategoryPage = frontMatter?.pageType === "sub-category";
+  const isSubCategoryPage = useMemo(
+    () => directoriesByRoute[route]?.frontMatter?.pageType === "sub-category",
+    [directoriesByRoute, route]
+  );
+
   const shouldRenderTOC = !isMainPage && !isSubCategoryPage;
 
   useEffect(() => {

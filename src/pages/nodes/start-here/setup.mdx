@@ -2,6 +2,7 @@
 title: Setting Up a Node
 description: In this guide we will be setting up a ZetaChain Mainnet node. For a testnet node, follow the same instructions, but replace some values (like chain ID and seed nodes) with the ones provided in corresponding tables.
 ---
+
 import { Alert } from "~/components/shared";
 
 ## Install the ZetaChain Node Binary
@@ -28,10 +29,10 @@ zetacored version
 
 ## Initialize the Data Directory
 
-| Network      | Chain ID         |
-| ------------ | ---------------- |
-| Mainnet      | zetachain_7000-1 |
-| Testnet      | athens_7001-1    |
+| Network | Chain ID         |
+| ------- | ---------------- |
+| Mainnet | zetachain_7000-1 |
+| Testnet | athens_7001-1    |
 
 ```
 zetacored init MONIKER --chain-id zetachain_7000-1
@@ -43,10 +44,10 @@ flag.
 
 ## Fetch Config Files
 
-| Network      | Config Files                                                   |
-| ------------ | -------------------------------------------------------------- |
-| Mainnet      | https://github.com/zeta-chain/network-config/tree/main/mainnet |
-| Testnet      | https://github.com/zeta-chain/network-config/tree/main/athens3 |
+| Network | Config Files                                                   |
+| ------- | -------------------------------------------------------------- |
+| Mainnet | https://github.com/zeta-chain/network-config/tree/main/mainnet |
+| Testnet | https://github.com/zeta-chain/network-config/tree/main/athens3 |
 
 Fetch and save config files in the data directory:
 
@@ -189,14 +190,11 @@ ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format j
 ```
 
 <Alert variant="danger">
-    In this example, we have set `DAEMON_ALLOW_DOWNLOAD_BINARIES=true`. This instructs `cosmovisor` to automatically 
-    download the new binaries specified in the upgrade proposal. This would fail if the Github API is down.
-
-    We suggest keeping this feature enabled, but preloading and validating any new binaries before the upgrade to
-    minimize risk. If you have already preloaded the binaries, none will be downloaded.
-
-    Read more about [cosmovisor Auto-Download here](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download).
-
+  In this example, we have set `DAEMON_ALLOW_DOWNLOAD_BINARIES=true`. This instructs `cosmovisor` to automatically
+  download the new binaries specified in the upgrade proposal. This would fail if the Github API is down. We suggest
+  keeping this feature enabled, but preloading and validating any new binaries before the upgrade to minimize risk. If
+  you have already preloaded the binaries, none will be downloaded. Read more about [cosmovisor Auto-Download
+  here](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download).
 </Alert>
 
 Run `systemctl daemon-reload` to load the service.
