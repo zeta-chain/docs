@@ -24,7 +24,7 @@ export const NavigationItemWrapper = ({ children, item, onClick }: NavigationIte
     return url.startsWith("https");
   }, [url]);
 
-  const className = "group px-4 sm:px-6 py-3 hover:!bg-[transparent]";
+  const className = "group px-4 sm:px-6 py-3 hover:!bg-[transparent] whitespace-nowrap";
 
   // Not a link, default to a normal button
   if (!item.url) {
