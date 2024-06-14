@@ -1,33 +1,32 @@
 import clsx from "clsx";
-import { useTheme as useNextraTheme } from "nextra-theme-docs";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-
-import { useAppDispatch } from "~/lib/app.store";
-import { themeSelectors } from "~/lib/theme/theme.redux.selectors";
-import { updateThemeMode } from "~/lib/theme/theme.redux.thunks";
+import { useTheme } from "nextra-theme-docs";
+import { useEffect, useState } from "react";
 
 import { HeroIconMoon, HeroIconSun } from "./Icons";
 
 export const ThemeToggle: React.FC<{ className?: string }> = ({ className }) => {
-  const dispatch = useAppDispatch();
+  const { setTheme, resolvedTheme } = useTheme();
 
-  const isDarkMode = useSelector(themeSelectors.selectIsDarkMode);
-
-  const { setTheme: setNextraTheme } = useNextraTheme();
+  const [isLightMode, setIsLightMode] = useState(false);
 
   useEffect(() => {
-    setNextraTheme(isDarkMode ? "dark" : "light");
-  }, [isDarkMode, setNextraTheme]);
+    const storedTheme = localStorage.getItem("theme");
+    const initialTheme = storedTheme || resolvedTheme;
+    setIsLightMode(initialTheme === "light");
+  }, []);
+
+  useEffect(() => {
+    setIsLightMode(resolvedTheme === "light");
+  }, [resolvedTheme]);
 
   return (
     <button
       type="button"
       className={clsx("flex items-center justify-center bg-[transparent] p-2 rounded transition-all", className)}
-      onClick={() => dispatch(updateThemeMode())}
+      onClick={() => setTheme(isLightMode ? "dark" : "light")}
     >
-      {isDarkMode && <HeroIconMoon className="text-current w-6 h-6 shrink-0" />}
-      {!isDarkMode && <HeroIconSun className="text-current w-6 h-6 shrink-0" />}
+      {!isLightMode && <HeroIconMoon className="text-current w-6 h-6 shrink-0" />}
+      {isLightMode && <HeroIconSun className="text-current w-6 h-6 shrink-0" />}
     </button>
   );
 };

@@ -35,9 +35,7 @@ export const HeadingLink: React.FC<HeadingLinkProps> = ({ tag: Tag, children }) 
       id={generatedId}
       className={clsx("heading-link first:mt-0", {
         "mt-20 sm:mt-[136px]": Tag === "h2",
-        "mt-10 sm:mt-20": Tag === "h3",
-        "mt-8 sm:mt-10": Tag === "h4",
-        "mt-8": Tag === "h5" || Tag === "h6",
+        "mt-8": Tag === "h3" || Tag === "h4" || Tag === "h5" || Tag === "h6",
       })}
     >
       <StyledLink

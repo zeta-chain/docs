@@ -2,7 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { ZetaChainClient } from "@zetachain/toolkit/client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 
@@ -16,7 +16,9 @@ type FeesProps = {
 };
 
 export const Fees: React.FC<FeesProps> = ({ type }) => {
-  const [fees, setFees] = useState<FeesState>({ messaging: [], omnichain: [] });
+  const [mainnetFees, setMainnetFees] = useState<FeesState>({ messaging: [], omnichain: [] });
+  const [testnetFees, setTestnetFees] = useState<FeesState>({ messaging: [], omnichain: [] });
+
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +41,9 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
           omnichain: sortedOmnichainFees,
         };
 
-        setFees(updatedData);
+        if (activeTab.networkType === "mainnet") setMainnetFees(updatedData);
+        if (activeTab.networkType === "testnet") setTestnetFees(updatedData);
+
         setIsLoading(false);
       })
       .catch((error: any) => {
@@ -47,6 +51,10 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
         setIsLoading(false);
       });
   }, [activeTab.networkType]);
+
+  const fees = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetFees : testnetFees;
+  }, [activeTab.networkType, mainnetFees, testnetFees]);
 
   const renderTableHeaders = () => {
     if (type === "messaging") {
@@ -94,8 +102,8 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
   };
 
   return (
-    <div className="mt-8">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="mt-8 first:mt-0">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix={`${type}-fees-`} />
 
       {isLoading ? (
         <LoadingTable rowCount={type === "messaging" ? 2 : 7} />

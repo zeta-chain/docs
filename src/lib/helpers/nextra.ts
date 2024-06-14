@@ -40,22 +40,29 @@ export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]
   return mdxPages;
 };
 
-type PageMeta = {
-  title?: string;
-  description?: string;
-  readTime?: string;
-  readType?: string;
+export type PageMeta = {
+  meta?: {
+    title?: string;
+    description?: string;
+    readTime?: string;
+    readType?: string;
+    relatedTutorialUrl?: string;
+    heroImgUrl?: string;
+    heroImgWidth?: number;
+  };
 };
 
-type PageIndex = {
+export type PageIndex = {
   index: number;
 };
 
-type PageWithMeta = PageMeta & Page;
+export type PageWithMeta = PageMeta & Page;
 
-type DirectoriesByRoute = Record<string, PageIndex & PageWithMeta>;
+export type Directory = PageIndex & PageWithMeta & { frontMatter?: { [key: string]: any } };
 
-export const getFlatDirectories = (allPages: Page[]) => {
+export type DirectoriesByRoute = Record<string, Directory>;
+
+export const getDirectories = (allPages: Page[]) => {
   const flatDirectories: PageWithMeta[] = [];
   const directoriesByRoute: DirectoriesByRoute = {};
 
@@ -64,19 +71,11 @@ export const getFlatDirectories = (allPages: Page[]) => {
       if (page.kind === "Folder") {
         flattenDirectories(page.children);
       } else {
-        const directory = {
-          ...(typeof page.meta?.title === "string" ? { title: page.meta?.title } : {}),
-          ...(typeof page.meta?.description === "string" ? { description: page.meta?.description } : {}),
-          ...(typeof page.meta?.readTime === "string" ? { readTime: page.meta?.readTime } : {}),
-          ...(typeof page.meta?.readType === "string" ? { readType: page.meta?.readType } : {}),
-          ...page,
-        };
-
-        flatDirectories.push(directory);
+        flatDirectories.push(page);
 
         directoriesByRoute[page.route] = {
           index: flatDirectories.length - 1,
-          ...directory,
+          ...page,
         };
       }
     }

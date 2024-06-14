@@ -1,5 +1,5 @@
 import { bech32 } from "bech32";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -16,13 +16,17 @@ const convertToValoper = (address: any) => {
 };
 
 export const ObserverList = () => {
-  const [observers, setObservers] = useState<any>([]);
-  const [validators, setValidators] = useState<any>([]);
+  const [mainnetObservers, setMainnetObservers] = useState<any>([]);
+  const [mainnetValidators, setMainnetValidators] = useState<any>([]);
+  const [testnetObservers, setTestnetObservers] = useState<any>([]);
+  const [testnetValidators, setTestnetValidators] = useState<any>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   const fetchObservers = useCallback(async () => {
     setIsLoading(true);
+
     try {
       const api = rpcByNetworkType[activeTab.networkType];
       const response = await fetch(`${api}/zeta-chain/observer/nodeAccount`);
@@ -31,9 +35,13 @@ export const ObserverList = () => {
         ...observer,
         valoperAddress: convertToValoper(observer.operator),
       }));
-      setObservers(processedData || []);
+
+      if (activeTab.networkType === "mainnet") setMainnetObservers(processedData || []);
+      if (activeTab.networkType === "testnet") setTestnetObservers(processedData || []);
     } catch (error) {
       console.error("Error fetching observer validators:", error);
+      if (activeTab.networkType === "mainnet") setMainnetObservers([]);
+      if (activeTab.networkType === "testnet") setTestnetObservers([]);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +61,8 @@ export const ObserverList = () => {
         const data = await response.json();
 
         if (data.validators) {
-          setValidators((prev: any) => [...prev, ...data.validators]);
+          if (activeTab.networkType === "mainnet") setMainnetValidators((prev: any) => [...prev, ...data.validators]);
+          if (activeTab.networkType === "testnet") setTestnetValidators((prev: any) => [...prev, ...data.validators]);
 
           if (data.pagination && data.pagination.next_key) {
             await fetchValidators(data.pagination.next_key);
@@ -61,6 +70,8 @@ export const ObserverList = () => {
         }
       } catch (error) {
         console.error("Error fetching validators:", error);
+        if (activeTab.networkType === "mainnet") setMainnetValidators([]);
+        if (activeTab.networkType === "testnet") setTestnetValidators([]);
       } finally {
         setIsLoading(false);
       }
@@ -69,11 +80,17 @@ export const ObserverList = () => {
   );
 
   useEffect(() => {
-    setObservers([]);
-    setValidators([]);
     fetchObservers();
     fetchValidators();
   }, [fetchObservers, fetchValidators]);
+
+  const observers = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetObservers : testnetObservers;
+  }, [activeTab.networkType, mainnetObservers, testnetObservers]);
+
+  const validators = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetValidators : testnetValidators;
+  }, [activeTab.networkType, mainnetValidators, testnetValidators]);
 
   const findMoniker = useCallback(
     (valoperAddress: any) => {
@@ -93,8 +110,8 @@ export const ObserverList = () => {
   }, [findMoniker, observers]);
 
   return (
-    <div className="mt-8">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="mt-8 first:mt-0">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="observer-list-" />
 
       {isLoading ? (
         <LoadingTable rowCount={9} />

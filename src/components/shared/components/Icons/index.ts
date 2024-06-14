@@ -22,6 +22,7 @@ export * from "./components/IconLink";
 export * from "./components/IconMedium";
 export * from "./components/IconReddit";
 export * from "./components/IconSearch";
+export * from "./components/IconServer";
 export * from "./components/IconSparkle";
 export * from "./components/IconStaking";
 export * from "./components/IconSupport";

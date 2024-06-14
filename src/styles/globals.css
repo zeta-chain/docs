@@ -59,3 +59,11 @@
   --shiki-ansi-bright-white: var(--shiki-color-ansi-bright-white);
   --shiki-ansi-bright-white-dim: var(--shiki-color-ansi-bright-white-dim);
 }
+
+html.dark .initial-overlay {
+  background-color: #000;
+}
+
+html.light .initial-overlay {
+  background-color: #fff;
+}

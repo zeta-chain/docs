@@ -17,19 +17,21 @@ export const NavTabs = <T extends Tab>({
   activeTab,
   setActiveTab,
   className,
+  layoutIdPrefix,
 }: {
   tabs: T[];
   activeTab: T;
   setActiveTab: (item: T) => void;
   className?: string;
+  layoutIdPrefix?: string;
 }) => {
-  const layoutId = useMemo(() => uniqueId(), []);
+  const layoutId = useMemo(() => uniqueId(layoutIdPrefix), [layoutIdPrefix]);
 
   return (
     <nav className={clsx("flex justify-center", className)}>
       <ul className="flex gap-4 sm:gap-6 border-b border-grey-200 dark:border-grey-600">
         {tabs.map((item) => (
-          <div className="relative">
+          <div className="relative" key={`${item.label}-${layoutId}`}>
             <button type="button" className="w-full" onClick={() => setActiveTab(item)}>
               <motion.li
                 {...getRevealProps({

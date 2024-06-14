@@ -8,7 +8,7 @@
     "description": "Learn how to build on ZetaChain."
   },
   "nodes": {
-    "title": "Start Operating",
+    "title": "Run a Node",
     "description": "Setup and run a ZetaChain node.",
     "variant": "fancy",
     "navImgUrl": "/img/pages/operate.svg"

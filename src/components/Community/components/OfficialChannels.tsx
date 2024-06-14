@@ -71,13 +71,13 @@ export const OfficialChannels = () => {
       <div className="flex flex-col gap-5 lg:gap-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8">
           {mainChannels.map((item, index) => (
-            <NavigationCardLink key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" />
+            <NavigationCardLink key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" isMainPage />
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-8">
           {otherChannels.map((item, index) => (
-            <NavigationCardLink key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" />
+            <NavigationCardLink key={index} {...item} className="sm:h-auto lg:h-[200px]" target="_blank" isMainPage />
           ))}
         </div>
       </div>

@@ -1,8 +1,8 @@
-import { getAllPages } from "nextra/context";
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 import { NavigationSection } from "~/components/shared";
-import { getFlatDirectories } from "~/lib/helpers/nextra";
+import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
 /**
  * @description
@@ -31,18 +31,13 @@ const getStartedPages: {
 ];
 
 export const GetStarted: React.FC = () => {
-  const allPages = getAllPages();
+  const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
-  const { directoriesByRoute } = useMemo(() => getFlatDirectories(allPages), [allPages]);
-
-  const pagesWithMeta = useMemo(() => {
+  const getStartedItems = useMemo(() => {
     const pages = getStartedPages.map((page) => {
       const directory = directoriesByRoute[page.href];
 
-      if (!directory) {
-        console.error(`Get Started ERROR - Page under route "${page.href}" not found.`);
-        return null;
-      }
+      if (!directory) return null;
 
       const title = page.title || directory.meta?.title;
       const description = page.description || directory.meta?.description;
@@ -69,13 +64,13 @@ export const GetStarted: React.FC = () => {
     return filteredPages;
   }, [directoriesByRoute]);
 
-  if (!directoriesByRoute) return null;
+  if (!directoriesByRoute || !getStartedItems.length) return null;
 
   return (
     <NavigationSection
       title="Get Started"
       description="Dive into the basics of ZetaChain"
-      navItems={pagesWithMeta}
+      navItems={getStartedItems}
       lastItemEmbellishment
     />
   );

@@ -1,4 +1,4 @@
-import { IconArticleRandom, IconDocs, PrimaryLink } from "../../shared";
+import { DeterministicIconArticle, IconDocs, PrimaryLink } from "../../shared";
 
 type KeyFeature = {
   title: string;
@@ -48,7 +48,7 @@ export const KeyFeatures: React.FC = () => {
         {keyFeatures.map((feature, index) => (
           <div key={feature.title} className="flex flex-col md:flex-row gap-0 md:gap-8">
             <div className="shrink-0">
-              <IconArticleRandom />
+              <DeterministicIconArticle index={index} />
             </div>
 
             <div key={index} className="flex flex-col md:gap-4">

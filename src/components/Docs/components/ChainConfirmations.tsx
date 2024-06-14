@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -27,7 +27,9 @@ const CHAIN_PARAMS = "/zeta-chain/observer/get_chain_params";
 const SUPPORTED_CHAINS = "/zeta-chain/observer/supportedChains";
 
 export const ChainConfirmations = () => {
-  const [chainParams, setChainParams] = useState<ChainParams>([]);
+  const [mainnetChainParams, setMainnetChainParams] = useState<ChainParams>([]);
+  const [testnetChainParams, setTestnetChainParams] = useState<ChainParams>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
@@ -56,7 +58,8 @@ export const ChainConfirmations = () => {
             chainName: chainsData.chains.find((chain) => chain.chain_id === param.chain_id)?.chain_name || "Unknown",
           }));
 
-        setChainParams(filteredParams);
+        if (activeTab.networkType === "mainnet") setMainnetChainParams(filteredParams);
+        if (activeTab.networkType === "testnet") setTestnetChainParams(filteredParams);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -67,9 +70,13 @@ export const ChainConfirmations = () => {
     fetchData();
   }, [activeTab.networkType]);
 
+  const chainParams = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetChainParams : testnetChainParams;
+  }, [activeTab.networkType, mainnetChainParams, testnetChainParams]);
+
   return (
-    <div className="mt-8">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="mt-8 first:mt-0">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="chain-confirmations-" />
 
       {isLoading ? (
         <LoadingTable rowCount={3} />
