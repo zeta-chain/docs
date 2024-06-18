@@ -7,9 +7,9 @@
     "title": "Swap",
     "description": "Implement an omnichain swap app compatible with chains like Ethereum, BNB and Bitcoin"
   },
-  "swap-zeta": {
-    "title": "Swap to ZETA",
-    "description": "Enhance the omnichain swap app with the ability to swap any token to ZETA"
+  "swap-any": {
+    "title": "Swap Any Token",
+    "description": "Enhance the omnichain swap app with the ability to swap to any token"
   },
   "staking": {
     "title": "Staking",
