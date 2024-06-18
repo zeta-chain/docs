@@ -30,7 +30,8 @@ yarn
 
 ## Create the contract
 
-Run the following command to create a new omnichain contract called `Swap`.
+Run the following command to create a new universal omnichain contract called
+`Swap`.
 
 ```
 npx hardhat omnichain Swap targetToken:address recipient
@@ -38,7 +39,7 @@ npx hardhat omnichain Swap targetToken:address recipient
 
 ## Omnichain Contract
 
-```solidity filename="contracts/Swap.sol" {6-7,12,24-61}
+```solidity filename="contracts/Swap.sol" {6-7,12,18-21,29-65}
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -56,18 +57,22 @@ contract Swap is zContract, OnlySystem {
         systemContract = SystemContract(systemContractAddress);
     }
 
+    struct Params {
+        address target;
+        bytes to;
+    }
+
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
     ) external virtual override onlySystem(systemContract) {
-        address targetTokenAddress;
-        bytes memory recipientAddress;
+        Params memory params = Params({target: address(0), to: bytes("")});
 
         if (context.chainID == BITCOIN) {
-            targetTokenAddress = BytesHelperLib.bytesToAddress(message, 0);
-            recipientAddress = abi.encodePacked(
+            params.target = BytesHelperLib.bytesToAddress(message, 0);
+            params.to = abi.encodePacked(
                 BytesHelperLib.bytesToAddress(message, 20)
             );
         } else {
@@ -75,11 +80,11 @@ contract Swap is zContract, OnlySystem {
                 message,
                 (address, bytes)
             );
-            targetTokenAddress = targetToken;
-            recipientAddress = recipient;
+            params.target = targetToken;
+            params.to = recipient;
         }
 
-        (address gasZRC20, uint256 gasFee) = IZRC20(targetTokenAddress)
+        (address gasZRC20, uint256 gasFee) = IZRC20(params.target)
             .withdrawGasFee();
 
         uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(
@@ -94,41 +99,40 @@ contract Swap is zContract, OnlySystem {
             systemContract,
             zrc20,
             amount - inputForGas,
-            targetTokenAddress,
+            params.target,
             0
         );
 
-        IZRC20(gasZRC20).approve(targetTokenAddress, gasFee);
-        IZRC20(targetTokenAddress).withdraw(recipientAddress, outputAmount);
+        IZRC20(gasZRC20).approve(params.target, gasFee);
+        IZRC20(params.target).withdraw(params.to, outputAmount);
     }
 }
 ```
 
-The contract expects to receive two values in the `message`:
+Create a `Params` struct, which will hold two values:
 
-- `address targetTokenAddress`: the address of the ZRC-20 version of the
-  destination token.
-- `bytes memory recipientAddress`: the recipient address on the destination
-  chain. We're using `bytes`, because the recipient address can be either on an
-  EVM chain or Bitcoin.
+- `address target`: target token ZRC-20 address.
+- `bytes to`: recipient address on the destination chain. We're using `bytes`,
+  because the recipient can be either on EVM (like Ethereum or BNB) or on
+  Bitcoin.
 
-When the contract is called from an EVM chain, the `message` is encoded as a
-`bytes` array using the ABI encoding.
-
-When the contract is called from Bitcoin it’s up to us to encode and then decode
-the message.
+First, decode the incoming `message` to get the parameter values. The message
+might be encoded differently depending on the source chain. For example, on
+Bitcoin there is a upper limit of 80 bytes, so you might want to encode the
+message in the most efficient way possible. On EVM don't have this limit, so
+it's fine to use `abi.encode` to encode the message.
 
 Use `context.chainID` to determine the connected chain from which the contract
 is called.
 
-If it’s Bitcoin, the first 20 bytes of the `message` are the
-`targetTokenAddress` encoded as an `address`. Use `bytesToAddress` helper method
-to get the target token address. To get the recipient address, use the same
-helper method with an offset of 20 bytes and then use `abi.encodePacked` to
-convert the address to `bytes`.
+If it's Bitcoin, the first 20 bytes of the `message` are the `params.target`
+encoded as an `address`. Use `bytesToAddress` helper method to get the target
+token address. To get the recipient address, use the same helper method with an
+offset of 20 bytes and then use `abi.encodePacked` to convert the address to
+`bytes`.
 
-If it’s an EVM chain, use `abi.decode` to decode the `message` into the
-`targetToken` and `recipient` variables.
+If it's an EVM chain, use `abi.decode` to decode the `message` into the
+`params.target` and `params.to`.
 
 Next, get the gas fee and the gas coin address from the target token. The gas
 coin is the token that will be used to pay for the gas on the destination chain.
@@ -138,8 +142,8 @@ incoming token for the gas coin using the internal liquidity pools. The method
 returns the amount of the incoming token that was used to pay for the gas.
 
 Next, swap the incoming amount minus the amount spent swapping for a gas fee for
-the target token on the destination chain using the `SwapHelperLib._doSwap`
-helper method.
+the target token on the destination chain using the
+`SwapHelperLib.swapExactTokensForTokens` helper method.
 
 Finally, withdraw the tokens to the recipient address on the destination chain.
 
@@ -153,7 +157,7 @@ To support both EVM and Bitcoin addresses, we need to check if the recipient is
 a valid Bitcoin address. If it is, we need to encode it as `bytes` using
 `utils.solidityPack`.
 
-If it’s not a valid bech32 address, then we assume it’s an EVM address and use
+If it’s not a valid bech32 address, then we assume it's an EVM address and use
 `args.recipient` as the value for the recipient.
 
 Finally, update the `prepareData` function call to use the `bytes` type for the
@@ -181,9 +185,9 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 
 ## Create an Account and Request Tokens from the Faucet
 
-Before proceeding with the next steps, make sure you have
-[created an account and requested ZETA tokens](/developers/tutorials/hello#create-an-account)
-from the faucet.
+Before proceeding with the next steps, make sure you have [created an account
+and requested ZETA tokens](/developers/tutorials/hello#create-an-account) from
+the faucet.
 
 ## Compile and Deploy the Contract
 
@@ -209,8 +213,8 @@ Use the `interact` task to perform a cross-chain swap. In this example, we're
 swapping native sETH from Sepolia for tMATIC on Polygon Mumbai. The contract
 will deposit sETH to ZetaChain as ZRC-20, swap it for ZRC-20 tMATIC and then
 withdraw native tMATIC Polygon Mumbai. To get the value of the `--target-token`
-find the ZRC-20 contract address of the destination token in the
-[ZRC-20 section of the docs](/developers/tokens/zrc20).
+find the ZRC-20 contract address of the destination token in the [ZRC-20 section
+of the docs](/developers/tokens/zrc20).
 
 ```
 npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 0.01 --network sepolia_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
@@ -240,8 +244,8 @@ npx hardhat cctx 0x6b4156c195d955d1325a5e6275214db63ff2e3642838607333e74abd74b8f
 
 Now let's swap USDC from Sepolia to MATIC on Polygon Mumbai. To send USDC
 specify the ERC-20 token contract address (on Sepolia) in the `--token`
-parameter. You can find the address of the token in the
-[ZRC-20 section of the docs](/developers/tokens/zrc20).
+parameter. You can find the address of the token in the [ZRC-20 section of the
+docs](/developers/tokens/zrc20).
 
 ```
 npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 10 --token 0x07865c6e87b9f70255377e024ace6630c1eaa37f --network sepolia_testnet --target-token 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb --recipient 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
