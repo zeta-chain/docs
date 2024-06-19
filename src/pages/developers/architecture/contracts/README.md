@@ -31,7 +31,9 @@ getAddress("zrc20", "zeta_mainnet", "USDT.BSC");
 The third argument (symbol) is only used when querying ZRC-20 addresses to
 specify which token address is needed.
 
-To view a table of all contracts visit the [Contract Addresses](https://www.zetachain.com/docs/reference/contracts/) page in the docs.
+To view a table of all contracts visit the [Contract
+Addresses](https://www.zetachain.com/docs/reference/network/contracts/) page in
+the docs.
 
 Importing
 [`ZetaInterfaces`](https://www.zetachain.com/docs/developers/architecture/contracts/contracts/evm/interfaces/ZetaInterfaces.sol/interface.ZetaInterfaces)
@@ -42,8 +44,8 @@ import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.so
 import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 ```
 
-Importing [ZRC20](https://www.zetachain.com/docs/developers/tokens/zrc20/)
-and the [system
+Importing [ZRC20](https://www.zetachain.com/docs/developers/tokens/zrc20/) and
+the [system
 contract](https://www.zetachain.com/docs/developers/architecture/contracts/contracts/zevm/SystemContract.sol/contract.SystemContract)
 for omni-chain smart contracts:
 
@@ -55,7 +57,8 @@ import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 
 ## Prerequisites for Development
 
-Before you can contribute to this project, you must have the following installed:
+Before you can contribute to this project, you must have the following
+installed:
 
 - [Node.js](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
@@ -75,7 +78,8 @@ to the `artifacts` directory.
 
 ## Generating Go Bindings and Contract Addresses
 
-To generate Go bindings for the Solidity contracts and fetch, run the following command:
+To generate Go bindings for the Solidity contracts and fetch, run the following
+command:
 
 ```
 yarn generate

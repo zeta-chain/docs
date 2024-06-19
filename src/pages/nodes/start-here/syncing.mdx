@@ -4,7 +4,9 @@ title: Syncing a Node
 
 import { Alert } from "~/components/shared";
 
-<Alert variant="note">This guide assumes you've completed the [Setting Up Your Node](/nodes/setup) step.</Alert>
+<Alert variant="note">
+  This guide assumes you've completed the [Setting Up Your Node](/nodes/start-here/setup) step.
+</Alert>
 
 # Option 1: Snapshot method
 
@@ -13,12 +15,12 @@ Syncing with a snapshot downloads the data directory from an existing node.
 Choose the network and the snapshot type, fetch the URL and follow instructions
 returned in response.
 
-| Network      | Type             | URL                                                                     |
-| ------------ | ---------------- | ----------------------------------------------------------------------- |
-| Mainnet      | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=mainnet         |
-| Mainnet      | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=mainnet |
-| Testnet      | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=athens3         |
-| Testnet      | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=athens3 |
+| Network | Type             | URL                                                                     |
+| ------- | ---------------- | ----------------------------------------------------------------------- |
+| Mainnet | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=mainnet         |
+| Mainnet | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=mainnet |
+| Testnet | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=athens3         |
+| Testnet | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=athens3 |
 
 Untar the file inside `~/.zetacored` and start the node.
 
@@ -75,21 +77,25 @@ ksync state-sync --binary="/path/to/zetacored" --chain-id=kaon-1 --snapshot-pool
 # Checking Node Health
 
 ### Check Logs
-To confirm that the node is working, you can watch the logs. The node should be printing `INF` logs like these:
+
+To confirm that the node is working, you can watch the logs. The node should be
+printing `INF` logs like these:
 
 ```
 4:10AM INF executed block height=3468229 module=state num_invalid_txs=1 num_valid_txs=24 server=node
 4:10AM INF commit synced commit=436F6D6D697449447B5B3139332032323120323438203430203230
-4:10AM INF committed state app_hash=C1DDF828CB4126E8239D92FB57006D978664911BF75FDB2606804083C4F65354 height=3468229 
+4:10AM INF committed state app_hash=C1DDF828CB4126E8239D92FB57006D978664911BF75FDB2606804083C4F65354 height=3468229
 4:10AM INF indexed block exents height=3468229 module=txindex server=node
 4:11AM INF Timed out dur=4468.382473 height=3468230 module=consensus round=0 server=node step=1
 ```
 
 ### Query Node Status
+
 You can confirm that the node is synced by querying the node status endpoint:
 
 ```
 curl localhost:26657/status
 ```
 
-Make sure that `catching_up` is false. Also, check `latest_block_height` and `latest_block_time`.
+Make sure that `catching_up` is false. Also, check `latest_block_height` and
+`latest_block_time`.

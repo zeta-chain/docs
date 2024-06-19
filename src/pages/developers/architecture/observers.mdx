@@ -10,11 +10,12 @@ ZetaChain has two types of validators: core validators and observer-signer
 validators (observer-signers).
 
 <Alert variant="note">
-  ZetaChain is designed to have two types of validators: observers and signers. Observers monitor activities on
-  connected chains, while signers handle the signing of transactions from the Threshold Signature Scheme (TSS) address
-  on behalf of the protocol. However, currently, all observer-signer validators on ZetaChain perform both roles, acting
-  as both observers and signers. This means each observer-signer validator simultaneously observes transactions on
-  connected chains and participates in transaction signing.
+  {" "}
+  ZetaChain is designed to have two types of validators: observers and signers. Observers monitor activities on connected
+  chains, while signers handle the signing of transactions from the Threshold Signature Scheme (TSS) address on behalf of
+  the protocol. However, currently, all observer-signer validators on ZetaChain perform both roles, acting as both observers
+  and signers. This means each observer-signer validator simultaneously observes transactions on connected chains and participates
+  in transaction signing.{" "}
 </Alert>
 
 Observer-signers are tasked with running nodes of connected chains, observing
@@ -26,8 +27,7 @@ where observer-signers can observe only the subset of chains they are interested
 in (for example, their infrastructure is built around running EVM nodes). In the
 current version of the protocol, all observers-signers are observing all chains.
 
-A list of [observer-signers](/architecture/modules/observer/overview) on the
-ZetaChain testnet:
+A list of observer-signers on the ZetaChain testnet:
 
 <ObserverList />
 

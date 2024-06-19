@@ -5,7 +5,7 @@ title: Withdrawing Rewards
 ## Prerequisites
 
 This tutorial requires `zetacored` CLI to be installed. Please, check out the
-docs [on installing the CLI](/developers/cli/setup).
+docs [on installing the CLI](/users/cli/setup).
 
 ## Calculating Rewards
 
@@ -66,9 +66,8 @@ zetacored tx distribution withdraw-all-rewards --gas 5000000 --from alice --chai
 
 Please, note that this command broadcasts a transaction with potentially
 multiple messages (one per validator). For the transaction to succeed, you may
-need to specify gas manually. In the example above, we are using
-`--gas 5000000`, but the actual amount of gas required may be different
-depending on network conditions.
+need to specify gas manually. In the example above, we are using `--gas 5000000`, but the actual amount of gas required may be different depending on
+network conditions.
 
 Confirm the transaction to withdraw your rewards:
 
