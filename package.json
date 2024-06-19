@@ -90,6 +90,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-unused-imports": "3.0.0",
+    "linkinator": "^6.0.5",
     "postcss": "8.4.33",
     "prettier": "2.6.2",
     "rimraf": "5.0.5"
