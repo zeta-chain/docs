@@ -9,7 +9,6 @@
     "lint:fix": "npx eslint --ext .js,.jsx,.ts,.tsx --fix ./src",
     "lint": "npx eslint --ext .js,.jsx,.ts,.tsx ./src",
     "start": "next start",
-    "postbuild": "npx check-links",
     "check-links": "npx linkinator ./out --recurse --verbosity error --skip '/contracts|/developers/architecture/zetacored|^https'",
     "clean": "rimraf .next out",
     "tsc:watch": "tsc --watch",
