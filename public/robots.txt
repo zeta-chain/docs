@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.zetachain.com/docs/
+
+# Sitemaps
+Sitemap: https://www.zetachain.com/docs/sitemap.xml

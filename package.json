@@ -5,6 +5,7 @@
   "author": "zetachain",
   "scripts": {
     "build": "next build",
+    "postbuild": "next-sitemap",
     "dev": "next dev -p 3001",
     "lint:fix": "npx eslint --ext .js,.jsx,.ts,.tsx --fix ./src",
     "lint": "npx eslint --ext .js,.jsx,.ts,.tsx ./src",
@@ -43,6 +44,7 @@
     "next": "14.0.4",
     "next-redux-wrapper": "8.1.0",
     "next-seo": "6.0.0",
+    "next-sitemap": "^4.2.3",
     "nextra": "2.13.4",
     "nextra-theme-docs": "2.13.4",
     "react": "18.2.0",
