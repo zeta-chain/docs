@@ -1,0 +1,113 @@
+# Alchemy
+
+Alchemy is a blockchain development platform that provides tools and
+infrastructure to build and scale decentralized applications. As a
+developer-focused platform, Alchemy helps companies create scalable and reliable
+dApps without the difficulty of managing blockchain infrastructure in-house. It
+simplifies the development process by offering a suite of APIs and services that
+enable developers to interact with blockchain networks efficiently.
+
+One of Alchemy's standout offerings is the **Alchemy Supernode**, which provides
+a reliable and scalable way to connect and build on the ZetaChain blockchain.
+This ensures that developers can focus on innovation and functionality without
+worrying about the complexities of node management.
+
+**Alchemy's Websockets and Webhooks** features allow developers to subscribe and
+get notified for any address activity events, as well as mined and dropped
+transactions. This real-time notification system enhances the ability to monitor
+and react to blockchain events, further simplifying the development and
+maintenance of decentralized applications.
+
+For ZetaChain developers, the **Alchemy SDK** offers the easiest way to connect
+their dApps to the blockchain with just two lines of code. This streamlined
+approach significantly reduces the time and effort required to integrate
+blockchain functionality into applications.
+
+With Alchemy, developers can access real-time blockchain data, manage smart
+contracts, and monitor the performance of their dApps across various
+blockchains, making it a versatile choice for building robust, scalable, and
+secure blockchain-based applications.
+
+## Sign Up for an Alchemy Account
+
+Go to https://auth.alchemy.com/signup and sign up for an Alchemy or sign in with
+your existing account.
+
+![](/img/docs/alchemy-0.png)
+
+## Create a New ZetaChain Project
+
+In the Alchemy dashboard you have an overview of all projects currently set up
+in your account. If you're building a universal app on ZetaChain, you might want
+to create projects for Ethereum and BNB to have access to RPCs of connected
+chains.
+
+Click "Create new app" to create a ZetaChain project.
+
+![](/img/docs/alchemy-1.png)
+
+In the modal window select "ZetaChain" and either "Mainnet" or "Testnet".
+
+## Get the API Key
+
+Interactions with your Alchemy RPC instance are protected by an API key. Click
+on the "API key" button to get the key.
+
+![](/img/docs/alchemy-2.png)
+
+## API Key and RPC Endpoints
+
+In the modal window you will see your API key as well as HTTP and WSS RPC
+endpoints.
+
+![](/img/docs/alchemy-3.png)
+
+## Connect to Alchemy
+
+If you're starting form scratch, create a new directory and initialize an npm
+project:
+
+```
+mkdir zetachain-app
+cd zetachain-app
+npm init -y
+```
+
+Use npm to install the Alchemy SDK:
+
+```
+npm install alchemy-sdk
+```
+
+Create a new Alchemy SDK instance. Make sure to replace `YOUR_API_KEY` with your
+actual API key.
+
+```ts
+// index.js
+import { Network, Alchemy } from "alchemy-sdk";
+
+const settings = {
+  apiKey: "YOUR_API_KEY",
+  network: Network.ZETACHAIN_MAINNET,
+};
+
+const alchemy = new Alchemy(settings);
+
+// Get the latest block
+const latestBlock = alchemy.core.getBlockNumber();
+
+// Get all outbound transfers for a provided address
+alchemy.core.getTokenBalances("0x4955a3F38ff86ae92A914445099caa8eA2B9bA32").then(console.log);
+
+// Listen to all new pending transactions
+alchemy.ws.on(
+  { method: "alchemy_pendingTransactions", fromAddress: "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32" },
+  (res) => console.log(res)
+);
+```
+
+Run the script with Node.js:
+
+```
+node index.js
+```

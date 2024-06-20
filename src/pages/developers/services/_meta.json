@@ -1,4 +1,8 @@
 {
+  "alchemy": {
+    "title": "Alchemy",
+    "description": "RPC, Transfer & Token API, WebSockets and more"
+  },
   "goldsky": {
     "title": "Goldsky",
     "description": "Subgraph indexer"
