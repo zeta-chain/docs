@@ -17,6 +17,8 @@ const { nextHeadersConfig } = require("./src/config/headers.config.json");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: { unoptimized: true },
+  output: "export",
   reactStrictMode: true,
 
   transpilePackages: ["@zetachain/ui-toolkit"],

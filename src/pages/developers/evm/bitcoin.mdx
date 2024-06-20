@@ -23,7 +23,7 @@ contract), the Bitcoin transaction must conform to this specifications:
    deposited amount to call a smart contract on ZetaChain's EVM, then the
    `[DATA]` field must consists of a smart contract address, and a binary
    message that will be forwarded to the said smart contract:
-   
+
    ```
    [DATA] = [ZetaChain's EVM contract address (20B)] - [arbitrary binary message]
    ```
@@ -55,9 +55,11 @@ transfer, and `memo` is the recipient address on ZetaChain's EVM.
 
 ## Example 2: Deposit BTC and call a smart contract on ZetaChain's EVM
 
-<Alert variant="tip"> {" "} In order to test with Bitcoin, you will need to use
-  a wallet that allows setting an `OP_RETURN` and memos in a binary format.
-  Please see our wallet suggestions [here](/reference/wallets).{" "} </Alert>
+<Alert variant="tip">
+  {" "}
+  In order to test with Bitcoin, you will need to use a wallet that allows setting an `OP_RETURN` and memos in a binary format.
+  Please see our wallet suggestions [here](/reference/apps/wallets).{" "}
+</Alert>
 
 If invalid information is sent (i. e. invalid address), the assets may be lost
 and not recoverable.
