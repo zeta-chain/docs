@@ -42,6 +42,8 @@ export const EndpointList: React.FC = () => {
           const providerB = extractProvider(b.url);
           if (providerA < providerB) return -1;
           if (providerA > providerB) return 1;
+          if (a.type < b.type) return -1;
+          if (a.type > b.type) return 1;
           return 0;
         });
 
