@@ -130,6 +130,24 @@ token, subtract the withdraw fee in input token amount.
 Finally, add a conditional to either withdraw ZRC-20 tokens to a connnected
 chain or transfer the target token to the recipient on ZetaChain.
 
+## Update the Interact Task
+
+```ts filename="tasks/interact.ts"
+let withdraw = true;
+if (args.withdraw != undefined) {
+  withdraw = JSON.parse(args.withdraw);
+}
+
+const data = prepareData(args.contract, ["address", "bytes", "bool"], [args.targetToken, recipient, withdraw]);
+
+//...
+  .addOptionalParam("withdraw");
+```
+
+Add an optional parameter `withdraw`, which determines if a user wants to
+withdraw the target token to the destination chain. By default set the value to
+`true`, and pass withdraw as the third value in the message.
+
 ## Compile and Deploy the Contract
 
 ```
