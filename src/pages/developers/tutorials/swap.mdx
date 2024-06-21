@@ -2,16 +2,44 @@
 title: Swap
 ---
 
-## Overview
+import { Alert } from "~/components/shared";
 
-In this tutorial you will write a cross-chain swap contract that allows users to
-swap a native gas or ERC-20 token from one of the connected chains for a token
-on another chain.
+In this tutorial you will create a cross-chain swap contract. This contract will
+enable users to exchange a native gas token or a supported ERC-20 token from one
+connected blockchain for a token on another blockchain. For example, a user will
+be able to swap USDC from Ethereum to BTC on Bitcoin in a single transaction.
 
-The swap process involves depositing a token from a connected chain to
-ZetaChain, triggering a swap omnichain contract to swap between ZRC-20
-representations of the tokens and then withdrawing the swapped token to the
-recipient address on the destination chain.
+You will learn how to:
+
+- Decode incoming messages from both EVM chains and Bitcoin.
+- Work with the ZRC-20 representation of tokens transferred from connected
+  chains.
+- Use the swap helper function to swap tokens using Uniswap v2 pools.
+- Withdraw ZRC-20 tokens to a connected chain, accounting for cross-chain gas
+  fees.
+
+The swap contract will be implemented as a universal app and deployed on
+ZetaChain.
+
+Universal apps can accept token transfers and contract calls from connected
+chains. Tokens transferred from connected chains to a universal app contract are
+represented as [ZRC-20](/developers/tokens/zrc20). For example, ETH transferred
+from Ethereum is represented as ZRC-20 ETH. ZRC-20 tokens have the unique
+property of being able to be withdrawn back to their original chain as native
+assets.
+
+The swap contract will:
+
+- Accept a contract call from a connected chain containing native gas or
+  supported ERC-20 tokens and a message.
+- Decode the message, which should include:
+  - Target token address (represented as ZRC-20)
+  - Recipient address on the destination chain
+- Query withdraw gas fee of the target token.
+- Swap a fraction of the input token for a ZRC-20 gas tokens to cover the
+  withdrawal fee using the Uniswap v2 liquidity pools.
+- Swap the remaining input token amount for the target token ZRC-20.
+- Withdraw ZRC-20 tokens to the destination chain
 
 ## Set Up Your Environment
 
@@ -32,13 +60,13 @@ yarn
 ## Create the contract
 
 Run the following command to create a new universal omnichain contract called
-`Swap`.
+`Swap` with two values in the message: target token address and recipient.
 
 ```
 npx hardhat omnichain Swap targetToken:address recipient
 ```
 
-## Omnichain Contract
+## Universal App Contract
 
 ```solidity filename="contracts/Swap.sol" {6-7,12,18-21,29-65}
 // SPDX-License-Identifier: MIT
@@ -139,20 +167,38 @@ If it's an EVM chain, use `abi.decode` to decode the `message` into the
 
 ### Swapping for Gas Token
 
-Next, get the gas fee and the gas coin address from the target token. The gas
-coin is the token that will be used to pay for the gas on the destination chain.
+Next, use the `withdrawGasFee` method of the target token ZRC-20 to get the gas
+fee token address and the gas fee amount. If the target token is the gas token
+of the destination chain (for example, BNB), `gasZRC20` will be the same
+`params.target`. However, if the target token is an ERC-20, like USDC on BNB,
+`gasZRC20` will tell you the address of the ZRC-20 of the destination chain.
 
-Use the `SwapHelperLib.swapTokensForExactTokens` helper method to swap the
-incoming token for the gas coin using the internal liquidity pools. The method
-returns the amount of the incoming token that was used to pay for the gas.
+Use the `swapTokensForExactTokens` helper method to swap the incoming token for
+the gas coin using the internal liquidity pools. The method returns the amount
+of the incoming token that was used to pay for the gas.
 
 ### Swapping for Target Token
 
 Next, swap the incoming amount minus the amount spent swapping for a gas fee for
-the target token on the destination chain using the
-`SwapHelperLib.swapExactTokensForTokens` helper method.
+the target token on the destination chain using the `swapExactTokensForTokens`
+helper method.
 
-Finally, withdraw the tokens to the recipient address on the destination chain.
+### Withdraw Target Token to Connected Chain
+
+At this point the contract has the required `gasFee` amount of `gasZRC20` token
+of the connected chain and an `outputAmount` amount of `params.target` token.
+
+To withdraw tokens to a connected chain you will be calling the `withdraw`
+method of ZRC-20. The `withdraw` method expects the caller (in our case the
+contract) to have the required amount of gas tokens ZRC-20. Approve the target
+token ZRC-20 contract to spend the `gasFee` amount. Finally, call the `withdraw`
+method of the target token ZRC-20 to send the tokens to the recipient on the
+connected chain.
+
+<Alert>
+  Note, that you don't have to tell which chain to withdraw to, because each ZRC-20 contract knows which connected chain
+  it is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
+</Alert>
 
 ## Update the Interact Task
 
