@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import * as React from "react";
 
+import { IconSparkle } from "../Icons";
 import AiCommand from "./AiCommand";
 import APIKeys from "./APIKeys";
 import { COMMAND_ROUTES } from "./Command.constants";
@@ -128,7 +129,8 @@ const CommandMenu = () => {
                 >
                   <AiIconAnimation />
                   <span className="text-brand flex items-center ml-[-8px]">
-                    <img src="zeta-bot.png" className="w-[24px] h-[24px] mr-2" />
+                    {/* <img src="/zeta-bot.png" className="w-[24px] h-[24px] mr-2" /> */}
+                    <IconSparkle className="h-[18px] w-[18px] mr-2 text-green-300" />
                     Ask Zeta AI
                     {search ? (
                       <>

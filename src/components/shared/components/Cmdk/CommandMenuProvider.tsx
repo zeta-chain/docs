@@ -80,7 +80,7 @@ const CommandMenuProvider = ({
   isOptedInToAI = false,
   saveGeneratedSQL,
 }: PropsWithChildren<CommandMenuProviderProps>) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [pages, setPages] = useState<string[]>([]);

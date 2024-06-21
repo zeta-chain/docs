@@ -10,14 +10,32 @@ import { MarkdownCodeBlock } from "./MarkdownCodeBlock";
 
 const StyledMarkdownMessage = styled.div``;
 
+const remarkPlugins = [[remarkGfm, { singleTilde: false }]];
+const rehypePlugins = [rehypeRaw];
+
 export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ message }) => {
   return (
     <Markdown
-      remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
-      rehypePlugins={[rehypeRaw]}
+      remarkPlugins={remarkPlugins as any}
+      rehypePlugins={rehypePlugins}
       skipHtml={false}
       components={{
-        code: (props: any) => <MarkdownCodeBlock {...props} />,
+        code: (props: any) => (
+          <MarkdownCodeBlock
+            children={props.children}
+            className={props.className}
+            // language={props.language}
+            // title={props.title}
+          />
+        ),
+        a: ({ children, ...args }) => {
+          console.log(args);
+          return (
+            <a {...args} className={clsx("text-green-300  hover:text-green-400", args.className)}>
+              {children}
+            </a>
+          );
+        },
         // img: (props: any) => NextImageHandler(props),
         // Image: (props: any) => NextImageHandler(props),
         h1: ({ children, ...args }) => {

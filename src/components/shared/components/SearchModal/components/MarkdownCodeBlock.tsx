@@ -3,23 +3,13 @@
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import clsx from "clsx";
-import curl from "highlightjs-curl";
-import { Check, Copy } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Children, ReactNode, useState } from "react";
+import { Children, memo, ReactNode, useState } from "react";
 import * as CopyToClipboard from "react-copy-to-clipboard";
 import { Light as SyntaxHighlighter, SyntaxHighlighterProps } from "react-syntax-highlighter";
-import bash from "react-syntax-highlighter/dist/cjs/languages/hljs/bash";
-import csharp from "react-syntax-highlighter/dist/cjs/languages/hljs/csharp";
-import dart from "react-syntax-highlighter/dist/cjs/languages/hljs/dart";
-import http from "react-syntax-highlighter/dist/cjs/languages/hljs/http";
 import js from "react-syntax-highlighter/dist/cjs/languages/hljs/javascript";
 import json from "react-syntax-highlighter/dist/cjs/languages/hljs/json";
-import kotlin from "react-syntax-highlighter/dist/cjs/languages/hljs/kotlin";
-import py from "react-syntax-highlighter/dist/cjs/languages/hljs/python";
-import sql from "react-syntax-highlighter/dist/cjs/languages/hljs/sql";
 import ts from "react-syntax-highlighter/dist/cjs/languages/hljs/typescript";
-import solidity from "react-syntax-highlighter/dist/cjs/languages/prism/solidity";
 
 import { monokaiCustomTheme } from "./CodeBlock.utils";
 
@@ -45,17 +35,24 @@ const ShortCodeBlock = styled.code`
   border-radius: 0.5rem;
 `;
 
-export const MarkdownCodeBlock = ({
-  title,
-  language,
-  linesToHighlight = [],
-  className,
-  value,
-  children,
-  hideCopy = false,
-  hideLineNumbers = false,
-  renderer,
-}: CodeBlockProps) => {
+SyntaxHighlighter.registerLanguage("js", js);
+SyntaxHighlighter.registerLanguage("ts", ts);
+SyntaxHighlighter.registerLanguage("json", json);
+// SyntaxHighlighter.registerLanguage("sol", solidity);
+
+const MarkdownCodeBlock = (props: CodeBlockProps) => {
+  let {
+    title,
+    language,
+    linesToHighlight = [],
+    className,
+    value,
+    children,
+    hideCopy = false,
+    hideLineNumbers = false,
+    renderer,
+  } = props;
+
   const { resolvedTheme } = useTheme();
   const isDarkTheme = resolvedTheme?.includes("dark")!;
   const monokaiTheme = monokaiCustomTheme(isDarkTheme);
@@ -84,18 +81,6 @@ export const MarkdownCodeBlock = ({
   let lang = language ? language : className ? className.replace("language-", "") : "js";
   // force jsx to be js highlighted
   if (lang === "jsx") lang = "js";
-  SyntaxHighlighter.registerLanguage("js", js);
-  SyntaxHighlighter.registerLanguage("ts", ts);
-  SyntaxHighlighter.registerLanguage("py", py);
-  SyntaxHighlighter.registerLanguage("sql", sql);
-  SyntaxHighlighter.registerLanguage("bash", bash);
-  SyntaxHighlighter.registerLanguage("dart", dart);
-  SyntaxHighlighter.registerLanguage("csharp", csharp);
-  SyntaxHighlighter.registerLanguage("json", json);
-  SyntaxHighlighter.registerLanguage("kotlin", kotlin);
-  SyntaxHighlighter.registerLanguage("curl", curl);
-  SyntaxHighlighter.registerLanguage("http", http);
-  SyntaxHighlighter.registerLanguage("sol", solidity);
 
   const large = false;
   // don't show line numbers if bash == lang
@@ -178,3 +163,7 @@ export const MarkdownCodeBlock = ({
     </>
   );
 };
+
+const MemoizedMarkdownCodeBlock = memo(MarkdownCodeBlock);
+
+export { MemoizedMarkdownCodeBlock as MarkdownCodeBlock };

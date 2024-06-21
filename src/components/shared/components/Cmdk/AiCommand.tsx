@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useReducer, useRef, u
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { IconSparkle } from "../Icons";
 import { MarkdownMessage } from "../SearchModal/components/MarkdownMessage";
 import { questions } from "./cmdk.constants";
 import { AiIconChat } from "./Command.icons";
@@ -160,7 +161,8 @@ const AiCommand = () => {
                   <div className="flex px-4 pb-12 overflow-hidden">
                     <div className="mr-6">
                       <div className="w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
-                        <img src="zeta-bot.png" className="w-[16px] h-[16px]" />
+                        {/* <img src="/zeta-bot.png" className="w-[16px] h-[16px]" /> */}
+                        <IconSparkle className="h-[18px] w-[18px] ml-0.5 text-green-300" />
                       </div>
                     </div>
                     <div className="max-w-[95%]">
