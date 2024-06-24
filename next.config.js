@@ -16,21 +16,15 @@ const withNextra = require("nextra")(nextraConfig);
 const { nextHeadersConfig } = require("./src/config/headers.config.json");
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: { unoptimized: true },
-  output: "export",
+const baseNextConfig = {
   reactStrictMode: true,
-
   transpilePackages: ["@zetachain/ui-toolkit"],
   experimental: {
     externalDir: true,
   },
-
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
-
   headers: async () => nextHeadersConfig,
-
   webpack(config) {
     // eslint-disable-next-line no-param-reassign
     config.resolve.fallback = {
@@ -48,6 +42,12 @@ const nextConfig = {
   },
 };
 
-const configWithNextra = withNextra(nextConfig);
+// Run next build with EXPORT env var set to make a static build compatible with linkinator
+if (process.env.EXPORT) {
+  baseNextConfig.images = { unoptimized: true };
+  baseNextConfig.output = "export";
+}
+
+const configWithNextra = withNextra(baseNextConfig);
 
 module.exports = withBundleAnalyzer(configWithNextra);

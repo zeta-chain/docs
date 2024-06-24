@@ -25,7 +25,7 @@ jobs:
         run: yarn
 
       - name: Build project
-        run: yarn build
+        run: EXPORT=true yarn build
 
       - name: Check for broken links
         run: yarn check-links
