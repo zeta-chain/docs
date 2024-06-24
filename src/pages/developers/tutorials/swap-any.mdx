@@ -2,13 +2,19 @@
 title: Swap To Any Token
 ---
 
-In the previous tutorial you've learned how to create an omnichain swap
-contracts that allows users to swap between tokens between connected
-blockchains. The target token was always on a connected blockchain.
+In the previous [Swap](/developers/tutorials/swap) tutorial, you learned how to
+create universal swap contracts that enable users to exchange tokens from one
+connected blockchain for a token on another blockchain, with the target token
+always withdrawn to the destination chain.
 
-In this tutorial you will modify the swap example to support swapping tokens to
-ZRC-20s and keeping them on ZetaChain, instead of withdrawing to a connected
-chain. This also supports swapping to ZETA.
+In this tutorial, you will enhance the swap contract to support swapping tokens
+to any token (such as ZRC-20, ERC-20, or ZETA) and provide the flexibility to
+either withdraw the token to the destination chain or keep it on ZetaChain.
+
+Keeping swapped tokens on ZetaChain is useful if you want to use ZRC-20 in
+non-universal contracts that don't yet have the capacity to accept tokens from
+connected chains directly, or if the destination token is ZETA, which you want
+to keep on ZetaChain.
 
 ## Omnichain Contract
 
@@ -205,6 +211,7 @@ npx hardhat cctx 0x8323982f778ab14a5c37b10a80c5837da74ccdc8dba6ab4368f8b00612da8
 ```
 ✓ CCTXs on ZetaChain found.
 
+
 ✓ 0x86c66514209a23499d23fea4c2d7177e87bff5199d273a3592fb685d7d945da8: 97 → 7001: OutboundMined (Remote omnichain contract call completed)
-✓ 0x4a1d7df81e11c4273c0d105a23f049409d06f0bbc03e286014276adb247e208f: 7001 → 11155111: PendingOutbound (ZRC20 withdrawal event setting to pending outbound directly) → OutboundMined (ZRC20 withdrawal event setting to pending outbound directly : Outbound succeeded, mined)
+✓ 0x4a1d7df81e11c4273c0d105a23f049409d06f0bbc03e286014276adb247e208f: 7001 → 11155111: OutboundMined (ZRC20 withdrawal event setting to pending outbound directly : Outbound succeeded, mined)
 ```
