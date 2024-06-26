@@ -5,7 +5,7 @@ title: Delegating to a Validator
 ## Prerequisites
 
 This tutorial requires `zetacored` CLI to be installed. Please, check out the
-docs [on installing the CLI](/developers/cli/setup).
+docs [on installing the CLI](/users/cli/setup).
 
 ## Delegating to a Validator
 
@@ -14,9 +14,9 @@ producing new blocks and securing the network. You can delegate your ZETA to a
 validator to participate in the network and earn rewards.
 
 You can find a list of validators on
-[ZetaScan](https://explorer.zetachain.com/validators),
-[Ping Pub](https://testnet.ping.pub/zetachain/staking), or any
-[other explorer](/reference/explorers).
+[ZetaScan](https://explorer.zetachain.com/validators), [Ping
+Pub](https://testnet.ping.pub/zetachain/staking), or any [other
+explorer](/reference/apps/services/).
 
 Choose the validator you want to delegate to based on their commission rate,
 uptime, how much voting power they have and other factors. It is generally a
@@ -26,8 +26,8 @@ ensures that the network remains decentralized.
 Copy the validator's operator address from the explorer. The address should be
 prefixed with `zetavaloper`.
 
-Next, check your [account balance](/developers/cli/balances) and decide on the
-amount you want to stake.
+Next, check your [account balance](/users/cli/balances) and decide on the amount
+you want to stake.
 
 Before delegating it’s important to understand that your ZETA will be locked for
 a period of time. You will not be able to transfer or spend it. The amount of
@@ -47,8 +47,8 @@ zetacored tx staking delegate zetavaloper167ns6zwczl9asjs47jwv3uhtkxfjcvx3fg3d4a
 - `1000000000000000azeta` is the amount (in this example, 0.001 ZETA)
 - `--node https://zetachain-athens.blockpi.network:443/rpc/v1/public` is the
   Tendermint RPC URL
-- `--from alice` is they account key name (see
-  [Managing Accounts](/developers/cli/account))
+- `--from alice` is they account key name (see [Managing
+  Accounts](/users/cli/account))
 - `--chain-id athens_7001-1` is the chain ID of the ZetaChain testnet
 
 The terminal will ask you to confirm the transaction:

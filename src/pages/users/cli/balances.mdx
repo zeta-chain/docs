@@ -5,7 +5,7 @@ title: Querying Balances
 ## Prerequisites
 
 This tutorial requires `zetacored` CLI to be installed. Please, check out the
-docs [on installing the CLI](/developers/cli/setup).
+docs [on installing the CLI](/users/cli/setup).
 
 ## Querying Balances
 
@@ -16,8 +16,8 @@ zetacored q bank balances $(zetacored keys show alice -a) --node https://zetacha
 ```
 
 Provide a valid node RPC URL with the `--node` flag. You can use one of the
-available RPCs [listed in the docs](/reference/network/api) labeled "Tendermint RPC".
-Please, note that you need to specify the port number in the URL. If the
+available RPCs [listed in the docs](/reference/network/api) labeled "Tendermint
+RPC". Please, note that you need to specify the port number in the URL. If the
 protocol scheme is `https://`, the port is 443, unless specified otherwise.
 
 ```yml

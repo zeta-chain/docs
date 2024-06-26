@@ -4,12 +4,14 @@
   "license": "MIT",
   "author": "zetachain",
   "scripts": {
-    "build": "next build",
+    "build": "yarn clean && next build",
     "postbuild": "next-sitemap",
     "dev": "next dev -p 3001",
     "lint:fix": "npx eslint --ext .js,.jsx,.ts,.tsx --fix ./src",
     "lint": "npx eslint --ext .js,.jsx,.ts,.tsx ./src",
     "start": "next start",
+    "check-links": "npx linkinator ./out --recurse --verbosity error --skip '/contracts|/developers/architecture/zetacored|^https'",
+    "clean": "rimraf .next out",
     "tsc:watch": "tsc --watch",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
     "analyze": "ANALYZE=true next build"
@@ -92,9 +94,10 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-unused-imports": "3.0.0",
+    "linkinator": "^6.0.5",
     "postcss": "8.4.33",
     "prettier": "2.6.2",
-    "rimraf": "5.0.5"
+    "rimraf": "^5.0.7"
   },
   "resolutions": {
     "@types/react": "18.2.48",

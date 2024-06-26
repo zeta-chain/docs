@@ -9,9 +9,9 @@ import { Alert } from "~/components/shared";
 
 ZetaChain is built with Cosmos SDK and uses the Ethermint module to provide EVM
 compatibility. Being both a Cosmos and an EVM chain means that ZetaChain
-supports two types of addresses:
-[bech32 Cosmos addresses](https://docs.cosmos.network/main/build/spec/addresses/bech32)
-and [hex EVM addresses](https://ethereum.org/developers/docs/accounts).
+supports two types of addresses: [bech32 Cosmos
+addresses](https://docs.cosmos.network/main/build/spec/addresses/bech32) and
+[hex EVM addresses](https://ethereum.org/developers/docs/accounts).
 
 Bech32 addresses are known for their human-readable format, which typically
 starts with a prefix related to the specific blockchain. These addresses are
@@ -54,7 +54,8 @@ wallet and an EVM wallet and access the same account. Some wallets, like Keplr
 display both bech32 and hex addresses.
 
 <Alert variant="tip">
-  You don't need to transfer your tokens between a bech32 address and an hex address that represent the same account.
+  {" "}
+  You don't need to transfer your tokens between a bech32 address and an hex address that represent the same account.{" "}
 </Alert>
 
 ## Account Type
@@ -74,7 +75,6 @@ To convert between bech32 and EVM addresses, you can use the following tool:
 <AddressConverter />
 
 Converting between bech32 and EVM addresses is an off-chain operation and can be
-implemented in any programming language, for example,
-[in TypeScript](https://github.com/zeta-chain/docs/blob/main/src/components/Docs/components/AddressConverter/AddressConverter.utils.ts).
-On the CLI you can also use
-[`zetacored debug addr`](/architecture/zetacored/zetacored_debug_addr/) command.
+implemented in any programming language, for example, [in
+TypeScript](https://github.com/zeta-chain/docs/blob/main/src/components/Docs/components/AddressConverter/AddressConverter.utils.ts).
+On the CLI you can also use [`zetacored debug addr`](/developers/architecture/zetacored/zetacored_debug_addr/) command.
