@@ -33,6 +33,8 @@ Click "Create new app" to name your project and give it a description.
 
 ![](/img/docs/alchemy-1.png)
 
+![](/img/docs/alchemy-1.5.png)
+
 All apps on Alchemy are multichain by default. This means that your dApp
 immediately has access to all available Alchemy network chains upon creation.
 You can view all available networks and the related API URLs in the “Networks”
@@ -90,7 +92,7 @@ const payload = {
 axios
   .post(url, payload)
   .then((response) => {
-    console.log("Block Number: ", response.data.result);
+    console.log("Block Number:", parseInt(response.data.result));
   })
   .catch((error) => {
     console.error(error);
@@ -107,7 +109,7 @@ You should a see the current block number on ZetaChain outputted to your
 console:
 
 ```
-Block Number: 0x37eca6
+Block Number: 3688095
 ```
 
 You can find the full list of JSON-RPC methods available on ZetaChain in the
