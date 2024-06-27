@@ -90,7 +90,7 @@ const payload = {
 axios
   .post(url, payload)
   .then((response) => {
-    console.log("Block Number:", response.data.result);
+    console.log("Block Number: ", response.data.result);
   })
   .catch((error) => {
     console.error(error);
