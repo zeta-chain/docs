@@ -10,7 +10,7 @@
     "lint:fix": "npx eslint --ext .js,.jsx,.ts,.tsx --fix ./src",
     "lint": "npx eslint --ext .js,.jsx,.ts,.tsx ./src",
     "start": "next start",
-    "check-links": "npx linkinator ./out --recurse --verbosity error --skip '/contracts|/developers/architecture/zetacored|^https'",
+    "check-links": "npx linkinator ./out --recurse --verbosity error --skip '^https' --skip '/developers/architecture/contracts'",
     "clean": "rimraf .next out",
     "tsc:watch": "tsc --watch",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
