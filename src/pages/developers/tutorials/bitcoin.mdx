@@ -1,6 +1,6 @@
 ---
-title: Bitcoin Frontend
-description: In this tutorial you will learn how to build a simple frontend application that let's you call omnichain contract on ZetaChain from Bitcoin using a browser wallet extension.
+title: Bitcoin Next.js Frontend
+description: In this tutorial you will learn how to build a simple Next.js frontend application that let's you call omnichain contract on ZetaChain from Bitcoin using different browser wallet extensions.
 ---
 
 ## Prerequisites
@@ -14,48 +14,127 @@ description: In this tutorial you will learn how to build a simple frontend appl
   `yarn`
 - Learn how to [Deposit and call ZetaChain's EVM contracts from
   Bitcoin](/developers/evm/bitcoin/).
+- Learn how to [Deposit and call ZetaChain's EVM contracts from
+  Bitcoin](/developers/evm/bitcoin/).
+- Familiarity with [Next.js](https://nextjs.org/docs)
 
-## Create a new project
+## Clone the Next.js Example Frontend
 
-Initialize a new project:
-
-```
-npm init -y
-```
-
-Install a simple HTTP server:
+Clone the repository:
 
 ```
-yarn add --dev http-server
+git clone https://github.com/zeta-chain/example-frontend
 ```
 
-## HTML Page with a Simple Form
+Install dependencies:
 
-Create a page with a simple form:
-
-```html filename="index.html"
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bitcoin</title>
-  </head>
-  <body>
-    <input type="number" id="amount" placeholder="Amount in tBTC" />
-    <input type="text" id="contract" placeholder="Omnichain contract address" />
-    <input type="text" id="message" placeholder="Contract call parameters" />
-    <select id="walletSelect">
-      <option value="xdefi">XDEFI</option>
-      <option value="unisat">Unisat</option>
-    </select>
-    <button onclick="sendTransaction()">Send transaction</button>
-    <script src="./script.js"></script>
-  </body>
-</html>
+```
+cd example-frontend;
+npm i;
 ```
 
-This HTML page contains a simple form with three inputs:
+## Bitcoin Transactions page
+
+Let's add a new page under app/btcintegration:
+
+```tsx filename="page.tsx"
+"use client";
+
+import React, { useState } from "react";
+import { isUndefined } from "lodash";
+import Wallet, { AddressPurpose } from "sats-connect";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import { createTransaction, signPsbt } from "./xverse-utils";
+
+type Wallet = "XDefi" | "UniSat" | "XVerse";
+
+interface ConnectedAddressData {
+  address: string;
+  pubKey: string;
+}
+
+const BtcIntegration = () => {
+  const [contractAddress, setContractAddress] = useState("");
+  const [message, setMessage] = useState("");
+  const [amount, setAmount] = useState();
+  const [selectedWallet, setSelectedWallet] = useState<Wallet>("XDefi");
+
+  return (
+    <div className="grid sm:grid-cols-3 gap-x-10 mt-12">
+      <div className="sm:col-span-2 overflow-x-auto">
+        <div className="flex items-center justify-start gap-2 mb-6">
+          <h1 className="leading-10 text-2xl font-bold tracking-tight pl-4">BTC Integration</h1>
+        </div>
+        <div className="pl-10 px-3 flex flex-col gap-6">
+          <div>
+            <Label>Amount in satoshis</Label>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+              }}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <Label>Omnichain contract address</Label>
+            <Input
+              type="text"
+              value={contractAddress}
+              onChange={(e) => {
+                setContractAddress(e.target.value);
+              }}
+              placeholder="0xc79EA..."
+            />
+          </div>
+          <div>
+            <Label>Contract call parameters</Label>
+            <Input
+              type="text"
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+              placeholder="0x3724C..."
+            />
+          </div>
+
+          <div>
+            <select
+              onChange={(e) => {
+                setSelectedWallet(e.target.value);
+              }}
+              className="block my-2"
+            >
+              <option value="XDefi">XDEFI</option>
+              <option value="UniSat">Unisat</option>
+              <option value="XVerse">Xverse</option>
+            </select>
+            <Button
+              size="sm"
+              className="mt-4"
+              onClick={() => {
+                sendTransaction();
+              }}
+            >
+              Send transaction
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BtcIntegration;
+```
+
+This React page contains a simple form with three inputs:
 
 - Amount - the amount of tBTC to send
 - Contract - the address of the omnichain contract to call
@@ -96,25 +175,31 @@ prefix is removed.
 The amount is passed in tBTC, so we need to multiply it by `1e8` to convert it
 to satoshis.
 
-```js filename="script.js"
-async function sendTransaction() {
+```tsx filename="page.tsx"
+const sendTransaction = async () => {
   const tss = "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur";
-  const contract = document.getElementById("contract").value.replace(/^0x/, "");
-  if (contract.length !== 40) return alert("Not a valid contract address");
-  const message = document.getElementById("message").value.replace(/^0x/, "");
-  const amount = parseFloat(document.getElementById("amount").value) * 1e8;
-  if (isNaN(amount)) return alert("Amount must be a number");
-  const params = { contract, message, amount, tss };
-  const wallet = document.getElementById("walletSelect")?.value;
-  switch (wallet) {
-    case "unisat":
-      await useUnisat(params);
+  if (contractAddress.length !== 42) return alert("Not a valid contract address");
+  if (isUndefined(amount) || isNaN(amount)) return alert("Amount must be a number");
+
+  const params = {
+    contract: contractAddress.slice(2),
+    message: message.slice(2),
+    amount,
+    tss,
+  };
+
+  switch (selectedWallet) {
+    case "XDefi":
+      await callXDefi(params);
       break;
-    case "xdefi":
-      await useXDEFI(params);
+    case "UniSat":
+      await callUniSat(params);
+      break;
+    case "XVerse":
+      await callXverse(params);
       break;
   }
-}
+};
 ```
 
 ## Use XDEFI Wallet
@@ -125,8 +210,8 @@ and use the first one.
 
 For XDEFI to properly encode the memo, you need to prefix it with `hex::`.
 
-```javascript filename="script.js"
-async function useXDEFI(p) {
+```tsx filename="page.tsx"
+const callXDefi = async (params) => {
   if (!window.xfi) return alert("XDEFI wallet not installed");
   const wallet = window.xfi;
   window.xfi.bitcoin.changeNetwork("testnet");
@@ -138,23 +223,23 @@ async function useXDEFI(p) {
       {
         feeRate: 10,
         from: account,
-        recipient: p.tss,
+        recipient: params.tss,
         amount: {
-          amount: p.amount,
+          amount: params.amount,
           decimals: 8,
         },
-        memo: `hex::${p.contract}${p.message}`,
+        memo: `hex::${params.contract}${params.message}`,
       },
     ],
   };
   window.xfi.bitcoin.request(tx, (err, res) => {
-    if (e) {
+    if (err) {
       return alert(`Couldn't send transaction, ${JSON.stringify(err)}`);
     } else if (res) {
       return alert(`Broadcasted a transaction, ${JSON.stringify(res)}`);
     }
   });
-}
+};
 ```
 
 Call the `request` method on the `window.xfi.bitcoin` object to send the
@@ -178,26 +263,177 @@ converting the resulting string to lower case.
 
 Use `unisat.sendBitcoin()` to make a token transfer to the TSS address.
 
-```js filename="script.js"
-async function useUnisat(p) {
+```tsx filename="page.tsx"
+const callUniSat = async (params) => {
   if (!window.unisat) return alert("Unisat wallet not installed");
   try {
     await window.unisat.requestAccounts();
-    const memos = [`${p.contract}${p.message}`.toLowerCase()];
-    const tx = await unisat.sendBitcoin(p.tss, p.amount, { memos });
+    const memos = [`${params.contract}${params.message}`.toLowerCase()];
+    const tx = await window.unisat.sendBitcoin(params.tss, params.amount, {
+      memos,
+    });
     return alert(`Broadcasted a transaction: ${JSON.stringify(tx)}`);
   } catch (e) {
     return alert(`Couldn't send transaction, ${JSON.stringify(e)}`);
   }
-}
+};
 ```
+
+## Use Xverse Wallet
+
+For Xverse we will use the [sats-connect](https://docs.xverse.app/sats-connect) package. Xverse doesn't have an easy to use API for sending a memo like the above two wallets but we can [create and sign arbitrary PSBT's](https://docs.xverse.app/sats-connect/guides/creating-bitcoin-psbts) so we will do that.
+
+First get the accounts using `Wallet.request("getAccounts",...)`. Then we need to create a transaction using `createTransaction()` and sign it using `signPsbt()`.
+
+```tsx filename="page.tsx"
+const callXverse = async (params) => {
+  const response = await Wallet.request("getAccounts", {
+    purposes: [AddressPurpose.Payment],
+    message: "Test app wants to know your addresses!",
+  });
+
+  if (response.status == "success") {
+    const result = await createTransaction(response.result[0].publicKey, response.result[0].address, params);
+
+    await signPsbt(result, response.result[0].address);
+  } else {
+    alert("wallet connection failed");
+  }
+};
+```
+
+Create a file xverse-utils.ts under btcintegration/
+
+```ts filename="xverse-utils.ts"
+import { base64, hex } from "@scure/base";
+import * as btc from "micro-btc-signer";
+import Wallet, { RpcErrorCode } from "sats-connect";
+
+const bitcoinTestnet = {
+  bech32: "tb",
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
+
+async function fetchUtxo(address: string): Promise<any[]> {
+  try {
+    const response = await fetch(`https://mempool.space/testnet/api/address/${address}/utxo`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch UTXO");
+    }
+    const utxos: any[] = await response.json();
+
+    if (utxos.length === 0) {
+      throw new Error("0 Balance");
+    }
+    return utxos;
+  } catch (error) {
+    console.error("Error fetching UTXO:", error);
+    throw error;
+  }
+}
+
+async function createTransaction(publickkey: string, senderAddress: string, params) {
+  const publicKey = hex.decode(publickkey);
+
+  const p2wpkh = btc.p2wpkh(publicKey, bitcoinTestnet);
+  const p2sh = btc.p2sh(p2wpkh, bitcoinTestnet);
+
+  const recipientAddress = "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur";
+  if (!senderAddress) {
+    throw new Error("Error: no sender address");
+  }
+  if (!recipientAddress) {
+    throw new Error("Error: no recipient address in ENV");
+  }
+
+  const output = await fetchUtxo(senderAddress);
+
+  const tx = new btc.Transaction({
+    allowUnknowOutput: true,
+  });
+
+  output.forEach((utxo) => {
+    tx.addInput({
+      txid: utxo.txid,
+      index: utxo.vout,
+      witnessUtxo: {
+        script: p2sh.script,
+        amount: BigInt(utxo.value),
+      },
+      witnessScript: p2sh.witnessScript,
+      redeemScript: p2sh.redeemScript,
+    });
+  });
+
+  const changeAddress = senderAddress;
+
+  const memo = `${params.contract}${params.message}`.toLowerCase();
+
+  const opReturn = btc.Script.encode(["RETURN", Buffer.from(memo, "utf8")]);
+
+  tx.addOutput({
+    script: opReturn,
+    amount: BigInt(0),
+  });
+  tx.addOutputAddress(recipientAddress, BigInt(params.amount), bitcoinTestnet);
+  tx.addOutputAddress(changeAddress, BigInt(800), bitcoinTestnet);
+
+  const psbt = tx.toPSBT(0);
+
+  const psbtB64 = base64.encode(psbt);
+
+  return psbtB64;
+}
+
+async function signPsbt(psbtBase64: string, senderAddress: string) {
+  // Get the PSBT Base64 from the input
+
+  if (!psbtBase64) {
+    alert("Please enter a valid PSBT Base64 string.");
+    return;
+  }
+
+  try {
+    const response = await Wallet.request("signPsbt", {
+      psbt: psbtBase64,
+      allowedSignHash: btc.SignatureHash.ALL,
+      broadcast: true,
+      signInputs: {
+        [senderAddress]: [0],
+      },
+    });
+
+    if (response.status === "success") {
+      alert("PSBT signed successfully!");
+    } else {
+      if (response.error.code === RpcErrorCode.USER_REJECTION) {
+        alert("Request canceled by user");
+      } else {
+        console.error("Error signing PSBT:", response.error);
+        alert("Error signing PSBT: " + response.error.message);
+      }
+    }
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    alert("Error while signing");
+  }
+}
+
+export { createTransaction, signPsbt };
+```
+
+The `createTransaction()` function takes in the sender address and public key and generates a transaction with the memo attached `const opReturn = btc.Script.encode(["RETURN", Buffer.from(memo, "utf8")])`. It returns a base64 encoded PSBT.
+
+The `signPsbt()` function will get the wallet to sign the transaction using `Wallet.request()`. Setting `broadcast: true` will also broadcast the transaction.
 
 ## Send a Transaction
 
-Start the HTTP server:
+Run the Next.js server:
 
 ```
-npx http-server
+npm run dev
 ```
 
 Open the page in your browser and fill in the form. You can test functionality
