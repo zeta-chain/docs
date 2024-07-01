@@ -27,8 +27,27 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
       setIsLoading(true);
 
       try {
-        const client = new ZetaChainClient({ network: activeTab.networkType });
-
+        const client = new ZetaChainClient({
+          network: activeTab.networkType,
+          chains: {
+            zeta_testnet: {
+              api: [
+                {
+                  url: `https://zetachain-athens.g.allthatnode.com/archive/evm`,
+                  type: "evm",
+                },
+              ],
+            },
+            zeta_mainnet: {
+              api: [
+                {
+                  url: `https://zetachain-mainnet.g.allthatnode.com/archive/evm`,
+                  type: "evm",
+                },
+              ],
+            },
+          },
+        });
         const data = await client.getFees(500000);
 
         const sortedOmnichainFees = [...data.omnichain].sort((a, b) =>
