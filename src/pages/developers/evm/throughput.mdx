@@ -1,0 +1,49 @@
+ZetaChain uses two mechanisms to manage liquidity throughput and ensure smooth
+and secure transaction handling:
+
+- Liquidity caps for incoming transactions
+- Rate limiting for outgoing transactions
+
+These mechanisms are important for maintaining the stability and reliability of
+the network, especially during periods of high transaction volume. By using
+liquidity caps for incoming transactions and rate limiting for outgoing
+transactions, ZetaChain can control the flow of tokens into and out of the
+network. This not only prevents abuse but also safeguards the network from
+potential liquidity shocks and ensures that the system can handle high
+transaction loads without compromising performance or security.
+
+## Incoming Transactions: Liquidity Caps
+
+For transactions coming into ZetaChain from a connected chain, ZetaChain uses a
+mechanism called liquidity caps. Each supported token on ZetaChain has a
+predefined maximum amount, or cap, that can be sent to ZetaChain. If the cap is
+reached, any further transactions attempting to send more tokens to ZetaChain
+will be reverted. Each supported token has its own cap, and transactions
+exceeding the cap are reverted. The current liquidity caps for supported tokens
+can be accessed through the the chain's API: on
+[testnet](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins)
+and [mainnet
+beta](https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins).
+
+## Outgoing Transactions: Rate Limiter
+
+For transactions from ZetaChain to a connected chain, ZetaChain employs a rate
+limiter mechanism. This mechanism ensures that the total amount of tokens
+withdrawn within a specified sliding window of ZetaChain blocks does not exceed
+a predefined global limit. The rate limiter operates within a sliding window
+defined in ZetaChain blocks and there is a global limit denominated in ZETA
+(rate) per block. The total amount of withdrawals for all tokens combined within
+a single window cannot exceed the rate multiplied by the number of window
+blocks.
+
+Each ZRC-20 token has a conversion rate to ZETA. For example, if a ZRC-20 token
+XYZ has a conversion rate of 2, withdrawing 10 XYZ will be counted as 20 ZETA
+towards the limit. The current rate limiter parameters can be accessed through
+the rate limiter flags endpoint: on
+[testnet](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/rateLimiterFlags)
+and [mainnet
+beta](https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/crosschain/rateLimiterFlags).
+
+These mechanisms ensure that ZetaChain can efficiently manage liquidity, prevent
+abuse, and maintain the stability of the network during periods of high
+transaction volume.
