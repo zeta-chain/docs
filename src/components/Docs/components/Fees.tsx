@@ -23,33 +23,33 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    const fetchFees = async () => {
+      setIsLoading(true);
 
-    const client = new ZetaChainClient({ network: activeTab.networkType });
+      try {
+        const client = new ZetaChainClient({ network: activeTab.networkType });
 
-    client
-      .getFees(500000)
-      .then((data: any) => {
+        const data = await client.getFees(500000);
+
         const sortedOmnichainFees = [...data.omnichain].sort((a, b) =>
           a.foreign_chain_id.localeCompare(b.foreign_chain_id)
         );
 
         const updatedData: FeesState = {
-          messaging: data.messaging.filter(
-            (fee: any) => !["18332", "8332"].includes(fee.chainID) // There is a bug in getFees that returns messaging fees for Bitcoin. This filters them out.
-          ),
+          messaging: data.messaging,
           omnichain: sortedOmnichainFees,
         };
 
         if (activeTab.networkType === "mainnet") setMainnetFees(updatedData);
         if (activeTab.networkType === "testnet") setTestnetFees(updatedData);
-
-        setIsLoading(false);
-      })
-      .catch((error: any) => {
+      } catch (error) {
         console.error("Error fetching fees:", error);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchFees();
   }, [activeTab.networkType]);
 
   const fees = useMemo(() => {
