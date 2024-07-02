@@ -21,14 +21,15 @@ jobs:
 
       - name: Update docs
         run: |
-          mkdir -p src/pages/architecture/contracts
-          rm -rf src/pages/architecture/contracts/*
-          cp -r protocol-contracts/docs/src/* src/pages/architecture/contracts/
+          mkdir -p src/pages/developers/architecture/contracts
+          rm -rf src/pages/developers/architecture/contracts/*
+          cp -r protocol-contracts/docs/src/* src/pages/developers/architecture/contracts/
+          rm -rf protocol-contracts
 
       - name: Check for changes
         id: check-changes
         run: |
-          git add src/pages/architecture/contracts
+          git add src/pages/developers/architecture/contracts
           git diff --cached --exit-code || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
