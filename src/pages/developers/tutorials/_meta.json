@@ -1,4 +1,8 @@
 {
+  "intro": {
+    "title": "Getting Started",
+    "description": "Learn how to set up a smart contract template, create an account, and use faucet"
+  },
   "hello": {
     "title": "First Universal App",
     "readTime": "10 min",
