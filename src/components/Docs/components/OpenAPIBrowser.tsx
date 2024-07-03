@@ -2,8 +2,8 @@ import "swagger-ui-react/swagger-ui.css";
 
 import axios from "axios";
 import yaml from "js-yaml";
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import SwaggerUI from "swagger-ui-react";
 import tw, { styled } from "twin.macro";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
@@ -45,6 +45,9 @@ const StyledContainer = styled.div`
     }
   }
 `;
+
+// Dynamically import SwaggerUI to disable server-side rendering
+const SwaggerUI = dynamic(() => import("swagger-ui-react"), { ssr: false });
 
 export const OpenAPIBrowser = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
