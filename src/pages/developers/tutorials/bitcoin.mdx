@@ -57,10 +57,23 @@ interface ConnectedAddressData {
   pubKey: string;
 }
 
+export type Params = {
+  contract: string;
+  message: string;
+  amount: number;
+  tss: string;
+};
+
+declare global {
+  interface Window {
+    unisat: any;
+  }
+}
+
 const BtcIntegration = () => {
   const [contractAddress, setContractAddress] = useState("");
   const [message, setMessage] = useState("");
-  const [amount, setAmount] = useState();
+  const [amount, setAmount] = useState<number | undefined>();
   const [selectedWallet, setSelectedWallet] = useState<Wallet>("XDefi");
 
   return (
@@ -76,7 +89,7 @@ const BtcIntegration = () => {
               type="number"
               value={amount}
               onChange={(e) => {
-                setAmount(e.target.value);
+                setAmount(Number(e.target.value));
               }}
               placeholder="0"
             />
@@ -107,7 +120,7 @@ const BtcIntegration = () => {
           <div>
             <select
               onChange={(e) => {
-                setSelectedWallet(e.target.value);
+                setSelectedWallet(e.target.value as Wallet);
               }}
               className="block my-2"
             >
@@ -211,7 +224,7 @@ and use the first one.
 For XDEFI to properly encode the memo, you need to prefix it with `hex::`.
 
 ```tsx filename="page.tsx"
-const callXDefi = async (params) => {
+const callXDefi = async (params: Params) => {
   if (!window.xfi) return alert("XDEFI wallet not installed");
   const wallet = window.xfi;
   window.xfi.bitcoin.changeNetwork("testnet");
@@ -232,7 +245,7 @@ const callXDefi = async (params) => {
       },
     ],
   };
-  window.xfi.bitcoin.request(tx, (err, res) => {
+  window.xfi.bitcoin.request(tx, (err: Error, res: Response) => {
     if (err) {
       return alert(`Couldn't send transaction, ${JSON.stringify(err)}`);
     } else if (res) {
@@ -264,7 +277,7 @@ converting the resulting string to lower case.
 Use `unisat.sendBitcoin()` to make a token transfer to the TSS address.
 
 ```tsx filename="page.tsx"
-const callUniSat = async (params) => {
+const callUniSat = async (params: Params) => {
   if (!window.unisat) return alert("Unisat wallet not installed");
   try {
     await window.unisat.requestAccounts();
@@ -286,7 +299,7 @@ For Xverse we will use the [sats-connect](https://docs.xverse.app/sats-connect) 
 First get the accounts using `Wallet.request("getAccounts",...)`. Then we need to create a transaction using `createTransaction()` and sign it using `signPsbt()`.
 
 ```tsx filename="page.tsx"
-const callXverse = async (params) => {
+const callXverse = async (params: Params) => {
   const response = await Wallet.request("getAccounts", {
     purposes: [AddressPurpose.Payment],
     message: "Test app wants to know your addresses!",
@@ -334,7 +347,7 @@ async function fetchUtxo(address: string): Promise<any[]> {
   }
 }
 
-async function createTransaction(publickkey: string, senderAddress: string, params) {
+async function createTransaction(publickkey: string, senderAddress: string, params: Params) {
   const publicKey = hex.decode(publickkey);
 
   const p2wpkh = btc.p2wpkh(publicKey, bitcoinTestnet);
@@ -373,11 +386,11 @@ async function createTransaction(publickkey: string, senderAddress: string, para
 
   const opReturn = btc.Script.encode(["RETURN", Buffer.from(memo, "utf8")]);
 
+  tx.addOutputAddress(recipientAddress, BigInt(params.amount), bitcoinTestnet);
   tx.addOutput({
     script: opReturn,
     amount: BigInt(0),
   });
-  tx.addOutputAddress(recipientAddress, BigInt(params.amount), bitcoinTestnet);
   tx.addOutputAddress(changeAddress, BigInt(800), bitcoinTestnet);
 
   const psbt = tx.toPSBT(0);
