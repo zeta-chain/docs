@@ -21,9 +21,25 @@ const baseNextConfig = {
   transpilePackages: ["@zetachain/ui-toolkit"],
   experimental: {
     externalDir: true,
+    /**
+     * Generating source maps consumes extra memory during the build process.
+     * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
+     */
+    serverSourceMaps: false,
+    /**
+     * The Webpack build worker allows you to run Webpack compilations inside a separate Node.js worker
+     * which will decrease memory usage of your application during builds.
+     * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#webpack-build-worker
+     */
+    webpackBuildWorker: true,
   },
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+  /**
+   * Generating source maps consumes extra memory during the build process.
+   * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
+   */
+  productionBrowserSourceMaps: false,
   headers: async () => nextHeadersConfig,
   webpack(config) {
     // eslint-disable-next-line no-param-reassign
