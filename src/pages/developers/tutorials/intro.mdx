@@ -1,1 +1,138 @@
-Once the process is complete, you will receive native ZETA tokens on the ZetaChain testnet. It may take a few minutes for your request to be processed.
+# Getting Started
+
+This introductory tutorial will guide you through the essential steps to set up
+your smart contract template, create and configure your account, and request
+tokens for testing on ZetaChain.
+
+## Prerequisites
+
+- A Unix-like environment (for example, macOS)
+- [Node.js](https://nodejs.org/en/) (version 18 or above)
+- [Yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/)
+
+## Universal App Template
+
+ZetaChain provides [a smart contract
+template](https://github.com/zeta-chain/template) to help you start building
+universal apps quickly. First, clone the template from GitHub:
+
+```
+git clone https://github.com/zeta-chain/template
+```
+
+Next, navigate to the template directory and install the necessary dependencies:
+
+```
+cd template
+yarn
+```
+
+The template uses [Hardhat](https://hardhat.org/) for compiling, testing, and
+deploying contracts. It also uses
+[`@zetachain/toolkit`](https://github.com/zeta-chain/toolkit/), which offers
+various utilities for creating contracts, querying balances, tracking
+cross-chain transactions, accessing the faucet, and more. The template exposes
+most of the features available in the toolkit through Hardhat tasks.
+
+## Create an Account
+
+To interact with a blockchain, you'll need an account. If you don't have an
+account, you can generate a new one using the following command:
+
+```
+npx hardhat account --save
+```
+
+This command creates a random wallet, displays the wallet information in the
+terminal, and saves the private key to a `.env` file, making it accessible to
+Hardhat.
+
+If you don't want to save the wallet (for example, if you just need an address
+to send tokens to for testing purposes), you can run the command without the
+`--save` flag.
+
+If you already have a private key or mnemonic, you can import it with the
+`--recover` flag:
+
+```
+npx hardhat account --save --recover
+```
+
+This will prompt you to enter the private key or mnemonic, derive the addresses,
+and save the private key into the `.env` file.
+
+The `account` command shows derived addresses in hexadecimal (for EVM-based
+chains), bech32 with `zeta` prefix for ZetaChain, and bech32 for Bitcoin.
+
+## Query Token Balances
+
+To check the token balances:
+
+```
+npx hardhat balances
+```
+
+This command queries token balances for the account address derived from the
+private key specified in the `.env`.
+
+If you need to query for balances as part of a script, you can also use a
+`--json` flag to output the balances in JSON format:
+
+```
+npx hardhat balances --json
+```
+
+If you want to query for token balances for a different account, you can use the
+`--address` flag:
+
+```
+npx hardhat balances --address ADDRESS
+```
+
+The `balances` command supports querying for native gas tokens, wrapped ZETA on
+all connected chains as well as ZetaChain, ZRC-20 tokens, and BTC on Bitcoin.
+
+## Request Tokens from the Faucet
+
+To request ZETA tokens from the faucet:
+
+```
+npx hardhat faucet
+```
+
+This command requests tokens from the faucet for the account address derived
+from the private key specified in the `.env`. To prevent abuse, the faucet will
+prompt you to sign in with GitHub. Once the process is complete, you will
+receive native ZETA tokens on ZetaChain testnet. It may take a few minutes for
+your request to be processed.
+
+To send tokens to a different address, use:
+
+```
+npx hardhat faucet --address ADDRESS
+```
+
+Alternatively, you can install a standalone faucet CLI:
+
+```
+yarn global add @zetachain/faucet-cli
+```
+
+You can then use it with the following command:
+
+```
+zetafaucet -h
+```
+
+If the faucet is throwing an error, delete the `access_token` file from the
+project and try again.
+
+In addition to ZETA tokens on ZetaChain, you might need tokens on connected
+blockchains like Ethereun, BNB and Bitcoin testnets.
+
+- https://www.bnbchain.org/en/testnet-faucet
+- https://www.alchemy.com/faucets/ethereum-sepolia
+- https://www.infura.io/faucet/sepolia
+- https://bitcoinfaucet.uo1.net/
+- https://cloud.google.com/application/web3/faucet/ethereum/sepolia

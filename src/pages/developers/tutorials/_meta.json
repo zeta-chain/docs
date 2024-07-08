@@ -1,6 +1,7 @@
 {
   "intro": {
     "title": "Getting Started",
+    "readTime": "10 min",
     "description": "Learn how to set up a smart contract template, create an account, and use faucet"
   },
   "hello": {
