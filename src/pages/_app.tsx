@@ -5,7 +5,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { compose } from "@reduxjs/toolkit";
 import type { AppProps } from "next/app";
 import Script from "next/script";
+import React from "react";
 
+import { Cmdk } from "~/components/Cmdk";
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
 import { useAppAnalytics } from "~/hooks/useAppAnalytics";
@@ -19,6 +21,19 @@ const clientSideEmotionCache = createEmotionCache();
 
 const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: EmotionCache }) => {
   const { emotionCache = clientSideEmotionCache, router } = rest;
+  const [isCmdkOpen, setIsCmdkOpen] = React.useState(true);
+
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsCmdkOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   useAppAnalytics(router);
 
@@ -33,6 +48,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
           <HeadProgressBar />
 
           <Layout>
+            <Cmdk isOpen={isCmdkOpen} setIsCmdkOpen={setIsCmdkOpen} />
             <Component {...pageProps} />
           </Layout>
         </ThemeProvider>

@@ -1,25 +1,24 @@
 import styled from "@emotion/styled";
-import { Chat } from "@mui/icons-material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Dialog, Paper } from "@mui/material";
+import clsx from "clsx";
 import { Command } from "cmdk";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { Dispatch, SetStateAction } from "react";
 
-const Container = styled.div`
+import { CmdkBreadcrumb } from "./CmdkBreadcrumb";
+import { CmdkChat } from "./CmdkChat";
+
+const Container = styled(Paper)`
   [cmdk-root] {
     max-width: 640px;
     width: 100%;
-    padding: 8px;
-    background: #ffffff;
     border-radius: 12px;
-    overflow: hidden;
     font-family: var(--font-sans);
     border: 1px solid var(--gray6);
     box-shadow: var(--cmdk-shadow);
     transition: transform 100ms ease;
     outline: none;
-
-    .dark & {
-      background: rgba(22, 22, 22, 0.7);
-    }
   }
 
   [cmdk-input] {
@@ -159,11 +158,16 @@ const Container = styled.div`
   }
 `;
 
-export function Cmdk() {
+type CmdkProps = {
+  isOpen: boolean;
+  setIsCmdkOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = React.useState("");
 
-  const [pages, setPages] = React.useState<string[]>(["home"]);
+  const [pages, setPages] = React.useState<("chat" | "home" | "sections")[]>(["chat"]);
   const activePage = pages[pages.length - 1];
   const isHome = activePage === "home";
 
@@ -203,7 +207,17 @@ export function Cmdk() {
   }
 
   return (
-    <Container>
+    <Dialog
+      open={isOpen}
+      onClose={() => {
+        setIsCmdkOpen(false);
+      }}
+      classes={{
+        root: "w-full",
+        paper: "border border-[#353535] w-full relative min-h-[500px] m-0 py-0",
+      }}
+      PaperComponent={Container}
+    >
       <Command
         ref={ref}
         onKeyDown={(e: React.KeyboardEvent) => {
@@ -222,38 +236,64 @@ export function Cmdk() {
           }
         }}
       >
-        <div>
-          {pages.map((p) => (
-            <div key={p} cmdk-vercel-badge="">
-              {p}
-            </div>
-          ))}
+        {activePage !== "home" && (
+          <CmdkBreadcrumb onClick={() => setPages(["home"])}>
+            <ArrowBackIcon />
+          </CmdkBreadcrumb>
+        )}
+        <div className="flex flex-col items-center" cmdk-input-wrapper="">
+          <Command.Input
+            // value={value}
+            autoFocus
+            // onValueChange={onValueChange}
+            // ref={ref}
+            placeholder="Type a command or search..."
+            className={clsx(
+              "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
+              "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom !bg-[#0c0d10] !border-[#353535]"
+            )}
+          />
         </div>
-        <Command.Input
-          autoFocus
-          placeholder="What do you need?"
-          onValueChange={(value) => {
-            setInputValue(value);
-          }}
-        />
+
+        {activePage !== "home"
+          ? pages.map((p) => (
+              <div key={p} cmdk-vercel-badge="">
+                {p}
+              </div>
+            ))
+          : null}
         <Command.List>
-          <Command.Empty>No results found.</Command.Empty>
-          {activePage === "home" && <Home searchSections={() => setPages([...pages, "sections"])} />}
+          {activePage === "home" && (
+            <Home
+              searchSections={() => setPages([...pages, "sections"])}
+              goToChat={() => setPages([...pages, "chat"])}
+            />
+          )}
           {activePage === "sections" && <SectionsList />}
+          {activePage === "chat" && <CmdkChat />}
         </Command.List>
       </Command>
-    </Container>
+    </Dialog>
   );
-}
+};
 
-function Home({ searchSections }: { searchSections: Function }) {
+function Home({
+  goToChat,
+  searchSections,
+  setIsCmdkOpen,
+}: {
+  goToChat: Function;
+  searchSections: Function;
+  setIsCmdkOpen: Dispatch<SetStateAction<boolean>>;
+}) {
+  const router = useRouter();
   return (
     <>
       <Command.Group heading="Sections">
         <Item
           shortcut="S P"
           onSelect={() => {
-            searchSections();
+            router.push("developers");
           }}
         >
           <ProjectsIcon />
@@ -262,7 +302,7 @@ function Home({ searchSections }: { searchSections: Function }) {
         <Item
           shortcut="S P"
           onSelect={() => {
-            searchSections();
+            router.push("nodes");
           }}
         >
           <ProjectsIcon />
@@ -271,7 +311,8 @@ function Home({ searchSections }: { searchSections: Function }) {
         <Item
           shortcut="S P"
           onSelect={() => {
-            searchSections();
+            router.push("users");
+            // setIsCmdkOpen
           }}
         >
           <ProjectsIcon />
@@ -279,7 +320,12 @@ function Home({ searchSections }: { searchSections: Function }) {
         </Item>
       </Command.Group>
       <Command.Group heading="Help">
-        <Item shortcut="⇧ C">
+        <Item
+          shortcut="⇧ C"
+          onSelect={() => {
+            goToChat();
+          }}
+        >
           <FeedbackIcon />
           Chat with the docs
         </Item>
