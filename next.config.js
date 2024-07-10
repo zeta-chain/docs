@@ -26,12 +26,6 @@ const baseNextConfig = {
      * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
      */
     serverSourceMaps: false,
-    /**
-     * The Webpack build worker allows you to run Webpack compilations inside a separate Node.js worker
-     * which will decrease memory usage of your application during builds.
-     * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#webpack-build-worker
-     */
-    webpackBuildWorker: true,
   },
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
