@@ -31,7 +31,7 @@ pragma solidity 0.8.7;
 
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
-contract YourContract is zContract {
+contract UniversalApp is zContract {
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
@@ -43,17 +43,108 @@ contract YourContract is zContract {
 }
 ```
 
-It’s implemented in Solidity and uses ZetaChain's universal EVM features (like
-`onCrossChainCall`) to handle calls from connected chains.
+## Calling Universal Apps
 
-<Alert variant="tip">
-  For a quick hands-on introduction to building omnichain apps check out "[Your First Universal
-  App](/developers/tutorials/hello)" tutorial.
-</Alert>
+Users can call universal apps by interacting with a **Gateway contract** on a
+connected chain. Each connected chain has a single Gateway contract that exposes
+methods to deposit tokens to and call universal apps. Users can pass both data
+and tokens when calling universal apps.
 
-One of the key advantages of a universal app is that it requires deploying only
-a single contract on ZetaChain, eliminating the need for separate contracts on
-each connected chain. This reduces development time, lowers deployment costs,
-and minimizes the potential for errors. You can focus on creating robust,
-feature-rich applications without worrying about the complexities of managing
-multiple contracts across different blockchains.
+<Alert>Gateway is an upcoming unified interface that will replace the TSS address and ERC-20 custody contract.</Alert>
+
+In this example an Ethereum user sends 1 ETH and a message "hello" to a
+universal app:
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fboard%2FgPX2Rjuxb44SYr1FTwZCXv%2FIntro-1%3Fnode-id%3D0-1%26t%3DowucPIvKfVlZrHJR-1"
+  allowfullscreen
+></iframe>
+
+A call to a universal app triggers an `onCrossChainCall` method.
+
+A universal app receives:
+
+- a message (in this example, `"hello"`) containing arbitrary data. A message
+  can include recipient address, a token address, properties of an NFT to be
+  minted, etc.
+- tokens represented as ZRC-20 (in this example, 1 ZRC-20 ETH).
+
+Each native gas and supported ERC-20 token from a connected chains has a
+corresponding ZRC-20 token on ZetaChain. ZRC-20 tokens are ERC-20-compatible and
+can be permissionlessly transferred back (withdrawn) to their original chain
+(ZRC-20 ETH on ZetaChain becomes ETH on Ethereum).
+
+`onCrossChainCall` also has access to additional context information such as the
+original sender address and chain ID.
+
+Universal apps can also initiate token transfers and contract calls to connected
+chains.
+
+In this example a universal app:
+
+- accepts 6 ETH and "I want BNB" (bytes that represent the destination token)
+  from Ethereum
+- swaps 6 ZRC-20 ETH for ZRC-20 BNB using a decentralized exchange on ZetaChain
+- calls the Gateway contract to withdraw ZRC-20 BNB and call a contract on the
+  BNB chain
+
+Of course, a single universal app call can trigger more than one call to
+different chains.
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fboard%2FKtVyu73smn4q9P4Gq5Bczn%2FIntro-2%3Fnode-id%3D0-1%26t%3DB7lT6avDGo620CZb-1"
+  allowfullscreen
+></iframe>
+
+With a universal app a complex sequence of transactions and value transfers that
+span multiple blockchains can been triggered by a single user-signed
+transaction.
+
+## Bitcoin Support
+
+Universal apps are fully-compatible with Bitcoin. The same universal app
+contract can receive calls from any connected chain.
+
+Users can call universal apps from the Bitcoin network by sending BTC and data
+to the **Gateway address**. To make a call to a universal app a Bitcoin user
+only needs to sign a single transaction using their wallet of choice. Universal
+apps offer gas abstraction, so end-user are not required to have an account on
+chains other than Bitcoin or acquire gas tokens.
+
+## Gas Abstraction
+
+Incoming calls to universal apps from connected chains do not incur additional
+gas costs aside from the initial interaction with the Gateway contract.
+
+Outgoing calls from universal apps (like contract calls and token withdrawals)
+to connected chains require gas. Universal EVM offers tools to query gas, and
+it's up to each universal app to make sure that the contract has the right
+amount of ZRC-20 gas token to cover the gas fees.
+
+In practice it means that a universal app would swap a fraction of the incoming
+ZRC-20 token to the ZRC-20 of the gas token of the chain to which an outgoing
+call is made. When an outgoing call or withdrawal is made, a required amount of
+ZRC-20 gas token is deducted to cover the gas fees on the destination chain.
+
+For end user this system abstracts away the complexities of cross-chain gas. As
+long as the user provides a sufficient amount as input (in the token of their
+choosing), the gas fees will be covered.
+
+## Summary
+
+- Universal apps:
+  - can receive contract calls and tokens from users and contracts on connected
+    chains
+  - can trigger contract calls and token transfers to connected chains
+  - can automatically handle gas for cross-chain transactions
+  - are fully compatible with EVM chains (like Ethereum and BNB), Bitcoin.
+    Support for Polygon, Solana, Cosmos (through IBC) and other chains is coming
+    soon.
+- Native gas and supported ERC-20 tokens are represented as ZRC-20 tokens. A
+  ZRC-20 token can be permissionlessly withdrawn back to it's original chain.
