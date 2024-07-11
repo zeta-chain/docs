@@ -41,21 +41,29 @@ The swap contract will:
 - Swap the remaining input token amount for the target token ZRC-20.
 - Withdraw ZRC-20 tokens to the destination chain
 
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fboard%2FTu1Y2v1FwSIyklWV69Q5r0%2FUntitled%3Fnode-id%3D0-1%26t%3DaQJr5yQw5U5nV1sE-1"
+  allowfullscreen
+></iframe>
+
 ## Set Up Your Environment
 
 Clone the Hardhat contract template:
 
 ```
 git clone https://github.com/zeta-chain/template
-```
 
-Install dependencies:
-
-```
 cd template
 
 yarn
 ```
+
+Make sure that you've followed the [Getting
+Started](/developers/tutorials/intro) tutorial to set up your development
+environment, create an account and request testnet tokens.
 
 ## Create the contract
 
@@ -196,8 +204,9 @@ method of the target token ZRC-20 to send the tokens to the recipient on the
 connected chain.
 
 <Alert>
-  Note, that you don't have to tell which chain to withdraw to, because each ZRC-20 contract knows which connected chain
-  it is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
+  {" "}
+  Note that you don't have to tell which chain to withdraw to because each ZRC-20 contract knows which connected chain it
+  is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
 </Alert>
 
 ## Update the Interact Task

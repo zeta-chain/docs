@@ -1,13 +1,34 @@
 ---
 title: Your First Univeral App
-description: In this tutorial you will create a simple universal app contract, deploy it on ZetaChain and make a contract call from a connected chain.
 ---
+
+In this tutorial, you will create a simple universal app contract that accepts a
+message with a string and emits an event with that string when called from a
+connected chain. For example, a user on Ethereum will be able to send a message
+"alice" and the universal contract on ZetaChain will emit a "Greet" event with a
+value "alice".
+
+You will learn how to:
+
+- Use the Hardhat template to create a new universal app using a single command
+- Define your universal app contract to handle messages from connected chains
+- Deploy the contract to ZetaChain
+- Interact with the contract by sending a message from Ethereum testnet
+- Track an incoming cross-chain transaction
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fboard%2F64RmVfwufYkWKmAmTQoumT%2FUntitled%3Ft%3DXf1On2VCmV2JwRDs-1"
+  allowfullscreen
+></iframe>
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) (version 18 or above)
-- [Yarn](https://yarnpkg.com/)
-- [Git](https://git-scm.com/)
+- [Introduction to Universal Apps](/developers/apps/intro/)
+- [Interacting with a Universal App](/developers/apps/interacting/)
+- [Getting Started](/developers/tutorials/intro)
 
 ## Set Up Your Environment
 
@@ -15,33 +36,40 @@ Clone the Hardhat contract template:
 
 ```
 git clone https://github.com/zeta-chain/template
-```
 
-Install dependencies:
-
-```
 cd template
 
 yarn
 ```
 
+Make sure that you've followed the [Getting
+Started](/developers/tutorials/intro) tutorial to set up your development
+environment, create an account and request testnet tokens.
+
 ## Create the Contract
 
-To create a new universal app contract, use the `omnichain` Hardhat task
-available by default in the template.
+To create a new universal app contract, use the `omnichain` Hardhat task:
 
 ```
-npx hardhat omnichain MyContract
+npx hardhat omnichain Greeting name
 ```
 
-The `omnichain` task can also accept a list of arguments (optionally with types)
-to create a contract that accepts specific data from a connected chain. You can
-learn more about passing arguments in the following tutorials. In this tutorial
-you will create a contract that does not accept any arguments.
+The `omnichain` task accepts a contract name (`Greeting`) and a list of fields.
+The list of fields defines the values that will be included in the message
+passed to a universal app contract.
+
+A field may have a type specified after the field name, separated by a colon. If
+no type is specified, the type defaults to `string`.
+
+Supported types are: `address`, `bool`, `bytes32`, `string`,
+`int`,`int8`,`int16`,`int128`,`int256`,`uint`,`uint8`,`uint16`,`uint128`,`uint256`.
+
+In this example, the message will contain only one value: `name` of type
+`string`.
 
 The `omnichain` task has created:
 
-- `contracts/MyContract.sol`: a Solidity universal app contract
+- `contracts/Greeting.sol`: a Solidity universal app contract
 - `tasks/deploy.ts`: a Hardhat task to deploy the contract
 - `tasks/interact.ts`: a Hardhat task to interact with the contract
 
@@ -50,9 +78,9 @@ tasks.
 
 ## Universal App Contract
 
-Let's review the contents of the `MyContract` contract:
+Let's review the contents of the `Greeting` contract:
 
-```solidity filename="contracts/MyContract.sol"
+```solidity filename="contracts/Greeting.sol"
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -60,7 +88,7 @@ import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@zetachain/toolkit/contracts/OnlySystem.sol";
 
-contract MyContract is zContract, OnlySystem {
+contract Greeting is zContract, OnlySystem {
     SystemContract public systemContract;
 
     constructor(address systemContractAddress) {
@@ -73,12 +101,16 @@ contract MyContract is zContract, OnlySystem {
         uint256 amount,
         bytes calldata message
     ) external virtual override onlySystem(systemContract) {
+        (string memory name) = abi.decode(
+            message,
+            (string)
+        );
         // TODO: implement the logic
     }
 }
 ```
 
-`MyContract` is a simple contract that inherits from the [`zContract`
+`Greeting` is a simple contract that inherits from the [`zContract`
 interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/zContract.sol).
 
 The contract declares a state variable of type `SystemContract` that stores a
@@ -116,6 +148,39 @@ the TSS address or an ERC-20 custody contract.
 
 By default, the `onCrossChainCall` function doesn't do anything else. You will
 implement the logic yourself based on your use case.
+
+Modify the contract to emit an event after parsing the `message`:
+
+```solidity filename="contracts/Greeting.sol" {10,26}
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+import "@zetachain/toolkit/contracts/OnlySystem.sol";
+
+contract Greeting is zContract, OnlySystem {
+    SystemContract public systemContract;
+    event Greet(string message);
+
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
+    }
+
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override onlySystem(systemContract) {
+        (string memory name) = abi.decode(
+            message,
+            (string)
+        );
+        emit Greet(name);
+    }
+}
+```
 
 ## Deploy Task
 
@@ -165,7 +230,7 @@ const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
 
 task("deploy", "Deploy the contract", main)
   .addFlag("json", "Output in JSON")
-  .addOptionalParam("name", "Contract to deploy", "MyContract");
+  .addOptionalParam("name", "Contract to deploy", "Greeting");
 ```
 
 Omnichain contracts are supposed to be deployed to ZetaChain, so the task checks
@@ -194,7 +259,7 @@ import ERC20 from "@openzeppelin/contracts/build/contracts/ERC20.json";
 const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
 
-  const data = prepareData(args.contract, [], []);
+  const data = prepareData(args.contract, ["string"], [args.name]);
 
   let tx;
 
@@ -234,7 +299,8 @@ task("interact", "Interact with the contract", main)
   .addParam("contract", "The address of the withdraw contract on ZetaChain")
   .addParam("amount", "Amount of tokens to send")
   .addOptionalParam("token", "The address of the token to send")
-  .addFlag("json", "Output in JSON");
+  .addFlag("json", "Output in JSON")
+  .addParam("name");
 ```
 
 The task uses the `prepareData` function from `@zetachain/toolkit/helpers` to
@@ -283,57 +349,17 @@ address. The transaction contains the following information:
 - `to`: the address of the TSS
 - `value`: the amount of tokens to transfer
 
-## Create an Account
-
-To deploy and interact with the contract you will need a wallet with tokens.
-
-Create a new wallet account:
-
-```
-npx hardhat account --save
-```
-
-This command generates a random wallet, prints information about the wallet to
-the terminal, and saves the private key to a `.env` file to make it accessible
-to Hardhat.
-
-## Use the Faucet to Request Tokens
-
-Request testnet ZETA tokens from the ZetaChain faucet:
-
-```
-npx hardhat faucet
-```
-
-This command requests tokens from the faucet for the account address derived
-from the private key specified in the `.env`. Tokens sent to the address on
-ZetaChain.
-
-Using the `faucet` task you can get ZETA tokens on ZetaChain as well as ZETA
-tokens on connected chains.
-
-You will, however, need to request native tokens on connected chains from one of
-the [publicly available faucets](/reference/apps/get-testnet-zeta).
-
-## Check Token Balances
-
-Check token balances to ensure you have tokens on ZetaChain and at least one of
-the connected chains:
-
-```
-npx hardhat balances
-```
-
-Learn more about these and other ZetaChain toolkit commands [avaialble in the
-template](/developers/reference/template/).
+* `value`: the number of tokens to transfer
 
 ## Deploy the Contract
 
-Clear the cache and artifacts, then compile the contract:
+Compile the contract:
 
 ```
 npx hardhat compile --force
 ```
+
+Use the `--force` flag to clear the cache and artifacts.
 
 Deploy the contract to ZetaChain:
 
@@ -342,19 +368,20 @@ npx hardhat deploy --network zeta_testnet
 ```
 
 ```
-🔑 Using account: 0x1bE17D79b60182D7F3573576B7807F6C20Ae7C99
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 
-🚀 Successfully deployed contract on ZetaChain.
-📜 Contract address: 0xE26F2e102E2f3267777F288389435d3037D14bb3
-🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xE26F2e102E2f3267777F288389435d3037D14bb3
+🚀 Successfully deployed contract on zeta_testnet.
+📜 Contract address: 0x2C0201B9DFdC6Dcc23524Ab29c51c38dcc8afF54
+🌍 ZetaScan: https://athens.explorer.zetachain.com/address/0x2C0201B9DFdC6Dcc23524Ab29c51c38dcc8afF54
+🌍 Blockcsout: https://zetachain-athens-3.blockscout.com/address/0x2C0201B9DFdC6Dcc23524Ab29c51c38dcc8afF54
 ```
 
 ## Interact with the Contract
 
-Call the `interact` task to interact with the contract:
+Use the `interact` task to send a transaction on Ethereum Sepolia testnet:
 
 ```
-npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amount 0.1 --network sepolia_testnet
+npx hardhat interact --name alice --contract 0x2C0201B9DFdC6Dcc23524Ab29c51c38dcc8afF54 --network sepolia_testnet --amount 0
 ```
 
 ```
@@ -364,34 +391,50 @@ npx hardhat interact --contract 0xE26F2e102E2f3267777F288389435d3037D14bb3 --amo
 📝 Transaction hash: 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
 ```
 
+The `interact` task has sent a transaction to the TSS address on Sepolia.
+
+The `data` field of the transaction contains the following data:
+
+```
+0x2c0201b9dfdc6dcc23524ab29c51c38dcc8aff5400000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000005616c696365000000000000000000000000000000000000000000000000000000
+```
+
+The first 20 bytes is the universal app contract on ZetaChain, the rest are
+bytes that will be passed to the universal contract as `message`. In this
+example, the `message` is a string `alice`.
+
+The `value` (amount) of the transaction is 0 because you're not sending any ETH
+in this example, you're just sending a message.
+
 Track the transaction:
 
 ```
-npx hardhat cctx 0x93b441dc2ddb751a60a2f4c0fc52dbbd447ed70eb962b1a01072328aa6872b73
-✓ CCTXs on ZetaChain found.
-
-✓ 0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6: 5 → 7001:
-OutboundMined (Remote omnichain contract call completed)
+npx hardhat cctx 0x1d32177e6cdedbabd5f587ed0de80e8b4734636b329d88d24d015676257c330d
 ```
 
-Once the transaction is finalized on ZetaChain, you should be able to review the
-transaction on the ZetaChain explorer:
+```
+✓ CCTXs on ZetaChain found.
 
-https://explorer.zetachain.com/cc/tx/0x31310706ac4b33aa468e62a77d5db358e52a60dad3854210db8fc06c870186b6
+✓ 0xb672ea88abd2c35e4ee4a094969799259773a89e5d93906e46829632837106a5: 11155111 → 7001: OutboundMined (Remote omnichain contract call completed)
+```
 
-The `interact` task has sent a token transfer transaction to the TSS address on
-Sepolia. The transaction contains the address of the contract on ZetaChain in
-the `data` field. ZetaChain detects the transaction and triggers the
-`onCrossChainCall` function of the contract. The `onCrossChainCall` function
-does nothing in this example, but you can modify it to implement your own logic.
+You can also track the cross-chain transaction on ZetaScan:
 
-Congratulations! 🎉 In this tutorial you have:
+https://athens.explorer.zetachain.com/cc/tx/0xb672ea88abd2c35e4ee4a094969799259773a89e5d93906e46829632837106a5
 
-- cloned the Hardhat contract template
-- used `npx hardhat omnichain` to create a new omnichain contract
-- reviewed the contents of the generated contract and the tasks to deploy and
-  interact with the contract
-- successfully deployed the contract to ZetaChain
-- interacted with the contract by sending a token transfer transaction to the
-  TSS address on a connected chain and triggering the `onCrossChainCall`
-  function of the omnichain contract on ZetaChain
+Once the transaction is finalized on ZetaChain, you should be able to see the
+event emitted by the contract on ZetaChain. Go to the "Logs tab" to see:
+
+```
+Method id   efdeaaf5
+Call        Greet(string message)
+Name        Type                    Indexed?    Data
+message     string                  false       alice
+```
+
+https://zetachain-athens-3.blockscout.com/address/0x2C0201B9DFdC6Dcc23524Ab29c51c38dcc8afF54
+
+Congratulations! 🎉 You've successfully created a universal app contract,
+deployed it on ZetaChain and made a call to it with a message sent from Ethereum
+testnet. Now you know the basics of how to handle calls and parse messages from
+connected chains and can move on to build more exciting apps!
