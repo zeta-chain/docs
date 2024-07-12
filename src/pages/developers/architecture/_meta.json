@@ -1,9 +1,30 @@
 {
-  "overview": "Architecture",
-  "observers": "Observer-Signer Validators",
-  "privileged": "Privileged Actions",
-  "rewards": "Staking Rewards",
-  "whitelisting": "Whitelisting ERC-20",
-  "modules": "Modules",
-  "zetacored": "Zetacore Daemon"
+  "overview": {
+    "title": "Architecture",
+    "description": "Overview of the architecture of ZetaChain"
+  },
+  "observers": {
+    "title": "Observer-Signer Validators",
+    "description": "List of currently active observer-signer validators"
+  },
+  "privileged": {
+    "title": "Privileged Actions",
+    "description": "Administrative actions that can only be executed by dedicated groups"
+  },
+  "rewards": {
+    "title": "Staking Rewards",
+    "description": "How staking rewards are calculated"
+  },
+  "whitelisting": {
+    "title": "Whitelisting ERC-20",
+    "description": "How to whitelist an ERC-20 as a supported ZRC-20"
+  },
+  "modules": {
+    "title": "Modules",
+    "description": "ZetaChain's Cosmos SDK modules"
+  },
+  "zetacored": {
+    "title": "ZetaChain Node CLI",
+    "description": "Command-line interface of the ZetaChain node binary"
+  }
 }
