@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Dialog, Paper } from "@mui/material";
+import { Dialog, Paper, Typography } from "@mui/material";
+import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import clsx from "clsx";
 import { Command } from "cmdk";
 import { useRouter } from "next/router";
@@ -10,7 +11,7 @@ import { CmdkBreadcrumb } from "./CmdkBreadcrumb";
 import { CmdkChat } from "./CmdkChat";
 
 const Container = styled(Paper)`
-  [cmdk-root] {
+  /* [cmdk-root] {
     max-width: 640px;
     width: 100%;
     border-radius: 12px;
@@ -19,7 +20,7 @@ const Container = styled(Paper)`
     box-shadow: var(--cmdk-shadow);
     transition: transform 100ms ease;
     outline: none;
-  }
+  } */
 
   [cmdk-input] {
     font-family: var(--font-sans);
@@ -65,25 +66,24 @@ const Container = styled(Paper)`
     align-items: center;
     gap: 8px;
     padding: 0 16px;
-    color: var(--gray11);
     user-select: none;
     will-change: background, color;
     transition: all 150ms ease;
     transition-property: none;
 
     &[data-selected="true"] {
-      background: var(--grayA3);
-      color: var(--gray12);
+      background: ${twTheme.colors.grey[700]};
+      color: ${twTheme.colors.white};
     }
 
     &[data-disabled="true"] {
-      color: var(--gray8);
+      color: ${twTheme.colors.grey[300]};
       cursor: not-allowed;
     }
 
     &:active {
       transition-property: background;
-      background: var(--gray4);
+      background: ${twTheme.colors.grey[600]};
     }
 
     & + [cmdk-item] {
@@ -171,6 +171,10 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
   const activePage = pages[pages.length - 1];
   const isHome = activePage === "home";
 
+  const onValueChange = React.useCallback((value: string) => {
+    setInputValue(value);
+  }, []);
+
   const popPage = React.useCallback(() => {
     setPages((pages) => {
       const x = [...pages];
@@ -236,37 +240,45 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
           }
         }}
       >
-        {activePage !== "home" && (
-          <CmdkBreadcrumb onClick={() => setPages(["home"])}>
-            <ArrowBackIcon />
-          </CmdkBreadcrumb>
+        {activePage === "chat" && (
+          <div className="py-3 px-1">
+            <CmdkBreadcrumb>
+              <div className="flex items-center">
+                <ArrowBackIcon className="cursor-pointer" onClick={() => setPages(["home"])} sx={{ fontSize: 16 }} />
+                <Typography className="ml-4">Zeta AI</Typography>
+              </div>
+            </CmdkBreadcrumb>
+          </div>
         )}
-        <div className="flex flex-col items-center" cmdk-input-wrapper="">
-          <Command.Input
-            // value={value}
-            autoFocus
-            // onValueChange={onValueChange}
-            // ref={ref}
-            placeholder="Type a command or search..."
-            className={clsx(
-              "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
-              "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom !bg-[#0c0d10] !border-[#353535]"
-            )}
-          />
-        </div>
+        {activePage === "home" && (
+          <div className="flex flex-col items-center" cmdk-input-wrapper="">
+            <Command.Input
+              value={inputValue}
+              autoFocus
+              onValueChange={onValueChange}
+              placeholder="Type a command or search..."
+              className={clsx(
+                "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
+                "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom !bg-[#0c0d10] !border-[#353535]"
+              )}
+            />
+          </div>
+        )}
 
-        {activePage !== "home"
+        {/* {activePage !== "home"
           ? pages.map((p) => (
               <div key={p} cmdk-vercel-badge="">
                 {p}
               </div>
             ))
-          : null}
-        <Command.List>
+          : null} */}
+        <Command.List className="px-2">
           {activePage === "home" && (
             <Home
+              inputValue={inputValue}
               searchSections={() => setPages([...pages, "sections"])}
               goToChat={() => setPages([...pages, "chat"])}
+              setIsCmdkOpen={setIsCmdkOpen}
             />
           )}
           {activePage === "sections" && <SectionsList />}
@@ -279,40 +291,45 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
 
 function Home({
   goToChat,
+  inputValue,
   searchSections,
   setIsCmdkOpen,
 }: {
   goToChat: Function;
+  inputValue: string;
   searchSections: Function;
   setIsCmdkOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const router = useRouter();
+
   return (
     <>
       <Command.Group heading="Sections">
         <Item
-          shortcut="S P"
+          shortcut="G B"
           onSelect={() => {
-            router.push("developers");
+            setIsCmdkOpen(false);
+            router.push("/developers");
           }}
         >
           <ProjectsIcon />
           Go to "Build" section
         </Item>
         <Item
-          shortcut="S P"
+          shortcut="G N"
           onSelect={() => {
-            router.push("nodes");
+            setIsCmdkOpen(false);
+            router.push("/nodes");
           }}
         >
           <ProjectsIcon />
           Go to "Run a Node" section
         </Item>
         <Item
-          shortcut="S P"
+          shortcut="G U"
           onSelect={() => {
-            router.push("users");
-            // setIsCmdkOpen
+            setIsCmdkOpen(false);
+            router.push("/users");
           }}
         >
           <ProjectsIcon />
@@ -328,10 +345,30 @@ function Home({
         >
           <FeedbackIcon />
           Chat with the docs
+          {inputValue ? (
+            <>
+              {":"}
+              <span className="ml-[-4px] text-foreground font-semibold max-w-[200px] overflow-ellipsis whitespace-nowrap overflow-hidden">
+                {inputValue}
+              </span>
+            </>
+          ) : (
+            "..."
+          )}
         </Item>
         <Item shortcut="⇧ D">
           <DocsIcon />
-          Search docs...
+          Search the docs
+          {inputValue ? (
+            <>
+              {":"}
+              <span className="ml-[-4px] text-foreground font-semibold max-w-[200px] overflow-ellipsis whitespace-nowrap overflow-hidden">
+                {inputValue}
+              </span>
+            </>
+          ) : (
+            "..."
+          )}
         </Item>
       </Command.Group>
     </>

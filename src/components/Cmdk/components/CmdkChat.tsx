@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Person, Send } from "@mui/icons-material";
-import { IconButton, Input, InputAdornment, TextField } from "@mui/material";
+import { IconButton, Input, InputAdornment, TextField, Typography } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import { useChat } from "ai/react";
 import clsx from "clsx";
@@ -14,6 +14,9 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
+import { CommandGroup, CommandItem } from "cmdk";
+
+import { cmdkChatQuestions } from "../cmdk.constants";
 import { MarkdownMessage } from "./MarkdownMesage";
 
 export enum MessageRole {
@@ -108,7 +111,25 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             }
           })}
 
-        {messages.length === 0 && <div>Examples</div>}
+        {messages.length === 0 && (
+          <CommandGroup className="w-full" heading="Example questions">
+            {cmdkChatQuestions.map((question) => {
+              const key = question.replace(/\s+/g, "_");
+
+              return (
+                <CommandItem
+                  key={key}
+                  className={clsx("cursor-pointer", "w-full")}
+                  onSelect={() => {
+                    append({ role: "user", content: question });
+                  }}
+                >
+                  {question}
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        )}
         {/* {error && (
             <div className="p-6 flex flex-col items-center gap-6 mt-4">
               <IconAlertTriangle className="text-amber-900" strokeWidth={1.5} size={21} />
@@ -120,71 +141,74 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             </div>
           )} */}
       </div>
-      <CustomTextField
-        className="absolute bottom-0 pb-4 w-full bg-alternative rounded px-3 [&_input]:pr-32 md:[&_input]:pr-40 !focus:outline-none"
-        color="primary"
-        InputProps={{
-          classes: {
-            input: "dark:text-white",
-            root: "!hover:border-red h-[30px]",
-          },
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton aria-label="toggle password visibility" edge="end" disabled>
-                <Send className="dark:text-white h-[14px] w-[14px]" />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        // inputRef={inputRef}
-        // autoFocus
-        // placeholder={isLoadingCommandMenu || isLoading ? "Waiting on an answer..." : "Ask Zeta AI a question..."}
-        // value={input}
-        // actions={
-        //   <>
-        //     {!isLoadingCommandMenu && !isLoading ? (
-        //       <div
-        //         className={`flex items-center gap-3 mr-3 transition-opacity duration-700 ${
-        //           search ? "opacity-100" : "opacity-0"
-        //         }`}
-        //       >
-        //         <span className="text-foreground-light">Submit message</span>
-        //         <div className="hidden text-foreground-light md:flex items-center justify-center h-6 w-6 rounded bg-overlay-hover">
-        //           <IconCornerDownLeft size={12} strokeWidth={1.5} />
-        //         </div>
-        //       </div>
-        //     ) : null}
-        //   </>
-        // }
-        onChange={(e) => {
-          if (!isLoading) {
-            handleInputChange(e as React.ChangeEvent<HTMLInputElement>);
-          }
-        }}
-        // onCompositionStart={() => setIsImeComposing(true)}
-        // onCompositionEnd={() => setIsImeComposing(false)}
-        onKeyUp={(e) => {
-          switch (e.key) {
-            case "Backspace":
-              e.stopPropagation();
-          }
-        }}
-        onKeyDown={(e) => {
-          switch (e.key) {
-            case "Enter":
-              // if (!search || isLoadingCommandMenu || isLoading || isImeComposing) {
-              if (isLoading) {
+      <div className="absolute bottom-0 pb-4 w-[98%]">
+        <CustomTextField
+          className="w-full bg-alternative rounded px-3 [&_input]:pr-32 md:[&_input]:pr-40 !focus:outline-none"
+          color="primary"
+          placeholder="Ask Zeta AI a question..."
+          InputProps={{
+            classes: {
+              input: "dark:text-white",
+              root: "!hover:border-red h-[30px]",
+            },
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton aria-label="toggle password visibility" edge="end" disabled>
+                  <Send className="dark:text-white h-[14px] w-[14px]" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          // inputRef={inputRef}
+          // autoFocus
+          // placeholder={isLoadingCommandMenu || isLoading ? "Waiting on an answer..." : "Ask Zeta AI a question..."}
+          // value={input}
+          // actions={
+          //   <>
+          //     {!isLoadingCommandMenu && !isLoading ? (
+          //       <div
+          //         className={`flex items-center gap-3 mr-3 transition-opacity duration-700 ${
+          //           search ? "opacity-100" : "opacity-0"
+          //         }`}
+          //       >
+          //         <span className="text-foreground-light">Submit message</span>
+          //         <div className="hidden text-foreground-light md:flex items-center justify-center h-6 w-6 rounded bg-overlay-hover">
+          //           <IconCornerDownLeft size={12} strokeWidth={1.5} />
+          //         </div>
+          //       </div>
+          //     ) : null}
+          //   </>
+          // }
+          onChange={(e) => {
+            if (!isLoading) {
+              handleInputChange(e as React.ChangeEvent<HTMLInputElement>);
+            }
+          }}
+          // onCompositionStart={() => setIsImeComposing(true)}
+          // onCompositionEnd={() => setIsImeComposing(false)}
+          onKeyUp={(e) => {
+            switch (e.key) {
+              case "Backspace":
+                e.stopPropagation();
+            }
+          }}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case "Enter":
+                // if (!search || isLoadingCommandMenu || isLoading || isImeComposing) {
+                if (isLoading) {
+                  return;
+                }
+                handleSubmit(e as any);
                 return;
-              }
-              handleSubmit(e as any);
-              return;
-            case "Backspace":
-              e.stopPropagation();
-            default:
-              return;
-          }
-        }}
-      />
+              case "Backspace":
+                e.stopPropagation();
+              default:
+                return;
+            }
+          }}
+        />
+      </div>
     </div>
   );
 };

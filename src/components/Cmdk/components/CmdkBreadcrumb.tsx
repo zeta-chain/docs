@@ -12,7 +12,7 @@ export const CmdkBreadcrumb = ({ className, children, onClick, type = "default" 
     <button
       onClick={onClick}
       className={clsx(
-        "cursor-default px-1.5 py-0.5 rounded text-xs [&:not(:last-child)]:hover:cursor-pointer",
+        "cursor-default px-3 py-0.5 rounded text-xs [&:not(:last-child)]:hover:cursor-pointer",
         "justify-end",
         type === "breadcrumb"
           ? "text-foreground-muted"
