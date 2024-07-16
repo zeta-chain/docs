@@ -15,6 +15,10 @@
     "title": "Tutorials",
     "description": "Step-by-step guides to help you master building on ZetaChain."
   },
+  "frontend": {
+    "title": "Frontend Apps",
+    "description": "Build user-facing universal frontend apps"
+  },
   "services": {
     "title": "Apps & Services",
     "description": "Discover useful developer-focused applications and services to enhance your development process on ZetaChain."
