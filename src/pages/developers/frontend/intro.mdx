@@ -1,10 +1,33 @@
-# Setting Up
+import { Alert } from "~/components/shared";
+
+ZetaChain's component library is a set of ready to use React components that
+lets you build user interfaces for universal apps.
+
+The components are expected to work with
+[Next.js](https://github.com/vercel/next.js),
+[RainbowKit](https://github.com/rainbow-me/rainbowkit/) and
+[wagmi](https://github.com/wevm/wagmi).
 
 ```
 git clone https://github.com/zeta-chain/frontend-template
 ```
 
+<Alert> The component library is in under active development and currently is recommended for testnet use only.</Alert>
+
 ## Component: Swap
+
+The Swap component provides the following functionality:
+
+- Swap between connected chains (for example, Ethereum and BNB)
+- Deposit native gas and supported ERC-20 tokens from a connected chain to
+  ZetaChain
+- Withdraw ZRC-20 tokens from ZetaChain to a connected chain
+- Send ZETA between chains
+- Transfer native gas and ERC-20 tokens on connected chains
+
+For cross-chain swaps the component depends on a universal swap contract.
+Complete [the swap tutorial](/developers/tutorials/swap-any) and deploy your own
+contract or use the contract address from the example below.
 
 ![](/img/docs/components-swap.png)
 
@@ -15,7 +38,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Swap, useEthersSigner, useZetaChainClient } from "@fadeev/swap/dist";
 import { useAccount, useChainId, useWalletClient } from "wagmi";
 
-const contract = "0xb459F14260D1dc6484CE56EB0826be317171e91F";
+const contract = "0xb459F14260D1dc6484CE56EB0826be317171e91F"; // universal swap contract
 
 const Page = () => {
   const account = useAccount();
@@ -36,6 +59,9 @@ export default Page;
 ```
 
 ## Component: Balances
+
+The Balances component provides a list of token balances on all chains connected
+to ZetaChain with the ability to search the list and filter tokens by chain.
 
 ![](/img/docs/components-balances.png)
 
@@ -65,6 +91,10 @@ export default Page;
 ```
 
 ## Component: Profile
+
+The Profile component resolves an address to a domain name and displays it as a
+button. For resolving addresses the component uses [Space ID Web3 Name
+SDK](https://docs.space.id/developer-guide/web3-name-sdk/web3-name-sdk).
 
 ![](/img/docs/components-profile.png)
 
