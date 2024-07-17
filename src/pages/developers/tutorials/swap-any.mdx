@@ -21,7 +21,7 @@ to keep on ZetaChain.
 Copy the existing swap example into a new file `SwapToAnyToken.sol` and make the
 necessary changes:
 
-```solidity filename="contracts/SwapToAnyToken.sol" {8,11,23,35,41-43,45-51,58,73,78-83}
+```solidity filename="contracts/SwapToAnyToken.sol" {8,11,23,37,45-47,49-56,64,73,79,94,99-114,117-127}
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -47,6 +47,8 @@ contract SwapToAnyToken is zContract, OnlySystem {
         bool withdraw;
     }
 
+    receive() external payable {}
+
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
@@ -61,30 +63,49 @@ contract SwapToAnyToken is zContract, OnlySystem {
 
         if (context.chainID == BITCOIN) {
             params.target = BytesHelperLib.bytesToAddress(message, 0);
-            params.to = abi.encodePacked(BytesHelperLib.bytesToAddress(message, 20));
+            params.to = abi.encodePacked(
+                BytesHelperLib.bytesToAddress(message, 20)
+            );
             if (message.length >= 41) {
                 params.withdraw = BytesHelperLib.bytesToBool(message, 40);
             }
         } else {
-            (address targetToken, bytes memory recipient, bool withdrawFlag) = abi.decode(
-                message,
-                (address, bytes, bool)
-            );
+            (
+                address targetToken,
+                bytes memory recipient,
+                bool withdrawFlag
+            ) = abi.decode(message, (address, bytes, bool));
             params.target = targetToken;
             params.to = recipient;
             params.withdraw = withdrawFlag;
         }
 
+        swapAndWithdraw(
+            zrc20,
+            amount,
+            params.target,
+            params.to,
+            params.withdraw
+        );
+    }
+
+    function swapAndWithdraw(
+        address inputToken,
+        uint256 amount,
+        address targetToken,
+        bytes memory recipient,
+        bool withdraw
+    ) internal {
         uint256 inputForGas;
         address gasZRC20;
         uint256 gasFee;
 
-        if (params.withdraw) {
-            (gasZRC20, gasFee) = IZRC20(params.target).withdrawGasFee();
+        if (withdraw) {
+            (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
 
             inputForGas = SwapHelperLib.swapTokensForExactTokens(
                 systemContract,
-                zrc20,
+                inputToken,
                 gasFee,
                 gasZRC20,
                 amount
@@ -93,18 +114,40 @@ contract SwapToAnyToken is zContract, OnlySystem {
 
         uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
             systemContract,
-            zrc20,
-            params.withdraw ? amount - inputForGas : amount,
-            params.target,
+            inputToken,
+            withdraw ? amount - inputForGas : amount,
+            targetToken,
             0
         );
 
-        if (params.withdraw) {
-            IZRC20(gasZRC20).approve(params.target, gasFee);
-            IZRC20(params.target).withdraw(params.to, outputAmount);
+        if (withdraw) {
+            IZRC20(gasZRC20).approve(targetToken, gasFee);
+            IZRC20(targetToken).withdraw(recipient, outputAmount);
         } else {
-            IWETH9(params.target).transfer(address(uint160(bytes20(params.to))), outputAmount);
+            address wzeta = systemContract.wZetaContractAddress();
+            if (targetToken == wzeta) {
+                IWETH9(wzeta).withdraw(outputAmount);
+                address payable recipientAddress = payable(
+                    address(uint160(bytes20(recipient)))
+                );
+                recipientAddress.transfer(outputAmount);
+            } else {
+                address recipientAddress = address(uint160(bytes20(recipient)));
+                IWETH9(targetToken).transfer(recipientAddress, outputAmount);
+            }
         }
+    }
+
+    function swap(
+        address inputToken,
+        uint256 amount,
+        address targetToken,
+        bytes memory recipient,
+        bool withdraw
+    ) public {
+        IZRC20(inputToken).transferFrom(msg.sender, address(this), amount);
+
+        swapAndWithdraw(inputToken, amount, targetToken, recipient, withdraw);
     }
 }
 ```
@@ -122,7 +165,14 @@ If the contract is being called from Bitcoin, use `bytesToBool` to decode the
 last value in the `message`, and set it as the value of `params.withdraw`.
 
 If the contract is being called from an EVM chain, use `abi.decode` to decode
-all values: target token, recipient and withdraw.
+all values: target token, recipient and the withdraw flag.
+
+Next, add `params.withdraw` as the last argument to the `swapAndWithdraw`
+function call.
+
+### Swap and Withdraw Function
+
+Add `bool withdraw` as the last parameter to the function definition.
 
 If a user wants to withdraw the tokens, query the gas token and the gas fee.
 Since a user now has an option to not withdraw, this step has become optional.
@@ -130,8 +180,25 @@ Since a user now has an option to not withdraw, this step has become optional.
 Modify the amount passed to `swapExactTokensForTokens`. If a user withdraws
 token, subtract the withdraw fee in input token amount.
 
-Finally, add a conditional to either withdraw ZRC-20 tokens to a connnected
-chain or transfer the target token to the recipient on ZetaChain.
+Finally, add a conditional to either withdraw ZRC-20 tokens to a connected chain
+or transfer the target token to the recipient on ZetaChain. If a user doesn't
+want to withdraw a token you need to consider two scenarios:
+
+- If the target token is WZETA, unwrap it and transfer native ZETA to the
+  recipient.
+- If the target token is not WZETA, transfer it to the recipient as any other
+  ERC-20-compatible token.
+
+### Swap Function
+
+Create a new public `swap` function to make it possible for users to call the
+"swap and withdraw" function. Compared to "swap and withdraw", which is internal
+and is not meant to be called directly, the "swap" function is public and is
+meant to be called from ZetaChain. The purpose of "swap" is to allow users to
+swap tokens they have on ZetaChain for other tokens and optionally also withdraw
+them. For example, when a user has a ZRC-20 ETH and they want to swap it for
+ZRC-20 BTC (without withdrawing), or swap it for ZRC-20 BNB and withdraw it to
+the BNB chain as a native BNB token.
 
 ## Update the Interact Task
 
@@ -150,6 +217,63 @@ const data = prepareData(args.contract, ["address", "bytes", "bool"], [args.targ
 Add an optional parameter `withdraw`, which determines if a user wants to
 withdraw the target token to the destination chain. By default set the value to
 `true`, and pass withdraw as the third value in the message.
+
+## Add a Swap Task
+
+While the interact task is meant to be called on a connected chain to trigger a
+universal contract, the swap task is meant to be called on ZetaChain directly to
+swap an asset already on ZetaChain for a different asset optionally withdrawing
+it.
+
+```
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { parseEther } from "@ethersproject/units";
+import { ethers } from "ethers";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+
+  if (!/zeta_(testnet|mainnet)/.test(hre.network.name)) {
+    throw new Error('🚨 Please use either "zeta_testnet" or "zeta_mainnet".');
+  }
+
+  const factory = await hre.ethers.getContractFactory("SwapToAnyToken");
+  const contract = factory.attach(args.contract);
+
+  const amount = parseEther(args.amount);
+  const inputToken = args.inputToken;
+  const targetToken = args.targetToken;
+  const recipient = ethers.utils.arrayify(args.recipient);
+  const withdraw = JSON.parse(args.withdraw);
+
+  const erc20Factory = await hre.ethers.getContractFactory("ERC20");
+  const inputTokenContract = erc20Factory.attach(args.inputToken);
+
+  const approval = await inputTokenContract.approve(args.contract, amount);
+  await approval.wait();
+
+  const tx = await contract.swap(
+    inputToken,
+    amount,
+    targetToken,
+    recipient,
+    withdraw
+  );
+
+  await tx.wait();
+  console.log(`Transaction hash: ${tx.hash}`);
+};
+
+task("swap", "Interact with the Swap contract from ZetaChain", main)
+  .addFlag("json", "Output JSON")
+  .addParam("contract", "Contract address")
+  .addParam("amount", "Token amount to send")
+  .addParam("inputToken", "Input token address")
+  .addParam("targetToken", "Target token address")
+  .addParam("recipient", "Recipient address")
+  .addParam("withdraw", "Withdraw flag (true/false)");
+```
 
 ## Compile and Deploy the Contract
 
