@@ -67,8 +67,8 @@ and not recoverable.
 In summary, a ZetaChain's EVM BTC transaction would look like this:
 
 1. A user sends 1 BTC on Bitcoin network to the Bitcoin [TSS
-   address](/reference/contracts) , adding a memo (via `OP_RETURN`) in the tx
-   saying (colloquially) “deposit to 0x1337”.
+   address](/reference/network/contracts) , adding a memo (via `OP_RETURN`) in
+   the tx saying (colloquially) “deposit to 0x1337”.
 2. Upon receiving this tx, the ZetaCore state machine calls the deposit (0x1337,
    1e8) to mint and credit 0x1337 with 1 zBTC minus fees.
 3. If 0x1337 is an Externally Owned Account (EOA), that's it. If it’s a
