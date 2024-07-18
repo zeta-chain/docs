@@ -19,15 +19,53 @@ import { GlobalStyles } from "~/styles/GlobalStyles";
 
 const clientSideEmotionCache = createEmotionCache();
 
+const textTargetTags = ["INPUT", "TEXTAREA"];
+
+export const getIsTextTarget = (target: any) => target?.nodeName && textTargetTags.includes(target.nodeName);
+
 const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: EmotionCache }) => {
   const { emotionCache = clientSideEmotionCache, router } = rest;
   const [isCmdkOpen, setIsCmdkOpen] = React.useState(true);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setIsCmdkOpen((open) => !open);
+      const isTextTarget = getIsTextTarget(e.target as HTMLInputElement);
+      const key = e.key.toLowerCase();
+
+      switch (key) {
+        case "Escape":
+          setIsCmdkOpen(false);
+          break;
+        case "k":
+          if (e.metaKey || e.ctrlKey) {
+            e.preventDefault();
+            setIsCmdkOpen((open) => !open);
+          }
+          break;
+        case "b": {
+          if (e.shiftKey && !isTextTarget) {
+            e.preventDefault();
+            setIsCmdkOpen(false);
+            router.push("/developers");
+          }
+          break;
+        }
+        case "n": {
+          if (e.shiftKey && !isTextTarget) {
+            e.preventDefault();
+            setIsCmdkOpen(false);
+            router.push("/nodes");
+          }
+          break;
+        }
+        case "u": {
+          if (e.shiftKey && !isTextTarget) {
+            e.preventDefault();
+            setIsCmdkOpen(false);
+            router.push("/users");
+          }
+          break;
+        }
       }
     };
 

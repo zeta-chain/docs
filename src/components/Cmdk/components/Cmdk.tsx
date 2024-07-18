@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Dialog, Paper, Typography } from "@mui/material";
+import { Dialog, DialogContent, Paper, Typography } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import clsx from "clsx";
 import { Command } from "cmdk";
 import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction } from "react";
+
+import { IconClaim, IconCode, IconServer } from "~/components/shared";
 
 import { CmdkBreadcrumb } from "./CmdkBreadcrumb";
 import { CmdkChat } from "./CmdkChat";
@@ -210,6 +212,8 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
     }
   }
 
+  const commandListMaxHeight = activePage === "chat" ? "min(600px, 50vh)" : "auto";
+
   return (
     <Dialog
       open={isOpen}
@@ -218,73 +222,81 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
       }}
       classes={{
         root: "w-full",
-        paper: "border border-[#353535] w-full relative min-h-[500px] m-0 py-0",
+        paper: "border border-[#353535] w-full relative min-h-[500px] m-0 py-0 bg-[#15191E]",
       }}
       PaperComponent={Container}
     >
-      <Command
-        ref={ref}
-        onKeyDown={(e: React.KeyboardEvent) => {
-          if (e.key === "Enter") {
-            bounce();
-          }
-
-          if (isHome || inputValue.length) {
-            return;
-          }
-
-          if (e.key === "Backspace") {
-            e.preventDefault();
-            popPage();
-            bounce();
-          }
-        }}
+      <DialogContent
+        className={clsx(
+          "p-0",
+          "!bg-overlay/90 backdrop-filter backdrop-blur-sm",
+          "!border-overlay/90",
+          "transition ease-out",
+          "place-self-start mx-auto top-24",
+          "w-full"
+        )}
       >
-        {activePage === "chat" && (
-          <div className="py-3 px-1">
-            <CmdkBreadcrumb>
-              <div className="flex items-center">
-                <ArrowBackIcon className="cursor-pointer" onClick={() => setPages(["home"])} sx={{ fontSize: 16 }} />
-                <Typography className="ml-4">Zeta AI</Typography>
-              </div>
-            </CmdkBreadcrumb>
-          </div>
-        )}
-        {activePage === "home" && (
-          <div className="flex flex-col items-center" cmdk-input-wrapper="">
-            <Command.Input
-              value={inputValue}
-              autoFocus
-              onValueChange={onValueChange}
-              placeholder="Type a command or search..."
-              className={clsx(
-                "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
-                "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom !bg-[#0c0d10] !border-[#353535]"
-              )}
-            />
-          </div>
-        )}
+        <Command
+          ref={ref}
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === "Enter") {
+              bounce();
+            }
 
-        {/* {activePage !== "home"
-          ? pages.map((p) => (
-              <div key={p} cmdk-vercel-badge="">
-                {p}
-              </div>
-            ))
-          : null} */}
-        <Command.List className="px-2">
-          {activePage === "home" && (
-            <Home
-              inputValue={inputValue}
-              searchSections={() => setPages([...pages, "sections"])}
-              goToChat={() => setPages([...pages, "chat"])}
-              setIsCmdkOpen={setIsCmdkOpen}
-            />
+            if (isHome || inputValue.length) {
+              return;
+            }
+
+            if (e.key === "Backspace") {
+              e.preventDefault();
+              popPage();
+              bounce();
+            }
+          }}
+        >
+          {activePage === "chat" && (
+            <div className="py-3 px-1">
+              <CmdkBreadcrumb>
+                <div className="flex items-center">
+                  <ArrowBackIcon className="cursor-pointer" onClick={() => setPages(["home"])} sx={{ fontSize: 16 }} />
+                  <Typography className="ml-4">Zeta AI</Typography>
+                </div>
+              </CmdkBreadcrumb>
+            </div>
           )}
-          {activePage === "sections" && <SectionsList />}
-          {activePage === "chat" && <CmdkChat />}
-        </Command.List>
-      </Command>
+          {activePage === "home" && (
+            <div className="flex flex-col items-center" cmdk-input-wrapper="">
+              <Command.Input
+                value={inputValue}
+                autoFocus
+                onValueChange={onValueChange}
+                placeholder="Type a command or search..."
+                className={clsx(
+                  "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
+                  "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom !bg-[#0c0d10] !border-[#353535]"
+                )}
+              />
+            </div>
+          )}
+
+          <Command.List
+            className={clsx("overflow-y-auto overflow-x-hidden bg-transparent mx-0 !my-0 p-0 px-2")}
+            style={{
+              maxHeight: commandListMaxHeight,
+              height: activePage === "chat" ? commandListMaxHeight : "auto",
+            }}
+          >
+            {activePage === "home" && (
+              <Home
+                inputValue={inputValue}
+                goToChat={() => setPages([...pages, "chat"])}
+                setIsCmdkOpen={setIsCmdkOpen}
+              />
+            )}
+            {activePage === "chat" && <CmdkChat />}
+          </Command.List>
+        </Command>
+      </DialogContent>
     </Dialog>
   );
 };
@@ -292,53 +304,18 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
 function Home({
   goToChat,
   inputValue,
-  searchSections,
   setIsCmdkOpen,
 }: {
   goToChat: Function;
   inputValue: string;
-  searchSections: Function;
   setIsCmdkOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const router = useRouter();
 
   return (
     <>
-      <Command.Group heading="Sections">
+      <Command.Group heading="Learn">
         <Item
-          shortcut="G B"
-          onSelect={() => {
-            setIsCmdkOpen(false);
-            router.push("/developers");
-          }}
-        >
-          <ProjectsIcon />
-          Go to "Build" section
-        </Item>
-        <Item
-          shortcut="G N"
-          onSelect={() => {
-            setIsCmdkOpen(false);
-            router.push("/nodes");
-          }}
-        >
-          <ProjectsIcon />
-          Go to "Run a Node" section
-        </Item>
-        <Item
-          shortcut="G U"
-          onSelect={() => {
-            setIsCmdkOpen(false);
-            router.push("/users");
-          }}
-        >
-          <ProjectsIcon />
-          Go to "Use" section
-        </Item>
-      </Command.Group>
-      <Command.Group heading="Help">
-        <Item
-          shortcut="⇧ C"
           onSelect={() => {
             goToChat();
           }}
@@ -356,7 +333,7 @@ function Home({
             "..."
           )}
         </Item>
-        <Item shortcut="⇧ D">
+        <Item>
           <DocsIcon />
           Search the docs
           {inputValue ? (
@@ -369,6 +346,38 @@ function Home({
           ) : (
             "..."
           )}
+        </Item>
+      </Command.Group>
+      <Command.Group heading="Sections">
+        <Item
+          shortcut="⇧ B"
+          onSelect={() => {
+            setIsCmdkOpen(false);
+            router.push("/developers");
+          }}
+        >
+          <IconCode />
+          Go to "Build" section
+        </Item>
+        <Item
+          shortcut="⇧ N"
+          onSelect={() => {
+            setIsCmdkOpen(false);
+            router.push("/nodes");
+          }}
+        >
+          <IconServer />
+          Go to "Run a Node" section
+        </Item>
+        <Item
+          shortcut="⇧ U"
+          onSelect={() => {
+            setIsCmdkOpen(false);
+            router.push("/users");
+          }}
+        >
+          <IconClaim />
+          Go to "Use" section
         </Item>
       </Command.Group>
     </>

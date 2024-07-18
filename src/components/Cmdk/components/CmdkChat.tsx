@@ -8,8 +8,11 @@ import React from "react";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
-    "&:hover fieldset": {
+    "&:not(.Mui-disabled):hover fieldset": {
       borderColor: twTheme.colors.green[600],
+    },
+    "&.Mui-disabled": {
+      borderColor: twTheme.colors.grey[400],
     },
   },
 }));
@@ -141,20 +144,34 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             </div>
           )} */}
       </div>
-      <div className="absolute bottom-0 pb-4 w-[98%]">
+      <div className="absolute bottom-0 pb-4 w-[98%] bg-background py-3 pt-0 bg-[#15191e]">
         <CustomTextField
-          className="w-full bg-alternative rounded px-3 [&_input]:pr-32 md:[&_input]:pr-40 !focus:outline-none"
+          className="w-full bg-alternative rounded px-3 !focus:outline-none"
           color="primary"
           placeholder="Ask Zeta AI a question..."
+          value={input}
+          disabled={isLoading}
           InputProps={{
             classes: {
-              input: "dark:text-white",
-              root: "!hover:border-red h-[30px]",
+              input: "text-white",
+              root: "h-[30px]",
             },
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton aria-label="toggle password visibility" edge="end" disabled>
-                  <Send className="dark:text-white h-[14px] w-[14px]" />
+                <IconButton
+                  aria-label="toggle password visibility"
+                  edge="end"
+                  disabled={!input.length}
+                  type="submit"
+                  onClick={(e: Event) => {
+                    handleSubmit(e);
+                  }}
+                >
+                  <Send
+                    className={clsx("text-white h-[14px] w-[14px]", {
+                      "!text-grey-400": !input.length,
+                    })}
+                  />
                 </IconButton>
               </InputAdornment>
             ),
