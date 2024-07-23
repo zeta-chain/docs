@@ -5,19 +5,19 @@
   },
   "apps": {
     "title": "Building Universal Apps",
-    "description": "Explore the basics of developing on ZetaChain"
+    "description": "Explore the basics of developing on ZetaChain."
   },
   "evm": {
     "title": "Universal EVM",
-    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps"
+    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
   },
   "tutorials": {
     "title": "Tutorials",
     "description": "Step-by-step guides to help you master building on ZetaChain."
   },
   "frontend": {
-    "title": "Frontend Apps",
-    "description": "Build user-facing universal frontend apps"
+    "title": "Frontend Tutorials",
+    "description": "Build powerful universal web applications with ZetaChain."
   },
   "services": {
     "title": "Apps & Services",

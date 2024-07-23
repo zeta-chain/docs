@@ -1,5 +1,8 @@
 {
-  "intro": {
-    "title": "Component Library"
+  "universalkit": {
+    "title": "UniversalKit",
+    "description": "A set of ready to use React components that lets you build user interfaces for universal apps on ZetaChain",
+    "readType": "Beginner",
+    "readTime": "30 min"
   }
 }
