@@ -7,13 +7,15 @@ import { Alert } from "~/components/shared";
 
 # Start Here
 
-ZetaChain's component library is a set of ready to use React components that
-lets you build user interfaces for universal apps.
+UniversalKit by ZetaChain provides a set of React components designed to make
+building universal applications easier.
 
 The components are expected to work with
 [Next.js](https://github.com/vercel/next.js),
 [RainbowKit](https://github.com/rainbow-me/rainbowkit/) and
 [wagmi](https://github.com/wevm/wagmi).
+
+Start from a template (recommended):
 
 ```
 git clone https://github.com/zeta-chain/template
@@ -21,9 +23,116 @@ cd template/web
 yarn
 ```
 
+Or add UniversalKit to your existing app:
+
+```
+yarn add @zetachain/universalkit
+```
+
 <Alert> The component library is in under active development and currently is recommended for testnet use only.</Alert>
 
-## Component: Swap
+## UniversalKit Provider
+
+UniversalKit Provider is a React context provider that initializes and provides
+shared state between components.
+
+To initialize the provider, wrap your application with the
+`UniversalKitProvider`:
+
+```tsx filename="src/app/providers.tsx"
+import { UniversalKitProvider } from "@zetachain/universalkit";
+
+<UniversalKitProvider>{children}</UniversalKitProvider>;
+```
+
+If you're using the [template](https://github.com/zeta-chain/template), the
+provider is already initialized.
+
+## ZetaChain Client
+
+ZetaChain Client is a client that provides access to useful methods for
+interacting with ZetaChain. The client is powered by the
+[Toolkit](https://github.com/zeta-chain/toolkit) library.
+
+Some of the components require a ZetaChain Client to be passed as a prop. To
+initialize the client, use the `useZetaChainClient` hook:
+
+```tsx filename="src/app/page.tsx"
+import { useZetaChainClient } from "@zetachain/universalkit";
+
+const client = useZetaChainClient({ network: "testnet", signer });
+```
+
+Instantiating a client manually allows you to configure it, for example,
+specifying a different RPC endpoint:
+
+```ts
+const client = useZetaChainClient({
+  signer,
+  network: "testnet",
+  chains: {
+    zeta_testnet: {
+      api: [
+        {
+          url: `https://zetachain-athens.g.allthatnode.com/archive/evm/${process.env.KEY}`,
+          type: "evm",
+        },
+      ],
+    },
+  },
+});
+```
+
+## Bitcoin Wallet Provider
+
+Bitcoin Wallet Provider is a React context provider that initializes and
+provides functionality for connecting a Bitcoin wallet to the application:
+address of the connected Bitcoin wallet, connection status, connected wallet
+type, method to connect a wallet, method to disconnect a wallet, and method to
+send a transaction.
+
+```ts
+import { useBitcoinWallet } from "@zetachain/universalkit";
+
+const { address, loading, connectedWalletType, connectWallet, disconnect, sendTransaction } = useBitcoinWallet();
+```
+
+## Connect Bitcoin
+
+![](/img/docs/components-connect-bitcoin.png)
+
+Connect Bitcoin is a component that allows users to connect their Bitcoin wallet
+to the application. Currently, OKX, XDEFI and UniSat wallets are supported.
+
+After a Bitcoin wallet is connected, the current address becomes available from
+the `BitcoinWalletProvider`.
+
+```tsx filename="src/app/page.tsx"
+"use client";
+
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectBitcoin } from "@zetachain/universalkit";
+
+const Page = () => {
+  return (
+    <div className="m-4">
+      <div className="flex justify-end gap-2 mb-10">
+        <ConnectBitcoin />
+        <ConnectButton label="Connect EVM" showBalance={false} />
+      </div>
+      <div className="flex justify-center">
+        <div className="w-[400px]">{/* Add components here */}</div>
+      </div>
+    </div>
+  );
+};
+
+export default Page;
+```
+
+## Swap
+
+![](/img/docs/components-swap.png)
 
 The Swap component provides the following functionality:
 
@@ -38,13 +147,11 @@ For cross-chain swaps the component depends on a universal swap contract.
 Complete [the swap tutorial](/developers/tutorials/swap-any) and deploy your own
 contract or use the contract address from the example below.
 
-![](/img/docs/components-swap.png)
-
 ```tsx filename="src/app/page.tsx"
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Swap, useEthersSigner, useZetaChainClient } from "@fadeev/swap/dist";
+import { Swap, useEthersSigner, useZetaChainClient, ConnectBitcoin, useBitcoinWallet } from "@zetachain/universalkit";
 import { useAccount, useChainId, useWalletClient } from "wagmi";
 
 const contract = "0xb459F14260D1dc6484CE56EB0826be317171e91F"; // universal swap contract
@@ -55,11 +162,19 @@ const Page = () => {
   const { data: walletClient } = useWalletClient({ chainId });
   const signer = useEthersSigner({ walletClient });
   const client = useZetaChainClient({ network: "testnet", signer });
+  const { address: bitcoinAddress } = useBitcoinWallet();
 
   return (
-    <div>
-      <ConnectButton />
-      <div className="w-[400px]">{client && <Swap contract={contract} client={client} account={account} />}</div>
+    <div className="m-4">
+      <div className="flex justify-end gap-2 mb-10">
+        <ConnectBitcoin />
+        <ConnectButton label="Connect EVM" showBalance={false} />
+      </div>
+      <div className="flex justify-center">
+        <div className="w-[400px]">
+          {client && <Swap contract={contract} client={client} account={account} bitcoin={bitcoinAddress} />}
+        </div>
+      </div>
     </div>
   );
 };
@@ -67,18 +182,24 @@ const Page = () => {
 export default Page;
 ```
 
-## Component: Balances
+## Balances
+
+![](/img/docs/components-balances.png)
 
 The Balances component provides a list of token balances on all chains connected
 to ZetaChain with the ability to search the list and filter tokens by chain.
-
-![](/img/docs/components-balances.png)
 
 ```tsx filename="src/app/page.tsx"
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Balances, useEthersSigner, useZetaChainClient } from "@fadeev/swap/dist";
+import {
+  Balances,
+  useEthersSigner,
+  useZetaChainClient,
+  ConnectBitcoin,
+  useBitcoinWallet,
+} from "@zetachain/universalkit";
 import { useAccount, useChainId, useWalletClient } from "wagmi";
 
 const Page = () => {
@@ -87,11 +208,19 @@ const Page = () => {
   const { data: walletClient } = useWalletClient({ chainId });
   const signer = useEthersSigner({ walletClient });
   const client = useZetaChainClient({ network: "testnet", signer });
+  const { address: bitcoinAddress } = useBitcoinWallet();
 
   return (
-    <div>
-      <ConnectButton />
-      <div className="w-[400px]">{client && <Balances client={client} account={account} />}</div>
+    <div className="m-4">
+      <div className="flex justify-end gap-2 mb-10">
+        <ConnectBitcoin />
+        <ConnectButton label="Connect EVM" showBalance={false} />
+      </div>
+      <div className="flex justify-center">
+        <div className="w-[400px]">
+          {client && <Balances client={client} account={account} bitcoin={bitcoinAddress} />}
+        </div>
+      </div>
     </div>
   );
 };
@@ -99,34 +228,82 @@ const Page = () => {
 export default Page;
 ```
 
-## Component: Profile
+## Profile
+
+![](/img/docs/components-profile.png)
 
 The Profile component resolves an address to a domain name and displays it as a
 button. For resolving addresses the component uses [Space ID Web3 Name
 SDK](https://docs.space.id/developer-guide/web3-name-sdk/web3-name-sdk).
 
-![](/img/docs/components-profile.png)
+```tsx filename="src/app/page.tsx"
+"use client";
+
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Profile, ConnectBitcoin } from "@zetachain/universalkit";
+import { useAccount } from "wagmi";
+
+const Page = () => {
+  const account = useAccount();
+  return (
+    <div className="m-4">
+      <div className="flex justify-end gap-2 mb-10">
+        <ConnectBitcoin />
+        <ConnectButton label="Connect EVM" showBalance={false} />
+      </div>
+      <div className="flex justify-center">
+        <div className="w-[400px]">
+          <Profile address={account.address} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Page;
+```
+
+## Staking Rewards
+
+![](/img/docs/components-staking-rewards.png)
+
+The Staking Rewards component displays the staked amount, amount of tokens being
+unstaked, and the amount of rewards earned. The component also allows users to
+claim staking rewards.
 
 ```tsx filename="src/app/page.tsx"
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Profile } from "@fadeev/swap/dist";
-import { useAccount, useChainId } from "wagmi";
+import {
+  StakingRewards,
+  useEthersSigner,
+  useZetaChainClient,
+  ConnectBitcoin,
+  useBitcoinWallet,
+} from "@zetachain/universalkit";
+import { useAccount, useChainId, useWalletClient } from "wagmi";
 
-function Page() {
+const Page = () => {
   const account = useAccount();
   const chainId = useChainId();
+  const { data: walletClient } = useWalletClient({ chainId });
+  const signer = useEthersSigner({ walletClient });
+  const client = useZetaChainClient({ network: "testnet", signer });
+  const { address: bitcoinAddress } = useBitcoinWallet();
 
   return (
-    <div>
-      <ConnectButton />
-      <div className="w-[400px]">
-        <Profile address={account.address} />
+    <div className="m-4">
+      <div className="flex justify-end gap-2 mb-10">
+        <ConnectBitcoin />
+        <ConnectButton label="Connect EVM" showBalance={false} />
+      </div>
+      <div className="flex justify-center">
+        <div className="w-[400px]">{client && <StakingRewards client={client} account={account} />}</div>
       </div>
     </div>
   );
-}
+};
 
 export default Page;
 ```
