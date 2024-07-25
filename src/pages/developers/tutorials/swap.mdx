@@ -76,7 +76,7 @@ npx hardhat omnichain Swap targetToken:address recipient
 
 ## Universal App Contract
 
-```solidity filename="contracts/Swap.sol" {6-7,12,18-21,29-65}
+```solidity filename="contracts/Swap.sol" {6-7,12,18-21,29-45,48-78}
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
@@ -121,12 +121,24 @@ contract Swap is zContract, OnlySystem {
             params.to = recipient;
         }
 
-        (address gasZRC20, uint256 gasFee) = IZRC20(params.target)
-            .withdrawGasFee();
+        swapAndWithdraw(zrc20, amount, params.target, params.to);
+    }
 
-        uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(
+    function swapAndWithdraw(
+        address inputToken,
+        uint256 amount,
+        address targetToken,
+        bytes memory recipient
+    ) internal {
+        uint256 inputForGas;
+        address gasZRC20;
+        uint256 gasFee;
+
+        (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
+
+        inputForGas = SwapHelperLib.swapTokensForExactTokens(
             systemContract,
-            zrc20,
+            inputToken,
             gasFee,
             gasZRC20,
             amount
@@ -134,14 +146,14 @@ contract Swap is zContract, OnlySystem {
 
         uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
             systemContract,
-            zrc20,
+            inputToken,
             amount - inputForGas,
-            params.target,
+            targetToken,
             0
         );
 
-        IZRC20(gasZRC20).approve(params.target, gasFee);
-        IZRC20(params.target).withdraw(params.to, outputAmount);
+        IZRC20(gasZRC20).approve(targetToken, gasFee);
+        IZRC20(targetToken).withdraw(recipient, outputAmount);
     }
 }
 ```
@@ -173,25 +185,28 @@ offset of 20 bytes and then use `abi.encodePacked` to convert the address to
 If it's an EVM chain, use `abi.decode` to decode the `message` into the
 `params.target` and `params.to`.
 
-### Swapping for Gas Token
+### Swap and Withdraw Function
 
-Next, use the `withdrawGasFee` method of the target token ZRC-20 to get the gas
-fee token address and the gas fee amount. If the target token is the gas token
-of the destination chain (for example, BNB), `gasZRC20` will be the same
-`params.target`. However, if the target token is an ERC-20, like USDC on BNB,
-`gasZRC20` will tell you the address of the ZRC-20 of the destination chain.
+#### Swapping for Gas Token
+
+Create a new function called `swapAndWithdraw`. Use the `withdrawGasFee` method
+of the target token ZRC-20 to get the gas fee token address and the gas fee
+amount. If the target token is the gas token of the destination chain (for
+example, BNB), `gasZRC20` will be the same `params.target`. However, if the
+target token is an ERC-20, like USDC on BNB, `gasZRC20` will tell you the
+address of the ZRC-20 of the destination chain.
 
 Use the `swapTokensForExactTokens` helper method to swap the incoming token for
 the gas coin using the internal liquidity pools. The method returns the amount
 of the incoming token that was used to pay for the gas.
 
-### Swapping for Target Token
+#### Swapping for Target Token
 
 Next, swap the incoming amount minus the amount spent swapping for a gas fee for
 the target token on the destination chain using the `swapExactTokensForTokens`
 helper method.
 
-### Withdraw Target Token to Connected Chain
+#### Withdraw Target Token to Connected Chain
 
 At this point the contract has the required `gasFee` amount of `gasZRC20` token
 of the connected chain and an `outputAmount` amount of `params.target` token.
