@@ -50,13 +50,7 @@ export async function POST(req: Request) {
       console.log(`Got the following sections: ${pageSections?.map((s) => `${s.heading}\n`)}`);
     }
 
-    // if (!pageSections.length) {
-
-    // }
-
     const prompt = getPrompt(userPrompt as string, pageSections);
-
-    console.log(prompt);
 
     const result = await streamText({
       model: openai("gpt-4o-mini"),
