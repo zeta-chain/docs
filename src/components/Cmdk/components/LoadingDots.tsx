@@ -18,7 +18,6 @@ const Dot = styled.div`
   margin: 0 4px;
   border-radius: 50%;
   animation: ${jump} 1.35s infinite;
-  background-color: white;
 `;
 
 const Dot1 = styled(Dot)`
@@ -38,12 +37,18 @@ const DotsContainer = styled.div`
   align-items: flex-end;
 `;
 
+const dots = [
+  { key: "1", DotComponent: Dot1 },
+  { key: "2", DotComponent: Dot2 },
+  { key: "3", DotComponent: Dot3 },
+];
+
 export const LoadingDots: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <DotsContainer className={className}>
-      <Dot1 />
-      <Dot2 />
-      <Dot3 />
+      {dots.map(({ DotComponent, key }) => (
+        <DotComponent key={key} className="dark:bg-white bg-black" />
+      ))}
     </DotsContainer>
   );
 };
