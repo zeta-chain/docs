@@ -15,12 +15,9 @@ Syncing with a snapshot downloads the data directory from an existing node.
 Choose the network and the snapshot type, fetch the URL and follow instructions
 returned in response.
 
-| Network | Type             | URL                                                                     |
-| ------- | ---------------- | ----------------------------------------------------------------------- |
-| Mainnet | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=mainnet         |
-| Mainnet | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=mainnet |
-| Testnet | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=athens3         |
-| Testnet | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=athens3 |
+import NodeSnapshots from './components/NodeSnapshots';
+
+<NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
 
 Untar the file inside `~/.zetacored` and start the node.
 
