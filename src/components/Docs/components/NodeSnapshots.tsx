@@ -12,7 +12,7 @@ const NodeSnapshots = ({ apiUrl }) => {
         `${apiUrl}/testnet/fullnode.json`,
         `${apiUrl}/testnet/archive.json`,
         `${apiUrl}/mainnet/fullnode.json`,
-        `${apiUrl}/mainnet/archive.json`
+        `${apiUrl}/mainnet/archive.json`,
       ];
 
       try {
