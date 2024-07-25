@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { ScienceOutlined } from "@mui/icons-material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Dialog, DialogContent, Paper, Typography } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
@@ -6,6 +7,7 @@ import clsx from "clsx";
 import { Command } from "cmdk";
 import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction } from "react";
+import tw from "twin.macro";
 
 import { IconClaim, IconCode, IconServer } from "~/components/shared";
 
@@ -31,7 +33,6 @@ const Container = styled(Paper)`
     font-size: 17px;
     padding: 8px 8px 16px 8px;
     outline: none;
-    background: var(--bg);
     color: var(--gray12);
     border-bottom: 1px solid var(--gray6);
     margin-bottom: 16px;
@@ -42,7 +43,7 @@ const Container = styled(Paper)`
     }
   }
 
-  [cmdk-vercel-badge] {
+  [cmdk-zeta-badge] {
     height: 20px;
     background: var(--grayA3);
     display: inline-flex;
@@ -74,8 +75,7 @@ const Container = styled(Paper)`
     transition-property: none;
 
     &[data-selected="true"] {
-      background: ${twTheme.colors.grey[700]};
-      color: ${twTheme.colors.white};
+      ${tw`bg-grey-200 dark:bg-grey-700 dark:text-white`}
     }
 
     &[data-disabled="true"] {
@@ -85,7 +85,7 @@ const Container = styled(Paper)`
 
     &:active {
       transition-property: background;
-      background: ${twTheme.colors.grey[600]};
+      ${tw`bg-grey-300 dark:bg-grey-800`}
     }
 
     & + [cmdk-item] {
@@ -107,7 +107,7 @@ const Container = styled(Paper)`
     transition-property: height;
   }
 
-  [cmdk-vercel-shortcuts] {
+  [cmdk-zeta-shortcuts] {
     display: flex;
     margin-left: auto;
     gap: 8px;
@@ -199,19 +199,6 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
     [inputValue.length, isHome, popPage]
   );
 
-  function bounce() {
-    if (ref.current) {
-      ref.current.style.transform = "scale(0.96)";
-      setTimeout(() => {
-        if (ref.current) {
-          ref.current.style.transform = "";
-        }
-      }, 100);
-
-      setInputValue("");
-    }
-  }
-
   const commandListMaxHeight = activePage === "chat" ? "min(600px, 50vh)" : "auto";
 
   return (
@@ -222,14 +209,15 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
       }}
       classes={{
         root: "w-full",
-        paper: "border border-[#353535] w-full relative min-h-[500px] m-0 py-0 bg-[#15191E]",
+        paper:
+          "border dark:border-[#353535] border-grey-400 w-full relative min-h-[500px] m-0 py-0 dark:bg-[#15191E] dark:text-white",
       }}
       PaperComponent={Container}
     >
       <DialogContent
         className={clsx(
           "p-0",
-          "!bg-overlay/90 backdrop-filter backdrop-blur-sm",
+          "!dark:bg-overlay/90 backdrop-filter",
           "!border-overlay/90",
           "transition ease-out",
           "place-self-start mx-auto top-24",
@@ -239,10 +227,6 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
         <Command
           ref={ref}
           onKeyDown={(e: React.KeyboardEvent) => {
-            if (e.key === "Enter") {
-              bounce();
-            }
-
             if (isHome || inputValue.length) {
               return;
             }
@@ -250,7 +234,6 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
             if (e.key === "Backspace") {
               e.preventDefault();
               popPage();
-              bounce();
             }
           }}
         >
@@ -259,7 +242,11 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
               <CmdkBreadcrumb>
                 <div className="flex items-center">
                   <ArrowBackIcon className="cursor-pointer" onClick={() => setPages(["home"])} sx={{ fontSize: 16 }} />
-                  <Typography className="ml-4">Zeta AI</Typography>
+                  <Typography className="ml-4 dark:text-white">Zeta AI</Typography>
+                  <div className="flex items-center ml-3 rounded-full bg-surface-200 text-foreground-light border border-strong pl-2 pr-3 py-0.5">
+                    <ScienceOutlined fontSize="small" className="mr-1" />
+                    Experimental
+                  </div>
                 </div>
               </CmdkBreadcrumb>
             </div>
@@ -273,7 +260,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
                 placeholder="Type a command or search..."
                 className={clsx(
                   "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
-                  "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom !bg-[#0c0d10] !border-[#353535]"
+                  "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom dark:bg-[#0c0d10] bg-[#f3f3f3] !border-[#353535]"
                 )}
               />
             </div>
@@ -333,7 +320,7 @@ function Home({
             "..."
           )}
         </Item>
-        <Item>
+        {/* <Item>
           <DocsIcon />
           Search the docs
           {inputValue ? (
@@ -346,7 +333,7 @@ function Home({
           ) : (
             "..."
           )}
-        </Item>
+        </Item> */}
       </Command.Group>
       <Command.Group heading="Sections">
         <Item
@@ -407,7 +394,7 @@ function Item({
     <Command.Item onSelect={onSelect}>
       {children}
       {shortcut && (
-        <div cmdk-vercel-shortcuts="">
+        <div cmdk-zeta-shortcuts="">
           {shortcut.split(" ").map((key) => {
             return <kbd key={key}>{key}</kbd>;
           })}

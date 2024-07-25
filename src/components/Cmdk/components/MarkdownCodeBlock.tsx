@@ -28,7 +28,9 @@ const ShortCodeBlock = styled.code`
   color: azure;
   font-weight: 400;
   font-size: 0.875em;
-  padding: 0.2rem 0.4rem;
+  margin-top: 5px;
+  overflow: scroll;
+  padding: 0.2rem 0.4rem !important;
   background-color: #282828;
   border: 1px solid #2e2e2e;
   border-radius: 0.5rem;

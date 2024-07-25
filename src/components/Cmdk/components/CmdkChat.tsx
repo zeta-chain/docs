@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Person, Send } from "@mui/icons-material";
-import { IconButton, Input, InputAdornment, TextField, Typography } from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import { useChat } from "ai/react";
 import clsx from "clsx";
@@ -8,16 +8,21 @@ import React from "react";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
-    "&:not(.Mui-disabled):hover fieldset": {
-      borderColor: twTheme.colors.green[600],
+    fieldset: {
+      borderColor: `${twTheme.colors.green[900]}`,
     },
-    "&.Mui-disabled": {
-      borderColor: twTheme.colors.grey[400],
+    "&:not(.Mui-disabled):hover fieldset": {
+      borderColor: `${twTheme.colors.green[600]} !important`,
+    },
+    "&.Mui-disabled fieldset": {
+      borderColor: twTheme.colors.grey[700],
     },
   },
 }));
 
-import { CommandGroup, CommandItem } from "cmdk";
+import { Command } from "cmdk";
+
+import { IconSparkle } from "~/components/shared";
 
 import { cmdkChatQuestions } from "../cmdk.constants";
 import { MarkdownMessage } from "./MarkdownMesage";
@@ -73,27 +78,18 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             switch (message.role) {
               case MessageRole.User:
                 return (
-                  <div key={index} className="flex gap-6 mx-4 [overflow-anchor:none] mb-6">
-                    <div
-                      className="
-                          w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background
-                          ring-1
-                          shadow-sm
-                        "
-                    >
-                      <Person strokeWidth={1.5} size={16} />
+                  <div key={index} className="flex gap-4 mx-4 mb-4">
+                    <div className="w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
+                      <Person sx={{ fontSize: 20 }} />
                     </div>
                     <div className="prose text-foreground-lighter">{message.content}</div>
                   </div>
                 );
               case MessageRole.Assistant:
                 return (
-                  <div className="flex px-4 pb-12 overflow-hidden">
-                    <div className="mr-6">
-                      <div className="w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
-                        {/* <img src="/zeta-bot.png" className="w-[16px] h-[16px]" /> */}
-                        {/* <IconSparkle className="h-[18px] w-[18px] ml-0.5 text-green-300" /> */}
-                      </div>
+                  <div className="flex px-4 mb-4 overflow-hidden">
+                    <div className="min-w-[29px] mb-[1px] mt-[1px] mr-4 w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
+                      <IconSparkle className="h-[18px] w-[18px] ml-0.5 text-green-300" />
                     </div>
                     <div className="max-w-[95%]">
                       <MarkdownMessage message={message} />
@@ -115,12 +111,12 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
           })}
 
         {messages.length === 0 && (
-          <CommandGroup className="w-full" heading="Example questions">
+          <Command.Group className="w-full" heading="Example questions">
             {cmdkChatQuestions.map((question) => {
               const key = question.replace(/\s+/g, "_");
 
               return (
-                <CommandItem
+                <Command.Item
                   key={key}
                   className={clsx("cursor-pointer", "w-full")}
                   onSelect={() => {
@@ -128,10 +124,10 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
                   }}
                 >
                   {question}
-                </CommandItem>
+                </Command.Item>
               );
             })}
-          </CommandGroup>
+          </Command.Group>
         )}
         {/* {error && (
             <div className="p-6 flex flex-col items-center gap-6 mt-4">
@@ -144,7 +140,8 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             </div>
           )} */}
       </div>
-      <div className="absolute bottom-0 pb-4 w-[98%] bg-background py-3 pt-0 bg-[#15191e]">
+      <div className="w-[98%] h-8" />
+      <div className="absolute bottom-0 pb-4 w-[98%] bg-background py-3 pt-0 bg-white dark:bg-[#15191e]">
         <CustomTextField
           className="w-full bg-alternative rounded px-3 !focus:outline-none"
           color="primary"
@@ -153,8 +150,9 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
           disabled={isLoading}
           InputProps={{
             classes: {
-              input: "text-white",
+              input: "dark:text-white text-grey-800",
               root: "h-[30px]",
+              disabled: "!text-red",
             },
             endAdornment: (
               <InputAdornment position="end">
@@ -168,8 +166,10 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
                   }}
                 >
                   <Send
-                    className={clsx("text-white h-[14px] w-[14px]", {
-                      "!text-grey-400": !input.length,
+                    className={clsx("dark:text-white h-[14px] w-[14px]", {
+                      "dark:!text-grey-400": !input.length,
+                      "text-grey-300": !input.length,
+                      "text-grey-800": input.length,
                     })}
                   />
                 </IconButton>
