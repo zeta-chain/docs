@@ -25,6 +25,7 @@ import { Command } from "cmdk";
 import { IconSparkle } from "~/components/shared";
 
 import { cmdkChatQuestions } from "../cmdk.constants";
+import { LoadingDots } from "./LoadingDots";
 import { MarkdownMessage } from "./MarkdownMesage";
 
 export enum MessageRole {
@@ -70,6 +71,8 @@ type MessageAction = NewMessageAction | UpdateMessageAction | AppendContentActio
 export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
   const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat({});
 
+  const isLoadingAssistantMessage = isLoading;
+
   return (
     <div className="w-full" onClick={(e) => e.stopPropagation()}>
       <div className={clsx("relative py-4")}>
@@ -110,6 +113,16 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             }
           })}
 
+        {isLoadingAssistantMessage && Boolean(messages.length) && messages[messages.length - 1]?.role === "user" && (
+          <div className="flex px-4 mb-4 overflow-hidden">
+            <div className="min-w-[29px] mb-[1px] mt-[1px] mr-4 w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
+              <IconSparkle className="h-[18px] w-[18px] ml-0.5 text-green-300" />
+            </div>
+            <div className="flex max-w-[95%]">
+              <LoadingDots className="mb-1" />
+            </div>
+          </div>
+        )}
         {messages.length === 0 && (
           <Command.Group className="w-full" heading="Example questions">
             {cmdkChatQuestions.map((question) => {

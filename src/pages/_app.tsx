@@ -25,7 +25,7 @@ export const getIsTextTarget = (target: any) => target?.nodeName && textTargetTa
 
 const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: EmotionCache }) => {
   const { emotionCache = clientSideEmotionCache, router } = rest;
-  const [isCmdkOpen, setIsCmdkOpen] = React.useState(false);
+  const [isCmdkOpen, setIsCmdkOpen] = React.useState(true);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {

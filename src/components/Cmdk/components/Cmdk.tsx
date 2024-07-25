@@ -320,20 +320,6 @@ function Home({
             "..."
           )}
         </Item>
-        {/* <Item>
-          <DocsIcon />
-          Search the docs
-          {inputValue ? (
-            <>
-              {":"}
-              <span className="ml-[-4px] text-foreground font-semibold max-w-[200px] overflow-ellipsis whitespace-nowrap overflow-hidden">
-                {inputValue}
-              </span>
-            </>
-          ) : (
-            "..."
-          )}
-        </Item> */}
       </Command.Group>
       <Command.Group heading="Sections">
         <Item
