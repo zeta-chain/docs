@@ -157,11 +157,10 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  aria-label="toggle password visibility"
                   edge="end"
                   disabled={!input.length}
                   type="submit"
-                  onClick={(e: Event) => {
+                  onClick={(e: any) => {
                     handleSubmit(e);
                   }}
                 >
