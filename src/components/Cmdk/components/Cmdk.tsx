@@ -169,7 +169,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = React.useState("");
 
-  const [pages, setPages] = React.useState<("chat" | "home" | "sections")[]>(["chat"]);
+  const [pages, setPages] = React.useState<("chat" | "home")[]>(["home"]);
   const activePage = pages[pages.length - 1];
   const isHome = activePage === "home";
 
@@ -367,16 +367,6 @@ function Home({
           Go to "Use" section
         </Item>
       </Command.Group>
-    </>
-  );
-}
-
-function SectionsList() {
-  return (
-    <>
-      <Item>Build</Item>
-      <Item>Run a Node</Item>
-      <Item>Use</Item>
     </>
   );
 }
