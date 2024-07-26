@@ -39,6 +39,14 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
     fetchData();
   }, [apiUrl]);
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "Invalid date";
+    }
+    return format(date, "PPPpp");
+  };
+
   return (
     <table>
       <thead>
@@ -55,7 +63,7 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
           <tr key={index}>
             <td>{snapshot.networkVersion}</td>
             <td>{snapshot.height}</td>
-            <td>{format(new Date(snapshot.creationDate), "PPPpp")}</td>
+            <td>{formatDate(snapshot.creationDate)}</td>
             <td>{snapshot.filename}</td>
             <td>
               <a href={snapshot.link} target="_blank" rel="noopener noreferrer">
