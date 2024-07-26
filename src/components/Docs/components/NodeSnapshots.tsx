@@ -29,9 +29,7 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
       ];
 
       try {
-        const allData = await Promise.all(
-          endpoints.map((endpoint) => axios.get(endpoint))
-        );
+        const allData = await Promise.all(endpoints.map((endpoint) => axios.get(endpoint)));
         const combinedData = allData
           .map((response) => {
             if (response.config.url) {
