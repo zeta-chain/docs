@@ -8,7 +8,7 @@ export * from "./components/ForeignCoinsTable";
 export * from "./components/GovParams";
 export * from "./components/GovUpgradeProposals";
 export * from "./components/NetworkDetails";
-export * from "./components/NodeSnapshots";
+export { default as NodeSnapshots } from './components/NodeSnapshots';
 export * from "./components/ObserverList";
 export * from "./components/ObserverParams";
 export * from "./components/OpenAPIBrowser";
