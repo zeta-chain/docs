@@ -31,16 +31,17 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
       try {
         const allData = await Promise.all(endpoints.map((endpoint) => axios.get(endpoint)));
         const combinedData = allData.map((response) => {
-          return response.data.snapshots.map((snapshot: any) => {
+          if (response.config.url) {
             const urlParts = response.config.url.split('/');
             const type = urlParts[urlParts.length - 2];
             const environment = urlParts[urlParts.length - 3];
-            return {
+            return response.data.snapshots.map((snapshot: any) => ({
               ...snapshot,
               environment,
               type,
-            };
-          });
+            }));
+          }
+          return [];
         }).flat();
         setSnapshots(combinedData);
       } catch (error) {
