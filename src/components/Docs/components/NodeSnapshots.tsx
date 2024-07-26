@@ -8,10 +8,11 @@ interface NodeSnapshotsProps {
 }
 
 interface Snapshot {
+  environment: string;
+  type: string;
   networkVersion: string;
   height: number;
   creationDate: string;
-  filename: string;
   link: string;
 }
 
@@ -21,15 +22,26 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
   useEffect(() => {
     const fetchData = async () => {
       const endpoints = [
-        `${apiUrl}/testnet/fullnode.json`,
-        `${apiUrl}/testnet/archive.json`,
-        `${apiUrl}/mainnet/fullnode.json`,
-        `${apiUrl}/mainnet/archive.json`,
+        `${apiUrl}/testnet/fullnode/latest.json`,
+        `${apiUrl}/testnet/archive/latest.json`,
+        `${apiUrl}/mainnet/fullnode/latest.json`,
+        `${apiUrl}/mainnet/archive/latest.json`,
       ];
 
       try {
         const allData = await Promise.all(endpoints.map((endpoint) => axios.get(endpoint)));
-        const combinedData = allData.map((response) => response.data.snapshots).flat();
+        const combinedData = allData.map((response) => {
+          return response.data.snapshots.map((snapshot: any) => {
+            const urlParts = response.config.url.split('/');
+            const type = urlParts[urlParts.length - 2];
+            const environment = urlParts[urlParts.length - 3];
+            return {
+              ...snapshot,
+              environment,
+              type,
+            };
+          });
+        }).flat();
         setSnapshots(combinedData);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -51,20 +63,22 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
     <table>
       <thead>
         <tr>
+          <th>Environment</th>
+          <th>Type</th>
           <th>Network Version</th>
           <th>Height</th>
           <th>Creation Date</th>
-          <th>Filename</th>
           <th>Download</th>
         </tr>
       </thead>
       <tbody>
         {snapshots.map((snapshot, index) => (
           <tr key={index}>
+            <td>{snapshot.environment}</td>
+            <td>{snapshot.type}</td>
             <td>{snapshot.networkVersion}</td>
             <td>{snapshot.height}</td>
             <td>{formatDate(snapshot.creationDate)}</td>
-            <td>{snapshot.filename}</td>
             <td>
               <a href={snapshot.link} target="_blank" rel="noopener noreferrer">
                 <button>Download</button>
