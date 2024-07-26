@@ -13,3 +13,4 @@ export * from "./components/ObserverParams";
 export * from "./components/OpenAPIBrowser";
 export * from "./components/SubspaceKeyTable";
 export * from "./components/ZetaTokenTable";
+export * from "./components/NodeSnapshots";
