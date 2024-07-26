@@ -46,10 +46,12 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
             const urlParts = endpoint.split("/");
             const type = urlParts[urlParts.length - 2];
             const environment = urlParts[urlParts.length - 3];
-            return [{
-              environment,
-              type,
-            }];
+            return [
+              {
+                environment,
+                type,
+              },
+            ];
           } else {
             console.error("Error fetching data", error);
           }
