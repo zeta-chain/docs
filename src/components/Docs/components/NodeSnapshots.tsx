@@ -3,8 +3,20 @@ import axios from "axios";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 
-const NodeSnapshots = ({ apiUrl }) => {
-  const [snapshots, setSnapshots] = useState([]);
+interface NodeSnapshotsProps {
+  apiUrl: string;
+}
+
+interface Snapshot {
+  networkVersion: string;
+  height: number;
+  creationDate: string;
+  filename: string;
+  link: string;
+}
+
+const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
+  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
