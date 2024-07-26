@@ -10,7 +10,7 @@ const ERROR = 2;
 module.exports = {
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint", "simple-import-sort", "prettier", "unused-imports"],
-  extends: ["prettier"],
+  extends: ["prettier", "next", "next/core-web-vitals"],
   env: {
     es6: true,
     node: true,
