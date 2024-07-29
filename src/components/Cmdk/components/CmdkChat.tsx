@@ -22,7 +22,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 
 import { Command } from "cmdk";
 
-import { IconSparkle } from "~/components/shared";
+import { IconSparkle, IconZetaDocsLogo } from "~/components/shared";
 
 import { cmdkChatQuestions } from "../cmdk.constants";
 import { LoadingDots } from "./LoadingDots";
@@ -81,18 +81,25 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             switch (message.role) {
               case MessageRole.User:
                 return (
-                  <div key={index} className="flex gap-4 mx-4 mb-4">
-                    <div className="w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
-                      <Person sx={{ fontSize: 20 }} />
+                  <div key={index} className="flex gap-4 mx-4 mb-4 justify-end">
+                    <div
+                      className={clsx(
+                        "prose text-foreground-lighter bg-[#00D5FF26] dark:bg-zeta-teal px-4 py-2 text-right max-w-xs w-fit",
+                        {
+                          "rounded-full": message.content.length < 38,
+                          "rounded-lg": message.content.length >= 38,
+                        }
+                      )}
+                    >
+                      {message.content}
                     </div>
-                    <div className="prose text-foreground-lighter">{message.content}</div>
                   </div>
                 );
               case MessageRole.Assistant:
                 return (
                   <div className="flex px-4 mb-4 overflow-hidden">
-                    <div className="min-w-[29px] mb-[1px] mt-[1px] mr-4 w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
-                      <IconSparkle className="h-[18px] w-[18px] ml-0.5 text-green-300" />
+                    <div className="min-w-[32px] mb-[1px] mt-[1px] mr-4 w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
+                      <img src="/img/logos/zeta.svg" height="14" width="14" />
                     </div>
                     <div className="max-w-[95%]">
                       <MarkdownMessage message={message} />
@@ -115,8 +122,8 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
 
         {isLoadingAssistantMessage && Boolean(messages.length) && messages[messages.length - 1]?.role === "user" && (
           <div className="flex px-4 mb-4 overflow-hidden">
-            <div className="min-w-[29px] mb-[1px] mt-[1px] mr-4 w-7 h-7 bg-background rounded-full border border-muted flex items-center justify-center text-foreground-lighter first-letter:ring-background ring-1 shadow-sm">
-              <IconSparkle className="h-[18px] w-[18px] ml-0.5 text-green-300" />
+            <div className="min-w-[32px] mb-[1px] mt-[1px] mr-4 w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
+              <img src="/img/logos/zeta.svg" height="14" width="14" />
             </div>
             <div className="flex max-w-[95%]">
               <LoadingDots className="mb-1" />

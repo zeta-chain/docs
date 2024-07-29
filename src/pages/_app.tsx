@@ -50,6 +50,14 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
           }
           break;
         }
+        case "h": {
+          if (e.shiftKey && !isTextTarget) {
+            e.preventDefault();
+            setIsCmdkOpen(false);
+            router.push("/");
+          }
+          break;
+        }
         case "n": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();

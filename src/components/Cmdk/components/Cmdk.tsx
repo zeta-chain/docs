@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { ScienceOutlined } from "@mui/icons-material";
+import { HomeOutlined as HomeIcon } from "@mui/icons-material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseIcon from "@mui/icons-material/Close";
 import { Dialog, DialogContent, Paper, Typography } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import clsx from "clsx";
@@ -239,14 +240,17 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
         >
           {activePage === "chat" && (
             <div className="py-3 px-1">
-              <CmdkBreadcrumb>
+              <div className="w-full flex justify-end my-2 mb-4">
+                <CloseIcon className="cursor-pointer mr-2" onClick={() => setIsCmdkOpen(false)} />
+              </div>
+              <CmdkBreadcrumb className="flex justify-between w-full items-center">
                 <div className="flex items-center">
-                  <ArrowBackIcon className="cursor-pointer" onClick={() => setPages(["home"])} sx={{ fontSize: 16 }} />
-                  <Typography className="ml-4 dark:text-white">Zeta AI</Typography>
-                  <div className="flex items-center ml-3 rounded-full bg-surface-200 text-foreground-light border border-strong pl-2 pr-3 py-0.5">
-                    <ScienceOutlined fontSize="small" className="mr-1" />
-                    Experimental
-                  </div>
+                  <img src="/img/logos/arrow.svg" width="20" />
+                  <img className="ml-2" src="/img/logos/zeta-ai.svg" width="80" />
+                </div>
+                <div className="flex items-center ml-3 rounded-full bg-surface-200 text-foreground-light border border-strong border-grey-600 pl-3 pr-3 py-1.5">
+                  <img className="mr-2" src="/img/logos/experimental.svg" width="20" />
+                  <Typography className="uppercase dark:text-grey-300">Experimental</Typography>
                 </div>
               </CmdkBreadcrumb>
             </div>
@@ -322,6 +326,16 @@ function Home({
         </Item>
       </Command.Group>
       <Command.Group heading="Sections">
+        <Item
+          shortcut="⇧ H"
+          onSelect={() => {
+            setIsCmdkOpen(false);
+            router.push("/");
+          }}
+        >
+          <HomeIcon sx={{ strokeWidth: 0.2 }} />
+          Go to "Home" section
+        </Item>
         <Item
           shortcut="⇧ B"
           onSelect={() => {
