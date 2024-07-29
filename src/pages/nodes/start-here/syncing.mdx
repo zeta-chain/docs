@@ -11,15 +11,12 @@ import { NodeSnapshots } from "~/components/Docs";
 
 # Option 1: Snapshot method
 
-Syncing with a snapshot downloads the data directory from an existing node.
+Downloads the data directory backed up from an existing node.
 
-Choose the network and the snapshot type, fetch the URL and follow instructions
-returned in response.
-
+Choose the network and the snapshot type, download the snapshot and untar the data/ directory
+inside `~/.zetacored` folder.
 
 <NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
-
-Untar the file inside `~/.zetacored` and start the node.
 
 #### Alternative snapshots
 
