@@ -62,11 +62,11 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
         return [];
       };
 
-      const allData = await Promise.all(endpoints.map(fetchEndpoint));
+      const allData = await Promise.all(endpoints.map((endpoint) => fetchEndpoint(endpoint)));
       const combinedData = allData.flat();
 
-      setMainnetSnapshots(combinedData.filter(snapshot => snapshot.environment === "mainnet"));
-      setTestnetSnapshots(combinedData.filter(snapshot => snapshot.environment === "testnet"));
+      setMainnetSnapshots(combinedData.filter((snapshot) => snapshot.environment === "mainnet"));
+      setTestnetSnapshots(combinedData.filter((snapshot) => snapshot.environment === "testnet"));
       setIsLoading(false);
     };
 
