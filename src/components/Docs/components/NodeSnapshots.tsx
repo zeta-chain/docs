@@ -79,7 +79,7 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
       return "";
     }
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       return "Invalid date";
     }
     return format(date, "PPPpp");
