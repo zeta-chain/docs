@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { openai } from "@ai-sdk/openai";
+import { Ratelimit } from "@upstash/ratelimit";
+import kv from "@vercel/kv";
 import { CoreMessage, embed, streamText } from "ai";
 
 import { supabaseClient } from "~/lib/supabase/client";
@@ -20,10 +22,16 @@ const getPrompt = (userPrompt: string, pageSections: any[] | null) => {
 
 // Allow streaming responses up to 45 seconds
 export const maxDuration = 45;
-export const runtime = "edge";
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.fixedWindow(5, "30s"),
+});
 
 export async function POST(req: Request) {
   try {
+    const ip = req.ip ?? "ip";
+    const { success, remaining } = await ratelimit.limit(ip);
     const { messages: _messages } = await req.json();
     const messages = _messages as CoreMessage[];
 

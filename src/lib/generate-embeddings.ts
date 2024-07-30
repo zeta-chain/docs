@@ -21,11 +21,8 @@ import { u } from "unist-builder";
 import { filter } from "unist-util-filter";
 import yargs from "yargs";
 
-if (process.env.NODE_ENV === "production") {
-  dotenv.config({ path: path.join(__dirname, "../../.vercel/.env.production.local") });
-} else {
-  dotenv.config({ path: path.join(__dirname, "../../.env.local") });
-}
+dotenv.config({ path: path.join(__dirname, "../../.vercel/.env.production.local") });
+dotenv.config({ path: path.join(__dirname, "../../.env.local") });
 
 const ignoredFiles = ["pages/404.mdx"];
 

@@ -5238,6 +5238,34 @@
     "@uniswap/lib" "1.1.1"
     "@uniswap/v2-core" "1.0.0"
 
+"@upstash/core-analytics@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@upstash/core-analytics/-/core-analytics-0.0.10.tgz#e686a313ec2279d5a8d53e6c215085f1c0f5ab4b"
+  integrity sha512-7qJHGxpQgQr9/vmeS1PktEwvNAF7TI4iJDi8Pu2CFZ9YUGHZH4fOP5TfYlZ4aVxfopnELiE4BS4FBjyK7V1/xQ==
+  dependencies:
+    "@upstash/redis" "^1.28.3"
+
+"@upstash/ratelimit@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@upstash/ratelimit/-/ratelimit-2.0.1.tgz#ff617e31f46755ab71b1a6b68ac8a8f86171d736"
+  integrity sha512-J+0hlkvWUjlVrjcBQhWx7gbaUGsvFF59i+GAx7YQk8L0E0MQ93xzCPu02uaXhGDJGkxiar7nRRPqj3hs+CdAJg==
+  dependencies:
+    "@upstash/core-analytics" "^0.0.10"
+
+"@upstash/redis@^1.28.3", "@upstash/redis@^1.31.3":
+  version "1.34.0"
+  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.34.0.tgz#f32cd53ebeeafbba7eca10f8597a573d5a2fed0d"
+  integrity sha512-TrXNoJLkysIl8SBc4u9bNnyoFYoILpCcFJcLyWCccb/QSUmaVKdvY0m5diZqc3btExsapcMbaw/s/wh9Sf1pJw==
+  dependencies:
+    crypto-js "^4.2.0"
+
+"@vercel/kv@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@vercel/kv/-/kv-2.0.0.tgz#a0baa12563946cb35cee23d638b68f0fbbf76172"
+  integrity sha512-zdVrhbzZBYo5d1Hfn4bKtqCeKf0FuzW8rSHauzQVMUgv1+1JOwof2mWcBuI+YMJy8s0G0oqAUfQ7HgUDzb8EbA==
+  dependencies:
+    "@upstash/redis" "^1.31.3"
+
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"
   resolved "https://registry.yarnpkg.com/@xobotyi/scrollbar-width/-/scrollbar-width-1.9.5.tgz#80224a6919272f405b87913ca13b92929bdf3c4d"
@@ -6523,6 +6551,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
+  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
 
 css-in-js-utils@^3.1.0:
   version "3.1.0"
