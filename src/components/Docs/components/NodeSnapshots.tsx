@@ -100,7 +100,6 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
           <table>
             <thead>
               <tr>
-                <th>Environment</th>
                 <th>Type</th>
                 <th>Network Version</th>
                 <th>Height</th>
@@ -111,7 +110,6 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
             <tbody>
               {snapshots.map((snapshot, index) => (
                 <tr key={index}>
-                  <td>{snapshot.environment}</td>
                   <td>{snapshot.type}</td>
                   <td>{snapshot.networkVersion || ""}</td>
                   <td>{snapshot.height || ""}</td>
