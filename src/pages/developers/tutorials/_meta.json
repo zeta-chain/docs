@@ -1,46 +1,42 @@
 {
+  "intro": {
+    "title": "Getting Started",
+    "readTime": "10 min",
+    "description": "Learn how to set up a smart contract template, create an account, and use faucet"
+  },
   "hello": {
     "title": "First Universal App",
+    "readTime": "10 min",
     "description": "Learn how to create, deploy and interact with a universal app"
   },
   "swap": {
     "title": "Swap",
+    "readTime": "30 min",
     "description": "Implement an omnichain swap app compatible with chains like Ethereum, BNB and Bitcoin"
   },
-  "swap-zeta": {
-    "title": "Swap to ZETA",
-    "description": "Enhance the omnichain swap app with the ability to swap any token to ZETA"
+  "swap-any": {
+    "title": "Swap Any Token",
+    "readTime": "60 min",
+    "description": "Enhance the omnichain swap app with the ability to swap to any token"
   },
   "staking": {
     "title": "Staking",
+    "readTime": "60 min",
     "description": "Explore how universal apps can be used for omnichain staking"
   },
   "nft": {
     "title": "NFT",
+    "readTime": "60 min",
     "description": "Learn how to create a client-side UI for your universal app with Next.js and TypeScript"
   },
   "bitcoin": {
     "title": "Bitcoin Frontend",
+    "readTime": "20 min",
     "description": "Learn how to make calls to universal apps from Bitcoin with wallets like XDEFI and UniSat"
   },
   "multioutput": {
     "title": "Single Input, Multiple Outputs",
+    "readTime": "60 min",
     "description": "Learn how a single call to a universal app can create multiple outbound transactions"
-  },
-  "zeta": {
-    "title": "Connector: Send ZETA",
-    "description": "Learn how to send ZETA tokens to and from a universal app using the Connector API"
-  },
-  "message": {
-    "title": "Connector: Messaging",
-    "description": "Use the Connector API to send arbitrary messages to and from a universal app"
-  },
-  "erc20": {
-    "title": "Connector: ERC-20",
-    "description": "Use the Connector API to send any ERC-20 token to and from a universal app"
-  },
-  "connector-nft": {
-    "title": "Connector: NFTs",
-    "description": "Use the Connector API to send any NFTs to and from a universal app"
   }
 }

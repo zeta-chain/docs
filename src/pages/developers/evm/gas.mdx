@@ -16,9 +16,7 @@ that of [Ethermint](https://docs.ethermint.zone/basics/gas.html) and follows
 Ethereum's EIP 1559 gas fee structure. This system is designed to deter spamming
 activities on the network.
 
-## Omnichain Contract Fees
-
-### Deposit
+## Deposit
 
 When depositing tokens to ZetaChain by sending them to the TSS (Threshold
 Signature Scheme) address on a connected chain, you will pay the fee in the
@@ -29,10 +27,10 @@ be in ETH, comparable to a regular token transfer on the Ethereum network. For
 more information on Ethereum gas and fees, refer to the [official
 documentation](https://ethereum.org/en/developers/docs/gas/).
 
-### Withdraw
+## Withdraw
 
-When withdrawing ZRC-20 tokens back to a connected external chain, the "withdraw
-gas fee" is applicable (listed as "Total fee" in the table below).
+When withdrawing ZRC-20 tokens back to a connected connected chain, the
+"withdraw gas fee" is applicable (listed as "Total fee" in the table below).
 
 To find out the fee amount, call the `withdrawGasFee` function on the [ZRC-20
 contract](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/ZRC20.sol)
@@ -42,7 +40,7 @@ native gas token of the connected chain.
 The `withdraw` function will deduct this gas fee from your ZRC-20 balance and
 proceed with the withdrawal to the destination chain.
 
-### Current omnichain fees
+## Current omnichain fees
 
 In the table below you can see the current fees. The fees are defined in native
 gas tokens on the destination chain (the chain to which ZRC-20 tokens are
@@ -57,140 +55,3 @@ command in the smart-contract
 ```
 npx hardhat fees
 ```
-
-## Cross-Chain Messaging Fees
-
-To send data and value across chains through ZetaChain, users (wallets,
-contracts) must pay fees. These fees are paid by sending ZETA (along with the
-message data) on a connected chain to a Connector contract. This ZETA is used to
-compensate validators, stakers, and ecosystem pools, as well as to cover the gas
-fees on the destination chain. For users, this process is simplified into a
-single transaction.
-
-When sending a cross-chain message, you incur two types of fees:
-
-- Outbound Gas Fee: This fee is calculated dynamically based on the gas prices
-  for the destination chain, the gas limit provided by the user, and the token
-  prices in the liquidity pools on ZetaChain.
-- Protocol Fee: This is a fixed value defined in the ZetaChain source code.
-
-### Current Cross-Chain Messaging Fees
-
-The table below shows the current cross-chain messaging fees, defined in ZETA
-tokens. These fees are calculated for the destination chain (the chain to which
-the message is sent) with a gas limit of 500,000.
-
-<Fees type="messaging" />
-
-To calculate fees for a different gas limit, use the fees command in the
-smart-contract [template](https://github.com/zeta-chain/template):
-
-```
-npx hardhat fees
-```
-
-### Different Approaches to Paying the Fees
-
-When you write a smart contract that uses cross chain messages this contract
-needs to pay fees in ZETA for every cross chain transaction. There are several
-ways to handle this.
-
-#### Sending ZETA to the Connector
-
-In your cross-chain messaging contract approve `zetaValueAndGas` amount of ZETA
-tokens to the connector and then transfer them to the connector contract.
-
-The main disadvantage with this approach is that the user must approve your
-contract before and they have to have enough ZETA in his wallet.
-
-```solidity
-function sendMessage(uint256 destinationChainId, bytes calldata destinationAddress, uint256 zetaValueAndGas) external {
-    if (zetaValueAndGas == 0) revert InvalidZetaValueAndGas();
-
-    bool success1 = ZetaEth(zetaToken).approve(address(connector), zetaValueAndGas);
-    bool success2 = ZetaEth(zetaToken).transferFrom(msg.sender, address(this), zetaValueAndGas);
-    if (!(success1 && success2)) revert ErrorTransferringZeta();
-
-    connector.send(
-        ZetaInterfaces.SendInput({
-            destinationChainId: destinationChainId,
-            destinationAddress: destinationAddress,
-            destinationGasLimit: 300000,
-            message: abi.encode(),
-            zetaValueAndGas: zetaValueAndGas,
-            zetaParams: abi.encode("")
-        })
-    );
-}
-```
-
-#### Pay With ZETA From the Contract
-
-You can add ZETA tokens to the contract and the contract will use these tokens
-when sending cross chain messages.
-
-This is easier for end-users, because they don't have to think about using ZETA
-tokens, but it’s more complex for the contract developer because they have to
-ensure that the contract has enough ZETA tokens.
-
-```solidity
-function sendMessage(uint256 destinationChainId, bytes calldata destinationAddress) external {
-    bool success1 = ZetaEth(zetaToken).approve(address(connector), ZETA_GAS);
-    if (!success1) revert ErrorApprovingZeta();
-
-    connector.send(
-        ZetaInterfaces.SendInput({
-            destinationChainId: destinationChainId,
-            destinationAddress: destinationAddress,
-            destinationGasLimit: 300000,
-            message: abi.encode(),
-            zetaValueAndGas: ZETA_GAS,
-            zetaParams: abi.encode("")
-        })
-    );
-}
-```
-
-#### Pay With Any Token and Swap to ZETA
-
-Your contract can accept any token and swap it to ZETA internally.
-
-This approach is more complex, because you need to add a swap logic to your
-contract and take market price fluctuations into account. But it’s more
-convenient for end-users, because they can use any token to pay for cross chain
-messages without even knowing that ZETA is being used under the hood.
-
-To make it eaier you can use ZetaConsumer's `getZetaFromEth` to swap any token
-to ZETA.
-
-```solidity
-function sendMessage(uint256 destinationChainId, bytes calldata destinationAddress) external payable{
-    uint256 crossChainGas = 2 * (10 ** 18);
-    uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
-    bool success1 = ZetaEth(zetaToken).approve(address(connector), zetaValueAndGas);
-    if (!success1) revert ErrorApprovingZeta();
-
-    connector.send(
-        ZetaInterfaces.SendInput({
-            destinationChainId: destinationChainId,
-            destinationAddress: destinationAddress,
-            destinationGasLimit: 300000,
-            message: abi.encode(),
-            zetaValueAndGas: zetaValueAndGas,
-            zetaParams: abi.encode("")
-        })
-    );
-}
-```
-
-[ZetaTokenConsumer](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/ZetaInterfaces.sol)
-is an interface with several implementations that handles all the logic you need
-to swap ZETA from/to another token. Right now we have three implementations
-([Uniswap
-V2](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV2.strategy.sol),
-[Uniswap
-V3](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerUniV3.strategy.sol),
-and
-[Trident](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/tools/ZetaTokenConsumerTrident.strategy.sol))
-using different DEX. You can include it in your contract and just call the
-appropriate method.

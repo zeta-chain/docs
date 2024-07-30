@@ -91,18 +91,6 @@ developer and user alike need only trust the network for the delivery of their
 data and value. Read more about other interoperability solutions and how they
 compare to ZetaChain in the [whitepaper](https://zetachain.com/whitepaper.pdf).
 
-### How do I develop on ZetaChain?
-
-You can start building now, and add powerful cross-chain messaging capabilities
-to your dApp using ZetaChain's [Connector](/developers/evm/connector) or build
-an [omnichain dapp](/developers/apps/intro) that can manage assets on different
-chain from a single contract.
-
-Stay tuned on our <a href={globalLinks.twitterLink} target="_blank"
-className="text-[#00A5C6] dark:text-[#B0FF61]">Twitter</a> and <a
-href={globalLinks.discordLink} target="_blank" className="text-[#00A5C6]
-dark:text-[#B0FF61]">Discord</a> for the latest updates in our protocol.
-
 ### Is ZetaChain a bridge? How is it different from a bridge?
 
 ZetaChain is not a bridge. At its core, ZetaChain is a blockchain and
@@ -118,8 +106,8 @@ wrapping/locking.
 ### What's the difference between ZetaChain messaging and smart contracts?
 
 Messaging allows a developer to send data and value between smart contracts,
-whether they are on ZetaChain or on external chains. One can deploy smart
-contracts on external chains and just pass messages between them through
+whether they are on ZetaChain or on connected chains. One can deploy smart
+contracts on connected chains and just pass messages between them through
 ZetaChain in a similar manner to other interoperability messaging protocols like
 LayerZero, but ZetaChain's interoperable smart contracts let developers maintain
 omnichain logic within a single place, reducing overhead and enabling smart
@@ -135,12 +123,6 @@ recovery would be a social process between various stakeholders including
 ZetaChain validators and team, dApps developers, and end users. The dApps
 developers should build in the capability to resolve inconsistent states due to
 the very deep re-organization.
-
-### What happens if a TX on the destination chain doesn't have enough gas?
-
-Same answer as above. The transaction is reverted and funds are returned to the
-sender if the destination transaction is unable to successfully send. dApps can
-handle reverts easily with the [Connector docs](/developers/evm/connector).
 
 ### Is there an interface where we can run a PoS validator?
 

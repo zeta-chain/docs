@@ -21,9 +21,19 @@ const baseNextConfig = {
   transpilePackages: ["@zetachain/ui-toolkit"],
   experimental: {
     externalDir: true,
+    /**
+     * Generating source maps consumes extra memory during the build process.
+     * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
+     */
+    serverSourceMaps: false,
   },
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+  /**
+   * Generating source maps consumes extra memory during the build process.
+   * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
+   */
+  productionBrowserSourceMaps: false,
   headers: async () => nextHeadersConfig,
   webpack(config) {
     // eslint-disable-next-line no-param-reassign

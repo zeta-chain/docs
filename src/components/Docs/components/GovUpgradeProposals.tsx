@@ -6,8 +6,8 @@ import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/sha
 import { NetworkType } from "~/lib/app.types";
 
 const API: Record<NetworkType, string> = {
-  testnet: "https://zetachain-testnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
-  mainnet: "https://zetachain-mainnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
+  testnet: "https://zetachain-athens.g.allthatnode.com/archive/rest/cosmos/gov/v1/proposals",
+  mainnet: "https://zetachain-mainnet.g.allthatnode.com/archive/rest/cosmos/gov/v1/proposals",
 };
 
 const convertIpfsLink = (link: string) => {

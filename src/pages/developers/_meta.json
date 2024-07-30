@@ -1,29 +1,34 @@
 {
   "index": {
     "title": "Build",
-    "description": "Start building on ZetaChain, the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "description": "Begin your journey on ZetaChain, the decentralized blockchain and smart contract platform designed for omnichain interoperability."
   },
   "apps": {
     "title": "Building Universal Apps",
-    "description": "Dive into the basics of building on ZetaChain"
+    "description": "Explore the basics of developing on ZetaChain."
   },
   "evm": {
     "title": "Universal EVM",
-    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps"
+    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
   },
   "tutorials": {
-    "title": "Tutorials"
+    "title": "Tutorials",
+    "description": "Step-by-step guides to help you master building on ZetaChain."
+  },
+  "frontend": {
+    "title": "Frontend Tutorials",
+    "description": "Build powerful universal web applications with ZetaChain."
   },
   "services": {
-    "title": "Apps and Services"
+    "title": "Apps & Services",
+    "description": "Discover useful developer-focused applications and services to enhance your development process on ZetaChain."
   },
   "tokens": {
-    "title": "Working with Tokens"
-  },
-  "cli": {
-    "title": "Using ZetaChain's CLI"
+    "title": "Working with Tokens",
+    "description": "Overview of the different types of tokens available on ZetaChain and connected blockchains, and how to work with them."
   },
   "architecture": {
-    "title": "Architecture"
+    "title": "Architecture",
+    "description": "Take an in-depth look into the inner workings and technical architecture of the ZetaChain protocol."
   }
 }

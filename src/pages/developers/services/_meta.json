@@ -1,4 +1,8 @@
 {
+  "alchemy": {
+    "title": "Alchemy",
+    "description": "Node API and Subgraphs"
+  },
   "goldsky": {
     "title": "Goldsky",
     "description": "Subgraph indexer"
@@ -14,5 +18,9 @@
   "envio": {
     "title": "Envio",
     "description": "Real-time data indexer"
+  },
+  "subquery": {
+    "title": "SubQuery",
+    "description": "Open-source, flexible, multi-chain data indexer"
   }
 }

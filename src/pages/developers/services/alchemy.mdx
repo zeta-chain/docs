@@ -1,0 +1,115 @@
+# Alchemy
+
+Alchemy is a blockchain development platform that provides tools and
+infrastructure to build and scale decentralized applications. As a
+developer-focused platform, Alchemy helps companies create scalable and reliable
+dApps without the difficulty of managing blockchain infrastructure in-house. It
+simplifies the development process by offering a suite of APIs and services that
+enable developers to interact with blockchain networks efficiently.
+
+One of Alchemy's standout offerings is the Alchemy Supernode, which provides a
+reliable and scalable way to connect and build on the ZetaChain blockchain. This
+ensures that developers can focus on innovation and functionality without
+worrying about the complexities of node management.
+
+With Alchemy, developers can access real-time blockchain data, manage smart
+contracts, and monitor the performance of their dApps across various
+blockchains, making it a versatile choice for building robust, scalable, and
+secure blockchain-based applications.
+
+## Sign Up for an Alchemy Account
+
+Go to https://auth.alchemy.com/signup and sign up for an Alchemy or sign in with
+your existing account.
+
+![](/img/docs/alchemy-0.png)
+
+## Create a New ZetaChain Project
+
+In the Alchemy dashboard you have an overview of all projects currently set up
+in your account.
+
+Click "Create new app" to name your project and give it a description.
+
+![](/img/docs/alchemy-1.png)
+
+![](/img/docs/alchemy-1.5.png)
+
+All apps on Alchemy are multichain by default. This means that your dApp
+immediately has access to all available Alchemy network chains upon creation.
+You can view all available networks and the related API URLs in the “Networks”
+tab. You also have access to switch between Mainnet or Testnet, if available.
+
+![](/img/docs/alchemy-2.png)
+
+## API Key and RPC Endpoints
+
+Interactions with your Alchemy RPC instance are protected by an API key. Your
+API key is automatically generated for you and can be copied from the top-right
+of your app page.
+
+On this page you will also find RPC Endpoints, HTTP and WSS, for all available
+chains. Search for the ZetaChain network and take note of the Mainnet URL. You
+will use this later to make a request to ZetaChain.
+
+![](/img/docs/alchemy-3.png)
+
+## Connect to Alchemy
+
+If you're starting from scratch, create a new directory and initialize an npm
+project:
+
+```
+mkdir zetachain-app
+cd zetachain-app
+npm init -y
+```
+
+Use npm to install `axios`. Axios is a widely-used HTTP client allowing you to
+make API requests.
+
+```
+npm install axios
+```
+
+Create an `index.js` file in your project directory and paste the code below
+into the file to send a request to the ZetaChain network. Make sure to replace
+YOUR_API_KEY with your actual API key found on your Alchemy app dashboard.
+
+```ts
+const axios = require("axios");
+
+const url = `https://zetachain-mainnet.g.alchemy.com/v2/${YOUR_API_KEY}`;
+
+const payload = {
+  jsonrpc: "2.0",
+  id: 1,
+  method: "eth_blockNumber",
+  params: [],
+};
+
+axios
+  .post(url, payload)
+  .then((response) => {
+    console.log("Block Number:", parseInt(response.data.result));
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+```
+
+Run the script with Node.js:
+
+```
+node index.js
+```
+
+You should a see the current block number on ZetaChain outputted to your
+console:
+
+```
+Block Number: 3688095
+```
+
+You can find the full list of JSON-RPC methods available on ZetaChain in the
+[Alchemy Docs](https://docs.alchemy.com/reference/zetachain-api-endpoints).

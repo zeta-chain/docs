@@ -10,12 +10,6 @@ Every EVM chain has their own, unique id, represented by a number.
 [Chainlist](https://chainlist.org/) is a great resource to find EVM chain ids by
 chain name.
 
-## Connector Contract
-
-Smart contracts on connected chains like Ethereum or Arbitrum interact with
-ZetaChain by passing/receiving messages from ZetaChain's Connector Contracts,
-which are deployed on each connected chain.
-
 ## Core Validator
 
 ZetaChain uses the Tendermint consensus protocol which is a partially
@@ -53,7 +47,7 @@ Blanket term for apps or concepts that span multiple blockchains.
 
 The observers watch externally connected chains for certain relevant
 transactions/events/states at particular addresses via their full nodes of
-external chains.
+connected chains.
 
 ## Omnichain
 
@@ -68,7 +62,7 @@ Messaging value and/or data between chains seamlessly (via ZetaChain).
 ## Omnichain smart contracts
 
 ZetaChain's native smart contracts are omnichain, meaning that they can manage,
-read, and write state to/from external chains. These smart contracts are the
+read, and write state to/from connected chains. These smart contracts are the
 first of their kind, and unlock a new paradigm of dApps that transcend
 individual chains and layers.
 
@@ -82,12 +76,12 @@ source chain.
 ## Signer Validator
 
 The ZetaChain collectively holds standard ECDSA/EdDSA keys for authenticated
-interaction with external chains. The keys are distributed among multiple
+interaction with connected chains. The keys are distributed among multiple
 signers in such a way that only a super majority of them can sign on behalf of
 the ZetaChain. Its important to ensure that at no time is any single entity or
-small fraction of nodes able to sign messages on behalf of ZetaChain on external
-chains. The ZetaChain system uses bonded stakes and positive/negative incentives
-to ensure economic safety
+small fraction of nodes able to sign messages on behalf of ZetaChain on
+connected chains. The ZetaChain system uses bonded stakes and positive/negative
+incentives to ensure economic safety
 
 ## TSS
 

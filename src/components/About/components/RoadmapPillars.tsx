@@ -62,7 +62,7 @@ const pillars = [
             <li>ZRC-20 whitelisting automation and expanded onboarding process.</li>
             <li>ZRC20-like NFT support for omnichain smart contracts.</li>
             <li>BRC20/Ordinals support in omnichain smart contracts.</li>
-            <li>Standardized interactions with external chains beyond fungible tokens (ZRC20 model).</li>
+            <li>Standardized interactions with connected chains beyond fungible tokens (ZRC20 model).</li>
           </StyledUnorderedList>
         ),
       },
