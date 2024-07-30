@@ -13,10 +13,15 @@ import { NodeSnapshots } from "~/components/Docs";
 
 Downloads the data directory backed up from an existing node.
 
-Choose the network and the snapshot type, download the snapshot and untar the data/ directory
-inside `~/.zetacored` folder.
+Choose the network and snapshot type, download the snapshot and extract the snapshot
+inside `~/.zetacored` directory.
 
 <NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
+
+<Alert variant="warning">
+  Note: Our nodes' database backend is pebbledb. Ensure that your node is configured to
+  use the same backend to utilize our snapshots.
+</Alert>
 
 #### Alternative snapshots
 
@@ -65,7 +70,7 @@ https://github.com/BlockPILabs/cosmos-db.
 ### Sync the Node
 
 ```
-ksync state-sync --binary="/path/to/zetacored" --chain-id=kaon-1 --snapshot-pool-id=11
+ksync state-sync --binary="/path/to/zetacored" --chain-id=zetachain_7000-1 --snapshot-pool-id=11
 ```
 
 # Checking Node Health
