@@ -3,7 +3,7 @@ import { TextField } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import { useChat } from "ai/react";
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect } from "react";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -80,10 +80,17 @@ const AssistantMessage: React.FC<{ children: React.ReactNode; messageClasses?: s
   );
 };
 
-export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
+export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputValue }) => {
   const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat({});
 
   const isLoadingAssistantMessage = isLoading;
+
+  useEffect(() => {
+    if (initialValue && input.length === 0) {
+      setInput(initialValue);
+      setCmdkInputValue("");
+    }
+  }, [initialValue, input]);
 
   return (
     <div className="w-full" onClick={(e) => e.stopPropagation()}>
@@ -140,7 +147,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             <LoadingDots className="mb-1" />
           </AssistantMessage>
         )}
-        {messages.length === 0 && (
+        {messages.length === 0 && input.length === 0 && (
           <Command.Group className="w-full" heading="Example questions">
             {cmdkChatQuestions.map((question) => {
               const key = question.replace(/\s+/g, "_");
@@ -148,6 +155,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
               return (
                 <Command.Item
                   key={key}
+                  value={question}
                   className={clsx("cursor-pointer", "w-full")}
                   onSelect={() => {
                     append({ role: "user", content: question });
@@ -213,4 +221,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
   );
 };
 
-interface CmdkChatProps {}
+interface CmdkChatProps {
+  initialValue: string;
+  setCmdkInputValue: Function;
+}

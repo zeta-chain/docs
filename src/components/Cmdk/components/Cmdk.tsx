@@ -292,7 +292,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
                 setIsCmdkOpen={setIsCmdkOpen}
               />
             )}
-            {activePage === "chat" && <CmdkChat />}
+            {activePage === "chat" && <CmdkChat initialValue={inputValue} setCmdkInputValue={setInputValue} />}
           </Command.List>
         </Command>
       </DialogContent>
@@ -318,6 +318,7 @@ function Home({
           onSelect={() => {
             goToChat();
           }}
+          value={inputValue}
         >
           <FeedbackIcon />
           Chat with the docs
@@ -341,7 +342,7 @@ function Home({
             router.push("/");
           }}
         >
-          <HomeIcon sx={{ strokeWidth: 0.2 }} />
+          <HomeIcon className="dark:text-grey-300" sx={{ strokeWidth: 0.2 }} />
           Go to "Home" section
         </Item>
         <Item
@@ -383,13 +384,15 @@ function Item({
   children,
   shortcut,
   onSelect = () => {},
+  value,
 }: {
   children: React.ReactNode;
   shortcut?: string;
   onSelect?: (value: string) => void;
+  value?: string;
 }) {
   return (
-    <Command.Item onSelect={onSelect}>
+    <Command.Item onSelect={onSelect} value={value} itemType="command">
       {children}
       {shortcut && (
         <div cmdk-zeta-shortcuts="">
