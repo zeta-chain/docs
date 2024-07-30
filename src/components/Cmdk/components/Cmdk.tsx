@@ -176,6 +176,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
   const isHome = activePage === "home";
 
   const onValueChange = React.useCallback((value: string) => {
+    console.log(value);
     setInputValue(value);
   }, []);
 
@@ -238,6 +239,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
               popPage();
             }
           }}
+          shouldFilter={false}
         >
           {activePage === "chat" && (
             <div className="py-3 px-1">
@@ -318,7 +320,6 @@ function Home({
           onSelect={() => {
             goToChat();
           }}
-          value={inputValue}
         >
           <FeedbackIcon />
           Chat with the docs
@@ -342,7 +343,7 @@ function Home({
             router.push("/");
           }}
         >
-          <HomeIcon className="dark:text-grey-300" sx={{ strokeWidth: 0.2 }} />
+          <HomeIcon className="text-grey-400 dark:text-grey-300" sx={{ strokeWidth: 0.2 }} />
           Go to "Home" section
         </Item>
         <Item
