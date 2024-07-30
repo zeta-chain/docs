@@ -17,6 +17,7 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
+    "@cookbookdev/docsbot": "^4.21.5",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.3",
     "@emotion/serialize": "1.1.3",

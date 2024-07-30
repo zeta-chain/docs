@@ -7,6 +7,7 @@ import type { AppProps } from "next/app";
 import Script from "next/script";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
+import { AskCookbook } from "~/components/shared/components/AskCookbook";
 import { environment } from "~/env.cjs";
 import { useAppAnalytics } from "~/hooks/useAppAnalytics";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
@@ -55,6 +56,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
           </Script>
         </>
       )}
+      <AskCookbook />
     </>
   );
 };
