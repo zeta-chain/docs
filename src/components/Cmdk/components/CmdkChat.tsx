@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import { Person, Send } from "@mui/icons-material";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
 import { useChat } from "ai/react";
 import clsx from "clsx";
@@ -22,9 +21,8 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 
 import { Command } from "cmdk";
 
-import { IconSparkle, IconZetaDocsLogo } from "~/components/shared";
-
 import { cmdkChatQuestions } from "../cmdk.constants";
+import { ArrowUpIcon } from "./ArrowUpIcon";
 import { LoadingDots } from "./LoadingDots";
 import { MarkdownMessage } from "./MarkdownMesage";
 
@@ -68,6 +66,20 @@ interface ResetAction {
 
 type MessageAction = NewMessageAction | UpdateMessageAction | AppendContentAction | ResetAction;
 
+const AssistantMessage: React.FC<{ children: React.ReactNode; messageClasses?: string }> = ({
+  children,
+  messageClasses,
+}) => {
+  return (
+    <div className="flex px-4 mb-4 overflow-hidden">
+      <div className="min-w-[32px] mb-[1px] mt-[1px] mr-4 w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
+        <img src="/img/logos/zeta.svg" height="14" width="14" />
+      </div>
+      <div className={clsx("max-w-[95%]", messageClasses)}>{children}</div>
+    </div>
+  );
+};
+
 export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
   const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat({});
 
@@ -76,6 +88,15 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
   return (
     <div className="w-full" onClick={(e) => e.stopPropagation()}>
       <div className={clsx("relative py-4")}>
+        {Boolean(messages.length) && (
+          <AssistantMessage>
+            The AI-driven features in this product are experimental and provided for informational purposes only. Given
+            the inherent volatility and complexity of cryptocurrency, AI-generated insights, predictions, and analyses
+            should not be interpreted as fully accurate, reliable, or as financial advice. By using this product, you
+            acknowledge and accept that the information provided by AI is subject to errors and omissions and that any
+            reliance on this information is at your own risk.
+          </AssistantMessage>
+        )}
         {!error &&
           messages.map((message, index) => {
             switch (message.role) {
@@ -97,20 +118,14 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
                 );
               case MessageRole.Assistant:
                 return (
-                  <div className="flex px-4 mb-4 overflow-hidden">
-                    <div className="min-w-[32px] mb-[1px] mt-[1px] mr-4 w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
-                      <img src="/img/logos/zeta.svg" height="14" width="14" />
-                    </div>
-                    <div className="max-w-[95%]">
-                      <MarkdownMessage message={message} />
-                    </div>
-                  </div>
+                  <AssistantMessage messageClasses={message.content.length < 60 ? "flex items-center mb-4" : "mb-4"}>
+                    <MarkdownMessage message={message} />
+                  </AssistantMessage>
                 );
               default:
                 return (
                   <div key={index} className="px-4 [overflow-anchor:none] mb-[25px]">
                     <div className="flex gap-6 [overflow-anchor:none] mb-6">
-                      {/* <AiIconChat /> */}
                       <>
                         <MarkdownMessage message={message} />
                       </>
@@ -121,14 +136,9 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
           })}
 
         {isLoadingAssistantMessage && Boolean(messages.length) && messages[messages.length - 1]?.role === "user" && (
-          <div className="flex px-4 mb-4 overflow-hidden">
-            <div className="min-w-[32px] mb-[1px] mt-[1px] mr-4 w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
-              <img src="/img/logos/zeta.svg" height="14" width="14" />
-            </div>
-            <div className="flex max-w-[95%]">
-              <LoadingDots className="mb-1" />
-            </div>
-          </div>
+          <AssistantMessage messageClasses="flex">
+            <LoadingDots className="mb-1" />
+          </AssistantMessage>
         )}
         {messages.length === 0 && (
           <Command.Group className="w-full" heading="Example questions">
@@ -149,101 +159,55 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ ...props }) => {
             })}
           </Command.Group>
         )}
-        {/* {error && (
-            <div className="p-6 flex flex-col items-center gap-6 mt-4">
-              <IconAlertTriangle className="text-amber-900" strokeWidth={1.5} size={21} />
-              <p className="text-lg text-foreground text-center">Sorry, looks like Zeta AI is having a hard time!</p>
-              <p className="text-sm text-foreground-muted text-center">Please try again in a bit.</p>
-              <Button size="tiny" type="secondary" onClick={handleReset}>
-                Try again?
-              </Button>
-            </div>
-          )} */}
       </div>
       <div className="w-[98%] h-8" />
-      <div className="absolute bottom-0 pb-4 w-[98%] bg-background py-3 pt-0 bg-white dark:bg-[#15191e]">
-        <CustomTextField
-          className="w-full bg-alternative rounded px-3 !focus:outline-none"
-          color="primary"
-          placeholder="Ask Zeta AI a question..."
-          value={input}
-          disabled={isLoading}
-          InputProps={{
-            classes: {
-              input: "dark:text-white text-grey-800",
-              root: "h-[30px]",
-              disabled: "!text-red",
-            },
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  edge="end"
-                  disabled={!input.length}
-                  type="submit"
-                  onClick={(e: any) => {
-                    handleSubmit(e);
-                  }}
-                >
-                  <Send
-                    className={clsx("dark:text-white h-[14px] w-[14px]", {
-                      "dark:!text-grey-400": !input.length,
-                      "text-grey-300": !input.length,
-                      "text-grey-800": input.length,
-                    })}
-                  />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          // inputRef={inputRef}
-          // autoFocus
-          // placeholder={isLoadingCommandMenu || isLoading ? "Waiting on an answer..." : "Ask Zeta AI a question..."}
-          // value={input}
-          // actions={
-          //   <>
-          //     {!isLoadingCommandMenu && !isLoading ? (
-          //       <div
-          //         className={`flex items-center gap-3 mr-3 transition-opacity duration-700 ${
-          //           search ? "opacity-100" : "opacity-0"
-          //         }`}
-          //       >
-          //         <span className="text-foreground-light">Submit message</span>
-          //         <div className="hidden text-foreground-light md:flex items-center justify-center h-6 w-6 rounded bg-overlay-hover">
-          //           <IconCornerDownLeft size={12} strokeWidth={1.5} />
-          //         </div>
-          //       </div>
-          //     ) : null}
-          //   </>
-          // }
-          onChange={(e) => {
-            if (!isLoading) {
-              handleInputChange(e as React.ChangeEvent<HTMLInputElement>);
-            }
-          }}
-          // onCompositionStart={() => setIsImeComposing(true)}
-          // onCompositionEnd={() => setIsImeComposing(false)}
-          onKeyUp={(e) => {
-            switch (e.key) {
-              case "Backspace":
-                e.stopPropagation();
-            }
-          }}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "Enter":
-                // if (!search || isLoadingCommandMenu || isLoading || isImeComposing) {
-                if (isLoading) {
+      <div className="absolute bottom-0 pb-4 w-[98%] bg-background py-3 pt-0 bg-white dark:bg-[#15191e] flex items-center justify-center">
+        <div className="flex items-center border rounded-full shadow-sm w-[95%] justify-center">
+          <input
+            type="text"
+            placeholder={isLoading ? "Waiting on an answer..." : "What can ZetaAI do for you?"}
+            className="flex-1 px-4 py-1 bg-[transparent] text-gray-600 border-none rounded-full focus:outline-none"
+            value={input}
+            disabled={isLoading}
+            onChange={(e) => {
+              if (!isLoading) {
+                handleInputChange(e as React.ChangeEvent<HTMLInputElement>);
+              }
+            }}
+            onKeyUp={(e) => {
+              switch (e.key) {
+                case "Backspace":
+                  e.stopPropagation();
+              }
+            }}
+            onKeyDown={(e) => {
+              switch (e.key) {
+                case "Enter":
+                  if (isLoading) {
+                    return;
+                  }
+                  handleSubmit(e as any);
                   return;
-                }
-                handleSubmit(e as any);
-                return;
-              case "Backspace":
-                e.stopPropagation();
-              default:
-                return;
-            }
-          }}
-        />
+                case "Backspace":
+                  e.stopPropagation();
+                default:
+                  return;
+              }
+            }}
+          />
+          <button
+            disabled={isLoading || input.length === 0}
+            className={clsx(
+              "flex items-center justify-center w-10 h-6 rounded-full text-gray-300 m-2 transition-colors duration-200 ease-in-out",
+              {
+                "bg-[#00DDA5]": input.length > 0,
+                "dark:bg-grey-600 bg-grey-200": input.length === 0,
+              }
+            )}
+          >
+            <ArrowUpIcon enabled={input.length > 0} className="w-2 h-2" />
+          </button>
+        </div>
       </div>
     </div>
   );

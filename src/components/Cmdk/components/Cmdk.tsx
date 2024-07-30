@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { HomeOutlined as HomeIcon } from "@mui/icons-material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import { Dialog, DialogContent, Paper, Typography } from "@mui/material";
 import twTheme from "@zetachain/ui-toolkit/theme/tailwind.theme.json";
@@ -12,8 +11,10 @@ import tw from "twin.macro";
 
 import { IconClaim, IconCode, IconServer } from "~/components/shared";
 
+import { ArrowIcon } from "./ArrowIcon";
 import { CmdkBreadcrumb } from "./CmdkBreadcrumb";
 import { CmdkChat } from "./CmdkChat";
+import { ZetaAiIcon } from "./ZetaAiIcon";
 
 const Container = styled(Paper)`
   /* [cmdk-root] {
@@ -245,8 +246,15 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
               </div>
               <CmdkBreadcrumb className="flex justify-between w-full items-center">
                 <div className="flex items-center">
-                  <img src="/img/logos/arrow.svg" width="20" />
-                  <img className="ml-2" src="/img/logos/zeta-ai.svg" width="80" />
+                  <button
+                    onClick={() => {
+                      setPages([...pages, "home"]);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <ArrowIcon />
+                  </button>
+                  <ZetaAiIcon className="ml-2" />
                 </div>
                 <div className="flex items-center ml-3 rounded-full bg-surface-200 text-foreground-light border border-strong border-grey-600 pl-3 pr-3 py-1.5">
                   <img className="mr-2" src="/img/logos/experimental.svg" width="20" />

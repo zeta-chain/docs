@@ -55,7 +55,7 @@ const MarkdownCodeBlock = (props: CodeBlockProps) => {
   } = props;
 
   const { resolvedTheme } = useTheme();
-  const isDarkTheme = resolvedTheme?.includes("dark")!;
+  const isDarkTheme = Boolean(resolvedTheme?.includes("dark"));
   const monokaiTheme = monokaiCustomTheme(isDarkTheme);
 
   const [copied, setCopied] = useState(false);
@@ -151,7 +151,9 @@ const MarkdownCodeBlock = (props: CodeBlockProps) => {
           ) : null}
         </div>
       ) : (
-        <ShortCodeBlock>{value || children}</ShortCodeBlock>
+        <ShortCodeBlock className={"text-black dark:text-white bg-white dark:bg-grey-500"}>
+          {value || children}
+        </ShortCodeBlock>
       )}
     </>
   );
