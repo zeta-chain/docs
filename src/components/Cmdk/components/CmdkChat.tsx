@@ -25,7 +25,7 @@ const AssistantMessage: React.FC<{ children: React.ReactNode; className?: string
 
 export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputValue }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat({});
+  const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat();
 
   const isLoadingAssistantMessage = isLoading;
 
@@ -40,6 +40,8 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
     }
   }, [initialValue, input]);
 
+  console.log(error);
+
   return (
     <div className="w-full" onClick={(e) => e.stopPropagation()}>
       <div className={clsx("relative py-4")}>
@@ -52,6 +54,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
             reliance on this information is at your own risk.
           </AssistantMessage>
         )}
+        {error && <AssistantMessage messageClasses="flex items-center">{error.message}</AssistantMessage>}
         {!error &&
           messages.map((message, index) => {
             switch (message.role) {
@@ -99,7 +102,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
             <LoadingDots className="mb-1" />
           </AssistantMessage>
         )}
-        {messages.length === 0 && (
+        {messages.length === 0 && !error && (
           <Command.Group className="w-full" heading="Example questions">
             {cmdkChatQuestions.map((question) => {
               const key = question.replace(/\s+/g, "_");
