@@ -23,15 +23,31 @@ const getPrompt = (userPrompt: string, pageSections: any[] | null) => {
 // Allow streaming responses up to 45 seconds
 export const maxDuration = 45;
 
-const ratelimit = new Ratelimit({
-  redis: kv,
-  limiter: Ratelimit.fixedWindow(5, "30s"),
-});
-
 export async function POST(req: Request) {
   try {
-    const ip = req.ip ?? "ip";
-    const { success, remaining } = await ratelimit.limit(ip);
+    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+      const ip = req.headers.get("x-forwarded-for");
+      const ratelimit = new Ratelimit({
+        redis: kv,
+        limiter: Ratelimit.fixedWindow(1, "10m"),
+      });
+
+      const { success, limit, reset, remaining } = await ratelimit.limit(`ratelimit_${ip}`);
+
+      if (!success) {
+        return new Response("You have reached your request limit for the day.", {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
+        });
+      }
+    } else {
+      throw new Error("KV_REST_API_URL and KV_REST_API_TOKEN env vars not found.");
+    }
+
     const { messages: _messages } = await req.json();
     const messages = _messages as CoreMessage[];
 
