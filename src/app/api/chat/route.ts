@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { openai } from "@ai-sdk/openai";
 import { Ratelimit } from "@upstash/ratelimit";
-import kv from "@vercel/kv";
+import { kv } from "@vercel/kv";
 import { CoreMessage, embed, streamText } from "ai";
 
 import { supabaseClient } from "~/lib/supabase/client";
@@ -25,27 +25,29 @@ export const maxDuration = 45;
 
 export async function POST(req: Request) {
   try {
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-      const ip = req.headers.get("x-forwarded-for");
-      const ratelimit = new Ratelimit({
-        redis: kv,
-        limiter: Ratelimit.fixedWindow(1, "10m"),
-      });
-
-      const { success, limit, reset, remaining } = await ratelimit.limit(`ratelimit_${ip}`);
-
-      if (!success) {
-        return new Response("You have reached your request limit for the day.", {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.toString(),
-            "X-RateLimit-Remaining": remaining.toString(),
-            "X-RateLimit-Reset": reset.toString(),
-          },
-        });
-      }
-    } else {
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
       throw new Error("KV_REST_API_URL and KV_REST_API_TOKEN env vars not found.");
+    }
+
+    const ip = req.headers.get("x-forwarded-for");
+    const ratelimit = new Ratelimit({
+      redis: kv,
+      limiter: Ratelimit.fixedWindow(15, "10m"),
+    });
+
+    const { success, limit, reset, remaining } = await ratelimit.limit(`ratelimit_${ip}`);
+
+    if (!success) {
+      console.error("Rate limit exceeded for IP:", ip);
+
+      return new Response("You have reached your request limit for the day.", {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString(),
+        },
+      });
     }
 
     const { messages: _messages } = await req.json();
