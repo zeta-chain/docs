@@ -14,20 +14,10 @@ import { IconClaim, IconCode, IconServer } from "~/components/shared";
 import { ArrowIcon } from "./ArrowIcon";
 import { CmdkBreadcrumb } from "./CmdkBreadcrumb";
 import { CmdkChat } from "./CmdkChat";
+import { FeedbackIcon } from "./FeedbackIcon";
 import { ZetaAiIcon } from "./ZetaAiIcon";
 
 const Container = styled(Paper)`
-  /* [cmdk-root] {
-    max-width: 640px;
-    width: 100%;
-    border-radius: 12px;
-    font-family: var(--font-sans);
-    border: 1px solid var(--gray6);
-    box-shadow: var(--cmdk-shadow);
-    transition: transform 100ms ease;
-    outline: none;
-  } */
-
   [cmdk-input] {
     font-family: var(--font-sans);
     border: none;
@@ -176,7 +166,6 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
   const isHome = activePage === "home";
 
   const onValueChange = React.useCallback((value: string) => {
-    console.log(value);
     setInputValue(value);
   }, []);
 
@@ -403,23 +392,5 @@ function Item({
         </div>
       )}
     </Command.Item>
-  );
-}
-
-function FeedbackIcon() {
-  return (
-    <svg
-      fill="none"
-      height="24"
-      shapeRendering="geometricPrecision"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-      viewBox="0 0 24 24"
-      width="24"
-    >
-      <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-    </svg>
   );
 }

@@ -15,7 +15,8 @@
     "tsc:watch": "tsc --watch",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
     "analyze": "ANALYZE=true next build",
-    "supabase:generate": "npx supabase gen types typescript --project-id gkamfbosmcsrnzhsxufs > ./src/lib/supabase/__generated__/supabase.types.ts"
+    "supabase:generate": "npx supabase gen types typescript --project-id gkamfbosmcsrnzhsxufs > ./src/lib/supabase/__generated__/supabase.types.ts",
+    "generate-embeddings": "npx tsx src/lib/generate-embeddings.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "0.0.36",

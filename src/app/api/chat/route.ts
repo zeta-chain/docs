@@ -20,6 +20,7 @@ const getPrompt = (userPrompt: string, pageSections: any[] | null) => {
 
 // Allow streaming responses up to 45 seconds
 export const maxDuration = 45;
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
