@@ -1,7 +1,7 @@
-// components/NodeSnapshots.tsx
 import axios from "axios";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { NetworkTypeTabs, LoadingTable, networkTypeTabs } from "~/components/shared";
 
 interface NodeSnapshotsProps {
   apiUrl: string;
@@ -17,7 +17,10 @@ interface Snapshot {
 }
 
 const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
+  const [mainnetSnapshots, setMainnetSnapshots] = useState<Snapshot[]>([]);
+  const [testnetSnapshots, setTestnetSnapshots] = useState<Snapshot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,7 +64,10 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
 
       const allData = await Promise.all(endpoints.map(fetchEndpoint));
       const combinedData = allData.flat();
-      setSnapshots(combinedData);
+
+      setMainnetSnapshots(combinedData.filter(snapshot => snapshot.environment === "mainnet"));
+      setTestnetSnapshots(combinedData.filter(snapshot => snapshot.environment === "testnet"));
+      setIsLoading(false);
     };
 
     fetchData();
@@ -78,37 +84,51 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
     return format(date, "PPPpp");
   };
 
+  const snapshots = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetSnapshots : testnetSnapshots;
+  }, [activeTab.networkType, mainnetSnapshots, testnetSnapshots]);
+
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Environment</th>
-          <th>Type</th>
-          <th>Network Version</th>
-          <th>Height</th>
-          <th>Creation Date</th>
-          <th>Download</th>
-        </tr>
-      </thead>
-      <tbody>
-        {snapshots.map((snapshot, index) => (
-          <tr key={index}>
-            <td>{snapshot.environment}</td>
-            <td>{snapshot.type}</td>
-            <td>{snapshot.networkVersion || ""}</td>
-            <td>{snapshot.height || ""}</td>
-            <td>{formatDate(snapshot.creationDate)}</td>
-            <td>
-              {snapshot.link ? (
-                <a href={snapshot.link} target="_blank" rel="noopener noreferrer">
-                  <button>Download</button>
-                </a>
-              ) : null}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="mt-8 first:mt-0">
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="node-snapshot-" />
+
+      {isLoading ? (
+        <LoadingTable rowCount={8} />
+      ) : (
+        <div className="overflow-x-auto mt-8">
+          <table>
+            <thead>
+              <tr>
+                <th>Environment</th>
+                <th>Type</th>
+                <th>Network Version</th>
+                <th>Height</th>
+                <th>Creation Date</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              {snapshots.map((snapshot, index) => (
+                <tr key={index}>
+                  <td>{snapshot.environment}</td>
+                  <td>{snapshot.type}</td>
+                  <td>{snapshot.networkVersion || ""}</td>
+                  <td>{snapshot.height || ""}</td>
+                  <td>{formatDate(snapshot.creationDate)}</td>
+                  <td>
+                    {snapshot.link ? (
+                      <a href={snapshot.link} target="_blank" rel="noopener noreferrer">
+                        <button>Download</button>
+                      </a>
+                    ) : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 };
 
