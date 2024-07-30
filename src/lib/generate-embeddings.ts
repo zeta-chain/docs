@@ -21,7 +21,8 @@ import { u } from "unist-builder";
 import { filter } from "unist-util-filter";
 import yargs from "yargs";
 
-dotenv.config({ path: path.join(__dirname, "../../.env.local") });
+if (process.env.NODE_ENV === "production") dotenv.config({ path: path.join(__dirname, "../../.env.production.local") });
+else dotenv.config({ path: path.join(__dirname, "../../.env.local") });
 
 const ignoredFiles = ["pages/404.mdx"];
 
@@ -267,9 +268,10 @@ async function generateEmbeddings() {
   const shouldRefresh = argv.refresh;
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.OPENAI_API_KEY) {
-    return console.log(
-      "Environment variables NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and OPENAI_API_KEY are required: skipping embeddings generation"
-    );
+    const message =
+      "Environment variables NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and OPENAI_API_KEY are required: skipping embeddings generation";
+    console.error(message);
+    throw new Error(message);
   }
 
   const supabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
