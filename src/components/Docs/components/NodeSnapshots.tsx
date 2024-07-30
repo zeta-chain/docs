@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { format } from "date-fns";
-import { NetworkTypeTabs, LoadingTable, networkTypeTabs } from "~/components/shared";
+import React, { useEffect, useMemo, useState } from "react";
+
+import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 
 interface NodeSnapshotsProps {
   apiUrl: string;
