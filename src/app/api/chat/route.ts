@@ -44,8 +44,7 @@ export async function POST(req: Request) {
     const ip = req.headers.get("x-forwarded-for");
     const ratelimit = new Ratelimit({
       redis: kv,
-      // limiter: Ratelimit.fixedWindow(15, "10m"),
-      limiter: Ratelimit.fixedWindow(1, "10m"),
+      limiter: Ratelimit.fixedWindow(15, "10m"),
     });
 
     const { success, limit, reset, remaining } = await ratelimit.limit(`ratelimit_${ip}`);

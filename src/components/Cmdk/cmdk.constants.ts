@@ -1,7 +1,7 @@
 export const cmdkChatQuestions = [
-  "What are System Contracts?",
-  "How can I acquire testnet ZETA?",
+  "What are universal apps?",
+  "What is a ZRC-20 token?",
+  "What is an observer-signer validator?",
   "What is ZetaHub?",
   "How can I run a validator?",
-  "How can I stake ZETA?",
 ];
