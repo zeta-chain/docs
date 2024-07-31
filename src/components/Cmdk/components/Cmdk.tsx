@@ -14,6 +14,7 @@ import { IconClaim, IconCode, IconServer } from "~/components/shared";
 import { ArrowIcon } from "./ArrowIcon";
 import { CmdkBreadcrumb } from "./CmdkBreadcrumb";
 import { CmdkChat } from "./CmdkChat";
+import { ExperimentalIcon } from "./ExperimentalIcon";
 import { FeedbackIcon } from "./FeedbackIcon";
 import { ZetaAiIcon } from "./ZetaAiIcon";
 
@@ -177,20 +178,6 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
     });
   }, []);
 
-  const onKeyDown = React.useCallback(
-    (e: KeyboardEvent) => {
-      if (isHome || inputValue.length) {
-        return;
-      }
-
-      if (e.key === "Backspace") {
-        e.preventDefault();
-        popPage();
-      }
-    },
-    [inputValue.length, isHome, popPage]
-  );
-
   const commandListMaxHeight = activePage === "chat" ? "min(600px, 50vh)" : "auto";
 
   return (
@@ -248,7 +235,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
                   <ZetaAiIcon className="ml-2" />
                 </div>
                 <div className="flex items-center ml-3 rounded-full bg-surface-200 text-foreground-light border border-strong border-grey-600 pl-3 pr-3 py-1.5">
-                  <img className="mr-2" src="/img/logos/experimental.svg" width="20" />
+                  <ExperimentalIcon className="mr-2" />
                   <Typography className="uppercase dark:text-grey-300">Experimental</Typography>
                 </div>
               </CmdkBreadcrumb>
