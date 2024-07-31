@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { Message } from "ai";
 import clsx from "clsx";
 import React from "react";
@@ -7,8 +6,6 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 import { MarkdownCodeBlock } from "./MarkdownCodeBlock";
-
-const StyledMarkdownMessage = styled.div``;
 
 const remarkPlugins = [[remarkGfm, { singleTilde: false }]];
 const rehypePlugins = [rehypeRaw];
@@ -20,13 +17,14 @@ export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ message }) => 
       rehypePlugins={rehypePlugins}
       skipHtml={false}
       components={{
-        code: (props: any) => (
+        code: ({ children, ...props }: any) => (
           <MarkdownCodeBlock
-            children={props.children}
             className={props.className}
             // language={props.language}
             // title={props.title}
-          />
+          >
+            {children}
+          </MarkdownCodeBlock>
         ),
         a: ({ children, ...args }) => {
           return (

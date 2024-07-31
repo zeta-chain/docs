@@ -296,7 +296,7 @@ function Home({
   inputValue,
   setIsCmdkOpen,
 }: {
-  goToChat: Function;
+  goToChat: () => void;
   inputValue: string;
   setIsCmdkOpen: Dispatch<SetStateAction<boolean>>;
 }) {

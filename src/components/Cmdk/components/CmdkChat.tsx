@@ -40,8 +40,6 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
     }
   }, [initialValue, input]);
 
-  console.log(error);
-
   return (
     <div className="w-full" onClick={(e) => e.stopPropagation()}>
       <div className={clsx("relative py-4")}>
@@ -88,9 +86,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
                 return (
                   <div key={index} className="px-4 [overflow-anchor:none] mb-[25px]">
                     <div className="flex gap-6 [overflow-anchor:none] mb-6">
-                      <>
-                        <MarkdownMessage message={message} />
-                      </>
+                      <MarkdownMessage message={message} />
                     </div>
                   </div>
                 );
@@ -127,6 +123,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
       <div className="absolute bottom-0 pb-4 w-[98%] bg-background py-3 pt-0 bg-white dark:bg-[#15191e] flex items-center justify-center">
         <div className="flex items-center border rounded-full shadow-sm w-[95%] justify-center">
           <input
+            aria-label="Chat input"
             ref={inputRef}
             type="text"
             placeholder={isLoading ? "Waiting on an answer..." : "What can ZetaAI do for you?"}
@@ -147,13 +144,12 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
             onKeyDown={(e) => {
               switch (e.key) {
                 case "Enter":
-                  if (isLoading) {
-                    return;
-                  }
+                  if (isLoading) return;
                   handleSubmit(e);
                   return;
                 case "Backspace":
                   e.stopPropagation();
+                  break;
                 default:
                   return;
               }
@@ -180,5 +176,5 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
 
 interface CmdkChatProps {
   initialValue: string;
-  setCmdkInputValue: Function;
+  setCmdkInputValue: React.Dispatch<React.SetStateAction<string>>;
 }

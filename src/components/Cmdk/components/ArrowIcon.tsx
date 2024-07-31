@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ArrowIcon: React.FC<ArrowIconProps> = ({ className, onClick }) => {
+export const ArrowIcon: React.FC<ArrowIconProps> = ({ className }) => {
   return (
     <svg
       width="24"
@@ -22,5 +22,4 @@ export const ArrowIcon: React.FC<ArrowIconProps> = ({ className, onClick }) => {
 
 interface ArrowIconProps {
   className?: string;
-  onClick?: Function;
 }

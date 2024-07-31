@@ -6,7 +6,19 @@ import { CoreMessage, embed, streamText } from "ai";
 
 import { supabaseClient } from "~/lib/supabase/client";
 
-const getPrompt = (userPrompt: string, pageSections: any[] | null) => {
+const getPrompt = (
+  userPrompt: string,
+  pageSections:
+    | {
+        id: number;
+        page_id: number;
+        slug: string;
+        heading: string;
+        content: string;
+        similarity: number;
+      }[]
+    | null
+) => {
   if (typeof process.env.ZETA_AI_PROMPT !== "string") throw new Error("ZETA_AI_PROMPT is not a string");
 
   return Buffer.from(process.env.ZETA_AI_PROMPT, "base64")
