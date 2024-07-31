@@ -25,7 +25,13 @@ const AssistantMessage: React.FC<{ children: React.ReactNode; className?: string
 
 export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputValue }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat();
+  const basePath =
+    process.env.NEXT_PUBLIC_BASE_PATH && typeof window !== "undefined"
+      ? `https://${window.location.host}/${process.env.NEXT_PUBLIC_BASE_PATH}`
+      : "";
+  const { messages, append, handleSubmit, input, handleInputChange, error, isLoading, setInput } = useChat({
+    api: `${basePath}/api/chat`,
+  });
 
   const isLoadingAssistantMessage = isLoading;
 
