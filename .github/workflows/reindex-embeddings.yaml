@@ -15,9 +15,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Yarn
-        run: npm install --global yarn
-
       - uses: actions/cache@v3
         id: yarn-cache
         with:
