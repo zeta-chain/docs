@@ -4,6 +4,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { CoreMessage, embed, streamText } from "ai";
 
+import { inputSchema } from "~/lib/ai.constants";
 import { supabaseClient } from "~/lib/supabase/client";
 
 const getPrompt = (
@@ -62,8 +63,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const { messages: _messages } = await req.json();
-    const messages = _messages as CoreMessage[];
+    const { messages } = inputSchema.parse(await req.json());
 
     const userPrompt = messages[messages.length - 1].content;
 
@@ -100,6 +100,6 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
 
-    return new Response("Internal Server Error", { status: 500 });
+    return new Response("Zeta AI had an error processing your request, please try asking again.", { status: 500 });
   }
 }

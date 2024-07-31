@@ -1,16 +1,19 @@
 import { Message } from "ai";
 import clsx from "clsx";
+import Link from "next/link";
 import React from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+
+import { basePath } from "~/lib/app.constants";
 
 import { MarkdownCodeBlock } from "./MarkdownCodeBlock";
 
 const remarkPlugins = [[remarkGfm, { singleTilde: false }]];
 const rehypePlugins = [rehypeRaw];
 
-export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ message }) => {
+export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ closeCmdk, message }) => {
   return (
     <Markdown
       remarkPlugins={remarkPlugins as any}
@@ -26,11 +29,19 @@ export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ message }) => 
             {children}
           </MarkdownCodeBlock>
         ),
-        a: ({ children, ...args }) => {
+        a: ({ children, ref, ...args }) => {
+          if (typeof args.href !== "string") return null;
+          const isAbsoluteHref = args.href?.startsWith("http");
+
           return (
-            <a {...args} className={clsx("text-green-300  hover:text-green-400", args.className)}>
+            <Link
+              {...args}
+              href={isAbsoluteHref ? args.href : `${basePath}${args.href}`}
+              onClick={closeCmdk}
+              className={clsx("text-green-300  hover:text-green-400", args.className)}
+            >
               {children}
-            </a>
+            </Link>
           );
         },
         // img: (props: any) => NextImageHandler(props),
@@ -86,5 +97,6 @@ export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ message }) => 
 };
 
 interface MarkdownMessageProps {
+  closeCmdk: () => void;
   message: Message;
 }

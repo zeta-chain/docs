@@ -1,10 +1,10 @@
 import React from "react";
 
-export const ZetaAiIcon: React.FC<ZetaAiIconProps> = ({ className }) => {
+export const ZetaAiIcon: React.FC<ZetaAiIconProps> = ({ className, width, height }) => {
   return (
     <svg
-      width="91"
-      height="24"
+      width={width || "91"}
+      height={height || "24"}
       viewBox="0 0 91 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -28,4 +28,6 @@ export const ZetaAiIcon: React.FC<ZetaAiIconProps> = ({ className }) => {
 
 interface ZetaAiIconProps {
   className?: string;
+  height?: string;
+  width?: string;
 }

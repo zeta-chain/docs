@@ -93,7 +93,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
           <GlobalStyles />
           <HeadProgressBar />
 
-          <Layout>
+          <Layout setIsCmdkOpen={setIsCmdkOpen}>
             <Cmdk isOpen={isCmdkOpen} setIsCmdkOpen={setIsCmdkOpen} />
             <Component {...pageProps} />
           </Layout>
