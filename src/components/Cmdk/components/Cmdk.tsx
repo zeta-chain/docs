@@ -26,29 +26,8 @@ const Container = styled(Paper)`
     font-size: 17px;
     padding: 8px 8px 16px 8px;
     outline: none;
-    color: var(--gray12);
-    border-bottom: 1px solid var(--gray6);
     margin-bottom: 16px;
     border-radius: 0;
-
-    &::placeholder {
-      color: var(--gray9);
-    }
-  }
-
-  [cmdk-zeta-badge] {
-    height: 20px;
-    background: var(--grayA3);
-    display: inline-flex;
-    align-items: center;
-    padding: 0 8px;
-    font-size: 12px;
-    color: var(--grayA11);
-    border-radius: 4px;
-    margin: 4px 0 4px 4px;
-    user-select: none;
-    text-transform: capitalize;
-    font-weight: 500;
   }
 
   [cmdk-item] {
@@ -189,7 +168,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
       classes={{
         root: "w-full",
         paper:
-          "border dark:border-[#353535] border-grey-400 w-full relative min-h-[500px] m-0 py-0 dark:bg-[#15191E] dark:text-white",
+          "border dark:border-[#353535] border-grey-400 w-full relative min-h-[500px] m-0 py-0 dark:bg-[#15191E] dark:text-white bg-white text-black",
       }}
       PaperComponent={Container}
     >
@@ -236,7 +215,7 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
                 </div>
                 <div className="flex items-center ml-3 rounded-full bg-surface-200 text-foreground-light border border-strong border-grey-600 pl-3 pr-3 py-1.5">
                   <ExperimentalIcon className="mr-2" />
-                  <Typography className="uppercase dark:text-grey-300">Experimental</Typography>
+                  <Typography className="uppercase dark:text-grey-300 text-black">Experimental</Typography>
                 </div>
               </CmdkBreadcrumb>
             </div>
@@ -250,7 +229,8 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
                 placeholder="Type a command or search..."
                 className={clsx(
                   "flex h-11 w-full rounded-md bg-transparent px-4 py-7 !text-sm outline-none !p-4",
-                  "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom dark:bg-[#0c0d10] bg-[#f3f3f3] !border-[#353535]"
+                  "text-foreground-light placeholder:text-border-stronger disabled:cursor-not-allowed disabled:opacity-50 !border-bottom dark:bg-[#0c0d10] bg-[#f3f3f3] !border-[#353535]",
+                  "text-grey-800 placeholder:text-grey-500 dark:placeholder:text-grey-400 dark:text-grey-200"
                 )}
               />
             </div>
