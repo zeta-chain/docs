@@ -1,7 +1,4 @@
-"use client";
-
 import styled from "@emotion/styled";
-import { Button } from "@mui/material";
 import clsx from "clsx";
 import { useTheme } from "next-themes";
 import { Children, memo, ReactNode, useState } from "react";
