@@ -3,10 +3,16 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": [
+        "./src/*"
+      ]
     },
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "strict": true,
     "skipLibCheck": true,
@@ -20,7 +26,12 @@
     "jsx": "preserve",
     "incremental": true,
     "useUnknownInCatchVariables": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -32,7 +43,12 @@
     "**/*.cjs",
     "**/*.mjs",
     "**/*.jsx",
-    "**/*.json"
+    "**/*.json",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next", ".yarn"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".yarn"
+  ]
 }
