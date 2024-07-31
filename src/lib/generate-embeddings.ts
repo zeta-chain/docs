@@ -9,17 +9,15 @@ import { readdir, readFile, stat } from "fs/promises";
 import GithubSlugger from "github-slugger";
 import { Content, Root } from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";
-import { mdxFromMarkdown, MdxjsEsm } from "mdast-util-mdx";
+import { MdxjsEsm } from "mdast-util-mdx";
 import { toMarkdown } from "mdast-util-to-markdown";
 import { toString } from "mdast-util-to-string";
-import { mdxjs } from "micromark-extension-mdxjs";
 import { OpenAI } from "openai";
 import path, { basename, dirname, join } from "path";
 import { u } from "unist-builder";
 import { filter } from "unist-util-filter";
 import yargs from "yargs";
 
-dotenv.config({ path: path.join(__dirname, "../../.vercel/.env.production.local") });
 dotenv.config({ path: path.join(__dirname, "../../.env.local") });
 
 const ignoredFiles = ["pages/404.mdx"];
