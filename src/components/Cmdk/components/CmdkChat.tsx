@@ -25,7 +25,7 @@ const AssistantMessage: React.FC<{ children: React.ReactNode; className?: string
   );
 };
 
-export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputValue }) => {
+export const CmdkChat: React.FC<CmdkChatProps> = ({ closeCmdk, initialValue, setCmdkInputValue }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const basePath =
     process.env.NEXT_PUBLIC_BASE_PATH && typeof window !== "undefined"
@@ -87,14 +87,14 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
                     className={clsx(index === messages.length - 1 && "mb-8")}
                     messageClasses={message.content.length < 90 ? "flex items-center" : undefined}
                   >
-                    <MarkdownMessage message={message} />
+                    <MarkdownMessage closeCmdk={closeCmdk} message={message} />
                   </AssistantMessage>
                 );
               default:
                 return (
                   <div key={index} className="px-4 [overflow-anchor:none] mb-[25px]">
                     <div className="flex gap-6 [overflow-anchor:none] mb-6">
-                      <MarkdownMessage message={message} />
+                      <MarkdownMessage closeCmdk={closeCmdk} message={message} />
                     </div>
                   </div>
                 );
@@ -183,6 +183,7 @@ export const CmdkChat: React.FC<CmdkChatProps> = ({ initialValue, setCmdkInputVa
 };
 
 interface CmdkChatProps {
+  closeCmdk: () => void;
   initialValue: string;
   setCmdkInputValue: React.Dispatch<React.SetStateAction<string>>;
 }

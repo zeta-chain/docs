@@ -250,7 +250,13 @@ export const Cmdk: React.FC<CmdkProps> = ({ isOpen, setIsCmdkOpen }) => {
                 setIsCmdkOpen={setIsCmdkOpen}
               />
             )}
-            {activePage === "chat" && <CmdkChat initialValue={inputValue} setCmdkInputValue={setInputValue} />}
+            {activePage === "chat" && (
+              <CmdkChat
+                closeCmdk={() => setIsCmdkOpen(false)}
+                initialValue={inputValue}
+                setCmdkInputValue={setInputValue}
+              />
+            )}
           </Command.List>
         </Command>
       </DialogContent>

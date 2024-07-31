@@ -1,3 +1,4 @@
+import { ListItem } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import clsx from "clsx";
@@ -5,6 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
+import { ZetaAiIcon } from "~/components/Cmdk/components/ZetaAiIcon";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { getRevealProps } from "~/lib/helpers/animations";
 
@@ -17,6 +19,7 @@ import { NavigationItem } from "./NavigationItem";
 
 type NavigationLayoutProps = PropsWithChildren<{
   isMainPage: boolean;
+  setIsCmdkOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }>;
 
 const mainLayoutAnimationVariants = {
@@ -43,7 +46,7 @@ const leftDrawerAnimationVariants = {
   },
 };
 
-export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
+export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children, setIsCmdkOpen }) => {
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
@@ -132,6 +135,16 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
 
             <div className="pb-6">
               <List className="w-full font-medium">
+                <ListItem className={clsx("px-5 sm:px-[30px] py-3 hover:!bg-[transparent] whitespace-nowrap")}>
+                  <button
+                    onClick={() => {
+                      setIsCmdkOpen(true);
+                      if (!upSm) setIsLeftDrawerOpen(false);
+                    }}
+                  >
+                    <ZetaAiIcon width={"60"} />
+                  </button>
+                </ListItem>
                 {navBottomItems.map((item) => (
                   <NavigationItem
                     key={item.label}
