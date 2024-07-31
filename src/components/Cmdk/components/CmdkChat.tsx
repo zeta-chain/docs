@@ -3,6 +3,8 @@ import clsx from "clsx";
 import { Command } from "cmdk";
 import React, { useEffect, useRef } from "react";
 
+import { basePath } from "~/lib/app.constants";
+
 import { cmdkChatQuestions } from "../cmdk.constants";
 import { ArrowUpIcon } from "./ArrowUpIcon";
 import { LoadingDots } from "./LoadingDots";
@@ -16,7 +18,7 @@ const AssistantMessage: React.FC<{ children: React.ReactNode; className?: string
   return (
     <div className={clsx("flex px-4 mb-4 overflow-hidden", className)}>
       <div className="min-w-[32px] mb-[1px] mt-[1px] mr-4 w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
-        <img src="/img/logos/zeta.svg" height="14" width="14" />
+        <img src={`${basePath}/img/logos/zeta.svg`} height="14" width="14" />
       </div>
       <div className={clsx("max-w-[95%]", messageClasses)}>{children}</div>
     </div>
