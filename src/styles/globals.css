@@ -16,6 +16,20 @@
   }
 }
 
+/* Override focus styles for all input elements */
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark mode specific overrides */
+:is(html[class~="dark"]) input:focus-visible, 
+:is(html[class~="dark"]) textarea:focus-visible, 
+:is(html[class~="dark"]) select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 :root {
   /**
     * Polyfill Nextra Shiki Theme Colors

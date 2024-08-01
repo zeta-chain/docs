@@ -18,5 +18,9 @@
   "addresses": {
     "title": "Account Addresses",
     "description": "Learn about types of account address, how to use and convert between them"
+  },
+  "throughput": {
+    "title": "Liquidity Throughput",
+    "description": "Liquidity caps on tokens and rate limiting"
   }
 }

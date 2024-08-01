@@ -38,25 +38,5 @@
     "title": "Single Input, Multiple Outputs",
     "readTime": "60 min",
     "description": "Learn how a single call to a universal app can create multiple outbound transactions"
-  },
-  "zeta": {
-    "title": "Connector: Send ZETA",
-    "readTime": "30 min",
-    "description": "Learn how to send ZETA tokens to and from a universal app using the Connector API"
-  },
-  "message": {
-    "title": "Connector: Messaging",
-    "readTime": "30 min",
-    "description": "Use the Connector API to send arbitrary messages to and from a universal app"
-  },
-  "erc20": {
-    "title": "Connector: ERC-20",
-    "readTime": "30 min",
-    "description": "Use the Connector API to send any ERC-20 token to and from a universal app"
-  },
-  "connector-nft": {
-    "title": "Connector: NFTs",
-    "readTime": "30 min",
-    "description": "Use the Connector API to send any NFTs to and from a universal app"
   }
 }
