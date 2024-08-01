@@ -54,7 +54,7 @@
     "lodash-es": "4.17.21",
     "mdast-util-from-markdown": "2.0.1",
     "micromark-extension-mdxjs": "3.0.0",
-    "next": "14.0.4",
+    "next": "14.2.5",
     "next-redux-wrapper": "8.1.0",
     "next-seo": "6.0.0",
     "next-sitemap": "^4.2.3",
