@@ -8,7 +8,8 @@ on:
       - "*"
 jobs:
   Deploy-Production:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Docs
     steps:
       - uses: actions/checkout@v3
       - name: Set up Node.js 20
