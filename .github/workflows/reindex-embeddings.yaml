@@ -4,7 +4,8 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   push:
-    branches: [main]
+    tags:
+      - "*"
 jobs:
   reindex-embeddings:
     runs-on: ubuntu-latest

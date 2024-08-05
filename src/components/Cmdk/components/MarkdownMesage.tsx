@@ -31,12 +31,11 @@ export const MarkdownMessage: React.FC<MarkdownMessageProps> = ({ closeCmdk, mes
         ),
         a: ({ children, ref, ...args }) => {
           if (typeof args.href !== "string") return null;
-          const isAbsoluteHref = args.href?.startsWith("http");
 
           return (
             <Link
               {...args}
-              href={isAbsoluteHref ? args.href : `${basePath}${args.href}`}
+              href={args.href}
               onClick={closeCmdk}
               className={clsx("text-green-300  hover:text-green-400", args.className)}
             >
