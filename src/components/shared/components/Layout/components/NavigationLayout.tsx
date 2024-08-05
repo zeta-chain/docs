@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 
-import { ZetaAiIcon } from "~/components/Cmdk/components/ZetaAiIcon";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { getRevealProps } from "~/lib/helpers/animations";
 
@@ -135,16 +134,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
 
             <div className="pb-6">
               <List className="w-full font-medium">
-                <ListItem className={clsx("px-5 sm:px-[30px] py-3 hover:!bg-[transparent] whitespace-nowrap")}>
-                  <button
-                    onClick={() => {
-                      setIsCmdkOpen(true);
-                      if (!upSm) setIsLeftDrawerOpen(false);
-                    }}
-                  >
-                    <ZetaAiIcon width={"60"} />
-                  </button>
-                </ListItem>
                 {navBottomItems.map((item) => (
                   <NavigationItem
                     key={item.label}
@@ -179,9 +168,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         })}
       >
         <Header
+          setIsCmdkOpen={setIsCmdkOpen}
           isLeftDrawerOpen={isLeftDrawerOpen}
           toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)}
           setIsLeftDrawerOpen={setIsLeftDrawerOpen}
+          upSm={upSm}
         />
 
         <motion.div
