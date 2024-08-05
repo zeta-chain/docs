@@ -13,7 +13,7 @@
   },
   "pool": {
     "title": "Pool ZETA",
-    "description": "Explore ZetaChain liquidity pools."
+    "description": "Add tokens to liquidity pools on ZetaChain, earn fees, view pool details, and manage your positions."
   },
   "stake": {
     "title": "Delegate/Stake ZETA",
