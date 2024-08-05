@@ -2,10 +2,11 @@ import { Toolbar } from "@mui/material";
 import clsx from "clsx";
 import Link from "next/link";
 
+import { ZetaAiIcon } from "~/components/Cmdk/components/ZetaAiIcon";
+
 import { ClientOnlyPortal } from "../../ClientOnlyPortal";
 import { IconSearch, IconZetaDocsLogo } from "../../Icons";
 import { MobileMenuButton } from "./MobileMenuButton";
-import { ZetaAiIcon } from "~/components/Cmdk/components/ZetaAiIcon";
 
 export const Header: React.FC<{
   className?: string;
