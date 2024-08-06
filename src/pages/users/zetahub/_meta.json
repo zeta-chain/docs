@@ -21,11 +21,11 @@
   },
   "enroll-zeta-xp": {
     "title": "Enroll in Zeta XP",
-    "description": "Who to participate in the Zeta XP program. ZetaHub’s way to track your activity on the app."
+    "description": "Enroll in the XP program to earn experience points by engaging with the ZetaChain ecosystem, level up through various tiers, and unlock rewards and perks for consistent participation."
   },
   "earn-zeta-xp": {
     "title": "Earn Zeta XP",
-    "description": "Who to earn XP in the Zeta XP program. ZetaHub’s way to track your activity on the app."
+    "description": "Participate in activities to earn XP, including staking, trading, and engaging with apps across DeFi, Gaming, Social, NFTs, and more."
   },
   "send": {
     "title": "Send Assets",
