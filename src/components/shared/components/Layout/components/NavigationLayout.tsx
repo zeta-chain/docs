@@ -1,3 +1,4 @@
+import { ListItem } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import clsx from "clsx";
@@ -17,6 +18,7 @@ import { NavigationItem } from "./NavigationItem";
 
 type NavigationLayoutProps = PropsWithChildren<{
   isMainPage: boolean;
+  setIsCmdkOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }>;
 
 const mainLayoutAnimationVariants = {
@@ -43,7 +45,7 @@ const leftDrawerAnimationVariants = {
   },
 };
 
-export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
+export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children, setIsCmdkOpen }) => {
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
@@ -166,9 +168,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         })}
       >
         <Header
+          setIsCmdkOpen={setIsCmdkOpen}
           isLeftDrawerOpen={isLeftDrawerOpen}
           toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)}
           setIsLeftDrawerOpen={setIsLeftDrawerOpen}
+          upSm={upSm}
         />
 
         <motion.div

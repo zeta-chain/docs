@@ -3,6 +3,7 @@ title: Syncing a Node
 ---
 
 import { Alert } from "~/components/shared";
+import { NodeSnapshots } from "~/components/Docs";
 
 <Alert variant="note">
   This guide assumes you've completed the [Setting Up Your Node](/nodes/start-here/setup) step.
@@ -10,25 +11,26 @@ import { Alert } from "~/components/shared";
 
 # Option 1: Snapshot method
 
-Syncing with a snapshot downloads the data directory from an existing node.
+Downloads the data directory backed up from an existing node.
 
-Choose the network and the snapshot type, fetch the URL and follow instructions
-returned in response.
+Choose the network and snapshot type, download the snapshot and extract the snapshot
+inside `~/.zetacored` directory.
 
-| Network | Type             | URL                                                                     |
-| ------- | ---------------- | ----------------------------------------------------------------------- |
-| Mainnet | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=mainnet         |
-| Mainnet | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=mainnet |
-| Testnet | Snapshot         | https://snapshots.zetachain.com/latest-snapshot?network=athens3         |
-| Testnet | Archive Snapshot | https://snapshots.zetachain.com/latest-archive-snapshot?network=athens3 |
+<NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
 
-Untar the file inside `~/.zetacored` and start the node.
+<Alert variant="warning">
+  Note: Our nodes database backend is `pebbledb`. Ensure that your node is configured to
+  use the same backend to utilize our snapshots.
+</Alert>
 
 #### Alternative snapshots
 
+Mainnet:
 - https://polkachu.com/tendermint_snapshots/zetachain
 - https://app.nodejumper.io/zetachain/sync
 - https://itrocket.net/services/mainnet/zetachain/#snap
+Testnet:
+- https://app.nodejumper.io/zetachain-testnet/sync
 - https://itrocket.net/services/testnet/zetachain/#snap
 
 # Option 2: KYVE's KSYNC method
@@ -73,7 +75,7 @@ https://github.com/BlockPILabs/cosmos-db.
 ### Sync the Node
 
 ```
-ksync state-sync --binary="/path/to/zetacored" --chain-id=kaon-1 --snapshot-pool-id=11
+ksync state-sync --binary="/path/to/zetacored" --chain-id=zetachain_7000-1 --snapshot-pool-id=11
 ```
 
 # Checking Node Health
