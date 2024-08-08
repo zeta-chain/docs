@@ -2,5 +2,9 @@
   "intro": {
     "title": "Universal App Basics",
     "description": "What is a universal app and what makes it different"
+  },
+  "interact": {
+    "title": "Interacting with Universal Apps",
+    "description": "Making calls to and from universal apps"
   }
 }

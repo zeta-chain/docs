@@ -1,0 +1,156 @@
+## Depositing Tokens and Calling a Universal App
+
+To call a universal app from a connected chain you interact with the **Gateway
+contract**. Each connected chain (that has smart contract support) has a Gateway
+contract, which acts as a single point of entry for all universal apps. The
+Gateway contract has `deposit` and `depositAndCall` function that make it easy
+to send tokens to and call universal apps. After a Gateway function is called, a
+network of ZetaChain validators will process a cross-chain transaction from a
+Gateway on a connected chain to a universal app on ZetaChain.
+
+### Depositing Tokens
+
+```solidity
+deposit(address receiver) external payable
+```
+
+To deposit tokens to an EOA or a universal contract call the `deposit` function
+of the Gateway contract. The `deposit` function is payable, which means it
+accepts native gas tokens (for example, ETH on Ethereum), which will then be
+sent to a `receiver` on ZetaChain.
+
+The `receiver` is either an externally-owned account (EOA) or a universal app
+address on ZetaChain. Even if the receiver is a universal app contract with the
+standard `receive` function, the `deposit` function will not trigger a contract
+call. If you want to deposit and call a universal app, please, use the
+`depositAndCall` function, instead.
+
+After the deposit is processed, the receiver gets [ZRC-20
+version](/developers/tokens/zrc20) of the deposited token, for example (ZRC-20
+ETH).
+
+```solidity
+deposit(address receiver, uint256 amount, address asset) external
+```
+
+The `deposit` function can also be used to send supported ERC-20 tokens to EOAs
+and universal apps on ZetaChain. Only [supported ERC-20
+assets](/developers/tokens/zrc20) can be deposited. The receiver gets ZRC-20
+version of the deposited token (for example, ZRC-20 USDC.ETH).
+
+The `amount` is the amount and `asset` is the token address of the ERC-20 that
+is being deposited.
+
+### Calling a Universal App
+
+```solidity
+depositAndCall(address receiver, bytes calldata payload) external payable
+```
+
+To call a universal app contract use the `depositAndCall` function. After the
+cross-chain transaction is processed, the `onCrossChainCall` function of a
+universal app contract is executed.
+
+The `receiver` must be a universal app contract address.
+
+`depositAndCall` can also be used when you want to call a universal app contract
+without depositing tokens. In this case just supply 0 gas tokens.
+
+```solidity
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+
+contract UniversalApp is UniversalContract {
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // ...
+    }
+}
+```
+
+`onCrossChainCall` receives:
+
+- `message`: value of the `payload`
+- `amount`: amount of deposited tokens
+- `zrc20`: ZRC-20 address of a the deposited tokens (for example, contract
+  address of ZRC-20 ETH)
+- `context`:
+  - `context.origin`: the original sender address on a connected chain (the EOA
+    or contract that called the Gateway)
+  - `context.chainID`: chain ID of the connected chain from which the call was
+    made
+
+```solidity
+depositAndCall(address receiver, uint256 amount, address asset, bytes calldata payload) external
+```
+
+`depositAndCall` can also be used to call a universal app contract and send
+ERC-20 tokens.
+
+The `amount` is the amount and `asset` is the token address of the ERC-20 that
+is being deposited.
+
+In the current version of the protocol only one ERC-20 asset can be deposited at
+a time.
+
+## Withdrawing Tokens and Calling from a Universal App
+
+Universal apps can withdraw ZRC-20 tokens and call contracts on connected chains
+using the Gateway contract.
+
+## Withdrawing Tokens
+
+```solidity
+withdraw(bytes memory receiver, uint256 amount, address zrc20) external
+```
+
+To withdraw a ZRC-20 token to an EOA or a contract on a connected chain call the
+`withdraw` function of the Gateway contract.
+
+The `receiver` is either an externally-owned account (EOA) or a contract on a
+connected chain. Even if the receiver is a smart contract with the standard
+`receive` function, the `withdraw` function will not trigger a contract call. If
+you want to withdraw and call a contract on a connected chain, please, use the
+`withdrawAndCall` function, instead.
+
+The `receiver` is of type `bytes`, because the receiver may be on a chain that
+uses a different address type, for example, bech32 on Bitcoin. `bytes` allow the
+receiver address to be chain agnostic. When withdrawing to a receiver on an EVM
+chain make sure that you convert `address` to `bytes`.
+
+The `amount` is the amount and `zrc20` is the ZRC-20 address of the token that
+is being withdrawn.
+
+You don't to specify which chain to withdraw to, because each ZRC-20 has an
+associated chain from which it was deposited. A ZRC-20 token can be withdrawn
+only to the chain from which it was originally deposited. This means that if you
+want to withdraw ZRC-20 USDC.ETH to the BNB chain, you first have to swap it to
+ZRC-20 USDC.BNB.
+
+```solidity
+withdraw(uint256 amount, uint256 chainId) external
+```
+
+If the receiver address matches the sender address (when you are withdrawing
+tokens to your own account on a connected chain), you can use the `withdraw`
+function without specifying the `receiver`. This will only work when the
+`receiver` address on the connected chain is an EVM hex address (as ZetaChain is
+also EVM).
+
+## Calling from a Universal App
+
+```solidity
+withdrawAndCall(uint256 amount, uint256 chainId, bytes calldata message) external
+```
+
+To make a call from a universal app to a contract on a connected chain use the
+`withdrawAndCall` function of the Gateway contract.
+
+```solidity
+withdrawAndCall(bytes memory receiver, uint256 amount, address zrc20, bytes calldata message) external
+```

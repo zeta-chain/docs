@@ -31,7 +31,7 @@ pragma solidity 0.8.7;
 
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
-contract UniversalApp is zContract {
+contract UniversalApp is UniversalContract {
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
@@ -146,8 +146,8 @@ choosing), the gas fees will be covered.
     chains
   - can trigger contract calls and token transfers to connected chains
   - can automatically handle gas for cross-chain transactions
-  - are fully compatible with EVM chains (like Ethereum and BNB), Bitcoin.
-    Support for Polygon, Solana, Cosmos (through IBC) and other chains is coming
-    soon.
+  - are fully compatible with EVM chains (like Ethereum, BNB, and Polygon),
+    Bitcoin. Support for Solana, TON and Cosmos (through IBC) and other chains
+    is coming soon.
 - Native gas and supported ERC-20 tokens are represented as ZRC-20 tokens. A
   ZRC-20 token can be permissionlessly withdrawn back to its original chain.
