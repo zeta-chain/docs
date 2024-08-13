@@ -108,8 +108,8 @@ function increaseLiquidity(IncreaseLiquidityParams calldata params)
 |Name|Type|Description|
 |----|----|-----------|
 |`liquidity`|`uint128`|The new liquidity amount as a result of the increase|
-|`amount0`|`uint256`|The amount of token0 to acheive resulting liquidity|
-|`amount1`|`uint256`|The amount of token1 to acheive resulting liquidity|
+|`amount0`|`uint256`|The amount of token0 to achieve resulting liquidity|
+|`amount1`|`uint256`|The amount of token1 to achieve resulting liquidity|
 
 
 ### decreaseLiquidity
