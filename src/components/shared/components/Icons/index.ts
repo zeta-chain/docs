@@ -32,3 +32,4 @@ export * from "./components/IconTools";
 export * from "./components/IconTwitter";
 export * from "./components/IconYouTube";
 export * from "./components/IconZetaDocsLogo";
+export * from "./components/IconSpeechBubble";
