@@ -8,9 +8,9 @@ import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directori
 import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
 
 import { IconArrowNarrowRight } from "../../Icons";
+import { IconSpeechBubble } from "../../Icons";
 import { NavigationSection } from "../../NavigationSection";
 import { mainNavRoutes } from "../Layout.constants";
-import { IconSpeechBubble } from "../../Icons";
 
 type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
 
