@@ -68,7 +68,7 @@ specify the fields your're interested in.
 The function to fetch NFT makes a GraphQL request to the subgraph to fetch the
 `transfer` events. The function then filters the events to find the NFTs that
 are currently owned by the address by checking which NFTs were sent to the
-addres and which NFTs were sent from the address.
+address and which NFTs were sent from the address.
 
 Since you're using the default ERC-721 Transfer event, you only have the
 `tokenId` field that contains the ID of the NFT. You will need to query the
@@ -132,7 +132,7 @@ user is no longer the owner of the NFT, update the frontend dApp state.
 
 ## Transferring NFTs
 
-Transferring NFTS happens on ZetaChain and does not invlove any cross-chain
+Transferring NFTS happens on ZetaChain and does not involve any cross-chain
 interactions. Simple call the contract's transfer method and pass the recipient,
 the sender and the ID of the NFT.
 
