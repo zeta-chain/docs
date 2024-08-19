@@ -8,6 +8,7 @@ import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directori
 import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
 
 import { IconArrowNarrowRight } from "../../Icons";
+import { IconSpeechBubble } from "../../Icons";
 import { NavigationSection } from "../../NavigationSection";
 import { mainNavRoutes } from "../Layout.constants";
 
@@ -128,13 +129,32 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
       {children}
 
       {shouldRenderNextSection && (
-        <div className="mb-16 mt-20 sm:mt-[120px]">
-          <NavigationSection
-            title="Continue Learning"
-            description="Continue with the next part or try a related tutorial"
-            navItems={continueLearningNavItems}
-          />
-        </div>
+        <>
+          <div className="mb-16 mt-20 sm:mt-[120px]">
+            <NavigationSection
+              title="Continue Learning"
+              description="Continue with the next part or try a related tutorial"
+              navItems={continueLearningNavItems}
+            />
+          </div>
+          <div className="grid sm:grid-cols-1 lg:grid-cols-10 py-16">
+            <div className="col-span-6 flex justify-center relative">
+              <hr className="bg-grey-100 dark:bg-grey-700 z-0 h-px border-none absolute top-1/2 -translate-y-1/2 w-full" />
+              <div className="flex flex-col gap-4 bg-white px-4 dark:bg-grey-800 z-10 relative items-center justify-center">
+                <div className="text-grey-400 dark:text-grey-300">How's your journey with ZetaChain?</div>
+                <Link
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  href="https://zetachain.deform.cc/DevXfeedback"
+                  className="flex gap-1"
+                >
+                  <IconSpeechBubble className="dark:text-grey-300 text-grey-400" />
+                  <div className="text-[#00A5C6]">Let us know</div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

@@ -24,6 +24,7 @@ export * from "./components/IconReddit";
 export * from "./components/IconSearch";
 export * from "./components/IconServer";
 export * from "./components/IconSparkle";
+export * from "./components/IconSpeechBubble";
 export * from "./components/IconStaking";
 export * from "./components/IconSupport";
 export * from "./components/IconTelegram";
