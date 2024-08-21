@@ -90,6 +90,11 @@ contract UniversalApp is UniversalContract {
   - `context.chainID`: chain ID of the connected chain from which the call was
     made
 
+When calling a universal app, the payload contains bytes passed to
+`onCrossChainCall` as `message`. You don't need to pass a function selector in
+the payload as the only function that can be called from a connected chain is
+`onCrossChainCall`.
+
 ## Deposit ERC-20 Tokens and Call a Universal App
 
 `depositAndCall` can also be used to call a universal app contract and send

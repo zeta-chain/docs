@@ -1,7 +1,7 @@
 {
   "zetachain": {
     "title": "ZetaChain",
-    "description": "Make calls from universal apps and withdraw tokens"
+    "description": "Make calls from universal apps and withdraw tokens to connected chains"
   },
   "evm": {
     "title": "EVM Blockchains",

@@ -10,12 +10,12 @@ ZetaChain gateway supports:
 
 ## Withdraw ZRC-20 Tokens
 
+To withdraw a ZRC-20 tokens to an EOA or a contract on a connected chain call
+the `withdraw` function of the gateway contract.
+
 ```solidity
 withdraw(bytes memory receiver, uint256 amount, address zrc20, RevertOptions calldata revertOptions) external;
 ```
-
-To withdraw a ZRC-20 token to an EOA or a contract on a connected chain call the
-`withdraw` function of the Gateway contract.
 
 The `receiver` is either an externally-owned account (EOA) or a contract on a
 connected chain. Even if the receiver is a smart contract with the standard
@@ -39,15 +39,8 @@ ZRC-20 USDC.BNB.
 
 ## Withdraw ZETA Tokens
 
-```solidity
-withdraw(bytes memory receiver, uint256 amount, address zrc20, RevertOptions calldata revertOptions) external;
-```
-
-If the receiver address matches the sender address (when you are withdrawing
-tokens to your own account on a connected chain), you can use the `withdraw`
-function without specifying the `receiver`. This will only work when the
-`receiver` address on the connected chain is an EVM hex address (as ZetaChain is
-also EVM).
+The `withdraw` function can also be used to withdraw ZETA tokens to a connected
+chain.
 
 ```
 withdraw(bytes memory receiver, uint256 amount, uint256 chainId, RevertOptions calldata revertOptions) external;
@@ -62,10 +55,14 @@ a connected chain use the `withdrawAndCall` function of the gateway contract.
 function withdrawAndCall(bytes memory receiver, uint256 amount, address zrc20, bytes calldata message, uint256 gasLimit, RevertOptions calldata revertOptions) external;
 ```
 
+The tokens are withdrawn and a call is made to a contract on the connected chain
+identified by the `zrc20` address. For example, if ZRC-20 ETH is being
+withdrawn, then the call is made to a contract on Ethereum.
+
 ## Withdraw ZETA Tokens and Call a Contract on Connected Chain
 
-To withdraw ZETA tokens and make a call from a universal app to a contract on a
-connected chain use the `withdrawAndCall` function of the gateway contract.
+The `withdrawAndCall` function cal also be used to withdraw ZETA tokens and make
+a call from a universal app to a contract on a connected chain.
 
 ```solidity
 withdrawAndCall(bytes memory receiver, uint256 amount, uint256 chainId, bytes calldata message, RevertOptions calldata revertOptions) external;
@@ -73,9 +70,41 @@ withdrawAndCall(bytes memory receiver, uint256 amount, uint256 chainId, bytes ca
 
 ## Call a Contract on a Connected Chain
 
+To call a contract on a connected chain (without withdrawing tokens), use the
+`call` function.
+
 ```solidity
 function call(bytes memory receiver, address zrc20, bytes calldata message, uint256 gasLimit, RevertOptions calldata revertOptions) external;
 ```
 
 `zrc20` represents the ZRC-20 token address of the gas token of the destination
-chain.
+chain. In the context of this function `zrc20` address acts as an identifier for
+the chain to which the call is made. For example, to make a call to Ethereum,
+use ZRC-20 ETH token address.
+
+## Format of the `message` when Calling Contracts
+
+The `withdrawAndCall` and `call` functions have a `bytes calldata message`
+parameter. This parameter contains the function selector and the encoded
+arguments necessary to call a specific function in the target contract.
+
+The message parameter should contain:
+
+- Function selector: the first 8 bytes represent the function selector, which is
+  the first 4 bytes of the Keccak-256 hash of the function signature.
+- Arguments: the remaining bytes in the message correspond to the arguments
+  passed to the function, encoded according to Ethereum's ABI encoding rules.
+  These arguments can vary in length depending on the data types.
+
+For example, consider the following message:
+
+```
+0xa777d0dc00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000005616c696365000000000000000000000000000000000000000000000000000000
+```
+
+- Function Selector: `0xa777d0dc`. This corresponds to the function
+  `hello(string)`.
+- Arguments: The remaining data
+  (`0000000000000000000000000000000000000000000000000000000000000020...`) is the
+  ABI-encoded argument passed to the `hello(string)` function. Specifically:
+  `616c696365` represents the string `alice` in hexadecimal.
