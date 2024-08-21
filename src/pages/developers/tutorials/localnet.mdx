@@ -10,3 +10,65 @@ Localnet:
   and running on the same local blockchain
 - Simulates the real-world testnet environment of ZetaChain by observing events
   and and relaying the contract calls between EVM gateway and ZetaChain gateway
+
+Clone the example contracts repo and install dependencies:
+
+```
+git clone https://github.com/zeta-chain/example-contracts
+cd universal/hello
+yarn
+```
+
+Start the localnet:
+
+```
+yarn hardhat localnet
+```
+
+Once the localnet is started you will see the standard Anvil output with a list
+of accounts, private keys as well as the output from protocol contracts being
+deployed. After the localnet is set up you will see a list of protocol contract
+addresses:
+
+```
+EVM Contract Addresses
+======================
+
+Gateway EVM: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+ZETA:        0x5FbDB2315678afecb367f032d93F642f64180aa3
+
+ZetaChain Contract Addresses
+============================
+
+Gateway ZetaChain: 0x610178dA211FEF7D417bC0e6FeD39F05609AD788
+ZETA:              0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
+ZRC-20 ETH:        0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c
+```
+
+Keep the terminal window with localnet running open and open a new terminal.
+
+Compile the contracts and deploy both a Hello universal app contract and a
+Receiver contract.
+
+```
+yarn deploy
+```
+
+Universal app contract address:
+
+```
+🚀 Successfully deployed contract on localhost.
+📜 Contract address: 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82
+```
+
+Receiver contract:
+
+```
+🚀 Successfully deployed contract on localhost.
+📜 Contract address: 0x9A676e781A523b5d0C0e43731313A708CB607508
+```
+
+Even though both contracts are deployed on the same local testnet we will think
+of Hello as running on ZetaChain and Receiver as running on a generic EVM chain.
+These two contracts are connected with each other through the
+[gateway](/developers/evm/gateway).
