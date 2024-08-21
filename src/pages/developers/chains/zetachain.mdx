@@ -108,3 +108,56 @@ For example, consider the following message:
   (`0000000000000000000000000000000000000000000000000000000000000020...`) is the
   ABI-encoded argument passed to the `hello(string)` function. Specifically:
   `616c696365` represents the string `alice` in hexadecimal.
+
+## Revert Transactions
+
+The `RevertOptions` struct defines how assets should be handled in the event of
+a cross-chain transaction (CCTX) reverting:
+
+```solidity
+struct RevertOptions {
+    address revertAddress;
+    bool callOnRevert;
+    address abortAddress;
+    bytes revertMessage;
+    uint256 onRevertGasLimit;
+}
+```
+
+`revertAddress`: the address that should get assets back if the CCTX reverts.
+For example, if a smart contract using ZetaChain wants to send assets back to
+the sender upon a revert, `revertAddress` should be set to `msg.sender`.
+
+`callOnRevert`: a boolean flag indicating whether the `onRevert` function should
+be called on the `revertAddress`. For example, a smart contract may want to
+execute custom logic when a revert occurs, such as unlocking tokens. In this
+case, the contract would set `callOnRevert` to true and assign `revertAddress`
+to `address(this)`.
+
+`abortAddress`: the address that will receive the funds on ZetaChain if the CCTX
+aborts. This feature is not currently used.
+
+`revertMessage`: message sent back to the `onRevert` function. This allows
+additional context to be provided for handling the revert.
+
+`onRevertGasLimit`: the gas limit to be used when executing the `onRevert`
+function.
+
+Contracts that implement the `onRevert` functionality are referred to as
+`Revertable` contracts. These contracts should conform to the following
+interface:
+
+```solidity
+struct RevertContext {
+    address asset;
+    uint64 amount;
+    bytes revertMessage;
+}
+
+interface Revertable {
+    function onRevert(RevertContext calldata revertContext) external;
+}
+```
+
+This interface allows the contract to handle reverts in a customized way, based
+on the context provided through the `RevertContext` struct.
