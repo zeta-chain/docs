@@ -19,6 +19,10 @@ cd universal/hello
 yarn
 ```
 
+Localnet is installed from the `@zetachain/localnet` package. If you need to
+update localnet just run `yarn add --dev @zetachain/localnet`. The template
+ships with the latest version of localnet.
+
 Start the localnet:
 
 ```
@@ -72,3 +76,98 @@ Even though both contracts are deployed on the same local testnet we will think
 of Hello as running on ZetaChain and Receiver as running on a generic EVM chain.
 These two contracts are connected with each other through the
 [gateway](/developers/evm/gateway).
+
+## Call a Universal App from EVM
+
+Call the `depositAndCall` function on the EVM gateway to call a universal app
+contract:
+
+```
+yarn hardhat deposit-and-call --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --amount 2 --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message 0x --call-on-revert
+```
+
+The command calls the `depositAndCall` function on the EVM gateway.
+
+The EVM gateway emits a "Deposited" event acknowledging that the function call
+has been successful:
+
+```
+[EVM]: Gateway: 'Deposited' event emitted
+```
+
+Localnet picks up the the "Deposited" event and calls the ZetaChain's gateway
+`execute` function, which calls the universal app:
+
+```
+[ZetaChain]: Universal contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 executing onCrossChainCall (context: {"origin":"0x610178dA211FEF7D417bC0e6FeD39F05609AD788","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c, amount: 2000000000000000000, message: 0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000)
+```
+
+The `onCrossChainCall` is executed and emits an event:
+
+```
+[ZetaChain]: Event from onCrossChainCall: {"_type":"log","address":"0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82","blockHash":"0xc8a8ebc484c5330f118a9e838587b918657ca2b347b7b76846236c00e44006bd","blockNumber":23,"data":"0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001a48656c6c6f2066726f6d206120756e6976657273616c206170700000000000000000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000","index":2,"removed":false,"topics":["0x39f8c79736fed93bca390bb3d6ff7da07482edb61cd7dafcfba496821d6ab7a3"],"transactionHash":"0x3a6612c174d980a13e3ee6b17a21c4708f0f31b823c1fba1037fc6c4124a7b68","transactionIndex":0}
+```
+
+## Call a Universal App from EVM and Revert
+
+Introduce a `revert();` statement anywhere inside the `onCrossChainCall`
+function to force the contract to revert.
+
+Make the same call to the EVM gateway contract:
+
+```
+yarn hardhat deposit-and-call --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message 0x --call-on-revert --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --amount 2
+```
+
+The EVM gateway emits the "Deposited" event:
+
+```
+[EVM]: Gateway: 'Deposited' event emitted
+```
+
+A universal app gets called:
+
+```
+[ZetaChain]: Universal contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 executing onCrossChainCall (context: {"origin":"0x610178dA211FEF7D417bC0e6FeD39F05609AD788","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c, amount: 2000000000000000000, message: 0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000)
+```
+
+Now instead of emitting an event from a universal app we see an error caused by
+the `revert();` statement we introduced earlier:
+
+```
+[ZetaChain]: Error executing onCrossChainCall: Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x735b14BB79463307AAcBED86DAf3322B1e6226aB", "to": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": "1", "blobGasUsed": null, "blockHash": "0x7f313eb2281d3ce784b4470c310b24b5a284cffcde76bd9b60a21b0626067bea", "blockNumber": 27, "contractAddress": null, "cumulativeGasUsed": "77284", "from": "0x735b14BB79463307AAcBED86DAf3322B1e6226aB", "gasPrice": "10000000000", "gasUsed": "77284", "hash": "0xec360d8c235799450d2e5a3ea3386deee9bb0653f26619034601d0bbeaa2095c", "index": 0, "logs": [  ], "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "root": "0xceb5ff1771bf62103eb1b419ad6922afdac15c99dc20326ace7e37434badcd9c", "status": 0, "to": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788" }, code=CALL_EXCEPTION, version=6.13.2)
+```
+
+The EVM gateway executes `onRevert` function of the Receiver contract:
+
+```
+[EVM]: Contract 0x9A676e781A523b5d0C0e43731313A708CB607508 executing onRevert (context: {"asset":"0x0000000000000000000000000000000000000000","amount":0,"revertMessage":"0x3078"})
+```
+
+## Call a Receiver Contract from a Universal App
+
+Execute the `callFromZetaChain` function of the universal app:
+
+```
+hardhat call-from-zetachain --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message "my revert message" --call-on-revert --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --receiver 0x9A676e781A523b5d0C0e43731313A708CB607508
+```
+
+The function calls the ZetaChain gateway contract. The ZetaChain gateway emits a
+"Called" event acknowledging that the call has been successful.
+
+```
+[ZetaChain]: Gateway: 'Called' event emitted
+```
+
+Localnet picks up the the "Called" event and calls the EVM gateway `execute`
+function, which calls the Receiver contract:
+
+```
+[EVM]: Calling 0x9a676e781a523b5d0c0e43731313a708cb607508 with message 0xa777d0dc00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000
+```
+
+The Receiver contract then emits an event:
+
+```
+[EVM]: Event from contract: {"_type":"log","address":"0x9A676e781A523b5d0C0e43731313A708CB607508","blockHash":"0x0deb4a3e22b73320ffad3d916c5e2b2db450dddc162feaafa84546612cebd238","blockNumber":22,"data":"0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000","index":0,"removed":false,"topics":["0xfa051318aca3e493e16e6cf4bccc017c7e061924a42ef27b3bb373c4707b636a"],"transactionHash":"0x94c4d53aed68c97f18e467207ff6cdc1e855c65bcddab399f100fe2786ee33a8","transactionIndex":0}
+```
