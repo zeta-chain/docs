@@ -11,6 +11,10 @@
     "title": "Universal EVM",
     "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
   },
+  "chains": {
+    "title": "Connected Blockchains",
+    "description": "Use Gateway to make calls to and from universal apps, deposit and withdraw tokens."
+  },
   "tutorials": {
     "title": "Tutorials",
     "description": "Step-by-step guides to help you master building on ZetaChain."

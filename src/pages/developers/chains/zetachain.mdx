@@ -1,0 +1,81 @@
+To make a call from a universal app to a contract on a connected chains or to
+withdraw tokens, use the ZetaChain gateway.
+
+ZetaChain gateway supports:
+
+- withdrawing ZRC-20 tokens as native gas or ERC-20 tokens to connected chains
+- withdrawing ZETA tokens to connected chains
+- withdrawing tokens to and making a contract call on a connected chains
+- calling contracts on connected chains
+
+## Withdraw ZRC-20 Tokens
+
+```solidity
+withdraw(bytes memory receiver, uint256 amount, address zrc20, RevertOptions calldata revertOptions) external;
+```
+
+To withdraw a ZRC-20 token to an EOA or a contract on a connected chain call the
+`withdraw` function of the Gateway contract.
+
+The `receiver` is either an externally-owned account (EOA) or a contract on a
+connected chain. Even if the receiver is a smart contract with the standard
+`receive` function, the `withdraw` function will not trigger a contract call. If
+you want to withdraw and call a contract on a connected chain, please, use the
+`withdrawAndCall` function, instead.
+
+The `receiver` is of type `bytes`, because the receiver may be on a chain that
+uses a different address type, for example, bech32 on Bitcoin. `bytes` allow the
+receiver address to be chain agnostic. When withdrawing to a receiver on an EVM
+chain make sure that you convert `address` to `bytes`.
+
+The `amount` is the amount and `zrc20` is the ZRC-20 address of the token that
+is being withdrawn.
+
+You don't need to specify which chain to withdraw to, because each ZRC-20 has an
+associated chain from which it was deposited. A ZRC-20 token can be withdrawn
+only to the chain from which it was originally deposited. This means that if you
+want to withdraw ZRC-20 USDC.ETH to the BNB chain, you first have to swap it to
+ZRC-20 USDC.BNB.
+
+## Withdraw ZETA Tokens
+
+```solidity
+withdraw(bytes memory receiver, uint256 amount, address zrc20, RevertOptions calldata revertOptions) external;
+```
+
+If the receiver address matches the sender address (when you are withdrawing
+tokens to your own account on a connected chain), you can use the `withdraw`
+function without specifying the `receiver`. This will only work when the
+`receiver` address on the connected chain is an EVM hex address (as ZetaChain is
+also EVM).
+
+```
+withdraw(bytes memory receiver, uint256 amount, uint256 chainId, RevertOptions calldata revertOptions) external;
+```
+
+## Withdraw ZRC-20 Tokens and Call a Contract on Connected Chain
+
+To withdraw ZRC-20 tokens and make a call from a universal app to a contract on
+a connected chain use the `withdrawAndCall` function of the gateway contract.
+
+```solidity
+function withdrawAndCall(bytes memory receiver, uint256 amount, address zrc20, bytes calldata message, uint256 gasLimit, RevertOptions calldata revertOptions) external;
+```
+
+## Withdraw ZETA Tokens and Call a Contract on Connected Chain
+
+To withdraw ZETA tokens and make a call from a universal app to a contract on a
+connected chain use the `withdrawAndCall` function of the gateway contract.
+
+```solidity
+withdrawAndCall(bytes memory receiver, uint256 amount, uint256 chainId, bytes calldata message, RevertOptions calldata revertOptions) external;
+```
+
+## Call a Contract on a Connected Chain
+
+```solidity
+function call(bytes memory receiver, address zrc20, bytes calldata message, uint256 gasLimit, RevertOptions calldata revertOptions) external;
+```
+
+`zrc20` represents the ZRC-20 token address of the gas token of the destination
+chain.

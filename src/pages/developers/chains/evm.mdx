@@ -1,0 +1,114 @@
+To interact with universal apps from EVM chains (like Ethereum, BNB, Polygon,
+etc.) use the EVM gateway.
+
+EVM gateway supports:
+
+- depositing gas tokens to a universal app or an account on ZetaChain
+- depositing supported ERC-20 tokens (including ZETA tokens)
+- depositing gas tokens and calling a universal app
+- depositing supported ERC-20 tokens and calling a universal app
+- calling a universal app
+
+## Deposit Gas Tokens
+
+To deposit tokens to an EOA or a universal contract call the `deposit` function
+of the Gateway contract.
+
+```solidity
+deposit(address receiver, RevertOptions calldata revertOptions) external payable;
+```
+
+The `deposit` function is payable, which means it accepts native gas tokens (for
+example, ETH on Ethereum), which will then be sent to a `receiver` on ZetaChain.
+
+The `receiver` is either an externally-owned account (EOA) or a universal app
+address on ZetaChain. Even if the receiver is a universal app contract with the
+standard `receive` function, the `deposit` function will not trigger a contract
+call. If you want to deposit and call a universal app, please, use the
+`depositAndCall` function, instead.
+
+After the deposit is processed, the receiver gets [ZRC-20
+version](/developers/tokens/zrc20) of the deposited token, for example (ZRC-20
+ETH).
+
+## Deposit ERC-20 Tokens
+
+The `deposit` function can also be used to send supported ERC-20 tokens to EOAs
+and universal apps on ZetaChain.
+
+```solidity
+deposit(address receiver, uint256 amount, address asset, RevertOptions calldata revertOptions) external;
+```
+
+Only [supported ERC-20 assets](/developers/tokens/zrc20) can be deposited. The
+receiver gets ZRC-20 version of the deposited token (for example, ZRC-20
+USDC.ETH).
+
+The `amount` is the amount and `asset` is the token address of the ERC-20 that
+is being deposited.
+
+## Deposit Gas Tokens and Call a Universal App
+
+To deposit tokens and call a universal app contract use the `depositAndCall`
+function.
+
+```solidity
+depositAndCall(address receiver, bytes calldata payload, RevertOptions calldata revertOptions) external payable;
+```
+
+After the cross-chain transaction is processed, the `onCrossChainCall` function
+of a universal app contract is executed.
+
+The `receiver` must be a universal app contract address.
+
+```solidity
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+
+contract UniversalApp is UniversalContract {
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // ...
+    }
+}
+```
+
+`onCrossChainCall` receives:
+
+- `message`: value of the `payload`
+- `amount`: amount of deposited tokens
+- `zrc20`: ZRC-20 address of a the deposited tokens (for example, contract
+  address of ZRC-20 ETH)
+- `context`:
+  - `context.origin`: the original sender address on a connected chain (the EOA
+    or contract that called the Gateway)
+  - `context.chainID`: chain ID of the connected chain from which the call was
+    made
+
+## Deposit ERC-20 Tokens and Call a Universal App
+
+`depositAndCall` can also be used to call a universal app contract and send
+ERC-20 tokens.
+
+```solidity
+depositAndCall(address receiver, uint256 amount, address asset, bytes calldata payload, RevertOptions calldata revertOptions) external;
+```
+
+The `amount` is the amount and `asset` is the token address of the ERC-20 that
+is being deposited.
+
+In the current version of the protocol only one ERC-20 asset can be deposited at
+a time.
+
+## Call a Universal App
+
+To call a universal app (without depositing tokens), use the `call` function.
+
+```solidity
+call(address receiver, bytes calldata payload, RevertOptions calldata revertOptions) external;
+```

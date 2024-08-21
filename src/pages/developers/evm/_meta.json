@@ -1,15 +1,11 @@
 {
-  "system-contract": {
-    "title": "System Contract",
-    "description": "Stores useful values and functions used by universal apps"
+  "gateway": {
+    "title": "Gateway",
+    "description": "A single point of entry for interacting with universal apps"
   },
   "connector": {
     "title": "Connector Contract",
     "description": "Enables message passing and ZETA transfer to and from universal apps"
-  },
-  "bitcoin": {
-    "title": "Bitcoin Interoperability",
-    "description": "Learn about how universal apps can be called from Bitcoin"
   },
   "gas": {
     "title": "Gas Fees",
