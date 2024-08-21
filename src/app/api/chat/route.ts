@@ -76,16 +76,17 @@ export async function POST(req: Request) {
       error: matchError,
       data: pageSections,
       status,
-    } = await supabaseClient.rpc("match_page_sections", {
-      embedding: embedding as any,
-      match_threshold: 0.7,
-      match_count: 10,
-      min_content_length: 50,
-    });
+    } = supabaseClient
+      ? await supabaseClient.rpc("match_page_sections", {
+          embedding: embedding as any,
+          match_threshold: 0.7,
+          match_count: 10,
+          min_content_length: 50,
+        })
+      : { error: "Supabase client not initialized", data: null, status: 500 };
 
-    if (process.env.NODE_ENV === "development") {
+    if (supabaseClient && process.env.NODE_ENV === "development") {
       console.log(matchError, pageSections, status);
-
       console.log(`Got the following sections: ${pageSections?.map((s) => `${s.heading}\n`)}`);
     }
 
