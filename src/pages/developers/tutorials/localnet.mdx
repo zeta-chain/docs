@@ -1,2 +1,12 @@
 Localnet is a local development environment that simplifies the development of
 universal apps.
+
+Localnet:
+
+- Starts an [Anvil](https://book.getfoundry.sh/anvil/) local testnet node
+- Deploys [protocol
+  contracts](https://github.com/zeta-chain/protocol-contracts/tree/main/v2) on
+  the local testnet node. Both EVM gateway and ZetaChain gateway are deployed
+  and running on the same local blockchain
+- Simulates the real-world testnet environment of ZetaChain by observing events
+  and and relaying the contract calls between EVM gateway and ZetaChain gateway
