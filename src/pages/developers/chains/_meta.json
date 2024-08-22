@@ -1,0 +1,18 @@
+{
+  "zetachain": {
+    "title": "ZetaChain",
+    "description": "Make calls from universal apps and withdraw tokens to connected chains"
+  },
+  "evm": {
+    "title": "EVM Blockchains",
+    "description": "Make calls to universal apps and deposit tokens from Ethereum, BNB, Polygon, Base and more"
+  },
+  "solana": {
+    "title": "Solana",
+    "description": "Make calls to universal apps and deposit SOL from Solana"
+  },
+  "bitcoin": {
+    "title": "Bitcoin",
+    "description": "Make calls to universal apps and deposit BTC from Bitcoin"
+  }
+}
