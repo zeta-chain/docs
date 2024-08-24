@@ -7,9 +7,9 @@ Localnet:
 - Deploys [protocol
   contracts](https://github.com/zeta-chain/protocol-contracts/tree/main/v2) on
   the local testnet node. Both EVM gateway and ZetaChain gateway are deployed
-  and running on the same local blockchain
-Simulates the real-world testnet environment of ZetaChain by observing events
-and relaying the contract calls between EVM gateway and ZetaChain gateway
+  and running on the same local blockchain Simulates the real-world testnet
+  environment of ZetaChain by observing events and relaying the contract calls
+  between EVM gateway and ZetaChain gateway
 
 Clone the example contracts repo and install dependencies:
 
@@ -149,7 +149,7 @@ The EVM gateway executes `onRevert` function of the Receiver contract:
 Execute the `callFromZetaChain` function of the universal app:
 
 ```
-hardhat call-from-zetachain --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message "my revert message" --call-on-revert --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --receiver 0x9A676e781A523b5d0C0e43731313A708CB607508
+yarn hardhat call-from-zetachain --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message "my revert message" --call-on-revert --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --receiver 0x9A676e781A523b5d0C0e43731313A708CB607508
 ```
 
 The function calls the ZetaChain gateway contract. The ZetaChain gateway emits a
