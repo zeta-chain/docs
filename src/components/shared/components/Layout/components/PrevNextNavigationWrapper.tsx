@@ -139,7 +139,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
               navItems={continueLearningNavItems}
             />
           </div>
-          <div className="py-16">
+          <div className="pt-4">
             <div className="border dark:border-grey-600 rounded-lg flex w-full flex-col md:flex-row gap-8 lg:gap-16 items-center py-10 px-6 md:py-6 md:px-10">
               <div className="mt-0">
                 <Image
