@@ -4,6 +4,15 @@ title: Call Universal Apps from Bitcoin
 
 import { Alert } from "~/components/shared";
 
+On Bitcoin the gateway is implemented as an TSS MPC account. The private key
+securing the account is split into fragments and distributed among ZetaChain
+observer-signer validators.
+
+Bitcoin gateway supports:
+
+- depositing BTC to a universal app or an account on ZetaChain
+- depositing BTC and calling a universal app
+
 ## Overview
 
 To deposit BTC into ZetaChain's Universal EVM (and optionally call a smart
