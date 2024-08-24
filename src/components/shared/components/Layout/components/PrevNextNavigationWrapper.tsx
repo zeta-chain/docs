@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { PropsWithChildren, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { usePrevious } from "react-use";
+import Image from "next/image";
+import { basePath } from "~/lib/app.constants";
 
 import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directories/directories.selectors";
 import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
@@ -137,20 +139,39 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
               navItems={continueLearningNavItems}
             />
           </div>
-          <div className="grid sm:grid-cols-1 lg:grid-cols-10 py-16">
-            <div className="col-span-6 flex justify-center relative">
-              <hr className="bg-grey-100 dark:bg-grey-700 z-0 h-px border-none absolute top-1/2 -translate-y-1/2 w-full" />
-              <div className="flex flex-col gap-4 bg-white px-4 dark:bg-grey-800 z-10 relative items-center justify-center">
-                <div className="text-grey-400 dark:text-grey-300">How's your journey with ZetaChain?</div>
-                <Link
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  href="https://zetachain.deform.cc/DevXfeedback"
-                  className="flex gap-1"
-                >
-                  <IconSpeechBubble className="dark:text-grey-300 text-grey-400" />
-                  <div className="text-[#00A5C6]">Let us know</div>
-                </Link>
+          <div className="py-16">
+            <div className="border dark:border-grey-600 rounded-lg flex w-full flex-col md:flex-row gap-8 lg:gap-16 items-center py-10 px-6 md:py-6 md:px-10">
+              <div className="mt-0">
+                <Image
+                  src={`${basePath}/img/pages/feedback.svg`}
+                  alt="Feedback"
+                  width={250}
+                  height={152}
+                  className="w-[240px] !mt-0"
+                />
+              </div>
+              <div className="grow flex lg:items-center items-start gap-8 flex-col lg:flex-row">
+                <div className="grow">
+                  <div className="text-2xl dark:text-grey-50 text-grey-900 font-medium mb-2">
+                    How has your developer experience been?
+                  </div>
+                  <div className="dark:text-grey-300 text-grey-400">
+                    Share your feedback and help improve it for everyone.
+                  </div>
+                </div>
+                <div>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    href="https://zetachain.deform.cc/DevXfeedback"
+                    className="flex gap-1"
+                  >
+                    <IconSpeechBubble className="dark:text-grey-300 text-grey-400" />
+                    <div className="text-[#00A5C6] hover:text-[#00A5C6]/80 dark:hover:text-lime-700/80 dark:text-lime-700 font-medium">
+                      Share your thoughts&nbsp;→
+                    </div>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
