@@ -98,6 +98,19 @@ export const ConnectedChainsList = () => {
       .join(", ");
   };
 
+  const getDocsLink = (chain: Chain) => {
+    if (chain.vm === "evm" && chain.consensus === "tendermint" && chain.cctx_gateway === "zevm") {
+      return { text: "ZetaChain Gateway", url: "/developers/chains/zetachain" };
+    }
+    if (chain.vm === "evm" && chain.consensus === "ethereum") {
+      return { text: "EVM Gateway", url: "/developers/chains/evm" };
+    }
+    if (chain.vm === "no_vm" && chain.consensus === "bitcoin") {
+      return { text: "Bitcoin Gateway", url: "/developers/chains/bitcoin" };
+    }
+    return null;
+  };
+
   return (
     <div className="mt-8 first:mt-0">
       <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="connected-chains-" />
@@ -113,6 +126,7 @@ export const ConnectedChainsList = () => {
                 <th>Chain Name</th>
                 <th>Label</th>
                 <th>Supported Tokens</th>
+                <th>Gateway Docs</th>
                 <th>VM</th>
                 <th>Consensus</th>
                 <th>CCTX Gateway</th>
@@ -120,18 +134,35 @@ export const ConnectedChainsList = () => {
             </thead>
 
             <tbody>
-              {chains.map((chain, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <tr key={index}>
-                  <td>{chain.chain_id}</td>
-                  <td>{chain.chain_name}</td>
-                  <td>{chain.name}</td>
-                  <td>{getTokensForChain(chain.chain_id) || ""}</td>
-                  <td>{chain.vm}</td>
-                  <td>{chain.consensus}</td>
-                  <td>{chain.cctx_gateway}</td>
-                </tr>
-              ))}
+              {chains.map((chain, index) => {
+                const docsLink = getDocsLink(chain);
+                return (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <tr key={index}>
+                    <td>{chain.chain_id}</td>
+                    <td>{chain.chain_name}</td>
+                    <td>{chain.name}</td>
+                    <td>{getTokensForChain(chain.chain_id) || ""}</td>
+                    <td>
+                      {docsLink ? (
+                        <a
+                          href={docsLink.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#00A5C6] dark:text-lime-500"
+                        >
+                          {docsLink.text}
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
+                    <td>{chain.vm}</td>
+                    <td>{chain.consensus}</td>
+                    <td>{chain.cctx_gateway}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
