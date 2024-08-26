@@ -1,6 +1,7 @@
 export * from "./components/AddressConverter";
 export * from "./components/AdminPolicy";
 export * from "./components/ChainConfirmations";
+export * from "./components/ConnectedChainsList";
 export * from "./components/ContractAddresses";
 export * from "./components/EndpointList";
 export * from "./components/Fees";
@@ -14,4 +15,3 @@ export * from "./components/ObserverParams";
 export * from "./components/OpenAPIBrowser";
 export * from "./components/SubspaceKeyTable";
 export * from "./components/ZetaTokenTable";
-export * from "./components/ConnectedChainsList";

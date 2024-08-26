@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type Chain = {
