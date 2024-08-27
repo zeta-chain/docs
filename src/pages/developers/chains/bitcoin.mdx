@@ -86,3 +86,20 @@ In summary, a ZetaChain's EVM BTC transaction would look like this:
 
 The TSS address holds the BTC, where ownerships are tracked inside this BTC
 ZRC-20 contract.
+
+## Deposit Fee
+
+Unlike EVM-based chains, each deposited Bitcoin output incurs a fee when it is
+spent. To address this, both the depositor and the withdrawer share the cost of
+the spend. This fee is charged in advance as a deposit fee.
+
+The Bitcoin deposit fee is calculated with the following formula:
+
+```
+depositFee == (txFee / txVsize) * 68vB * 2
+```
+
+- `txFee` is the deposit transaction's fee. This can be calculated by formula:
+  `totalInputValue - totalOutputValue`
+- `txVsize` is the deposit transaction's size in vByte. This can be retrieved
+  from RPC `GetRawTransaction` (ZetaChain's implementation).
