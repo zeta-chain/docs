@@ -22,5 +22,9 @@
   "subquery": {
     "title": "SubQuery",
     "description": "Open-source, flexible, multi-chain data indexer"
+  },
+  "goldrush": {
+    "title": "GoldRush API",
+    "description": "Historical blockchain data API"
   }
 }
