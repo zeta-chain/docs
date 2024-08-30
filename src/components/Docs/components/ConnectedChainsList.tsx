@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 type Chain = {
@@ -59,12 +58,12 @@ export const ConnectedChainsList = () => {
         const CHAINS_URL = `${rpcByNetworkType[activeTab.networkType]}${CHAINS}`;
         const COINS_URL = `${rpcByNetworkType[activeTab.networkType]}${COINS}`;
 
-        const [responseChains, responseTokens] = await Promise.all([fetch(CHAINS_URL), fetch(COINS_URL)]);
+        const [chainsResponse, tokensResponse] = await Promise.all([
+          fetch(CHAINS_URL).then((res) => res.json() as Promise<ChainsData>),
+          fetch(COINS_URL).then((res) => res.json() as Promise<CoinsData>),
+        ]);
 
-        const chainsData: ChainsData = await responseChains.json();
-        const tokensData: CoinsData = await responseTokens.json();
-
-        const formattedChains = chainsData.chains.map((chain) => ({
+        const formattedChains = chainsResponse.chains.map((chain) => ({
           ...chain,
           chain_name: formatString(chain.chain_name),
         }));
@@ -74,7 +73,7 @@ export const ConnectedChainsList = () => {
         if (activeTab.networkType === "mainnet") setMainnetChains(sortedChains);
         if (activeTab.networkType === "testnet") setTestnetChains(sortedChains);
 
-        setTokens(tokensData.foreignCoins);
+        setTokens(tokensResponse.foreignCoins);
       } catch (error) {
         console.error("Error fetching data:", error);
         setMainnetChains([]);
