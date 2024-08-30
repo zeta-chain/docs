@@ -43,7 +43,7 @@
     "@zetachain/toolkit": "^10.0.0",
     "@zetachain/ui-toolkit": "1.0.3",
     "ai": "3.2.19",
-    "axios": "1.6.5",
+    "axios": "1.7.4",
     "bech32": "2.0.0",
     "clsx": "1.2.1",
     "date-fns": "^3.6.0",
