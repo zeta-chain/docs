@@ -1,4 +1,8 @@
 {
+  "list": {
+    "title": "List of Connected Chains",
+    "description": ""
+  },
   "zetachain": {
     "title": "ZetaChain",
     "description": "Make calls from universal apps and withdraw tokens to connected chains"
