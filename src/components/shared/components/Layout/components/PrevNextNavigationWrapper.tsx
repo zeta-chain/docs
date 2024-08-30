@@ -1,11 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { usePrevious } from "react-use";
-import Image from "next/image";
-import { basePath } from "~/lib/app.constants";
 
+import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directories/directories.selectors";
 import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
 
