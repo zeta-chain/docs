@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
@@ -88,9 +88,7 @@ export const ConnectedChainsList = () => {
     fetchData();
   }, [activeTab.networkType]);
 
-  const chains = useMemo(() => {
-    return activeTab.networkType === "mainnet" ? mainnetChains : testnetChains;
-  }, [activeTab.networkType, mainnetChains, testnetChains]);
+  const chains = activeTab.networkType === "mainnet" ? mainnetChains : testnetChains;
 
   const getTokensForChain = (chainId: string) => {
     return tokens
