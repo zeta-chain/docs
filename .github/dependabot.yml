@@ -1,17 +1,17 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directories: 
+    directories:
       - "/"
       - "/packages/zeta-app-contracts"
       - "/packages/zevm-app-contracts"
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "dependabot: " 
+      prefix: "dependabot: "
     labels:
-      - "dependencies" 
+      - "dependencies"
     allow:
       - dependency-name: "@zetachain/addresses"
       - dependency-name: "@zetachain/toolkit"
-      - dependency-name: "@zetachain/ui-toolkit
+      - dependency-name: "@zetachain/ui-toolkit"
