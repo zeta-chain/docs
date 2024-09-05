@@ -99,13 +99,13 @@ export const ConnectedChainsList = () => {
 
   const getDocsLink = (chain: Chain) => {
     if (chain.vm === "evm" && chain.consensus === "tendermint" && chain.cctx_gateway === "zevm") {
-      return { text: "ZetaChain Gateway", url: "/developers/chains/zetachain" };
+      return { text: "ZetaChain Gateway", url: "/docs/developers/chains/zetachain" };
     }
     if (chain.vm === "evm" && chain.consensus === "ethereum") {
-      return { text: "EVM Gateway", url: "/developers/chains/evm" };
+      return { text: "EVM Gateway", url: "/docs/developers/chains/evm" };
     }
     if (chain.vm === "no_vm" && chain.consensus === "bitcoin") {
-      return { text: "Bitcoin Gateway", url: "/developers/chains/bitcoin" };
+      return { text: "Bitcoin Gateway", url: "/docs/developers/chains/bitcoin" };
     }
     return null;
   };
