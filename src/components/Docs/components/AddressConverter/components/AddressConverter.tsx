@@ -64,7 +64,7 @@ export const AddressConverter = () => {
     }
   };
 
-  const handleAddressChange = (event) => {
+  const handleAddressChange = (event: any) => {
     const newAddress = event.target.value;
     setAddress(newAddress);
     setErrorMessage(""); // Reset error message when input changes
@@ -89,20 +89,44 @@ export const AddressConverter = () => {
   };
 
   return (
-    <div className="mt-8 first:mt-0">
+    <div className="mt-8">
+      {/* Placeholder div to ensure consistent space for checksum status */}
+      <div className="min-h-[24px] mb-4 text-sm text-gray-500">
+        {address.startsWith("0x") && isValidAddress(address) && (
+          <p>
+            {isChecksumAddress ? (
+              "This address is checksummed."
+            ) : (
+              <>
+                This address is{" "}
+                <a
+                  href="https://docs.alchemy.com/docs/how-to-handle-checksum-addresses"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  not checksummed
+                </a>
+                .
+              </>
+            )}
+          </p>
+        )}
+      </div>
+
       <div className="flex items-center gap-3 mb-3">
         <input
           type="text"
           value={address}
           onChange={handleAddressChange}
           placeholder="0x or zeta address"
-          className="border border-grey-200 dark:border-grey-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-grey-800 outline-none"
+          className="border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
         />
         <button
           type="button"
           onClick={handleConversion}
           disabled={!address || !isValidAddress(address)}
-          className="whitespace-nowrap border border-grey-200 dark:border-grey-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition-[border-color] disabled:opacity-50 disabled:cursor-not-allowed min-w-[170px]"
+          className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition disabled:opacity-50 disabled:cursor-not-allowed min-w-[170px] whitespace-nowrap"
         >
           {getButtonStatus()}
         </button>
@@ -110,42 +134,26 @@ export const AddressConverter = () => {
 
       {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
 
-      {/* Only show checksum status for valid Ethereum addresses */}
-      {address.startsWith("0x") && isValidAddress(address) && (
-        <p style={{ marginBottom: "1rem" }}>
-          {isChecksumAddress ? (
-            "This address is checksummed."
-          ) : (
-            <>
-              This address is{" "}
-              <a
-                href="https://docs.alchemy.com/docs/how-to-handle-checksum-addresses"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline"
-              >
-                not checksummed
-              </a>
-              .
-            </>
-          )}
-        </p>
-      )}
-
-      {convertedAddress && <p style={{ marginBottom: "1rem" }}>Converted address: {convertedAddress}</p>}
-
       {convertedAddress && (
-        <button
-          onClick={copyToClipboard}
-          className="border border-grey-200 dark:border-grey-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition-[border-color] mb-3"
-        >
-          Copy to Clipboard
-        </button>
+        <div className="flex items-center gap-3 mb-3">
+          <input
+            type="text"
+            value={convertedAddress}
+            disabled
+            className="border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
+          />
+          <button
+            onClick={copyToClipboard}
+            className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition min-w-[170px] whitespace-nowrap"
+          >
+            Copy to Clipboard
+          </button>
+        </div>
       )}
 
       {convertedAddress && (
         <div className="mt-3 flex">
-          <div className="border border-8 border-white rounded-md">
+          <div className="border-8 border-white rounded-md">
             <QRCode value={convertedAddress} size={128} />
           </div>
         </div>
