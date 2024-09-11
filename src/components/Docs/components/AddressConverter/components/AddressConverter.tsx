@@ -90,8 +90,7 @@ export const AddressConverter = () => {
 
   return (
     <div className="mt-8">
-      {/* Placeholder div to ensure consistent space for checksum status */}
-      <div className="min-h-[24px] mb-4 text-sm text-gray-500">
+      <div className="h-[16px] mb-4 text-sm text-gray-500">
         {address.startsWith("0x") && isValidAddress(address) && (
           <p>
             {isChecksumAddress ? (
@@ -120,13 +119,14 @@ export const AddressConverter = () => {
           value={address}
           onChange={handleAddressChange}
           placeholder="0x or zeta address"
-          className="border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
+          autoComplete="off"
+          className="tracking-wide border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
         />
         <button
           type="button"
           onClick={handleConversion}
           disabled={!address || !isValidAddress(address)}
-          className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition disabled:opacity-50 disabled:cursor-not-allowed min-w-[170px] whitespace-nowrap"
+          className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition disabled:opacity-50 disabled:cursor-not-allowed min-w-[150px] whitespace-nowrap"
         >
           {getButtonStatus()}
         </button>
@@ -140,13 +140,13 @@ export const AddressConverter = () => {
             type="text"
             value={convertedAddress}
             disabled
-            className="border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
+            className="tracking-wide border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
           />
           <button
             onClick={copyToClipboard}
-            className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition min-w-[170px] whitespace-nowrap"
+            className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition min-w-[150px] whitespace-nowrap"
           >
-            Copy to Clipboard
+            Copy
           </button>
         </div>
       )}
