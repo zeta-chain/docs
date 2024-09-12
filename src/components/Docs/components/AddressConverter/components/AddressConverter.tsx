@@ -1,10 +1,11 @@
+import "react-toastify/dist/ReactToastify.css";
+
 import { bech32 } from "bech32";
 import { ethers } from "ethers";
+import { useTheme } from "nextra-theme-docs";
 import { useState } from "react";
 import QRCode from "react-qr-code";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useTheme } from "nextra-theme-docs";
+import { toast, ToastContainer } from "react-toastify";
 
 import { convertAddress } from "../AddressConverter.utils";
 
