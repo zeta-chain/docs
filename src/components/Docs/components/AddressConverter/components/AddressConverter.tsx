@@ -2,6 +2,9 @@ import { bech32 } from "bech32";
 import { ethers } from "ethers";
 import { useState } from "react";
 import QRCode from "react-qr-code";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useTheme } from "nextra-theme-docs";
 
 import { convertAddress } from "../AddressConverter.utils";
 
@@ -10,6 +13,8 @@ export const AddressConverter = () => {
   const [convertedAddress, setConvertedAddress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isChecksumAddress, setIsChecksumAddress] = useState(false);
+
+  const { theme } = useTheme();
 
   // Check if the address is valid (ignoring checksum)
   const isValidAddress = (address: string) => {
@@ -27,7 +32,7 @@ export const AddressConverter = () => {
   };
 
   const handleConversion = () => {
-    setErrorMessage(""); // Reset error message
+    setErrorMessage("");
 
     if (!isValidAddress(address)) {
       setErrorMessage("Invalid address format.");
@@ -61,7 +66,16 @@ export const AddressConverter = () => {
   const copyToClipboard = () => {
     if (convertedAddress) {
       navigator.clipboard.writeText(convertedAddress);
-      alert("Address copied to clipboard!");
+      toast.success("Address copied to clipboard!", {
+        theme,
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
@@ -91,6 +105,7 @@ export const AddressConverter = () => {
 
   return (
     <div className="mt-8">
+      <ToastContainer />
       <div className="h-[16px] mb-4 text-sm text-gray-500">
         {address.startsWith("0x") && isValidAddress(address) && (
           <p>
