@@ -1,7 +1,8 @@
-import { useState } from "react";
 import { bech32 } from "bech32";
 import { ethers } from "ethers";
+import { useState } from "react";
 import QRCode from "react-qr-code";
+
 import { convertAddress } from "../AddressConverter.utils";
 
 export const AddressConverter = () => {
