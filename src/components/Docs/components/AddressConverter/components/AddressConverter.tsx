@@ -151,28 +151,27 @@ export const AddressConverter = () => {
       {errorMessage && <p className="text-red-500 mb-3">{errorMessage}</p>}
 
       {convertedAddress && (
-        <div className="flex items-center gap-3 mb-3">
-          <input
-            type="text"
-            value={convertedAddress}
-            disabled
-            className="tracking-wide border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
-          />
-          <button
-            onClick={copyToClipboard}
-            className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition min-w-[150px] whitespace-nowrap"
-          >
-            Copy
-          </button>
-        </div>
-      )}
-
-      {convertedAddress && (
-        <div className="mt-3 flex">
-          <div className="border-8 border-white rounded-md">
-            <QRCode value={convertedAddress} size={128} />
+        <>
+          <div className="flex items-center gap-3 mb-3">
+            <input
+              type="text"
+              value={convertedAddress}
+              disabled
+              className="tracking-wide border border-gray-200 dark:border-gray-500 rounded p-3 sm:w-[450px] bg-transparent dark:bg-gray-800 outline-none"
+            />
+            <button
+              onClick={copyToClipboard}
+              className="border border-gray-200 dark:border-gray-500 rounded p-3 hover:border-green-100 hover:dark:border-green-100 transition min-w-[150px] whitespace-nowrap"
+            >
+              Copy
+            </button>
           </div>
-        </div>
+          <div className="mt-3 flex">
+            <div className="border-8 border-white rounded-md">
+              <QRCode value={convertedAddress} size={128} />
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
