@@ -23,25 +23,5 @@
     "title": "Swap Any Token",
     "readTime": "60 min",
     "description": "Enhance the omnichain swap app with the ability to swap to any token"
-  },
-  "staking": {
-    "title": "Staking",
-    "readTime": "60 min",
-    "description": "Explore how universal apps can be used for omnichain staking"
-  },
-  "nft": {
-    "title": "NFT",
-    "readTime": "60 min",
-    "description": "Learn how to create a client-side UI for your universal app with Next.js and TypeScript"
-  },
-  "bitcoin": {
-    "title": "Bitcoin Frontend",
-    "readTime": "20 min",
-    "description": "Learn how to make calls to universal apps from Bitcoin with wallets like XDEFI and UniSat"
-  },
-  "multioutput": {
-    "title": "Single Input, Multiple Outputs",
-    "readTime": "60 min",
-    "description": "Learn how a single call to a universal app can create multiple outbound transactions"
   }
 }
