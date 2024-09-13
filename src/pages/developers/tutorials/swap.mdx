@@ -39,12 +39,18 @@ The swap contract will:
 - Swap the remaining input token amount for the target token ZRC-20.
 - Withdraw ZRC-20 tokens to the destination chain
 
+<Alert>
+  {" "}
+  This tutorial depends on the gateway, which is available on localnet but not yet deployed on testnet. It will be compatible
+  with testnet after the gateway is deployed.{" "}
+</Alert>
+
 ## Setting Up Your Environment
 
 To set up your environment, clone the example contracts repository and install
 the dependencies by running the following commands:
 
-```bash
+```
 git clone https://github.com/zeta-chain/example-contracts
 
 cd example-contracts/examples/swap
@@ -230,16 +236,17 @@ the tokens to the recipient on the connected chain. The `withdraw` method
 handles the cross-chain transfer, ensuring that the recipient receives the
 swapped tokens on their native chain, whether it's an EVM chain or Bitcoin.
 
-<Alert> {" "} Note that you don't have to tell which chain to withdraw to
-  because each ZRC-20 contract knows which connected chain it is associated
-  with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.{"
-  "} </Alert>
+<Alert>
+  {" "}
+  Note that you don't have to tell which chain to withdraw to because each ZRC-20 contract knows which connected chain it
+  is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
+</Alert>
 
 ## Deploying the Contract
 
 Compile the contract and deploy it to localnet by running:
 
-```bash
+```
 yarn deploy
 ```
 
@@ -257,7 +264,7 @@ You should see output similar to:
 Start the local development environment to simulate ZetaChain's behavior by
 running:
 
-```bash
+```
 npx hardhat localnet
 ```
 

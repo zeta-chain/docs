@@ -2,6 +2,8 @@
 title: Your First Universal App
 ---
 
+import { Alert } from "~/components/shared";
+
 In this tutorial, you will create a simple universal app contract that accepts a
 message with a string and emits an event with that string when called from a
 connected chain. For example, a user on Ethereum will be able to send a message
@@ -15,6 +17,12 @@ You will learn how to:
 - Interact with the contract by sending a message from a connected EVM
   blockchain in localnet.
 - Handle reverts gracefully by implementing revert logic.
+
+<Alert>
+  {" "}
+  This tutorial depends on the gateway, which is available on localnet but not yet deployed on testnet. It will be compatible
+  with testnet after the gateway is deployed.{" "}
+</Alert>
 
 ## Prerequisites
 
