@@ -4,10 +4,11 @@ title: Swap
 
 import { Alert } from "~/components/shared";
 
-In this tutorial you will create a cross-chain swap contract. This contract will
-enable users to exchange a native gas token or a supported ERC-20 token from one
-connected blockchain for a token on another blockchain. For example, a user will
-be able to swap USDC from Ethereum to BTC on Bitcoin in a single transaction.
+In this tutorial, you will create a cross-chain swap contract. This contract
+will enable users to exchange a native gas token or a supported ERC-20 token
+from one connected blockchain for a token on another blockchain. For example, a
+user will be able to swap USDC from Ethereum to BTC on Bitcoin in a single
+transaction.
 
 You will learn how to:
 
@@ -34,16 +35,16 @@ The swap contract will:
   - Target token address (represented as ZRC-20)
   - Recipient address on the destination chain
 - Query withdraw gas fee of the target token.
-- Swap a fraction of the input token for a ZRC-20 gas tokens to cover the
+- Swap a fraction of the input token for a ZRC-20 gas token to cover the
   withdrawal fee using the Uniswap v2 liquidity pools.
 - Swap the remaining input token amount for the target token ZRC-20.
-- Withdraw ZRC-20 tokens to the destination chain
+- Withdraw ZRC-20 tokens to the destination chain.
 
 <Alert>
   {" "}
   This tutorial depends on the gateway, which is available on localnet but not yet deployed on testnet. It will be compatible
   with testnet after the gateway is deployed. In other words, you can't deploy this tutorial on testnet yet. For a tutorial
-  that works with the current testnet, checkout the [Swap on Testnet tutorial](/developers/tutorials/swap-tss){" "}
+  that works with the current testnet, check out the [Swap on Testnet tutorial](/developers/tutorials/swap-tss).{" "}
 </Alert>
 
 ## Setting Up Your Environment
@@ -117,19 +118,28 @@ contract Swap is UniversalContract {
             params.to = recipient;
         }
 
+        swapAndWithdraw(zrc20, amount, params.target, params.to);
+    }
+
+    function swapAndWithdraw(
+        address inputToken,
+        uint256 amount,
+        address targetToken,
+        bytes memory recipient
+    ) internal {
         uint256 inputForGas;
         address gasZRC20;
         uint256 gasFee;
         uint256 swapAmount;
 
-        (gasZRC20, gasFee) = IZRC20(params.target).withdrawGasFee();
+        (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
 
-        if (gasZRC20 == zrc20) {
+        if (gasZRC20 == inputToken) {
             swapAmount = amount - gasFee;
         } else {
             inputForGas = SwapHelperLib.swapTokensForExactTokens(
                 systemContract,
-                zrc20,
+                inputToken,
                 gasFee,
                 gasZRC20,
                 amount
@@ -139,23 +149,23 @@ contract Swap is UniversalContract {
 
         uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
             systemContract,
-            zrc20,
+            inputToken,
             swapAmount,
-            params.target,
+            targetToken,
             0
         );
 
-        if (gasZRC20 == params.target) {
+        if (gasZRC20 == targetToken) {
             IZRC20(gasZRC20).approve(address(gateway), outputAmount + gasFee);
         } else {
             IZRC20(gasZRC20).approve(address(gateway), gasFee);
-            IZRC20(params.target).approve(address(gateway), outputAmount);
+            IZRC20(targetToken).approve(address(gateway), outputAmount);
         }
 
         gateway.withdraw(
-            params.to,
+            recipient,
             outputAmount,
-            params.target,
+            targetToken,
             RevertOptions({
                 revertAddress: address(0),
                 callOnRevert: false,
@@ -200,48 +210,55 @@ The `context.chainID` is utilized to determine the source chain and apply the
 appropriate decoding logic.
 
 After decoding the message, the contract proceeds to handle the token swap and
-withdrawal process.
+withdrawal process by calling the `swapAndWithdraw` function with the
+appropriate parameters.
 
-### Swapping for Gas Token
+### Swapping and Withdrawing Tokens
+
+The `swapAndWithdraw` function encapsulates the logic for swapping tokens and
+withdrawing them to the connected chain. By separating this logic into its own
+function, the code becomes cleaner and easier to maintain.
+
+#### Swapping for Gas Token
 
 The contract first addresses the gas fee required for the withdrawal on the
 destination chain. It uses the `withdrawGasFee` method of the target token's
 ZRC-20 contract to obtain the gas fee amount (`gasFee`) and the gas fee token
 address (`gasZRC20`).
 
-If the incoming token (`zrc20`) is the same as the gas fee token (`gasZRC20`),
-it deducts the gas fee directly from the incoming amount. Otherwise, it swaps a
-portion of the incoming tokens for the required gas fee using the
-`swapTokensForExactTokens` helper method. This ensures that the contract has
-enough gas tokens to cover the withdrawal fee on the destination chain.
+If the incoming token (`inputToken`) is the same as the gas fee token
+(`gasZRC20`), it deducts the gas fee directly from the incoming amount.
+Otherwise, it swaps a portion of the incoming tokens for the required gas fee
+using the `swapTokensForExactTokens` helper method. This ensures that the
+contract has enough gas tokens to cover the withdrawal fee on the destination
+chain.
 
-### Swapping for Target Token
+#### Swapping for Target Token
 
 Next, the contract swaps the remaining tokens (`swapAmount`) for the target
-token specified in `params.target`. It uses the `swapExactTokensForTokens`
-helper method to perform this swap through ZetaChain's internal liquidity pools.
-This method returns the amount of the target token received (`outputAmount`).
+token specified in `targetToken`. It uses the `swapExactTokensForTokens` helper
+method to perform this swap through ZetaChain's internal liquidity pools. This
+method returns the amount of the target token received (`outputAmount`).
 
-### Withdrawing Target Token to Connected Chain
+#### Withdrawing Target Token to Connected Chain
 
 At this stage, the contract holds the required gas fee in `gasZRC20` tokens and
-the swapped target tokens in `params.target`. It needs to approve the
-`GatewayZEVM` contract to spend these tokens before initiating the withdrawal If
-the gas fee token is the same as the target token, it approves the total amount
-(gas fee plus output amount) for the gateway to spend. If they are different, it
-approves each token separately—the gas fee token (`gasZRC20`) and the target
-token (`params.target`).
+the swapped target tokens in `targetToken`. It needs to approve the
+`GatewayZEVM` contract to spend these tokens before initiating the withdrawal.
+If the gas fee token is the same as the target token, it approves the total
+amount (gas fee plus output amount) for the gateway to spend. If they are
+different, it approves each token separately—the gas fee token (`gasZRC20`) and
+the target token (`targetToken`).
 
-Finally, the contract calls the `withdraw` method of the `GatewayZEVM` to send
-the tokens to the recipient on the connected chain. The `withdraw` method
-handles the cross-chain transfer, ensuring that the recipient receives the
-swapped tokens on their native chain, whether it's an EVM chain or Bitcoin.
+Finally, the contract calls the `gateway.withdraw` method to send the tokens to
+the recipient on the connected chain. The `withdraw` method handles the
+cross-chain transfer, ensuring that the recipient receives the swapped tokens on
+their native chain, whether it's an EVM chain or Bitcoin.
 
-<Alert>
-  {" "}
-  Note that you don't have to tell which chain to withdraw to because each ZRC-20 contract knows which connected chain it
-  is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
-</Alert>
+<Alert> {" "} Note that you don't have to specify which chain to withdraw to
+  because each ZRC-20 contract knows which connected chain it is associated
+  with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.{"
+  "} </Alert>
 
 ## Deploying the Contract
 
@@ -273,15 +290,15 @@ npx hardhat localnet
 
 To swap gas tokens (such as ETH) for ERC-20 tokens, run the following command:
 
-```bash
+```
 npx hardhat evm-deposit-and-call --network localhost --receiver 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --amount 1 --types '["address", "bytes"]' 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
 This script deposits tokens into the ZetaChain gateway and sends a message to
 the Swap contract on ZetaChain to execute the swap logic.
 
-In this command, `--receiver` parameter is the address of the Swap contract on
-ZetaChain (`0x67d269191c92Caf3cD7723F116c85e6E9bf55933`) that will handle the
+In this command, the `--receiver` parameter is the address of the Swap contract
+on ZetaChain (`0x67d269191c92Caf3cD7723F116c85e6E9bf55933`) that will handle the
 swap. The `--amount 1` option indicates that you want to swap 1 ETH. The
 `--types '["address", "bytes"]'` parameter defines the ABI types of the message
 parameters being sent to the `onCrossChainCall` function in the Swap contract.
@@ -303,7 +320,7 @@ ZetaChain then picks up the event and executes the `onCrossChainCall` function
 of the Swap contract with the provided message. The execution log might look
 like this:
 
-```text
+```
 [ZetaChain]: Universal contract 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 executing onCrossChainCall (context: {"origin":"0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x91d18e54DAf4F677cB28167158d6dd21F6aB3921, amount: 1000000000000000000, message: 0x0000000000000000000000009fd96203f7b22bcf72d9dcb40ff98302376ce09c00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000014f39fd6e51aad88f6f4ce6ab8827279cfffb92266000000000000000000000000)
 ```
 
@@ -333,7 +350,7 @@ tokens are transferred to the recipient's address:
 To swap ERC-20 tokens for gas tokens, adjust the command by specifying the
 ERC-20 token you're swapping from using the `--erc20` parameter:
 
-```bash
+```
 npx hardhat evm-deposit-and-call --network localhost --receiver 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --amount 1 --erc20 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --types '["address", "bytes"]' 0x91d18e54DAf4F677cB28167158d6dd21F6aB3921 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
@@ -353,7 +370,7 @@ tokens and emits a `Deposited` event:
 ZetaChain picks up the event and executes the `onCrossChainCall` function of the
 Swap contract:
 
-```text
+```
 [ZetaChain]: Universal contract 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 executing onCrossChainCall (context: {"origin":"0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c, amount: 1000000000000000000, message: 0x00000000000000000000000091d18e54daf4f677cb28167158d6dd21f6ab392100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000014f39fd6e51aad88f6f4ce6ab8827279cfffb92266000000000000000000000000)
 ```
 
@@ -382,6 +399,7 @@ token approvals in cross-chain swaps.
 
 ## Source Code
 
-You can find the source code for the tutorial in the example contracts repo:
+You can find the source code for the tutorial in the example contracts
+repository:
 
-https://github.com/zeta-chain/example-contracts/tree/main/examples/swap
+[https://github.com/zeta-chain/example-contracts/tree/main/examples/swap](https://github.com/zeta-chain/example-contracts/tree/main/examples/swap)
