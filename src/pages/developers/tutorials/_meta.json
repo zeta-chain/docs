@@ -5,23 +5,28 @@
     "description": "Learn how to set up a smart contract template, create an account, and use faucet"
   },
   "hello": {
-    "title": "First Universal App",
+    "title": "First Universal App on Localnet",
     "readTime": "10 min",
     "description": "Learn how to create, deploy and interact with a universal app"
+  },
+  "swap-tss": {
+    "title": "Swap on Testnet",
+    "readTime": "30 min",
+    "description": "Implement an omnichain swap app compatible with chains like Ethereum, BNB and Bitcoin"
+  },
+  "swap": {
+    "title": "Swap on Localnet",
+    "readTime": "30 min",
+    "description": "Implement an omnichain swap app compatible with chains like Ethereum, BNB and Bitcoin"
+  },
+  "swap-any": {
+    "title": "Swap Any Token on Localnet",
+    "readTime": "60 min",
+    "description": "Enhance the omnichain swap app with the ability to swap to any token"
   },
   "localnet": {
     "title": "Localnet",
     "readTime": "30 min",
     "description": "Build and interact with your universal app in a local dev environment"
-  },
-  "swap": {
-    "title": "Swap",
-    "readTime": "30 min",
-    "description": "Implement an omnichain swap app compatible with chains like Ethereum, BNB and Bitcoin"
-  },
-  "swap-any": {
-    "title": "Swap Any Token",
-    "readTime": "60 min",
-    "description": "Enhance the omnichain swap app with the ability to swap to any token"
   }
 }
