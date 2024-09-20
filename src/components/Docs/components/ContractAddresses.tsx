@@ -1,7 +1,9 @@
-import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+const addressesUrl: any = {
+  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v1/data/addresses.testnet.json",
+  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v1/data/addresses.mainnet.json",
+};
 
 type ContractAddressData = {
   chain_id: string;
@@ -13,11 +15,6 @@ type ContractAddressData = {
 };
 
 type ContractAddressesByChain = Record<string, ContractAddressData[]>;
-
-const addressesUrl: Record<NetworkType, string> = {
-  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.testnet.json",
-  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.mainnet.json",
-};
 
 const groupDataByChain = (data: ContractAddressData[]) =>
   data.reduce((acc, item) => {
@@ -32,13 +29,15 @@ const sortGroupedData = (groupedData: ContractAddressesByChain) => {
   return groupedData;
 };
 
-const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
+const tabs = [
+  { label: "Mainnet Beta", networkType: "mainnet" },
+  { label: "Testnet", networkType: "testnet" },
+];
 
 export const ContractAddresses = () => {
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(tabs[0]);
   const [isLoading, setIsLoading] = useState(true);
-  const [groupedData, setGroupedData] = useState<Record<NetworkType, ContractAddressesByChain>>({
+  const [groupedData, setGroupedData] = useState<Record<string, ContractAddressesByChain>>({
     testnet: {},
     mainnet: {},
   });
@@ -62,37 +61,27 @@ export const ContractAddresses = () => {
   }, []);
 
   return (
-    <div className="mt-4">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+    <div className="mt-8 first:mt-0">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <div>Loading...</div>
       ) : (
-        Object.entries(groupedData[activeTab]).map(([chainName, contracts]) => (
+        Object.entries(groupedData[activeTab.networkType]).map(([chainName, contracts]) => (
           <div key={chainName}>
-            <h3 className="mt-6 mb-2 font-medium">{chainName}</h3>
+            <h3 className="text-xl mt-8 font-medium">{chainName}</h3>
 
-            <div className="overflow-auto">
+            <div className="overflow-x-auto mt-8">
               <table>
                 <thead>
                   <tr>
@@ -104,7 +93,6 @@ export const ContractAddresses = () => {
 
                 <tbody>
                   {contracts.map((contract, index) => (
-                    // eslint-disable-next-line react/no-array-index-key
                     <tr key={index}>
                       <td>{contract.type}</td>
                       <td>{contract.symbol || "-"}</td>
@@ -120,8 +108,13 @@ export const ContractAddresses = () => {
 
       <p className="mt-4">
         Source:{" "}
-        <a href={addressesUrl[activeTab]} target="_blank" rel="noopener noreferrer" className="text-green-100">
-          {addressesUrl[activeTab]}
+        <a
+          href={addressesUrl[activeTab.networkType]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#00A5C6] dark:text-[#B0FF61]"
+        >
+          {addressesUrl[activeTab.networkType]}
         </a>
       </p>
     </div>

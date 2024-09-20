@@ -1,0 +1,74 @@
+---
+title: Vote on a Proposal
+---
+
+## Overview
+
+Voting on a proposal is the final step in the governance process. After a
+proposal has been submitted and has met the minimum deposit requirement, it
+enters the voting period. During this period, network participants can cast
+their votes to approve or reject the proposal.
+
+There are four voting options:
+
+- Yes
+- No
+- No with veto
+- Abstain
+
+## Querying a Proposal
+
+Before voting on a proposal, query the proposal to ensure it’s in the voting
+period.
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+status: PROPOSAL_STATUS_VOTING_PERIOD
+```
+
+## Vote on a Proposal
+
+To vote on a proposal, use the `tx gov vote` command. The command requires the
+proposal ID and the voting option.
+
+```
+zetacored tx gov vote 58 yes --from alice --node https://zetachain-athens.blockpi.network:443/rpc/v1/public --chain-id athens_7001-1
+```
+
+After the transaction is successfully executed, you can query the proposal to
+confirm that your vote has been cast:
+
+```
+zetacored q gov votes 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+votes:
+  - metadata: ""
+    options:
+      - option: VOTE_OPTION_YES
+        weight: "1.000000000000000000"
+    proposal_id: "58"
+    voter: zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+```
+
+## Viewing Voting Results
+
+After the voting is finished, you can query the proposal to view the final tally
+result:
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+final_tally_result:
+  abstain_count: "21345"
+  no_count: "453453"
+  no_with_veto_count: "678"
+  yes_count: "1230180973026531211265609"
+status: PROPOSAL_STATUS_PASSED
+```

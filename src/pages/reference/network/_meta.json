@@ -1,0 +1,31 @@
+{
+  "details": {
+    "title": "Network Details",
+    "description": "ZetaChain testnet and mainnet details.",
+    "readTime": "5 min" },
+  "api": {
+    "title": "API / RPC Endpoints",
+    "description": "API endpoints that can be used to interact with ZetaChain.",
+    "readTime": "5 min"
+  },
+  "contracts": {
+    "title": "Contract Addresses",
+    "description": "A list of contract addresses for ZetaChain.",
+    "readTime": "5 min"
+  },
+  "proposals": {
+    "title": "Governance Upgrade Proposals",
+    "description": "A detailed list of governance upgrade proposals in Testnet and Mainnet.",
+    "readTime": "5 min"
+  },
+  "openapi": {
+    "title": "ZetaChain HTTP API",
+    "description": "Swagger documentation for the API of ZetaChain.",
+    "readTime": "15 min"
+  },
+  "services": {
+    "title": "Services and Providers",
+    "description": "A list of ZetaChain-compatible services that provide useful functionality to developers.",
+    "readTime": "5 min"
+  }
+}

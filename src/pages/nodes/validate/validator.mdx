@@ -1,0 +1,162 @@
+---
+title: Creating a Core Validator
+---
+
+import { Alert } from "~/components/shared";
+
+## Overview
+
+<Alert variant="note">
+  {" "}
+  This guide assumes you've completed the [Setting Up Your Node](/nodes/start-here/setup) step and synced the node using
+  of the provided options.{" "}
+</Alert>
+
+This guide is design for simplicity and does not cover the intricacies of secure
+key management. We recommend you follow best practices when it comes to secure
+key generation and key management. We are unable to offer support outside of the
+basic setup of a ZetaChain validator.
+
+### Create a Validator Account
+
+Create the account `operator`.
+
+Make sure to store the mnemonic from the output in a safe place. You will need
+this information to later access your account.
+
+```bash
+zetacored keys add operator --algo secp256k1
+```
+
+### Add Funds to the Validator Account
+
+Check your validator account balance. It’s newly created so `balances` should be
+empty.
+
+```bash
+zetacored query bank balances $(zetacored keys show operator -a)
+```
+
+Add funds to your validator account.
+
+Send tokens from your own wallet or from an exchange to your validators address.
+Make sure you are sending them using the ZetaChain's Cosmos based network, not
+the ZetaChain's EVM network.
+
+Check your validator account funds `balances`.
+
+```bash
+zetacored query bank balances $(zetacored keys show operator -a)
+```
+
+### Create Your Validator
+
+Create a new validator by staking **_azeta_** tokens. Here is an example of
+creating a validator on Zetachain Testnet. Save the transaction hash from the
+output.
+
+```bash
+zetacored tx staking create-validator \
+  --amount=1000000000000000000azeta \
+  --pubkey=$(zetacored tendermint show-validator) \
+  --moniker="MY_NODE_NAME" \
+  --chain-id=athens_7001-1 \
+  --commission-rate="0.10" \
+  --commission-max-rate="0.20" \
+  --commission-max-change-rate="0.01" \
+  --min-self-delegation="1000000" \
+  --gas="auto" \
+  --gas-adjustment=1.15 \
+  --gas-prices="0.1azeta" \
+  --from=operator
+```
+
+---
+
+- `amount` is the amount of tokens to be bonded
+- `moniker` is the validator's name
+- `commission-rate` is the commission rate on block rewards and fees charged to
+  delegators
+- `commission-max-rate` is the maximum commission rate that this validator can
+  charge. This parameter is fixed and cannot be changed after the validator is
+  created
+- `commission-max-change-rate` is the maximum daily increase of the validator
+  commission. This parameter is fixed cannot be changed after the validator is
+  created
+- `min-self-delegation` is the minimum amount of **azeta** the validator
+  requires to have bonded at all time. If the validator's self-delegated stake
+  falls below this limit, the validator gets jailed and kicked out of the active
+  validator set
+- `gas-prices` is gas prices in decimal format to determine the transaction fee
+- When specifying commission parameters, the `commission-max-change-rate` is
+  used to measure % *point* change over the `commission-rate`. E.g. 1% to 2% is
+  a 100% rate increase, but only 1 percentage point
+- `min-self-delegation` is a strictly positive integer that represents the
+  minimum amount of self-delegated voting power your validator must always have
+
+### Check Transaction Status
+
+Check the log of the transaction hash that created your validator and make sure
+there are no errors. If there are errors, your validator creation failed and you
+will need to troubleshoot it.
+
+```bash
+zetacored query tx <your transaction hash>
+```
+
+### Check Validator Status
+
+To confirm your validator is created, run this command which shows the current
+status of your validator.
+
+```bash
+zetacored query staking validator $(zetacored keys show operator --bech val -a)
+```
+
+It’s possible that you don’t have enough **_azeta_** tokens to be part of the
+active set of validators in the beginning. If the status is unbonded `status: BOND_STATUS_UNBONDED`, you didn’t stake enough tokens `amount` when you created
+your validator.
+
+In this case, your validator is not in the active set. It cannot sign blocks and
+it does not earn rewards. It can however, receive delegations.
+
+To delegate additional tokens to your validator use the following command.
+Adjust the amount of tokens accordingly to reach the minimum required bonded
+tokens.
+
+```bash
+zetacored tx staking delegate $(zetacored keys show operator --bech val -a) 1000000azeta --from operator
+```
+
+Once your validator receives sufficient bonded tokens it automatically join the
+active set and its status is updated to `status: BOND_STATUS_BONDED`.
+
+### **Confirm Your Validator is Running**
+
+Once your validator is bonded, you can check if it is in the validator set by
+executing the following command and it should return your validator address.
+
+```bash
+zetacored query tendermint-validator-set | grep $(zetacored tendermint show-address)
+```
+
+You can also check the validator signing information using the following command
+and verify that `missed_blocks_counter: "0”` and `index_offset:` is increasing.
+
+```bash
+zetacored query slashing signing-info $(zetacored tendermint show-validator)
+```
+
+### Unjail Your Validator
+
+If your validator falls out-of-sync with the chain (downtime), it can be
+“jailed”. Check your validator status for `jailed: true`. Once your validator is
+back in sync with the chain (it is at same block height as the validators in the
+active set), it can be “unjailed” `jailed: false` with the following command.
+
+```bash
+zetacored tx slashing unjail --from=operator
+```
+
+Check the transaction status for any error and confirm that your validator is
+part of the active set again with the command in the previous section.

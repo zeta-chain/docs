@@ -1,0 +1,57 @@
+---
+title: Gas Fees
+---
+
+import { Fees } from "~/components/Docs";
+
+import { Alert } from "~/components/shared";
+
+## Overview
+
+When interacting with smart contracts on ZetaChain, users need to include a fee
+for gas for each transaction.
+
+The gas market mechanism for smart contracts on ZetaChain's EVM is similar to
+that of [Ethermint](https://docs.ethermint.zone/basics/gas.html) and follows
+Ethereum's EIP 1559 gas fee structure. This system is designed to deter spamming
+activities on the network.
+
+## Deposit
+
+When depositing tokens to ZetaChain by sending them to the TSS (Threshold
+Signature Scheme) address on a connected chain, you will pay the fee in the
+native gas token of that chain, similar to a standard transaction.
+
+For example, if you are depositing ETH from Ethereum to ZetaChain, the fee will
+be in ETH, comparable to a regular token transfer on the Ethereum network. For
+more information on Ethereum gas and fees, refer to the [official
+documentation](https://ethereum.org/en/developers/docs/gas/).
+
+## Withdraw
+
+When withdrawing ZRC-20 tokens back to a connected connected chain, the
+"withdraw gas fee" is applicable (listed as "Total fee" in the table below).
+
+To find out the fee amount, call the `withdrawGasFee` function on the [ZRC-20
+contract](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/ZRC20.sol)
+for the token you wish to withdraw. This function will return the fee in the
+native gas token of the connected chain.
+
+The `withdraw` function will deduct this gas fee from your ZRC-20 balance and
+proceed with the withdrawal to the destination chain.
+
+## Current omnichain fees
+
+In the table below you can see the current fees. The fees are defined in native
+gas tokens on the destination chain (the chain to which ZRC-20 tokens are
+withdrawn). The fees are calculated with the gas limit of 500000.
+
+<Fees type="omnichain" />
+
+To calculate fees for a different gas limit, please, check out the `fees`
+command in the smart-contract
+[template](https://github.com/zeta-chain/template):
+
+```
+npx hardhat fees
+```

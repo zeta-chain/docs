@@ -5,7 +5,7 @@ import { DocsHighlightBlock } from "./DocsHighlightBlock";
 export const DocsHighlightBlockRack = () => {
   return (
     <div className="grid md:grid-cols-3 gap-4 flex-row overflow-x-hidden mt-6">
-      <Link href="/about/zetachain">
+      <Link href="/about">
         <DocsHighlightBlock
           icon={
             <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -20,7 +20,7 @@ export const DocsHighlightBlockRack = () => {
         />
       </Link>
 
-      <Link href="/about/token-utility/overview/">
+      <Link href="/about/token-utility/overview">
         <DocsHighlightBlock
           icon={
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,7 +36,7 @@ export const DocsHighlightBlockRack = () => {
         />
       </Link>
 
-      <Link href="/developers/overview">
+      <Link href="/developers/apps/intro">
         <DocsHighlightBlock
           icon={
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">

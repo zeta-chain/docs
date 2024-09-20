@@ -1,12 +1,9 @@
-import { Skeleton } from "@mui/material";
 import { bech32 } from "bech32";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
-
-const APIs: Record<NetworkType, string> = {
-  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
+const rpcByNetworkType: any = {
   mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
 };
 
 const convertToValoper = (address: any) => {
@@ -21,39 +18,49 @@ const convertToValoper = (address: any) => {
   return address;
 };
 
-const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyles = { fontWeight: "normal", textDecoration: "none" };
-
 export const ObserverList = () => {
-  const [observers, setObservers] = useState<any>([]);
-  const [validators, setValidators] = useState<any>([]);
+  const tabs = [
+    { label: "Mainnet Beta", networkType: "mainnet" },
+    { label: "Testnet", networkType: "testnet" },
+  ];
+
+  const [mainnetObservers, setMainnetObservers] = useState<any[]>([]);
+  const [mainnetValidators, setMainnetValidators] = useState<any[]>([]);
+  const [testnetObservers, setTestnetObservers] = useState<any[]>([]);
+  const [testnetValidators, setTestnetValidators] = useState<any[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   const fetchObservers = useCallback(async () => {
     setIsLoading(true);
+
     try {
-      const api = APIs[activeTab];
+      const api = rpcByNetworkType[activeTab.networkType];
       const response = await fetch(`${api}/zeta-chain/observer/nodeAccount`);
       const data = await response.json();
       const processedData = data.NodeAccount.map((observer: any) => ({
         ...observer,
         valoperAddress: convertToValoper(observer.operator),
       }));
-      setObservers(processedData || []);
+
+      if (activeTab.networkType === "mainnet") setMainnetObservers(processedData || []);
+      if (activeTab.networkType === "testnet") setTestnetObservers(processedData || []);
     } catch (error) {
       console.error("Error fetching observer validators:", error);
+      if (activeTab.networkType === "mainnet") setMainnetObservers([]);
+      if (activeTab.networkType === "testnet") setTestnetObservers([]);
     } finally {
       setIsLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
   const fetchValidators = useCallback(
     async (key = "") => {
       setIsLoading(true);
 
       try {
-        const api = APIs[activeTab];
+        const api = rpcByNetworkType[activeTab.networkType];
         const endpoint = "/cosmos/staking/v1beta1/validators";
         const query = key ? `pagination.key=${encodeURIComponent(key)}` : "";
         const url = `${api}${endpoint}?${query}`;
@@ -62,7 +69,8 @@ export const ObserverList = () => {
         const data = await response.json();
 
         if (data.validators) {
-          setValidators((prev: any) => [...prev, ...data.validators]);
+          if (activeTab.networkType === "mainnet") setMainnetValidators((prev: any) => [...prev, ...data.validators]);
+          if (activeTab.networkType === "testnet") setTestnetValidators((prev: any) => [...prev, ...data.validators]);
 
           if (data.pagination && data.pagination.next_key) {
             await fetchValidators(data.pagination.next_key);
@@ -70,19 +78,27 @@ export const ObserverList = () => {
         }
       } catch (error) {
         console.error("Error fetching validators:", error);
+        if (activeTab.networkType === "mainnet") setMainnetValidators([]);
+        if (activeTab.networkType === "testnet") setTestnetValidators([]);
       } finally {
         setIsLoading(false);
       }
     },
-    [activeTab]
+    [activeTab.networkType]
   );
 
   useEffect(() => {
-    setObservers([]);
-    setValidators([]);
     fetchObservers();
     fetchValidators();
   }, [fetchObservers, fetchValidators]);
+
+  const observers = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetObservers : testnetObservers;
+  }, [activeTab.networkType, mainnetObservers, testnetObservers]);
+
+  const validators = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetValidators : testnetValidators;
+  }, [activeTab.networkType, mainnetValidators, testnetValidators]);
 
   const findMoniker = useCallback(
     (valoperAddress: any) => {
@@ -102,33 +118,23 @@ export const ObserverList = () => {
   }, [findMoniker, observers]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+    <div className="mt-8 first:mt-0">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <div>Loading...</div>
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

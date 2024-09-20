@@ -1,7 +1,9 @@
-import { Skeleton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+const rpcByNetworkType: any = {
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
+};
 
 type ChainData = {
   chains: {
@@ -24,25 +26,27 @@ type ChainParams = {
   confirmation_count: string;
 }[];
 
-const API: Record<NetworkType, string> = {
-  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public",
-  mainnet: "https://zetachain.blockpi.network/lcd/v1/public",
-};
-
 const CHAIN_PARAMS = "/zeta-chain/observer/get_chain_params";
 const SUPPORTED_CHAINS = "/zeta-chain/observer/supportedChains";
 
 export const ChainConfirmations = () => {
-  const [chainParams, setChainParams] = useState<ChainParams>([]);
+  const tabs = [
+    { label: "Mainnet Beta", networkType: "mainnet" },
+    { label: "Testnet", networkType: "testnet" },
+  ];
+
+  const [mainnetChainParams, setMainnetChainParams] = useState<ChainParams>([]);
+  const [testnetChainParams, setTestnetChainParams] = useState<ChainParams>([]);
+
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const paramsUrl = `${API[activeTab]}${CHAIN_PARAMS}`;
-        const chainsUrl = `${API[activeTab]}${SUPPORTED_CHAINS}`;
+        const paramsUrl = `${rpcByNetworkType[activeTab.networkType]}${CHAIN_PARAMS}`;
+        const chainsUrl = `${rpcByNetworkType[activeTab.networkType]}${SUPPORTED_CHAINS}`;
 
         // Fetch supported chains first
         const responseChains = await fetch(chainsUrl);
@@ -62,7 +66,8 @@ export const ChainConfirmations = () => {
             chainName: chainsData.chains.find((chain) => chain.chain_id === param.chain_id)?.chain_name || "Unknown",
           }));
 
-        setChainParams(filteredParams);
+        if (activeTab.networkType === "mainnet") setMainnetChainParams(filteredParams);
+        if (activeTab.networkType === "testnet") setTestnetChainParams(filteredParams);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -71,39 +76,30 @@ export const ChainConfirmations = () => {
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
+  const chainParams = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetChainParams : testnetChainParams;
+  }, [activeTab.networkType, mainnetChainParams, testnetChainParams]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+    <div className="mt-8 first:mt-0">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <div>Loading...</div>
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>

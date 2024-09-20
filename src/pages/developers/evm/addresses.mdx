@@ -1,0 +1,74 @@
+---
+title: Account Addresses
+---
+
+import { AddressConverter } from "~/components/Docs";
+import { Alert } from "~/components/shared";
+
+## Overview
+
+ZetaChain is built with Cosmos SDK and uses the Ethermint module to provide EVM
+compatibility. Being both a Cosmos and an EVM chain means that ZetaChain
+supports two types of addresses: [bech32 Cosmos
+addresses](https://docs.cosmos.network/main/build/spec/addresses/bech32) and
+[hex EVM addresses](https://ethereum.org/developers/docs/accounts).
+
+Bech32 addresses are known for their human-readable format, which typically
+starts with a prefix related to the specific blockchain. These addresses are
+designed to reduce the risk of errors in transcription and input, thanks to
+their built-in error detection capabilities. ZetaChain uses the `zeta` prefix
+for its bech32 addresses.
+
+EVM addresses, on the other hand, are represented as 20-byte hexadecimal strings
+and are used to identify accounts on the Ethereum Virtual Machine.
+
+A single account can be represented by both a bech32 address and an EVM address
+if they are derived from the same public key.
+
+For example, let's consider the following bech32 address:
+
+```
+zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+```
+
+You can query the balance of the account associated with this address using the
+HTTP API:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+
+The equivalent EVM address for the same account is:
+
+```
+0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+```
+
+You can also query the balance of the account associated with this address using
+the HTTP API:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/ethermint/evm/v1/balances/0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+As you can see, both queries return the same balance.
+
+This means, for example, that you can import the same mnemonic into a Cosmos
+wallet and an EVM wallet and access the same account. Some wallets, like Keplr
+display both bech32 and hex addresses.
+
+<Alert variant="tip">
+  {" "}
+  You don't need to transfer your tokens between a bech32 address and an hex address that represent the same account.{" "}
+</Alert>
+
+## Account Type
+
+If you're having issues interacting from the same account from Cosmos and EVM
+wallets, check out the account type using the chain's API:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/auth/v1beta1/accounts/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+
+For Cosmos and EVM compatiblity the account `@type` should be
+`/ethermint.crypto.v1.ethsecp256k1.PubKey`.
+
+## Account Address Converter
+
+To convert between bech32 and EVM addresses, you can use the [address
+converter](/reference/network/address-converter).

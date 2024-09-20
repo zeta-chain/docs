@@ -1,0 +1,269 @@
+---
+title: Setting Up a Node
+description: In this guide we will be setting up a ZetaChain Mainnet node. For a testnet node, follow the same instructions, but replace some values (like chain ID and seed nodes) with the ones provided in corresponding tables.
+---
+
+import { Alert } from "~/components/shared";
+
+## Install the ZetaChain Node Binary
+
+First, download the binary and give it executable permissions. Make sure to
+replace the `VERSION` with the latest version passed in a [governance software
+upgrade proposal](/reference/network/proposals) and the platform
+(`-linux-amd64`) with the one you need.
+
+```
+wget https://github.com/zeta-chain/node/releases/download/VERSION/zetacored-linux-amd64 -O /usr/local/bin/zetacored
+
+chmod a+x /usr/local/bin/zetacored
+```
+
+Check out the GitHub for [more information on
+releases](https://github.com/zeta-chain/node/releases).
+
+Check that you have the correct version of `zetacored` installed:
+
+```
+zetacored version
+```
+
+## Initialize the Data Directory
+
+| Network | Chain ID         |
+| ------- | ---------------- |
+| Mainnet | zetachain_7000-1 |
+| Testnet | athens_7001-1    |
+
+```
+zetacored init MONIKER --chain-id zetachain_7000-1
+```
+
+Replace `MONIKER` with a name for your node. By default the node will be
+initialized in `$HOME/.zetacored`, but you can customize this with the `--home`
+flag.
+
+## Fetch Config Files
+
+| Network | Config Files                                                   |
+| ------- | -------------------------------------------------------------- |
+| Mainnet | https://github.com/zeta-chain/network-config/tree/main/mainnet |
+| Testnet | https://github.com/zeta-chain/network-config/tree/main/athens3 |
+
+Fetch and save config files in the data directory:
+
+```
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/genesis.json -O ~/.zetacored/config/genesis.json
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/client.toml -O ~/.zetacored/config/client.toml
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/config.toml -O ~/.zetacored/config/config.toml
+wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/app.toml -O ~/.zetacored/config/app.toml
+```
+
+## Modify the Config Files
+
+Even though the config files you fetched in the previous step already contain
+all the required values common for all nodes, you will need to make some
+adjustments specific to your node.
+
+If your machine has an external IPv4 address you can get it by running the
+command in your terminal:
+
+```
+curl -4 icanhazip.com
+
+109.68.188.70
+```
+
+If you have an IPv6 address, you can use that as an external address.
+
+Replace the moniker and external address with correct values.
+
+```text filename="~/.zetacored/config/config.toml"
+moniker = "{MONIKER}"
+external_address = "{YOUR_EXTERNAL_IP_ADDRESS_HERE}:26656"
+```
+
+## Set Limits on Open Files and Number of Processes
+
+To better manage the resources of your nodes, we recommend setting some limits
+on the maximum number of open file descriptors (nofile) and maximum number of
+processes (nproc).
+
+Edit `/etc/security/limits.conf` to include or modify the following parameters:
+
+```
+*       soft    nproc   262144
+*       hard    nproc   262144
+*       soft    nofile  262144
+*       hard    nofile  262144
+```
+
+Edit `/etc/sysctl.conf` to include the following:
+
+```
+fs.file-max=262144
+```
+
+## Installing Cosmovisor
+
+From the [cosmos
+docs](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor):
+
+> cosmovisor is a process manager for Cosmos SDK application binaries that
+> automates application binary switch at chain upgrades. It polls the
+> upgrade-info.json file that is created by the x/upgrade module at upgrade
+> height, and then can automatically download the new binary, stop the current
+> binary, switch from the old binary to the new one, and finally restart the
+> node with the new binary.
+
+### From Source
+
+```bash
+go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
+mv $(go env GOPATH)/bin/cosmovisor /usr/local/bin/cosmovisor
+```
+
+### From Precompiled Binaries
+
+Download the correct binary from the [cosmovisor v1.5.0
+release](https://github.com/cosmos/cosmos-sdk/releases/tag/cosmovisor%2Fv1.5.0).
+For example:
+
+```bash
+wget https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.5.0/cosmovisor-v1.5.0-linux-arm64.tar.gz
+tar xf cosmovisor-v1.5.0-linux-arm64.tar.gz
+mv cosmovisor /usr/local/bin
+```
+
+## Setting Up Cosmovisor
+
+### Create `cosmovisor` Directories
+
+```bash
+mkdir -p ~/.zetacored/cosmovisor/genesis/bin
+mkdir -p ~/.zetacored/cosmovisor/upgrades
+```
+
+### Install the Current `zetacored` Binary
+
+Find the current `zetacored` binary as specific in [setup](./setup). Place it in
+`~/.zetacored/cosmovisor/genesis/bin` rather than `$PATH`.
+
+## Configure `zetacored` systemd service
+
+### Create Non-Root User Account
+
+We recommend running ZetaChain binary files with a user account rather than as
+root.
+
+```bash
+useradd -m -s /bin/bash zetachain
+```
+
+## Create ZetaChain Directory Structure
+
+This is needed to store ZetaChain binary and configuration files.
+
+```bash
+sudo su zetachain
+mkdir /home/zetachain/.zetacored/config
+```
+
+### Configure a Systemd Unit File
+
+Create the file `/etc/systemd/system/zetacored.service` with the following
+contents:
+
+```
+[Unit]
+Description=zetacored (running under cosmovisor)
+After=multi-user.target
+StartLimitIntervalSec=0
+[Install]
+WantedBy=multi-user.target
+[Service]
+WorkingDirectory=/home/zetachain/.zetacored/cosmovisor
+Environment="DAEMON_HOME=/home/zetachain/.zetacored"
+Environment="DAEMON_NAME=zetacored"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="DAEMON_DATA_BACKUP_DIR=/home/zetachain/.zetacored"
+Environment="CLIENT_DAEMON_NAME=zetaclientd"
+Environment="CLIENT_SKIP_UPGRADE=false"
+Environment="CLIENT_START_PROCESS=false"
+Environment="UNSAFE_SKIP_BACKUP=true"
+Type=simple
+Restart=always
+RestartSec=600
+User=zetachain
+LimitNOFILE=262144
+ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
+```
+
+<Alert variant="danger">
+  {" "}
+  In this example, we have set `DAEMON_ALLOW_DOWNLOAD_BINARIES=true`. This instructs `cosmovisor` to automatically download
+  the new binaries specified in the upgrade proposal. This would fail if the Github API is down. We suggest keeping this
+  feature enabled, but preloading and validating any new binaries before the upgrade to minimize risk. If you have already
+  preloaded the binaries, none will be downloaded. Read more about [cosmovisor Auto-Download here](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download).
+</Alert>
+
+Run `systemctl daemon-reload` to load the service.
+
+Run `systemctl enable --now zetacored` to start the service and to automatically
+start it at boot.
+
+## Upgrades
+
+Follow the
+[#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486)
+and/or
+[#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338)
+channels on discord to receive upgrade proposal notifications.
+
+Download the new binaries from the github release and install them into the
+cosmovisor upgrade directory. The name of the directory must match the upgrade
+name. The upgrade name is **not** the the release name on github. Reference the
+[Governance Upgrade Proposals](/reference/network/proposals) page to easily see
+the upgrade names. Here are some examples:
+
+| Upgrade Name | `zetacored` Path                                            | git tag   |
+| ------------ | ----------------------------------------------------------- | --------- |
+| `v17-athens` | `~/.zetacored/cosmovisor/upgrades/v17-athens/bin/zetacored` | `v17.0.0` |
+| `v17`        | `~/.zetacored/cosmovisor/upgrades/v17/bin/zetacored`        | `v17.0.0` |
+| `v16`        | `~/.zetacored/cosmovisor/upgrades/v16/bin/zetacored`        | `v16.0.0` |
+
+After installing the binary, you should:
+
+- validate the checksum is correct
+- run `zetacored version` to validate that you can actually run the downloaded
+  binary
+
+## Monitoring
+
+In a production environment we recommend monitoring the node resources (CPU
+load, Memory Usage, Disk usage and Disk IO) for any performance degradation.
+
+`zetacored` generates logs that can be monitored for errors and used for
+troubleshooting. If you install `zetacored` as a Systemd service using the
+instructions above you can view logs with `journalctl -f -u zetacored`.
+
+### Metrics
+
+Prometheus can be enabled to serve metrics which can be consumed by Prometheus
+collector(s). Telemetry include Prometheus metrics can be enabled in the
+app.toml file. See the [Cosmos SDK Telemetry
+Documentation](https://docs.cosmos.network/v0.46/core/telemetry.html) for more
+information.
+
+#### Enable Prometheus Metrics
+
+To enable metrics, you'll have to make an adjustment in the node's `config.toml`
+file by setting the `prometheus` option to `true`:
+
+```bash
+sed -i 's/prometheus = false/prometheus = true/g' /home/zetachain/.zetacored/config/config.toml
+```
+
+To apply the modification, it’s necessary to restart the node. You should then
+have the capability to reach the `tendermint` metrics, which are set as the
+default on port port **26660**: `http://localhost:26660`

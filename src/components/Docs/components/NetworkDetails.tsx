@@ -1,11 +1,6 @@
 import { useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
-
-type NetworkData = Array<{ name: string; value: string }>;
-
-// Static data for the tables
-const networkDetails: Record<NetworkType, NetworkData> = {
+const networkDetails: any = {
   testnet: [
     { name: "Chain ID (EVM)", value: "7001" },
     { name: "Chain ID (Cosmos)", value: "athens_7001-1" },
@@ -36,12 +31,13 @@ const networkDetails: Record<NetworkType, NetworkData> = {
   ],
 };
 
-// Styles for active and inactive tabs
-const activeStyles = { fontWeight: "bold", textDecoration: "underline" };
-const inactiveStyles = { fontWeight: "normal", textDecoration: "none" };
+const tabs = [
+  { label: "Mainnet Beta", networkType: "mainnet" },
+  { label: "Testnet", networkType: "testnet" },
+];
 
-const NetworkTable: React.FC<{ networkData: NetworkData }> = ({ networkData }) => (
-  <div className="overflow-auto">
+const NetworkTable: React.FC<{ networkData: any }> = ({ networkData }) => (
+  <div className="overflow-x-auto mt-8">
     <table>
       <thead>
         <tr>
@@ -49,10 +45,8 @@ const NetworkTable: React.FC<{ networkData: NetworkData }> = ({ networkData }) =
           <th>Value</th>
         </tr>
       </thead>
-
       <tbody>
-        {networkData.map((item, index) => (
-          // eslint-disable-next-line react/no-array-index-key
+        {networkData.map((item: any, index: number) => (
           <tr key={index}>
             <td>{item.name}</td>
             <td>{item.value}</td>
@@ -64,29 +58,23 @@ const NetworkTable: React.FC<{ networkData: NetworkData }> = ({ networkData }) =
 );
 
 export const NetworkDetails = () => {
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyles : inactiveStyles}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+    <div className="mt-8 first:mt-0">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <NetworkTable networkData={networkDetails[activeTab]} />
+      <NetworkTable networkData={networkDetails[activeTab.networkType]} />
     </div>
   );
 };

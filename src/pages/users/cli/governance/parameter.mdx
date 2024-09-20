@@ -1,0 +1,45 @@
+---
+title: Parameter Change Proposal
+---
+
+## Overview
+
+A parameter change proposal is a governance action that proposes to change a
+specific module parameter of the network.
+
+Create a proposal JSON file:
+
+```json filename="proposal.json"
+{
+  "messages": [
+    {
+      "@type": "/cosmos.gov.v1.MsgExecLegacyContent",
+      "authority": "zeta10d07y265gmmuvt4z0w9aw880jnsr700jvxasvr",
+      "content": {
+        "@type": "/cosmos.params.v1beta1.ParameterChangeProposal",
+        "changes": [
+          {
+            "subspace": "gov",
+            "key": "votingparams",
+            "value": "{ \"voting_period\": \"86400000000000\" }"
+          }
+        ],
+        "description": "Update voting period to 24 hours",
+        "title": "Gov Param Change"
+      }
+    }
+  ],
+  "deposit": "1000000azeta",
+  "metadata": "https://example.org/metadata.json"
+}
+```
+
+The proposal above uses the `MsgExecLegacyContent` message type to wrap the
+`ParameterChangeProposal` message.
+
+The `changes` array contains a list of changes to be made to the network's
+parameters. Each change is a JSON object with the following fields:
+
+- `subspace`: The module whose parameter is being changed.
+- `key`: The parameter key.
+- `value`: The new value of the parameter.

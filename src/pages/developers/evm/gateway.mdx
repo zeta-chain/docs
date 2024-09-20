@@ -1,0 +1,52 @@
+Gateway is an interface that serves as a unified entry point for interactions
+between contracts on connected chains and universal apps on ZetaChain.
+
+## Gateway on Connected Chains
+
+The gateway on connected chains (like Ethereum, Solana and Bitcoin) facilitates
+incoming transactions: contract calls and token transfers from connected chains
+to universal apps on ZetaChain.
+
+The implementation of the gateway depends on the connected chain:
+
+- EVM chains: a gateway smart contract
+- Solana: a gateway program
+- Bitcoin: a TSS MPC gateway address managed by a network of observer-signer
+  validators
+
+Each chain has only one gateway. The same gateway is used to interact with all
+universal apps.
+
+Gateway supports the following features:
+
+- depositing native gas tokens to a universal app or an account on ZetaChain
+- depositing supported ERC-20 tokens (including ZETA tokens) to a universal app
+  or an account on ZetaChain
+- depositing native gas tokens and making a contract call (with arbitrary data
+  passing) to a universal app
+- depositing supported ERC-20 tokens and making a contract call (with arbitrary
+  data passing) to a universal app
+- making a contract call (with arbitrary data passing) to a universal app
+
+These features may vary depending on each specific connected chain. For example,
+deposits from Bitcoin can only be made in native gas token (BTC). And deposits
+from Solana can be made in SOL and (soon) SPL tokens.
+
+Currently, only one asset can be deposited at a time to a universal app. Support
+for multi-asset deposits will be added in the future updates to the protocol.
+
+## Gateway on ZetaChain
+
+Gateway on ZetaChain facilitates outgoing transactions: calls and token
+withdrawals from universal apps to contracts on connected chains.
+
+Gateway supports the following features:
+
+- withdrawing ZRC-20 tokens as native gas or ERC-20 tokens to connected chains
+- withdrawing ZETA tokens to a connected chain
+- withdrawing tokens to and making a contract call on a connected chain
+- making a contract call on a connected chain
+
+Currently, only one asset can be withdrawn at a time from a universal app.
+Support for multi-asset withdrawals will be added in the future updates to the
+protocol.

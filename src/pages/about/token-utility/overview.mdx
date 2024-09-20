@@ -1,4 +1,6 @@
-# Token Utility
+---
+title: Token Utility
+---
 
 ## Overview
 
@@ -29,7 +31,7 @@ token standard called ZRC-20. Liquidity in the Threshold Signature Scheme (TSS)
 addresses are managed by a distributed network of validators in a decentralized
 manner. Assets are deposited into TSS addresses and ERC-20 custody contracts on
 connected chains, and those assets are thereby usable at a native level by logic
-in a ZetaChain smart contract. Users on external chains may send messages to
+in a ZetaChain smart contract. Users on connected chains may send messages to
 either simply transfer value and data to other connected chains (”cross-chain
 messaging”), or to call contracts on ZetaChain’s EVM that can orchestrate
 liquidity on any connected chain. They may also connect directly to ZetaChain’s
@@ -53,7 +55,7 @@ There are 4 primary participants
   chains and the TSS addresses and thereby the cross-chain functionality of the
   network. These two roles are batched into a single set of validators, but may
   be decoupled later.
-- Transacting users: who pay fees to transact on ZetaChain zEVM and for
+- Transacting users: who pay fees to transact on ZetaChain's EVM and for
   cross-chain tractions.
 - ZETA token holders/delegators: who can participate in governance and security
   of the network.
@@ -74,7 +76,7 @@ core pillars:
   destination, not only used for bundling gas but as the **medium** of value
   transfer between connected chains to facilitate value transfer without the
   creation of new wrapped assets.
-- Core Liquidity Pools comprised of ZETA and other external chain assets let
+- Core Liquidity Pools comprised of ZETA and other connected chain assets let
   users transact on ZetaChain and between connected chains (for gas on outbound
   transactions) through ZetaChain. The liquidity providers (LPs) receive trading
   fees and other liquidity incentives to provide liquidity for this in the form

@@ -1,0 +1,375 @@
+---
+title: Swap
+---
+
+import { Alert } from "~/components/shared";
+
+In this tutorial you will create a cross-chain swap contract. This contract will
+enable users to exchange a native gas token or a supported ERC-20 token from one
+connected blockchain for a token on another blockchain. For example, a user will
+be able to swap USDC from Ethereum to BTC on Bitcoin in a single transaction.
+
+You will learn how to:
+
+- Decode incoming messages from both EVM chains and Bitcoin.
+- Work with the ZRC-20 representation of tokens transferred from connected
+  chains.
+- Use the swap helper function to swap tokens using Uniswap v2 pools.
+- Withdraw ZRC-20 tokens to a connected chain, accounting for cross-chain gas
+  fees.
+
+The swap contract will be implemented as a universal app and deployed on
+ZetaChain.
+
+Universal apps can accept token transfers and contract calls from connected
+chains. Tokens transferred from connected chains to a universal app contract are
+represented as [ZRC-20](/developers/tokens/zrc20). For example, ETH transferred
+from Ethereum is represented as ZRC-20 ETH. ZRC-20 tokens have the unique
+property of being able to be withdrawn back to their original chain as native
+assets.
+
+The swap contract will:
+
+- Accept a contract call from a connected chain containing native gas or
+  supported ERC-20 tokens and a message.
+- Decode the message, which should include:
+  - Target token address (represented as ZRC-20)
+  - Recipient address on the destination chain
+- Query withdraw gas fee of the target token.
+- Swap a fraction of the input token for a ZRC-20 gas tokens to cover the
+  withdrawal fee using the Uniswap v2 liquidity pools.
+- Swap the remaining input token amount for the target token ZRC-20.
+- Withdraw ZRC-20 tokens to the destination chain
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fboard%2FTu1Y2v1FwSIyklWV69Q5r0%2FUntitled%3Fnode-id%3D0-1%26t%3DaQJr5yQw5U5nV1sE-1"
+  allowfullscreen
+></iframe>
+
+## Set Up Your Environment
+
+Clone the Hardhat contract template:
+
+```
+git clone https://github.com/zeta-chain/template
+
+cd template/contracts
+
+yarn
+```
+
+Make sure that you've followed the [Getting
+Started](/developers/tutorials/intro) tutorial to set up your development
+environment, create an account and request testnet tokens.
+
+## Create the contract
+
+Run the following command to create a new universal omnichain contract called
+`Swap` with two values in the message: target token address and recipient.
+
+```
+npx hardhat omnichain Swap targetToken:address recipient
+```
+
+## Universal App Contract
+
+```solidity filename="contracts/Swap.sol" {6-7,12,18-21,29-45,48-78}
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
+import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
+import "@zetachain/toolkit/contracts/OnlySystem.sol";
+
+contract Swap is zContract, OnlySystem {
+    SystemContract public systemContract;
+    uint256 constant BITCOIN = 18332;
+
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
+    }
+
+    struct Params {
+        address target;
+        bytes to;
+    }
+
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override onlySystem(systemContract) {
+        Params memory params = Params({target: address(0), to: bytes("")});
+
+        if (context.chainID == BITCOIN) {
+            params.target = BytesHelperLib.bytesToAddress(message, 0);
+            params.to = abi.encodePacked(
+                BytesHelperLib.bytesToAddress(message, 20)
+            );
+        } else {
+            (address targetToken, bytes memory recipient) = abi.decode(
+                message,
+                (address, bytes)
+            );
+            params.target = targetToken;
+            params.to = recipient;
+        }
+
+        swapAndWithdraw(zrc20, amount, params.target, params.to);
+    }
+
+    function swapAndWithdraw(
+        address inputToken,
+        uint256 amount,
+        address targetToken,
+        bytes memory recipient
+    ) internal {
+        uint256 inputForGas;
+        address gasZRC20;
+        uint256 gasFee;
+
+        (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
+
+        inputForGas = SwapHelperLib.swapTokensForExactTokens(
+            systemContract,
+            inputToken,
+            gasFee,
+            gasZRC20,
+            amount
+        );
+
+        uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
+            systemContract,
+            inputToken,
+            amount - inputForGas,
+            targetToken,
+            0
+        );
+
+        IZRC20(gasZRC20).approve(targetToken, gasFee);
+        IZRC20(targetToken).withdraw(recipient, outputAmount);
+    }
+}
+```
+
+### Decoding the Message
+
+Create a `Params` struct, which will hold two values:
+
+- `address target`: target token ZRC-20 address.
+- `bytes to`: recipient address on the destination chain. We're using `bytes`,
+  because the recipient can be either on EVM (like Ethereum or BNB) or on
+  Bitcoin.
+
+First, decode the incoming `message` to get the parameter values. The message
+might be encoded differently depending on the source chain. For example, on
+Bitcoin there is a upper limit of 80 bytes, so you might want to encode the
+message in the most efficient way possible. On EVM don't have this limit, so
+it's fine to use `abi.encode` to encode the message.
+
+Use `context.chainID` to determine the connected chain from which the contract
+is called.
+
+If it's Bitcoin, the first 20 bytes of the `message` are the `params.target`
+encoded as an `address`. Use `bytesToAddress` helper method to get the target
+token address. To get the recipient address, use the same helper method with an
+offset of 20 bytes and then use `abi.encodePacked` to convert the address to
+`bytes`.
+
+If it's an EVM chain, use `abi.decode` to decode the `message` into the
+`params.target` and `params.to`.
+
+### Swap and Withdraw Function
+
+#### Swapping for Gas Token
+
+Create a new function called `swapAndWithdraw`. Use the `withdrawGasFee` method
+of the target token ZRC-20 to get the gas fee token address and the gas fee
+amount. If the target token is the gas token of the destination chain (for
+example, BNB), `gasZRC20` will be the same `params.target`. However, if the
+target token is an ERC-20, like USDC on BNB, `gasZRC20` will tell you the
+address of the ZRC-20 of the destination chain.
+
+Use the `swapTokensForExactTokens` helper method to swap the incoming token for
+the gas coin using the internal liquidity pools. The method returns the amount
+of the incoming token that was used to pay for the gas.
+
+#### Swapping for Target Token
+
+Next, swap the incoming amount minus the amount spent swapping for a gas fee for
+the target token on the destination chain using the `swapExactTokensForTokens`
+helper method.
+
+#### Withdraw Target Token to Connected Chain
+
+At this point the contract has the required `gasFee` amount of `gasZRC20` token
+of the connected chain and an `outputAmount` amount of `params.target` token.
+
+To withdraw tokens to a connected chain you will be calling the `withdraw`
+method of ZRC-20. The `withdraw` method expects the caller (in our case the
+contract) to have the required amount of gas tokens ZRC-20. Approve the target
+token ZRC-20 contract to spend the `gasFee` amount. Finally, call the `withdraw`
+method of the target token ZRC-20 to send the tokens to the recipient on the
+connected chain.
+
+<Alert>
+  {" "}
+  Note that you don't have to tell which chain to withdraw to because each ZRC-20 contract knows which connected chain it
+  is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
+</Alert>
+
+## Update the Interact Task
+
+In the `interact` task generated for us by the contract template the recipient
+is encoded as string. Our contract, however, expects the recipient to be encoded
+as `bytes` to ensure that both EVM and Bitcoin addresses are supported.
+
+To support both EVM and Bitcoin addresses, we need to check if the recipient is
+a valid Bitcoin address. If it is, we need to encode it as `bytes` using
+`utils.solidityPack`.
+
+If it’s not a valid bech32 address, then we assume it's an EVM address and use
+`args.recipient` as the value for the recipient.
+
+Finally, update the `prepareData` function call to use the `bytes` type for the
+recipient.
+
+```ts filename="tasks/interact.ts" {1,6-22}
+import bech32 from "bech32";
+
+const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
+  const [signer] = await hre.ethers.getSigners();
+
+  let recipient;
+  try {
+    if (bech32.decode(args.recipient)) {
+      recipient = utils.solidityPack(["bytes"], [utils.toUtf8Bytes(args.recipient)]);
+    }
+  } catch (e) {
+    recipient = args.recipient;
+  }
+
+  const data = prepareData(args.contract, ["address", "bytes"], [args.targetToken, recipient]);
+  //...
+};
+```
+
+## Create an Account and Request Tokens from the Faucet
+
+Before proceeding with the next steps, make sure you have [created an account
+and requested ZETA tokens](/developers/tutorials/hello#create-an-account) from
+the faucet.
+
+## Compile and Deploy the Contract
+
+```
+npx hardhat compile --force
+```
+
+```
+npx hardhat deploy --network zeta_testnet
+```
+
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🚀 Successfully deployed contract on ZetaChain.
+📜 Contract address: 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E
+🌍 Explorer: https://athens3.explorer.zetachain.com/address/0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E
+```
+
+## Swap Native Gas Tokens Between EVM Chains
+
+Use the `interact` task to perform a cross-chain swap. In this example, we're
+swapping native sETH from Sepolia for BNB on BNB chain. The contract will
+deposit sETH to ZetaChain as ZRC-20, swap it for ZRC-20 BNB and then withdraw
+native BNB to the BNB chain. To get the value of the `--target-token` find the
+ZRC-20 contract address of the destination token in the [ZRC-20 section of the
+docs](/developers/tokens/zrc20).
+
+```
+npx hardhat interact --contract 0x175DeE06ca605674e49F1FADfC6B399D6ab31726 --amount 0.3 --network sepolia_testnet --target-token 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+```
+
+```
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet
+network. 📝 Transaction hash:
+0xc4b2bbd3b3090e14797463af1965a00318cc39a50fce53a5d5856d09fe67410d
+```
+
+Track your cross-chain transaction:
+
+```
+npx hardhat cctx
+0xc4b2bbd3b3090e14797463af1965a00318cc39a50fce53a5d5856d09fe67410d
+```
+
+```
+✓ CCTXs on ZetaChain found.
+
+✓ 0xf6419c8d850314a436a3cfc7bc5cd487e29bad9c8fae0d8be9a913d622599980: 11155111 → 7001: OutboundMined (Remote omnich
+ain contract call completed)
+⠧ 0x5e533d781ddc9760784ba9c1887f77a80d3ca0d771ea41f02bc4d0a1c9412dc2: 7001 → 97: PendingOutbound (ZRC20 withdrawal
+event setting to pending outbound directly)
+```
+
+## Swap ERC-20 Tokens Between EVM Chains
+
+Now let's swap USDC from Sepolia to BNB on BNB chain. To send USDC specify the
+ERC-20 token contract address (on Sepolia) in the `--token` parameter. You can
+find the address of the token in the [ZRC-20 section of the
+docs](/developers/tokens/zrc20).
+
+```
+npx hardhat interact --contract 0xf6CDd83AB44E4d947FE52c2637ee4A04F330328E --amount 5 --token 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238 --network sepolia_testnet --target-token 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 --recipient 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+```
+
+```
+🔑 Using account: 0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+
+🚀 Successfully broadcasted a token transfer transaction on sepolia_testnet network.
+📝 Transaction hash: 0xce8832232639d29d40078e14d0a5b20c055123d6df1e1d39f90cfd130c33466d
+```
+
+```
+npx hardhat cctx 0xce8832232639d29d40078e14d0a5b20c055123d6df1e1d39f90cfd130c33466d
+```
+
+```
+✓ CCTXs on ZetaChain found.
+
+✓ 0x1ae1436358ef755c1c782d0a249ae99e857b0aecb91dcd8da4a4e7171f5d9459: 11155111 → 7001: OutboundMined (Remote omnichain contract call completed)
+✓ 0xbefe99d3e17d16fc88762f85b1becd1396b01956c04b5ec037abc2c63d821caa: 7001 → 97: OutboundMined (ZRC20 withdrawal event setting to pending outbound directly : Outbound succeeded, mined)
+```
+
+## Swap from Bitcoin
+
+Use the `send-btc` task to send Bitcoin to the TSS address with a memo. The memo
+should contain the following:
+
+- Omnichain contract address on ZetaChain:
+  `175DeE06ca605674e49F1FADfC6B399D6ab31726`
+- Target token address: `05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0`
+- Recipient address: `4955a3F38ff86ae92A914445099caa8eA2B9bA32`
+
+```
+npx hardhat send-btc --amount 0.001 --memo 175DeE06ca605674e49F1FADfC6B399D6ab3172605BA149A7bd6dC1F937fA9046A9e05C05f3b18b04955a3F38ff86ae92A914445099caa8eA2B9bA32 --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur
+```
+
+```
+npx hardhat cctx 29d6a0af11aa6164e83c17d9f129e4ec504d327fb94429732d95c16ddfcce999
+```
+
+## Source Code
+
+You can find the source code for the example in this tutorial here:
+
+https://github.com/zeta-chain/example-contracts/tree/main/omnichain/swap

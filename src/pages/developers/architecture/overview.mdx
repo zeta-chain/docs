@@ -1,0 +1,71 @@
+---
+title: Architecture
+---
+
+import { Alert } from "~/components/shared";
+
+## Overview
+
+At a high level, ZetaChain is a Proof of Stake (PoS) blockchain built on the
+Cosmos SDK and Comet BFT consensus engine. As a result, ZetaChain enjoys fast
+block time (~5s) and instant finality (no confirmation needed, no
+re-organization allowed). The Comet BFT consensus engine has shown to scale to
+~300 nodes in production. With future upgrades with BLS threshold signatures the
+number can potentially increase to 1000+. The throughput of transactions on
+ZetaChain can potentially reach 100 transactions per second TPS due to the
+efficiency of the consensus protocol.
+
+The ZetaChain architecture consists of a distributed network of nodes, often
+referred to as validators. Validators act as decentralized observers that reach
+consensus on relevant connected chain state and events, and can also
+update connected chain state via distributed key signing. ZetaChain accomplishes
+these functions in a decentralized (without a single point of failure,
+trustless, permissionless), transparent, and efficient way.
+
+Contained within each validator is the ZetaCore and ZetaClient. ZetaCore is
+responsible for producing the blockchain and maintaining the replicated state
+machine. ZetaClient is responsible for observing events on connected chains and
+signing outbound transactions.
+
+ZetaCore and ZetaClient are bundled together and run by node operators. Anyone
+can become a node operator to participate in validation provided that enough
+bonds are staked.
+
+![](/img/docs/architecture-1.png)
+
+## Validators
+
+Validators are comprised of 2 different roles: Core Validators and
+Observer-Signer Validators. Fees from transactions and rewards are distributed
+to validators in return for their service of processing transactions and keeping
+the network secure.
+
+### Core Validators
+
+ZetaChain uses the Comet BFT consensus protocol which is a partially synchronous
+Byzantine Fault Tolerant (BFT) consensus algorithm. Each validator node can vote
+on block proposals with voting power proportional to the staking coins (ZETA), 
+bonded/delegated. Each validator is identified by its consensus public key.
+Validators need to be online all the time, ready to participate in the
+constantly growing block production. In exchange for their service, validators
+will receive block rewards and transaction fees.
+
+### Observer-Signer Validators
+
+Another set of important participants for ZetaChain consensus are the
+observer-signer validators who reach consensus on connected chain events and
+states. The observer-signers watch connected chains for certain relevant
+transactions/events/states at particular addresses via their full nodes of
+connected chains.
+
+ZetaChain collectively holds standard ECDSA/EdDSA keys for authenticated
+interaction with connected chains. The keys are distributed among multiple
+observer-signers in such a way that only a super majority of them can sign on
+behalf of the ZetaChain. The ZetaChain system uses bonded stakes and
+positive/negative incentives to ensure economic safety.
+
+<Alert>
+  {" "}
+  It's important to note that at no time is any single entity or small fraction of nodes able to sign messages on behalf
+  of ZetaChain on connected chains.{" "}
+</Alert>

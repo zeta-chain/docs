@@ -1,0 +1,157 @@
+---
+title: "GoldRush"
+---
+
+## Overview
+
+The GoldRush API is designed as a single, unified interface for developers to access historical blockchain data quickly and at scale. It addresses common challenges faced by developers when working with blockchain data, such as:
+
+- High costs and limitations associated with running or using public blockchain nodes
+- Complexity of writing custom SQL queries
+- Delays in waiting for data to be indexed
+
+GoldRush offers a RESTful API that allows developers to easily fetch data with consistent request and response object formats. For example, by simply changing the network name in the URL, you can retrieve all token balances for an address across any of the 200+ supported networks. Developers can integrate the API once and automatically benefit from newly supported networks, endpoint performance upgrades, and other improvements.
+
+## Registering for a GoldRush API Key
+
+Before using the GoldRush API, you need to register for an account and obtain an API key. Visit the [GoldRush website](https://goldrush.dev) and click the "Signup for free API Key" button. Follow the prompts to fill in the necessary information and submit your application.
+
+![](/img/docs/goldrush-home.png)
+
+After submission, you'll need to wait for a short period. You'll receive an invitation email with a link to complete your registration. Once registered, you'll be assigned an API key, which is required to access the Gold Rush API. You can copy your API key from the top right corner of the interface for future use.
+
+![](/img/docs/goldrush-key.png)
+
+## Using the GoldRush API
+
+GoldRush API provides various data query interfaces, such as querying Token balances, Transactions, Portfolios, Blocks, etc. In addition to direct HTTP requests, GoldRush API supports SDKs for multiple programming languages, including Python, TypeScript, Go, Ruby, and Shell.
+
+### Initializing the Project
+
+First, initialize an npm project with the following commands:
+
+```bash
+mkdir zetachain-app
+cd zetachain-app
+npm init -y
+```
+
+Install the necessary dependencies:
+
+```bash
+npm install @covalenthq/client-sdk axios
+```
+
+### Querying Token Balances
+
+We'll demonstrate how to use the GoldRush API to query account balances using both direct HTTP requests and the TypeScript SDK.
+
+
+#### Using HTTP Requests
+
+Create an `index.js` file and add the following code:
+
+```javascript
+const axios = require("axios");
+
+const apiKey = "your_api_key";
+const network = "zetachain-mainnet";
+const walletAddress = "your_wallet_address";
+const url = `https://api.covalenthq.com/v1/${network}/address/${walletAddress}/balances_v2/`;
+
+axios.get(url, {
+  auth: {
+    username: apiKey,
+    password: ''
+  },
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+.then((response) => {
+  console.log(JSON.stringify(response.data, null, 2));
+})
+.catch((error) => {
+  console.error('Request failed:', error);
+});
+
+```
+
+Run the code using the `node index.js` command. You'll get a result similar to the following:
+
+```json
+{
+  "data": {
+    "address": "0xece40cbb54d65282c4623f141c4a8a0be7d6adec",
+    "updated_at": "2024-08-28T10:17:28.671658047Z",
+    "next_update_at": "2024-08-28T10:22:28.671658318Z",
+    "quote_currency": "USD",
+    "chain_id": 7000,
+    "chain_name": "zetachain-mainnet",
+    "items": [
+      {
+        "contract_decimals": 18,
+        "contract_name": "Zeta",
+        "contract_ticker_symbol": "ZETA",
+        "contract_address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "supports_erc": [],
+        "logo_url": "https://www.datocms-assets.com/86369/1693331953-zetachain-colour.png",
+        "contract_display_name": "Zeta",
+        "logo_urls": {
+          "token_logo_url": "https://logos.covalenthq.com/tokens/7000/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
+          "protocol_logo_url": null,
+          "chain_logo_url": "https://www.datocms-assets.com/86369/1693503842-zetachain-icon-white.svg"
+        },
+        "last_transferred_at": null,
+        "native_token": true,
+        "type": "cryptocurrency",
+        "is_spam": false,
+        "balance": "129029144648174752049",
+        "balance_24h": "129029144648174752049",
+        "quote_rate": 0.50380385,
+        "quote_rate_24h": 0.49448004,
+        "quote": 65.00538,
+        "pretty_quote": "$65.01",
+        "quote_24h": 63.802338,
+        "pretty_quote_24h": "$63.80",
+        "protocol_metadata": null,
+        "nft_data": null
+      },
+    ]
+  },
+  "error": false,
+  "error_message": null,
+  "error_code": null
+}
+
+```
+
+
+#### Using the TypeScript SDK
+
+Using the official SDK can sometimes be more convenient. In your `index.js` file, copy the following code:
+
+
+```javascript
+const { GoldRushClient } = require("@covalenthq/client-sdk");
+
+const apiKey = "your_api_key";
+const network = "zetachain-mainnet";
+const walletAddress = "your_wallet_address";
+
+const apiServices = async () => {
+    try {
+        const client = new GoldRushClient(apiKey);
+        const resp = await client.BalanceService.getTokenBalancesForWalletAddress(network, walletAddress);
+        console.log(resp.data);
+    } catch (error) {
+        console.error("An error occurred:", error);
+    }
+}
+
+apiServices().catch(console.error);
+```
+
+Run the code using the `node index.js` command. You'll get a result similar to the one shown above.
+
+For more tutorials on using the GoldRush API with ZetaChain, please visit the [ZetaChain Blockchain Data Indexing API](https://goldrush.dev/docs/networks/zetachain/) documentation.

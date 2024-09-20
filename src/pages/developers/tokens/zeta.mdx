@@ -1,6 +1,8 @@
-import { ZetaTokenTable } from "~/components/Docs";
+---
+title: ZETA
+---
 
-# ZETA
+import { ZetaTokenTable } from "~/components/Docs";
 
 ## Native ZETA Token on ZetaChain
 
@@ -11,8 +13,8 @@ user-friendly symbol for the token, and the on-chain denom is `azeta`.
 
 1 ZETA = 10¹⁸ azeta.
 
-To query for account balance you can use the Cosmos HTTP API
-[`balances` endpoint](https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um):
+To query for account balance you can use the Cosmos HTTP API [`balances`
+endpoint](https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um):
 
 ```json
 {
@@ -30,8 +32,8 @@ example above the balance is 10 ZETA.
 
 ## Wrapped ZETA on ZetaChain
 
-ZETA can exist on ZetaChain in a wrapped form as a
-[WETH9 token](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/WZETA.sol).
+ZETA can exist on ZetaChain in a wrapped form as a [WETH9
+token](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/WZETA.sol).
 When wrapping a token (in this example, ZETA) it is locked in a smart contract
 and an equivalent amount of wrapped tokens (WZETA) is minted. The wrapped token
 is pegged 1:1 to the native token and can be redeemed for the native token at
@@ -41,7 +43,7 @@ primarily used in internal liquidity pools on ZetaChain paired with native gas
 tokens of connected blockchains (for example, sETH/WZETA pair).
 
 To wrap native ZETA and turn it into WZETA, send it to or use the `deposit`
-method of the `zetaToken` [contract on ZetaChain](/reference/contracts).
+method of the `zetaToken` [contract on ZetaChain](/reference/network/contracts).
 
 ## ZETA on Connected Blockchains
 
@@ -49,6 +51,6 @@ ZETA tokens on EVM-compatible connected blockchains (like Ethereum, Polygon and
 BSC) are implemented as
 [ERC-20](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/Zeta.eth.sol)
 tokens. You can find the contract addresses of the `zetaToken` on a connected
-blockchain on the [contracts page](/reference/contracts).
+blockchain on the [contracts page](/reference/network/contracts).
 
 <ZetaTokenTable />

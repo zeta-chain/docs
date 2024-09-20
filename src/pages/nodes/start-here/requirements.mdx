@@ -1,0 +1,46 @@
+---
+title: Technical Requirements
+---
+
+## Node Specifications
+
+These are the recommended specs for a ZetaChain node.
+
+| Node Type       | CPU    | Memory       | Data Disk         |
+| :-------------- | :----- | :----------- | :---------------- |
+| Core Validator  | 4 CPUs | 16 GB Memory | 300+ GB Data Disk |
+| Full Node       | 4 CPUs | 12 GB Memory | 300+ GB Data Disk |
+| Archive         | 4 CPUs | 12 GB Memory | 3+ TB Data Disk   |
+
+It is recommended to run validators on a machine with NVMe SSDs that support
+high IOPS (12K or higher) to avoid falling behind and getting the validator jailed.
+
+## Network Requirements
+
+#### Public Ports
+
+ZetaChain nodes communicate over the following ports. Make sure these are open
+to the public internet.
+
+| Node Type               | Port  | Protocol |
+| :---------------------- | :---- | :------- |
+| Full Node and Validator | 26656 | TCP      |
+
+#### RPC/API/Archive Nodes
+
+If you want to access RPC/API services on your node you'll need to make sure the
+following ports are open.
+
+| RPC Type       | Port  | Protocol |
+| :------------- | :---  | :------- |
+| Tendermint     | 26657 | TCP      |
+| EVM RPC - HTTP | 8545  | TCP      |
+| EVM RPC - WSS  | 8546  | TCP      |
+| Cosmos RPC     | 1317  | TCP      |
+
+#### Operating System
+
+ZetaChain nodes have been developed and tested on x86_64 architecture. Our
+binary files have been compiled with Ubuntu 22.04 LTS x86_64. This guide assumes
+you are using Ubuntu 22.04 LTS x86_64. If you are using a different OS you may
+need to make some adjustments.

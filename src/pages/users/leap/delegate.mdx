@@ -1,20 +1,24 @@
+---
+title: Delegating to a Validator
+---
+
 import Image from "next/image";
 
-# Delegating to a Validator
+import { basePath } from "~/lib/app.constants";
 
 To delegate your ZETA tokens to a validator, select the "Stake" tag in Leap:
 
-<Image src="/img/docs/leap-stake.png" width={400} height={597} alt="Leap extension - Staking" />
+<Image src={`${basePath}/img/docs/leap-stake.png`} width={400} height={597} alt="Leap extension - Staking" />
 
 Choose a validator to delegate to:
 
-<Image src="/img/docs/leap-validator.png" width={400} height={597} alt="Leap extension - Stake tZETA" />
+<Image src={`${basePath}/img/docs/leap-validator.png`} width={400} height={597} alt="Leap extension - Stake tZETA" />
 
 Enter the amount of ZETA you would like to delegate and click "Review":
 
-<Image src="/img/docs/leap-review.png" width={400} height={597} alt="Leap extension - Stake Review" />
+<Image src={`${basePath}/img/docs/leap-review.png`} width={400} height={597} alt="Leap extension - Stake Review" />
 
 Review the transaction details and click "Confirm" to sign and broadcast the
 transaction:
 
-<Image src="/img/docs/leap-confirm.png" width={400} height={597} alt="Leap extension - Confirm Stake" />
+<Image src={`${basePath}/img/docs/leap-confirm.png`} width={400} height={597} alt="Leap extension - Confirm Stake" />

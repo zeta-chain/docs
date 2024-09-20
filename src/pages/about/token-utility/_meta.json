@@ -1,8 +1,38 @@
 {
-  "overview": "Token Utility",
-  "token": "ZETA Token",
-  "distribution": "ZETA Distribution",
-  "validators": "Validator Incentives",
-  "gas": "Gas Fees",
-  "liquidity": "Core Liquidity Pools"
+  "overview": {
+    "title": "Token Utility",
+    "description": "How ZETA is used across components of the ZetaChain ecosystem.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "token": {
+    "title": "ZETA Token",
+    "description": "All about the total supply of the ZETA token.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "distribution": {
+    "title": "ZETA Distribution",
+    "description": "How the total supply of ZETA is distributed.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "validators": {
+    "title": "Validator Incentives",
+    "description": "How validator incentives are structured for securing the network.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "gas": {
+    "title": "Gas Fees",
+    "description": "How ZETA is used for gas fees for the network.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "liquidity": {
+    "title": "Core Liquidity Pools",
+    "description": "All about the core liquidity pools on ZetaChain.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  }
 }

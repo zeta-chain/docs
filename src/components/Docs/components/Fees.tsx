@@ -1,11 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-import { Skeleton } from "@mui/material";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { ZetaChainClient } from "@zetachain/toolkit/client";
-import { useEffect, useState } from "react";
-
-import { NetworkType } from "~/lib/app.types";
+import { useEffect, useMemo, useState } from "react";
 
 type FeesState = {
   messaging: any[];
@@ -17,35 +14,57 @@ type FeesProps = {
 };
 
 export const Fees: React.FC<FeesProps> = ({ type }) => {
-  const [fees, setFees] = useState<FeesState>({ messaging: [], omnichain: [] });
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const tabs = [
+    { label: "Mainnet Beta", networkType: "mainnet" },
+    { label: "Testnet", networkType: "testnet" },
+  ];
+
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [mainnetFees, setMainnetFees] = useState<FeesState>({
+    messaging: [],
+    omnichain: [],
+  });
+  const [testnetFees, setTestnetFees] = useState<FeesState>({
+    messaging: [],
+    omnichain: [],
+  });
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    const client = new ZetaChainClient({ network: activeTab });
-    client
-      .getFees(500000)
-      .then((data: any) => {
+    const fetchFees = async () => {
+      setIsLoading(true);
+
+      try {
+        const client = new ZetaChainClient({
+          network: activeTab.networkType,
+        });
+        const data = await client.getFees(500000);
+
         const sortedOmnichainFees = [...data.omnichain].sort((a, b) =>
           a.foreign_chain_id.localeCompare(b.foreign_chain_id)
         );
 
         const updatedData: FeesState = {
-          messaging: data.messaging.filter(
-            (fee: any) => !["18332", "8332"].includes(fee.chainID) // There is a bug in getFees that returns messaging fees for Bitcoin. This filters them out.
-          ),
+          messaging: data.messaging,
           omnichain: sortedOmnichainFees,
         };
 
-        setFees(updatedData);
-        setIsLoading(false);
-      })
-      .catch((error: any) => {
+        if (activeTab.networkType === "mainnet") setMainnetFees(updatedData);
+        if (activeTab.networkType === "testnet") setTestnetFees(updatedData);
+      } catch (error) {
         console.error("Error fetching fees:", error);
+      } finally {
         setIsLoading(false);
-      });
-  }, [activeTab]);
+      }
+    };
+
+    fetchFees();
+  }, [activeTab.networkType]);
+
+  const fees = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetFees : testnetFees;
+  }, [activeTab.networkType, mainnetFees, testnetFees]);
 
   const renderTableHeaders = () => {
     if (type === "messaging") {
@@ -92,37 +111,24 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
     ));
   };
 
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+    <div className="mt-8 first:mt-0">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <div>Loading...</div>
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>{renderTableHeaders()}</thead>
             <tbody>{renderTableRows()}</tbody>

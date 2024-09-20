@@ -1,24 +1,49 @@
-import { Skeleton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { GitHub, InfoOutlined } from "@mui/icons-material";
+import { Box, IconButton, Modal, Tooltip } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+const API: Record<string, string> = {
+  testnet: "https://zetachain-athens.g.allthatnode.com/archive/rest/cosmos/gov/v1/proposals",
+  mainnet: "https://zetachain-mainnet.g.allthatnode.com/archive/rest/cosmos/gov/v1/proposals",
+};
 
-const API: Record<NetworkType, string> = {
-  testnet: "https://zetachain-testnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
-  mainnet: "https://zetachain-mainnet-archive.allthatnode.com:1317/cosmos/gov/v1/proposals",
+const convertIpfsLink = (link: string) => {
+  const ipfsPrefix = "ipfs://";
+  const gatewayPrefix = "https://ipfs.io/ipfs/";
+  return link.startsWith(ipfsPrefix) ? link.replace(ipfsPrefix, gatewayPrefix) : link;
+};
+
+const modalStyles = {
+  position: "absolute" as const,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  overflow: "scroll",
+  minWidth: "75%",
 };
 
 export const GovUpgradeProposals = () => {
-  const [proposals, setProposals] = useState<any>([]);
+  const [mainnetProposals, setMainnetProposals] = useState<any[]>([]);
+  const [testnetProposals, setTestnetProposals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState({ label: "Mainnet", networkType: "mainnet" });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContents, setModalContents] = useState<any>(undefined);
+  const handleModalClose = () => setIsModalOpen(false);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const response = await fetch(API[activeTab]);
+        const response = await fetch(API[activeTab.networkType]);
         const data = await response.json();
+
         const softwareUpgradeProposals = data.proposals
           .filter(
             (proposal: any) =>
@@ -34,7 +59,8 @@ export const GovUpgradeProposals = () => {
           .filter((proposal: any) => proposal.plan.name)
           .sort((a: any, b: any) => b.plan.height - a.plan.height);
 
-        setProposals(softwareUpgradeProposals);
+        if (activeTab.networkType === "mainnet") setMainnetProposals(softwareUpgradeProposals);
+        if (activeTab.networkType === "testnet") setTestnetProposals(softwareUpgradeProposals);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -43,52 +69,43 @@ export const GovUpgradeProposals = () => {
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
-
-  const convertIpfsLink = (link: string) => {
-    const ipfsPrefix = "ipfs://";
-    const gatewayPrefix = "https://ipfs.io/ipfs/";
-    if (link.startsWith(ipfsPrefix)) {
-      return link.replace(ipfsPrefix, gatewayPrefix);
-    }
-    return link;
-  };
+  const proposals = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetProposals : testnetProposals;
+  }, [activeTab.networkType, mainnetProposals, testnetProposals]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
+    <div className="mt-8 first:mt-0">
+      <Modal open={isModalOpen} onClose={handleModalClose}>
+        <Box sx={{ ...modalStyles }}>
+          <pre style={{ overflow: "scroll" }}>{modalContents}</pre>
+        </Box>
+      </Modal>
 
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+      <div className="tabs">
+        {[
+          { label: "Mainnet", networkType: "mainnet" },
+          { label: "Testnet", networkType: "testnet" },
+        ].map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <div>Loading...</div>
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>
-                <th>ZetaChain Version</th>
+                <th>Upgrade Name</th>
                 <th>Upgrade Height</th>
                 <th>Status</th>
                 <th>Details</th>
@@ -96,15 +113,53 @@ export const GovUpgradeProposals = () => {
             </thead>
             <tbody>
               {proposals.map((proposal: any, index: any) => (
-                // eslint-disable-next-line react/no-array-index-key
                 <tr key={index}>
                   <td>{proposal.plan.name}</td>
                   <td>{proposal.plan.height}</td>
                   <td>{proposal.status}</td>
                   <td>
-                    <a href={convertIpfsLink(proposal.plan.info)} target="_blank" rel="noopener noreferrer">
-                      {convertIpfsLink(proposal.plan.info)}
-                    </a>
+                    {proposal.plan.info.startsWith("{") ? (
+                      <>
+                        <Tooltip title="Raw Plan Info" arrow>
+                          <IconButton
+                            aria-label="Raw Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            onClick={() => {
+                              let plan = structuredClone(proposal.plan);
+                              plan.info = JSON.parse(proposal.plan.info);
+                              setModalContents(JSON.stringify(plan, null, 4));
+                              setIsModalOpen(true);
+                            }}
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Github Release" arrow>
+                          <IconButton
+                            aria-label="Github Release"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={proposal.metadata}
+                            target="_blank"
+                          >
+                            <GitHub />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      <>
+                        <Tooltip title="Plan Info" arrow>
+                          <IconButton
+                            aria-label="Plan Info"
+                            className="text-grey-500 dark:text-grey-300"
+                            href={convertIpfsLink(proposal.plan.info)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <InfoOutlined />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

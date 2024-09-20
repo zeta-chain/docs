@@ -1,6 +1,8 @@
-import { ChainConfirmations, ForeignCoinsTable } from "~/components/Docs";
+---
+title: ZRC-20 on ZetaChain
+---
 
-# ZRC-20 on ZetaChain
+import { ChainConfirmations, ForeignCoinsTable } from "~/components/Docs";
 
 ZRC-20 is a token standard integrated into ZetaChain's omnichain smart contract
 platform. With ZRC-20, developers can build dApps that orchestrate native assets
@@ -42,8 +44,8 @@ A list of currently supported assets:
 <ForeignCoinsTable />
 
 New assets can be added or removed by broadcasting a transaction with a
-corresponding message of the
-[`fungible` module](/architecture/modules/fungible/messages/) on ZetaChain.
+corresponding message of the [`fungible`
+module](/developers/architecture/modules/fungible/messages/) on ZetaChain.
 
 ## Introduction
 
@@ -59,8 +61,8 @@ fungible token (like an ERC-20).
 
 ZRC-20 is based on ERC-20, with three additional functions and some associated
 events for integration with Cross-Chain Transactions (CCTXs) in ZetaChain (see
-the
-[`IZRC20` interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)).
+the [`IZRC20`
+interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)).
 
 Comparing ZRC-20 to ERC-20, there are additional external functions to deposit
 and withdraw, and additional events for each of them. This makes ZRC-20
@@ -105,7 +107,7 @@ flowchart LR
 ```
 
 To deposit a native gas token (like sETH, tMATIC, tBNB, or tBTC) to ZetaChain,
-send it to the [TSS address](/reference/contracts) on a connected chain.
+send it to the [TSS address](/reference/network/contracts) on a connected chain.
 
 If the input data field of the transaction is empty, the token will be deposited
 to the sender's address on ZetaChain.
@@ -122,19 +124,7 @@ additional cross-chain fee. If you send 1 token to a TSS address, you will
 receive 1 ZRC-20 version of the same token on ZetaChain.
 
 For Bitcoin deposits, which utilize the UTXO (Unspent Transaction Output) model,
-the process incurs additional fees. Unlike EVM-based chains, each deposited
-Bitcoin output incurs a fee when it is spent. To address this, both the
-depositor and the withdrawer share the cost of the spend. This fee is charged in
-advance as a deposit fee.
-
-The Bitcoin deposit fee is calculated with the following formula:
-
-```
-DepositFee = AverageFeeRateBlockX * GasPriceMultiplier * DepositIncurredVBytes
-```
-
-Where `DepositIncurredVBytes` is fixed as `68vB` and the `GasPriceMultiplier`
-defaults to 2 currently.
+the process [incurs additional fees](/developers/chains/bitcoin#deposit-fee).
 
 ## Depositing Supported ERC-20 Tokens as ZRC-20
 
@@ -175,7 +165,8 @@ flowchart LR
 ```
 
 To deposit a supported ERC-20 token to ZetaChain, use the `deposit` method of
-the [ERC-20 custody contract](/reference/contracts) on a connected chain.
+the [ERC-20 custody contract](/reference/network/contracts) on a connected
+chain.
 
 The `deposit` method accepts the following parameters:
 
@@ -202,9 +193,9 @@ deposited. After the CCTX is processed the token amount will be transferred to
 the recipient address on the connected chain either from a TSS address (for
 native gas tokens) or from the ERC-20 custody contract (for ERC-20 tokens).
 
-Check out the [Swap tutorial](/developers/omnichain/tutorials/swap) to learn how
-to build omnichain contracts that accept token deposits form connected chains,
-swap between ZRC-20 tokens using the internal liquidity pools on ZetaChain, and
+Check out the [Swap tutorial](/developers/tutorials/swap) to learn how to build
+omnichain contracts that accept token deposits form connected chains, swap
+between ZRC-20 tokens using the internal liquidity pools on ZetaChain, and
 withdraw them to connected chains.
 
 ## Block Confirmations
@@ -224,6 +215,6 @@ confirmations, for example, when the value transfer exceeds a specified amount.
 ## Liquidity Cap
 
 Each ZRC-20 has a total cap on the number of deposited tokens that the protocol
-can accept. Any assets beyond this deposited to ZetaChain from external chains
+can accept. Any assets beyond this deposited to ZetaChain from connected chains
 will be returned to the sender. You can view the caps on the explorer
 [here](https://explorer.zetachain.com/liquidity).

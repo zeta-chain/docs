@@ -1,5 +1,7 @@
 {
-  "zetachain": "What is ZetaChain?",
-  "roadmap": "Technical Roadmap",
-  "token-utility": "ZETA Token Utility"
+  "token-utility": {
+    "title": "About ZETA Token",
+    "description": "Understand more about the token underpinning ZetaChain",
+    "readTime": "5 min"
+  }
 }

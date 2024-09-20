@@ -1,0 +1,30 @@
+{
+  "alchemy": {
+    "title": "Alchemy",
+    "description": "Node API and Subgraphs"
+  },
+  "goldsky": {
+    "title": "Goldsky",
+    "description": "Subgraph indexer"
+  },
+  "pyth": {
+    "title": "Pyth",
+    "description": "Price and VRF Oracle"
+  },
+  "particle": {
+    "title": "Particle Network",
+    "description": "Account Abstraction"
+  },
+  "envio": {
+    "title": "Envio",
+    "description": "Real-time data indexer"
+  },
+  "subquery": {
+    "title": "SubQuery",
+    "description": "Open-source, flexible, multi-chain data indexer"
+  },
+  "goldrush": {
+    "title": "GoldRush",
+    "description": "Historical blockchain data API"
+  }
+}

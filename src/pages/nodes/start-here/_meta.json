@@ -1,0 +1,20 @@
+{
+  "requirements": {
+    "title": "Technical Requirements",
+    "description": "Before you start running a node, make sure you have the following technical requirements.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "setup": {
+    "title": "Setting Up a Node",
+    "description": "A guide to set up a ZetaChain Mainnet or Testnet node.",
+    "readTime": "30 min",
+    "readType": "Intermediate"
+  },
+  "syncing": {
+    "title": "Syncing a Node",
+    "description": "Syncing a node using snapshots or KSYNC.",
+    "readTime": "15 min",
+    "readType": "Beginner"
+  }
+}

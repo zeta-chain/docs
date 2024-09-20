@@ -1,11 +1,10 @@
-import { Skeleton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { NetworkType } from "~/lib/app.types";
+type NetworkType = "mainnet" | "testnet";
 
-const API: Record<NetworkType, string> = {
-  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.mainnet.json",
-  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.testnet.json",
+const API: any = {
+  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v1/data/addresses.mainnet.json",
+  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v1/data/addresses.testnet.json",
 };
 
 type AddressData = {
@@ -16,63 +15,64 @@ type AddressData = {
   type: string;
 }[];
 
-export const ZetaTokenTable = () => {
-  const [zetaTokens, setZetaTokens] = useState<AddressData>([]);
+export const ZetaTokenTable: any = () => {
+  const tabs = [
+    { label: "Mainnet Beta", networkType: "mainnet" },
+    { label: "Testnet", networkType: "testnet" },
+  ];
+
+  const [mainnetZetaTokens, setMainnetZetaTokens] = useState<AddressData>([]);
+  const [testnetZetaTokens, setTestnetZetaTokens] = useState<AddressData>([]);
+
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<NetworkType>("testnet");
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   useEffect(() => {
     setIsLoading(true);
-    setZetaTokens([]);
+
     const fetchData = async () => {
       try {
-        const response = await fetch(API[activeTab]);
+        const response = await fetch(API[activeTab.networkType]);
         const data: AddressData = await response.json();
 
         const zetaTokenContracts = data.filter((item) => item.type === "zetaToken");
 
-        setZetaTokens(zetaTokenContracts);
+        if (activeTab.networkType === "mainnet") setMainnetZetaTokens(zetaTokenContracts);
+        if (activeTab.networkType === "testnet") setTestnetZetaTokens(zetaTokenContracts);
       } catch (error) {
         console.error("Error fetching data:", error);
+        if (activeTab.networkType === "mainnet") setMainnetZetaTokens([]);
+        if (activeTab.networkType === "testnet") setTestnetZetaTokens([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab.networkType]);
 
-  const activeStyle = { fontWeight: "bold", textDecoration: "underline" };
-  const inactiveStyle = { fontWeight: "normal", textDecoration: "none" };
+  const zetaTokens = useMemo(() => {
+    return activeTab.networkType === "mainnet" ? mainnetZetaTokens : testnetZetaTokens;
+  }, [activeTab.networkType, mainnetZetaTokens, testnetZetaTokens]);
 
   return (
-    <div className="mt-6">
-      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-        <button
-          type="button"
-          style={activeTab === "testnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("testnet")}
-        >
-          Testnet
-        </button>
-
-        <button
-          type="button"
-          style={activeTab === "mainnet" ? activeStyle : inactiveStyle}
-          onClick={() => setActiveTab("mainnet")}
-        >
-          Mainnet Beta
-        </button>
+    <div className="mt-8 first:mt-0">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.networkType}
+            onClick={() => setActiveTab(tab)}
+            className={activeTab.networkType === tab.networkType ? "active" : ""}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          className="rounded mb-5 last-of-type:mb-0 bg-grey-200 dark:bg-grey-600"
-        />
+        <div>Loading...</div>
       ) : (
-        <div className="overflow-auto">
+        <div className="overflow-x-auto mt-8">
           <table>
             <thead>
               <tr>
@@ -98,8 +98,13 @@ export const ZetaTokenTable = () => {
 
       <p className="mt-4">
         Source:{" "}
-        <a href={API[activeTab]} target="_blank" rel="noopener noreferrer" className="text-green-100">
-          {API[activeTab]}
+        <a
+          href={API[activeTab.networkType]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#00A5C6] dark:text-[#B0FF61]"
+        >
+          {API[activeTab.networkType]}
         </a>
       </p>
     </div>

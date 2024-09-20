@@ -1,6 +1,22 @@
 {
-  "zetahub": "ZetaHub",
-  "pingpub": "Ping Pub Explorer",
-  "keplr": "Keplr Wallet",
-  "leap": "Leap Wallet"
+  "zetahub": {
+    "title": "ZetaHub",
+    "description": "Using ZetaHub"
+  },
+  "pingpub": {
+    "title": "Ping Pub Explorer",
+    "description": "Using a block explorer for Cosmos based blockchains"
+  },
+  "keplr": {
+    "title": "Keplr Wallet",
+    "description": "Setting up and using Keplr Wallet with ZetaChain"
+  },
+  "leap": {
+    "title": "Leap Wallet",
+    "description": "Setting up and using Leap Wallet with ZetaChain"
+  },
+  "cli": {
+    "title": "ZetaChain's CLI",
+    "description": "Interact with ZetaChain from a terminal using a command-line interface"
+  }
 }

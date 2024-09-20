@@ -1,0 +1,10 @@
+{
+  "start-here": {
+    "title": "Start Here",
+    "description": "These docs will provide you with all the necessary steps to successfully set up your node"
+  },
+  "validate": {
+    "title": "Validate",
+    "description": "Start validating transactions for the chain."
+  }
+}

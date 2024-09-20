@@ -1,15 +1,19 @@
+---
+title: Transfer Tokens
+---
+
 import Image from "next/image";
 
-# Transfer Tokens
+import { basePath } from "~/lib/app.constants";
 
 To transfer tokens between accounts open the Keplr extension and click "Send":
 
-<Image src="/img/docs/keplr-dashboard.png" width={400} height={670} alt="Keplr extension" />
+<Image src={`${basePath}/img/docs/keplr-dashboard.png`} width={400} height={670} alt="Keplr extension" />
 
 Next, select the asset you want to transfer. Note, that Keplr will only show
 native and IBC tokens, but not ZRC-20 or ERC-20. Select ZETA from the list:
 
-<Image src="/img/docs/keplr-assets.png" width={400} height={670} alt="Keplr extension - Select Asset" />
+<Image src={`${basePath}/img/docs/keplr-assets.png`} width={400} height={670} alt="Keplr extension - Select Asset" />
 
 Enter the recipient address in the bech32 format (`zeta***`) and the amount you
 want to transfer. Please, note that the amount in Keplr is speficied in ZETA, so
@@ -18,9 +22,14 @@ Memo is optional and is often used when sending tokens to centralized exchanges.
 
 Click "Next" to review the transaction details:
 
-<Image src="/img/docs/keplr-send.png" width={400} height={670} alt="Keplr extension - Send" />
+<Image src={`${basePath}/img/docs/keplr-send.png`} width={400} height={670} alt="Keplr extension - Send" />
 
 Review the transaction details and click "Approve" to sign and broadcast the
 transaction:
 
-<Image src="/img/docs/keplr-approve.png" width={400} height={670} alt="Keplr extension - Confirm Transaction" />
+<Image
+  src={`${basePath}/img/docs/keplr-approve.png`}
+  width={400}
+  height={670}
+  alt="Keplr extension - Confirm Transaction"
+/>
