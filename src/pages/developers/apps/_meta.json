@@ -2,5 +2,9 @@
   "intro": {
     "title": "Universal App Basics",
     "description": "Build universal apps that can be called from any blockchain"
+  },
+  "advantages": {
+    "title": "Why Build Universal Apps?",
+    "description": "Advantages of building universal apps"
   }
 }
