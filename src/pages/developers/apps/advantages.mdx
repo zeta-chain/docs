@@ -8,22 +8,91 @@ development, enhanced security, and a significantly improved user experience.
 
 ### Chain Orchestration
 
-Universal apps can orchestrate complex cross-chain transactions that span across
-different networks from a single contract on ZetaChain. A universal app can
-handle incoming cross-chain token transfers and contract calls and produce
-outgoing transactions on connected blockchains.
+One of the standout features of ZetaChain is its ability to orchestrate complex
+transactions across multiple blockchains from a single smart contract. Universal
+apps built on ZetaChain can manage incoming token transfers and contract calls
+from different blockchains and initiate outgoing transactions to connected
+networks—all within a unified framework.
+
+For example, suppose you have an application that needs to interact with both
+Ethereum and Solana. Traditionally, you would need to write separate codebases
+and manage intricate communication protocols between the two chains. With
+ZetaChain, your universal app can handle these operations seamlessly,
+coordinating transactions across chains without the need for multiple contracts
+or complex interoperability solutions.
+
+This chain orchestration capability simplifies the development process, reduces
+the potential for errors, and ensures that your application can scale as it
+integrates with more blockchains.
 
 ### Forwards Compatibility
 
-When an app is deployed on ZetaChain, it's automatically connected to all
-networks connected to ZetaChain. When a new blockchain is connected, the same
-universal app becomes compatible with this blockchain without any modifications
-required to the contract source code. This forwards compatibility makes
-universal apps easier to maintain and future-proof.
+Deploying an app on ZetaChain means it automatically becomes connected to all
+networks linked to ZetaChain. As new blockchains are added to the ZetaChain
+ecosystem, your universal app gains compatibility with these networks without
+any additional effort or modifications to your contract's source code.
 
-### EVM Developer Experience
+This forward compatibility is a significant advantage, as it future-proofs your
+application. You don't have to anticipate which blockchains might become popular
+or widely adopted in the future; your app will be ready to interact with them as
+soon as they are integrated into ZetaChain. This not only saves development time
+but also ensures that your app remains relevant and accessible to users across
+different blockchain networks.
 
-Smart contracts are running on ZetaChain's Universal EVM, which is fully
-compatible with Ethereum and offers familiar developer experience. Foundry,
-Hardhat, Slither, Ethers.js and other tools work out of the box and make
-building universal apps a breeze.
+This feature simplifies maintenance, as you don't need to update your contracts
+or redeploy your application whenever a new blockchain is connected. Your app
+can continue to operate smoothly, providing a consistent user experience even as
+the underlying blockchain landscape evolves.
+
+### Familiar Developer Experience
+
+ZetaChain runs smart contracts on its Universal Ethereum Virtual Machine (UEVM),
+which is fully compatible with Ethereum's EVM. This means developers can write
+smart contracts in Solidity or other EVM-compatible languages, leveraging their
+existing knowledge and expertise.
+
+The platform supports popular development tools like Foundry, Hardhat, Slither,
+and Ethers.js right out of the box. This compatibility allows developers to use
+familiar workflows, debugging tools, and testing frameworks, making the process
+of building universal apps more efficient and less error-prone.
+
+For instance, if you're accustomed to using Hardhat for compiling and deploying
+smart contracts on Ethereum, you can continue to use it seamlessly with
+ZetaChain. This reduces the learning curve and accelerates the development
+process, enabling you to focus on building innovative features rather than
+grappling with new tooling or languages.
+
+### Transfer Native Tokens
+
+One of the core capabilities of universal apps on ZetaChain is the ability to
+transfer value using native tokens across all connected chains. This means users
+can perform transactions involving the actual native assets of each blockchain,
+rather than wrapped or synthetic versions.
+
+For example, a user can send native USDC from Ethereum directly to Polygon, or
+swap native BTC from the Bitcoin network for PEPE tokens on Ethereum. This
+cross-chain token transfer functionality enhances liquidity and provides a more
+seamless experience for users, who no longer need to rely on intermediaries or
+complex token wrapping mechanisms.
+
+To facilitate these transfers, universal apps have access to unified liquidity
+pools on ZetaChain. These pools aggregate liquidity from all connected chains,
+containing tokens that have been transferred to ZetaChain from their respective
+networks.
+
+Adding liquidity to these unified pools involves transferring tokens to the
+custody of ZetaChain validators on the connected chains. For instance, ZetaChain
+validators hold custody of ETH, USDC, and other tokens on Ethereum. This custody
+mechanism is secured through robust consensus protocols and validator
+incentives, ensuring the safety of the assets.
+
+This system allows users to send tokens to and from universal apps, as well as
+directly between connected chains, without the need for centralized exchanges or
+third-party bridges. It streamlines the user experience and reduces the risks
+associated with cross-chain transactions, such as double-spending or transaction
+failures.
+
+By using native tokens, users benefit from the inherent properties of those
+assets, including their security features, consensus mechanisms, and existing
+network effects. This enhances trust and reliability in cross-chain operations
+conducted through ZetaChain-powered universal apps.
