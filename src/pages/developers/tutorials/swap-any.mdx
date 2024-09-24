@@ -1,44 +1,77 @@
 ---
-title: Swap To Any Token
+title: Swap to Any Token
 ---
 
-In the previous [Swap](/developers/tutorials/swap) tutorial, you learned how to
-create universal swap contracts that enable users to exchange tokens from one
-connected blockchain for a token on another blockchain, with the target token
-always withdrawn to the destination chain.
+import { Alert } from "~/components/shared";
 
-In this tutorial, you will enhance the swap contract to support swapping tokens
-to any token (such as ZRC-20, ERC-20, or ZETA) and provide the flexibility to
-either withdraw the token to the destination chain or keep it on ZetaChain.
+In the previous [Swap](/developers/tutorials/swap) tutorial, you created a
+universal swap contract that allows users to exchange tokens from one connected
+blockchain for a token on another blockchain. In that implementation, the
+swapped token was always withdrawn to the destination chain. This tutorial
+expands on that by enhancing the contract to support swapping tokens to any
+token (such as ZRC-20, ERC-20, or ZETA) and offering users the flexibility to
+either withdraw the token to the destination chain or retain it on ZetaChain.
 
-Keeping swapped tokens on ZetaChain is useful if you want to use ZRC-20 in
-non-universal contracts that don't yet have the capacity to accept tokens from
-connected chains directly, or if the destination token is ZETA, which you want
-to keep on ZetaChain.
+The ability to keep swapped tokens on ZetaChain can be particularly useful if
+you intend to utilize ZRC-20 tokens in non-universal contracts that aren't yet
+equipped to accept tokens from connected chains. It is also useful if the
+destination token is ZETA, which you may want to keep on ZetaChain for further
+use.
 
-## Omnichain Contract
+In this enhanced version, you will modify the original swap contract to support
+this additional functionality. You will also deploy the modified contract to
+localnet and interact with it by swapping tokens from a connected EVM chain.
 
-Copy the existing swap example into a new file `SwapToAnyToken.sol` and make the
-necessary changes:
+<Alert>
+  {" "}
+  This tutorial depends on the gateway, which is available on localnet but not yet deployed on testnet. It will be compatible
+  with testnet after the gateway is deployed. In other words, you cannot deploy this tutorial on testnet yet.{" "}
+</Alert>
 
-```solidity filename="contracts/SwapToAnyToken.sol" {8,11,23,37,45-47,49-56,64,73,79,94,99-114,117-127}
+## Setting Up Your Environment
+
+To get started, clone the example contracts repository and install the
+dependencies by running the following commands:
+
+```
+git clone https://github.com/zeta-chain/example-contracts
+
+cd example-contracts/examples/swap
+
+yarn
+```
+
+## Understanding the SwapToAnyToken Contract
+
+The `SwapToAnyToken` contract builds on the previous swap contract by allowing
+users to swap tokens to any target token and giving them the option to either
+withdraw the swapped tokens to the destination chain or keep them on ZetaChain.
+This added flexibility makes the contract more versatile for a variety of use
+cases.
+
+```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity 0.8.26;
 
-import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
-import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
-import "@zetachain/toolkit/contracts/BytesHelperLib.sol";
+import {SystemContract, IZRC20} from "@zetachain/toolkit/contracts/SystemContract.sol";
+import {SwapHelperLib} from "@zetachain/toolkit/contracts/SwapHelperLib.sol";
+import {BytesHelperLib} from "@zetachain/toolkit/contracts/BytesHelperLib.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IWZETA.sol";
-import "@zetachain/toolkit/contracts/OnlySystem.sol";
+import {GatewayZEVM} from "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
 
-contract SwapToAnyToken is zContract, OnlySystem {
+contract SwapToAnyToken is UniversalContract {
     SystemContract public systemContract;
-
+    GatewayZEVM public gateway;
     uint256 constant BITCOIN = 18332;
 
-    constructor(address systemContractAddress) {
+    constructor(address systemContractAddress, address payable gatewayAddress) {
         systemContract = SystemContract(systemContractAddress);
+        gateway = GatewayZEVM(gatewayAddress);
     }
 
     struct Params {
@@ -47,14 +80,12 @@ contract SwapToAnyToken is zContract, OnlySystem {
         bool withdraw;
     }
 
-    receive() external payable {}
-
     function onCrossChainCall(
         zContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external virtual override onlySystem(systemContract) {
+    ) external virtual override {
         Params memory params = Params({
             target: address(0),
             to: bytes(""),
@@ -99,42 +130,60 @@ contract SwapToAnyToken is zContract, OnlySystem {
         uint256 inputForGas;
         address gasZRC20;
         uint256 gasFee;
+        uint256 swapAmount = amount;
 
         if (withdraw) {
             (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
 
-            inputForGas = SwapHelperLib.swapTokensForExactTokens(
-                systemContract,
-                inputToken,
-                gasFee,
-                gasZRC20,
-                amount
-            );
+            if (gasZRC20 == inputToken) {
+                swapAmount = amount - gasFee;
+            } else {
+                inputForGas = SwapHelperLib.swapTokensForExactTokens(
+                    systemContract,
+                    inputToken,
+                    gasFee,
+                    gasZRC20,
+                    amount
+                );
+                swapAmount = amount - inputForGas;
+            }
         }
 
         uint256 outputAmount = SwapHelperLib.swapExactTokensForTokens(
             systemContract,
             inputToken,
-            withdraw ? amount - inputForGas : amount,
+            swapAmount,
             targetToken,
             0
         );
 
         if (withdraw) {
-            IZRC20(gasZRC20).approve(targetToken, gasFee);
-            IZRC20(targetToken).withdraw(recipient, outputAmount);
-        } else {
-            address wzeta = systemContract.wZetaContractAddress();
-            if (targetToken == wzeta) {
-                IWETH9(wzeta).withdraw(outputAmount);
-                address payable recipientAddress = payable(
-                    address(uint160(bytes20(recipient)))
+            if (gasZRC20 == targetToken) {
+                IZRC20(gasZRC20).approve(
+                    address(gateway),
+                    outputAmount + gasFee
                 );
-                recipientAddress.transfer(outputAmount);
             } else {
-                address recipientAddress = address(uint160(bytes20(recipient)));
-                IWETH9(targetToken).transfer(recipientAddress, outputAmount);
+                IZRC20(gasZRC20).approve(address(gateway), gasFee);
+                IZRC20(targetToken).approve(address(gateway), outputAmount);
             }
+            gateway.withdraw(
+                recipient,
+                outputAmount,
+                targetToken,
+                RevertOptions({
+                    revertAddress: address(0),
+                    callOnRevert: false,
+                    abortAddress: address(0),
+                    revertMessage: "",
+                    onRevertGasLimit: 0
+                })
+            );
+        } else {
+            IWETH9(targetToken).transfer(
+                address(uint160(bytes20(recipient))),
+                outputAmount
+            );
         }
     }
 
@@ -149,192 +198,128 @@ contract SwapToAnyToken is zContract, OnlySystem {
 
         swapAndWithdraw(inputToken, amount, targetToken, recipient, withdraw);
     }
+
+    function onRevert(RevertContext calldata revertContext) external override {}
 }
 ```
 
-Add the `WZETA` interface import, which allows interacting with ERC-20
-compatible tokens (such as ZRC-20) as well as unwrapping WZETA into native ZETA.
+The contract introduces a key enhancement: a `withdraw` flag. This flag
+determines whether the swapped tokens should be withdrawn to a connected chain
+or remain on ZetaChain. Additionally, the contract supports both cross-chain
+calls and direct interactions on ZetaChain, making it useful for scenarios where
+tokens are already on ZetaChain and you don’t need to involve a connected chain.
 
-Change the contract name from `Swap` to `SwapToAnyToken`.
+### Differences Between Swap and SwapToAnyToken Contracts
 
-Add `bool withdraw` to the `Params` struct. This value determines if a user
-wants to withdraw the swapped token to the destination chain (`true`) or keep
-the token on ZetaChain (`false`). By default the value will be set to `true`.
+In this new version, the core structure remains similar, but several key changes
+have been made to extend its functionality.
 
-If the contract is being called from Bitcoin, use `bytesToBool` to decode the
-last value in the `message`, and set it as the value of `params.withdraw`.
+First, the `Params` struct has been updated to include a `withdraw` flag. This
+allows users to specify whether they want the swapped tokens withdrawn to a
+connected chain or kept on ZetaChain. The `onCrossChainCall` function now
+decodes this additional flag from the incoming message. For EVM chains and
+Solana, the contract decodes the `withdraw` flag alongside other parameters. For
+Bitcoin, due to the smaller message size allowed by its OP_RETURN, the contract
+checks if the message length is sufficient before extracting the `withdraw`
+flag.
 
-If the contract is being called from an EVM chain, use `abi.decode` to decode
-all values: target token, recipient and the withdraw flag.
+The `swapAndWithdraw` function has also been modified to conditionally handle
+gas fees based on whether the tokens will be withdrawn. If the `withdraw` flag
+is set to `true`, the contract proceeds with the usual gas fee calculation and
+deduction. If the flag is `false`, it skips the gas fee handling and simply
+swaps the full amount of tokens.
 
-Next, add `params.withdraw` as the last argument to the `swapAndWithdraw`
-function call.
+Once the tokens are swapped, the contract either withdraws them to the
+destination chain or transfers them directly on ZetaChain. When `withdraw` is
+`true`, it follows the same withdrawal process as the original contract, using
+the gateway to send tokens to the connected chain. However, if `withdraw` is
+`false`, it transfers the tokens directly to the recipient on ZetaChain without
+involving the gateway.
 
-### Swap and Withdraw Function
+Additionally, a new public `swap` function has been introduced, which allows
+users to interact with the contract directly on ZetaChain. This function is
+particularly useful if you already have tokens on ZetaChain and want to swap
+them without making a cross-chain call. It takes in parameters similar to those
+in `onCrossChainCall`, transfers the input tokens from the sender to the
+contract, and then calls `swapAndWithdraw` to perform the swap and handle
+withdrawal or direct transfer based on the `withdraw` flag.
 
-Add `bool withdraw` as the last parameter to the function definition.
+Finally, the contract now imports the `IWETH9` interface to handle direct token
+transfers when `withdraw` is `false`. This interface facilitates the transfer of
+wrapped tokens on ZetaChain.
 
-If a user wants to withdraw the tokens, query the gas token and the gas fee.
-Since a user now has an option to not withdraw, this step has become optional.
+## Starting Localnet
 
-Modify the amount passed to `swapExactTokensForTokens`. If a user withdraws
-token, subtract the withdraw fee in input token amount.
-
-Finally, add a conditional to either withdraw ZRC-20 tokens to a connected chain
-or transfer the target token to the recipient on ZetaChain. If a user doesn't
-want to withdraw a token you need to consider two scenarios:
-
-- If the target token is WZETA, unwrap it and transfer native ZETA to the
-  recipient.
-- If the target token is not WZETA, transfer it to the recipient as any other
-  ERC-20-compatible token.
-
-### Swap Function
-
-Create a new public `swap` function to make it possible for users to call the
-"swap and withdraw" function. Compared to "swap and withdraw", which is internal
-and is not meant to be called directly, the "swap" function is public and is
-meant to be called from ZetaChain. The purpose of "swap" is to allow users to
-swap tokens they have on ZetaChain for other tokens and optionally also withdraw
-them. For example, when a user has a ZRC-20 ETH and they want to swap it for
-ZRC-20 BTC (without withdrawing), or swap it for ZRC-20 BNB and withdraw it to
-the BNB chain as a native BNB token.
-
-## Update the Interact Task
-
-```ts filename="tasks/interact.ts"
-let withdraw = true;
-if (args.withdraw != undefined) {
-  withdraw = JSON.parse(args.withdraw);
-}
-
-const data = prepareData(args.contract, ["address", "bytes", "bool"], [args.targetToken, recipient, withdraw]);
-
-//...
-  .addOptionalParam("withdraw");
-```
-
-Add an optional parameter `withdraw`, which determines if a user wants to
-withdraw the target token to the destination chain. By default set the value to
-`true`, and pass withdraw as the third value in the message.
-
-## Add a Swap Task
-
-While the interact task is meant to be called on a connected chain to trigger a
-universal contract, the swap task is meant to be called on ZetaChain directly to
-swap an asset already on ZetaChain for a different asset optionally withdrawing
-it.
+To simulate ZetaChain’s behavior locally, start the local development
+environment by running:
 
 ```
-import { task } from "hardhat/config";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { parseEther } from "@ethersproject/units";
-import { ethers } from "ethers";
-
-const main = async (args: any, hre: HardhatRuntimeEnvironment) => {
-  const [signer] = await hre.ethers.getSigners();
-
-  if (!/zeta_(testnet|mainnet)/.test(hre.network.name)) {
-    throw new Error('🚨 Please use either "zeta_testnet" or "zeta_mainnet".');
-  }
-
-  const factory = await hre.ethers.getContractFactory("SwapToAnyToken");
-  const contract = factory.attach(args.contract);
-
-  const amount = parseEther(args.amount);
-  const inputToken = args.inputToken;
-  const targetToken = args.targetToken;
-  const recipient = ethers.utils.arrayify(args.recipient);
-  const withdraw = JSON.parse(args.withdraw);
-
-  const erc20Factory = await hre.ethers.getContractFactory("ERC20");
-  const inputTokenContract = erc20Factory.attach(args.inputToken);
-
-  const approval = await inputTokenContract.approve(args.contract, amount);
-  await approval.wait();
-
-  const tx = await contract.swap(
-    inputToken,
-    amount,
-    targetToken,
-    recipient,
-    withdraw
-  );
-
-  await tx.wait();
-  console.log(`Transaction hash: ${tx.hash}`);
-};
-
-task("swap", "Interact with the Swap contract from ZetaChain", main)
-  .addFlag("json", "Output JSON")
-  .addParam("contract", "Contract address")
-  .addParam("amount", "Token amount to send")
-  .addParam("inputToken", "Input token address")
-  .addParam("targetToken", "Target token address")
-  .addParam("recipient", "Recipient address")
-  .addParam("withdraw", "Withdraw flag (true/false)");
+npx hardhat localnet
 ```
 
-## Compile and Deploy the Contract
+## Deploying the Contract
+
+Once your environment is set up, compile the contract and deploy it to localnet
+using the following command:
 
 ```
-npx hardhat compile --force
+yarn deploy --name SwapToAnyToken
 ```
 
-When deploying use the `--name` flag to specify which contract you want to
-deploy:
+After deployment, you should see an output similar to this:
 
 ```
-npx hardhat deploy --network zeta_testnet --name SwapToZeta
+🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+
+🚀 Successfully deployed contract on localhost.
+📜 Contract address: 0x67d269191c92Caf3cD7723F116c85e6E9bf55933
 ```
 
-```
-🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+Ensure that you provide the `systemContractAddress` and `gatewayAddress` when
+deploying the contract. For localnet, these addresses remain the same.
 
-🚀 Successfully deployed contract on zeta_testnet.
-📜 Contract address: 0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
-🌍 ZetaScan: https://athens.explorer.zetachain.com/address/0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
-🌍 Blockcsout: https://zetachain-athens-3.blockscout.com/address/0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
-```
+## Swapping and Withdrawing Tokens to Connected Chain
 
-## Swap Tokens Without Withdrawing
-
-When using the `interact` task specify ZETA token contract address as the value
-of `--target-token`:
+To swap tokens from a connected EVM chain and withdraw them to the destination
+chain, use the following command:
 
 ```
-npx hardhat interact --contract 0x1767A93A96D339EeC8E0325D94B5d3E4454d542f --network bsc_testnet --amount 0.01 --target-token 0xcC683A782f4B30c138787CB5576a86AF66fdc31d --recipient 0x6093537Aa6C8C8bf4705bda40aC9193977208B39 --withdraw false
+npx hardhat evm-deposit-and-call --network localhost --receiver 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --amount 1 --types '["address", "bytes", "bool"]' 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 true
 ```
 
-Track the transaction:
+This command sends tokens to the `SwapToAnyToken` contract on ZetaChain and
+instructs it to withdraw the tokens to a connected chain. You’ll need to provide
+the receiver address (the contract), the amount of tokens to swap, the target
+token address on ZetaChain, the recipient address on the destination chain, and
+the `withdraw` flag set to `true`.
+
+## Swapping Tokens Without Withdrawing
+
+If you want to swap tokens and keep them on ZetaChain rather than withdrawing
+them, set the `withdraw` flag to `false`. This can be done using the new `swap`
+function, which allows direct interaction with the contract on ZetaChain. Use
+the following command:
 
 ```
-npx hardhat cctx 0x3f22de7a6d6669ce55ce2a95adaee46b8fd8a751b145c903c62300f9e7e44e4d
+npx hardhat swap --network localhost --contract 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --inputToken 0x91d18e54DAf4F677cB28167158d6dd21F6aB3921 --amount 1 --targetToken 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw false
 ```
 
-```
-✓ CCTXs on ZetaChain found.
+This command will perform the token swap directly on ZetaChain without
+withdrawing the tokens. You need to provide the contract address, the input
+token address, the amount to swap, the target token address, and the recipient
+address on ZetaChain.
 
-✓ 0x7f7f7051dd9da2037b7fc01c43b18649b923c522e9ff3934e28647da59fffe79: 97 → 7001: OutboundMined (Remote omnichain contract call completed)
-```
+## Conclusion
 
-Notice that an outbound CCTX is not created, because when swapping without
-withdrawing, target tokens remain on ZetaChain and are not withdrawn.
+In this tutorial, you extended the functionality of the original swap contract
+by adding the ability to swap tokens to any token and decide whether to withdraw
+them to a connected chain or keep them on ZetaChain. You also learned how to
+deploy the contract and interact with it both via cross-chain calls and directly
+on ZetaChain, providing greater flexibility for a variety of use cases.
 
-## Swap Token And Withdraw
+## Source Code
 
-```
-npx hardhat interact --contract 0x1767A93A96D339EeC8E0325D94B5d3E4454d542f --network bsc_testnet --amount 0.1 --target-token 0xcC683A782f4B30c138787CB5576a86AF66fdc31d --recipient 0x6093537Aa6C8C8bf4705bda40aC9193977208B39
-```
+You can find the source code for this tutorial in the example contracts
+repository:
 
-```
-npx hardhat cctx 0x8323982f778ab14a5c37b10a80c5837da74ccdc8dba6ab4368f8b00612da8e1e
-```
-
-```
-✓ CCTXs on ZetaChain found.
-
-
-✓ 0x86c66514209a23499d23fea4c2d7177e87bff5199d273a3592fb685d7d945da8: 97 → 7001: OutboundMined (Remote omnichain contract call completed)
-✓ 0x4a1d7df81e11c4273c0d105a23f049409d06f0bbc03e286014276adb247e208f: 7001 → 11155111: OutboundMined (ZRC20 withdrawal event setting to pending outbound directly : Outbound succeeded, mined)
-```
+https://github.com/zeta-chain/example-contracts/tree/main/examples/swap]
