@@ -1,5 +1,5 @@
 # IGatewayZEVMEvents
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/c157025a39efca61d83e5991d093a94548f342fb/contracts/zevm/interfaces/IGatewayZEVM.sol)
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/3a274ce7bad045a879c73669586611d35509cbce/contracts/zevm/interfaces/IGatewayZEVM.sol)
 
 Interface for the events emitted by the GatewayZEVM contract.
 
@@ -15,7 +15,7 @@ event Called(
     address indexed zrc20,
     bytes receiver,
     bytes message,
-    uint256 gasLimit,
+    CallOptions callOptions,
     RevertOptions revertOptions
 );
 ```
@@ -28,7 +28,7 @@ event Called(
 |`zrc20`|`address`|Address of zrc20 to pay fees.|
 |`receiver`|`bytes`|The receiver address on the external chain.|
 |`message`|`bytes`|The calldata passed to the contract call.|
-|`gasLimit`|`uint256`|Gas limit.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 ### Withdrawn
@@ -45,7 +45,7 @@ event Withdrawn(
     uint256 gasfee,
     uint256 protocolFlatFee,
     bytes message,
-    uint256 gasLimit,
+    CallOptions callOptions,
     RevertOptions revertOptions
 );
 ```
@@ -62,6 +62,6 @@ event Withdrawn(
 |`gasfee`|`uint256`|The gas fee for the withdrawal.|
 |`protocolFlatFee`|`uint256`|The protocol flat fee for the withdrawal.|
 |`message`|`bytes`|The calldata passed to the contract call.|
-|`gasLimit`|`uint256`|Gas limit.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 

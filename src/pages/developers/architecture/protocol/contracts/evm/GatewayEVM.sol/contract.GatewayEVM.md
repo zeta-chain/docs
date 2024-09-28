@@ -1,5 +1,5 @@
 # GatewayEVM
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/c157025a39efca61d83e5991d093a94548f342fb/contracts/evm/GatewayEVM.sol)
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/3a274ce7bad045a879c73669586611d35509cbce/contracts/evm/GatewayEVM.sol)
 
 **Inherits:**
 Initializable, AccessControlUpgradeable, UUPSUpgradeable, [IGatewayEVM](/contracts/evm/interfaces/IGatewayEVM.sol/interface.IGatewayEVM.md), ReentrancyGuardUpgradeable, PausableUpgradeable
@@ -107,28 +107,6 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |`newImplementation`|`address`|Address of the new implementation.|
 
 
-### _execute
-
-*Internal function to execute a call to a destination address.*
-
-
-```solidity
-function _execute(address destination, bytes calldata data) internal returns (bytes memory);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`destination`|`address`|Address to call.|
-|`data`|`bytes`|Calldata to pass to the call.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`bytes`|The result of the call.|
-
-
 ### pause
 
 Pause contract.
@@ -177,7 +155,42 @@ function executeRevert(
 
 ### execute
 
-Executes a call to a destination address without ERC20 tokens.
+Executes an authenticated call to a destination address without ERC20 tokens.
+
+*This function can only be called by the TSS address and it is payable.*
+
+
+```solidity
+function execute(
+    MessageContext calldata messageContext,
+    address destination,
+    bytes calldata data
+)
+    external
+    payable
+    onlyRole(TSS_ROLE)
+    whenNotPaused
+    nonReentrant
+    returns (bytes memory);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`messageContext`|`MessageContext`|Message context containing sender.|
+|`destination`|`address`|Address to call.|
+|`data`|`bytes`|Calldata to pass to the call.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`bytes`|The result of the call.|
+
+
+### execute
+
+Executes an arbitrary call to a destination address without ERC20 tokens.
 
 *This function can only be called by the TSS address and it is payable.*
 
@@ -191,7 +204,6 @@ function execute(
     payable
     onlyRole(TSS_ROLE)
     whenNotPaused
-    nonReentrant
     returns (bytes memory);
 ```
 **Parameters**
@@ -477,4 +489,62 @@ function transferToAssetHandler(address token, uint256 amount) private;
 |`token`|`address`|Address of the ERC20 token.|
 |`amount`|`uint256`|Amount of tokens to transfer.|
 
+
+### _executeArbitraryCall
+
+*Private function to execute an arbitrary call to a destination address.*
+
+
+```solidity
+function _executeArbitraryCall(address destination, bytes calldata data) private returns (bytes memory);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`destination`|`address`|Address to call.|
+|`data`|`bytes`|Calldata to pass to the call.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`bytes`|The result of the call.|
+
+
+### _executeAuthenticatedCall
+
+*Private function to execute an authenticated call to a destination address.*
+
+
+```solidity
+function _executeAuthenticatedCall(
+    MessageContext calldata messageContext,
+    address destination,
+    bytes calldata data
+)
+    private
+    returns (bytes memory);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`messageContext`|`MessageContext`|Message context containing sender and arbitrary call flag.|
+|`destination`|`address`|Address to call.|
+|`data`|`bytes`|Calldata to pass to the call.|
+
+**Returns**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`<none>`|`bytes`|The result of the call.|
+
+
+### revertIfOnCallOrOnRevert
+
+
+```solidity
+function revertIfOnCallOrOnRevert(bytes calldata data) private pure;
+```
 

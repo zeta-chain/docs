@@ -4,6 +4,7 @@
 - [IGatewayZEVMEvents](IGatewayZEVM.sol/interface.IGatewayZEVMEvents.md)
 - [IGatewayZEVMErrors](IGatewayZEVM.sol/interface.IGatewayZEVMErrors.md)
 - [IGatewayZEVM](IGatewayZEVM.sol/interface.IGatewayZEVM.md)
+- [CallOptions](IGatewayZEVM.sol/struct.CallOptions.md)
 - [ISystem](ISystem.sol/interface.ISystem.md)
 - [IWETH9](IWZETA.sol/interface.IWETH9.md)
 - [IZRC20](IZRC20.sol/interface.IZRC20.md)
