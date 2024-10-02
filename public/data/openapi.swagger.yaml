@@ -29498,21 +29498,6 @@ paths:
             $ref: '#/definitions/googlerpcStatus'
       tags:
         - Query
-  /zeta-chain/emissions/get_emissions_factors:
-    get:
-      summary: Queries a list of GetEmmisonsFactors items.
-      operationId: Query_GetEmissionsFactors
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/emissionsQueryGetEmissionsFactorsResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      tags:
-        - Query
   /zeta-chain/emissions/list_addresses:
     get:
       summary: Queries a list of ListBalances items.
@@ -56853,6 +56838,9 @@ definitions:
     description: |-
       MsgRemoveAuthorizationResponse defines the MsgRemoveAuthorizationResponse
       service.
+  authorityMsgRemoveChainInfoResponse:
+    type: object
+    description: MsgRemoveChainInfoResponse defines the MsgRemoveChainInfoResponse service.
   authorityMsgUpdateChainInfoResponse:
     type: object
     description: MsgUpdateChainInfoResponse defines the MsgUpdateChainInfoResponse service.
@@ -57071,11 +57059,21 @@ definitions:
       - Gas
       - ERC20
       - Cmd
+      - NoAssetCall
     default: Zeta
     title: |-
       - Gas: Ether, BNB, Matic, Klay, BTC, etc
        - ERC20: ERC20 token
-       - Cmd: not a real coin, rather a command
+       - Cmd: no asset, used for admin command
+       - NoAssetCall: no asset, used for contract call
+  crosschainCallOptions:
+    type: object
+    properties:
+      gas_limit:
+        type: string
+        format: uint64
+      is_arbitrary_call:
+        type: boolean
   crosschainCctxStatus:
     type: string
     enum:
@@ -57121,6 +57119,10 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/crosschainOutboundParams'
+      protocol_contract_version:
+        $ref: '#/definitions/crosschainProtocolContractVersion'
+      revert_options:
+        $ref: '#/definitions/crosschainRevertOptions'
   crosschainGasPrice:
     type: object
     properties:
@@ -57231,12 +57233,22 @@ definitions:
       is_removed:
         type: boolean
         title: if the tx was removed from the tracker due to no pending cctx
+  crosschainMsgMigrateERC20CustodyFundsResponse:
+    type: object
+    properties:
+      cctx_index:
+        type: string
   crosschainMsgMigrateTssFundsResponse:
     type: object
   crosschainMsgRefundAbortedCCTXResponse:
     type: object
   crosschainMsgRemoveOutboundTrackerResponse:
     type: object
+  crosschainMsgUpdateERC20CustodyPauseStatusResponse:
+    type: object
+    properties:
+      cctx_index:
+        type: string
   crosschainMsgUpdateRateLimiterFlagsResponse:
     type: object
   crosschainMsgUpdateTssAddressResponse:
@@ -57272,6 +57284,7 @@ definitions:
       gas_limit:
         type: string
         format: uint64
+        title: Deprecated (v21), use CallOptions
       gas_price:
         type: string
       gas_priority_fee:
@@ -57298,6 +57311,8 @@ definitions:
         type: string
       tx_finalization_status:
         $ref: '#/definitions/crosschainTxFinalizationStatus'
+      call_options:
+        $ref: '#/definitions/crosschainCallOptions'
   crosschainOutboundTracker:
     type: object
     properties:
@@ -57315,6 +57330,15 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/crosschainTxHash'
+  crosschainProtocolContractVersion:
+    type: string
+    enum:
+      - V1
+      - V2
+    default: V1
+    title: |-
+      ProtocolContractVersion represents the version of the protocol contract used
+      for cctx workflow
   crosschainQueryAllCctxResponse:
     type: object
     properties:
@@ -57537,6 +57561,21 @@ definitions:
           type: object
           $ref: '#/definitions/crosschainConversion'
         title: conversion in azeta per token
+  crosschainRevertOptions:
+    type: object
+    properties:
+      revert_address:
+        type: string
+      call_on_revert:
+        type: boolean
+      abort_address:
+        type: string
+      revert_message:
+        type: string
+        format: byte
+      revert_gas_limit:
+        type: string
+    title: RevertOptions represents the options for reverting a cctx
   crosschainTxFinalizationStatus:
     type: string
     enum:
@@ -57569,15 +57608,6 @@ definitions:
     type: object
   emissionsMsgWithdrawEmissionResponse:
     type: object
-  emissionsQueryGetEmissionsFactorsResponse:
-    type: object
-    properties:
-      reservesFactor:
-        type: string
-      bondFactor:
-        type: string
-      durationFactor:
-        type: string
   emissionsQueryListPoolAddressesResponse:
     type: object
     properties:
@@ -58421,31 +58451,35 @@ definitions:
         format: int64
       isAbortRefunded:
         type: boolean
+      created_timestamp:
+        type: string
+        format: int64
+        description: when the CCTX was created. only populated on new transactions.
   zetacoreemissionsParams:
     type: object
     properties:
-      max_bond_factor:
-        type: string
-      min_bond_factor:
-        type: string
-      avg_block_time:
-        type: string
-      target_bond_ratio:
-        type: string
       validator_emission_percentage:
         type: string
       observer_emission_percentage:
         type: string
       tss_signer_emission_percentage:
         type: string
-      duration_factor_constant:
-        type: string
       observer_slash_amount:
         type: string
       ballot_maturity_blocks:
         type: string
         format: int64
-    description: Params defines the parameters for the module.
+      block_reward_amount:
+        type: string
+    title: |-
+      Params defines the parameters for the module.
+      Sample values:
+         ValidatorEmissionPercentage: "00.50",
+         ObserverEmissionPercentage:  "00.25",
+         TssSignerEmissionPercentage: "00.25",
+         ObserverSlashAmount:         100000000000000000,
+         BallotMaturityBlocks:        100,
+         BlockRewardAmount:           9620949074074074074.074070733466756687,
   ethermint.evm.v1.ChainConfig:
     type: object
     properties:
