@@ -65,6 +65,7 @@ contract Hello is UniversalContract {
 
     event HelloEvent(string, string);
     event RevertEvent(string, RevertContext);
+    error TransferFailed();
 
     constructor(address payable gatewayAddress) {
         gateway = GatewayZEVM(gatewayAddress);
@@ -92,7 +93,8 @@ contract Hello is UniversalContract {
         RevertOptions memory revertOptions
     ) external {
         (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
-        IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee);
+        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee))
+            revert TransferFailed();
         IZRC20(zrc20).approve(address(gateway), gasFee);
         gateway.call(receiver, zrc20, message, gasLimit, revertOptions);
     }
@@ -107,11 +109,18 @@ contract Hello is UniversalContract {
     ) external {
         (address gasZRC20, uint256 gasFee) = IZRC20(zrc20)
             .withdrawGasFeeWithGasLimit(gasLimit);
-        uint256 targetAmount = zrc20 == gasZRC20 ? amount + gasFee : amount;
-        IZRC20(zrc20).transferFrom(msg.sender, address(this), targetAmount);
-        IZRC20(zrc20).approve(address(gateway), targetAmount);
+        uint256 target = zrc20 == gasZRC20 ? amount + gasFee : amount;
+        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), target))
+            revert TransferFailed();
+        IZRC20(zrc20).approve(address(gateway), target);
         if (zrc20 != gasZRC20) {
-            IZRC20(gasZRC20).transferFrom(msg.sender, address(this), gasFee);
+            if (
+                !IZRC20(gasZRC20).transferFrom(
+                    msg.sender,
+                    address(this),
+                    gasFee
+                )
+            ) revert TransferFailed();
             IZRC20(gasZRC20).approve(address(gateway), gasFee);
         }
         gateway.withdrawAndCall(
@@ -403,6 +412,15 @@ Overview:
 
 - Upon revert, the gateway calls the specified `revert-address` contract,
   allowing you to handle the error within your ZetaChain application.
+
+## Withdrawing and Calling an EVM Contract from a Universal App
+
+To withdraw tokens and call a contract on a connected chain from a universal app
+run the following command:
+
+```
+npx hardhat hello-withdraw-and-call --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --function "hello(string)" --amount 1 --network localhost --types '["string"]' hello
+```
 
 ## Conclusion
 
