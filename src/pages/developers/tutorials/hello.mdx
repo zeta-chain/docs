@@ -4,18 +4,18 @@ title: Your First Universal App
 
 import { Alert } from "~/components/shared";
 
-In this tutorial, you will build a universal app contract that accepts messages
-from connected chains and emits corresponding events on ZetaChain. For instance,
+In this tutorial, you'll build a universal app contract that accepts messages
+from connected chains and emits corresponding events on ZetaChain. For example,
 a user on Ethereum can send the message `"alice"`, and the universal contract on
 ZetaChain will emit an event with the string `"Hello on ZetaChain, alice"`.
 
-You will learn how to:
+By the end of this tutorial, you will have learned how to:
 
-- Define your universal app contract to handle messages from connected chains.
+- Define a universal app contract to handle messages from connected chains.
 - Deploy the contract to localnet.
 - Interact with the contract by sending a message from a connected EVM
   blockchain in localnet.
-- Handle reverts gracefully by implementing revert logic.
+- Gracefully handle reverts by implementing revert logic.
 
 <Alert>
   {" "}
@@ -25,21 +25,19 @@ You will learn how to:
 
 ## Prerequisites
 
-Before starting, ensure you have completed the following:
+Before you begin, make sure you've completed the following tutorials:
 
 - [Introduction to Universal Apps](/developers/apps/intro/)
 - [Getting Started with ZetaChain](/developers/tutorials/intro)
 
 ## Set Up Your Environment
 
-Begin by cloning the example contracts repository and installing the necessary
+Start by cloning the example contracts repository and installing the necessary
 dependencies:
 
-```
+```bash
 git clone https://github.com/zeta-chain/example-contracts
-
 cd example-contracts/examples/hello
-
 yarn
 ```
 
@@ -49,7 +47,7 @@ The `Hello` contract is a simple universal app deployed on ZetaChain. It
 implements the `UniversalContract` interface, enabling it to handle cross-chain
 calls and token transfers from connected chains.
 
-Let's review the contents of the `Hello` contract:
+Here's the code for the `Hello` contract:
 
 ```solidity filename="contracts/Hello.sol"
 // SPDX-License-Identifier: MIT
@@ -93,8 +91,9 @@ contract Hello is UniversalContract {
         RevertOptions memory revertOptions
     ) external {
         (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
-        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee))
+        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee)) {
             revert TransferFailed();
+        }
         IZRC20(zrc20).approve(address(gateway), gasFee);
         gateway.call(receiver, zrc20, message, gasLimit, revertOptions);
     }
@@ -135,26 +134,27 @@ contract Hello is UniversalContract {
 }
 ```
 
-The `Hello` contract inherits from the
+Let's break down what this contract does. The `Hello` contract inherits from the
 [`UniversalContract`](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/zevm/interfaces/UniversalContract.sol)
-interface, which mandates the implementation of `onCrossChainCall` and
-`onRevert` functions for cross-chain interactions.
+interface, which requires the implementation of `onCrossChainCall` and
+`onRevert` functions for handling cross-chain interactions.
 
 A state variable `gateway` of type `GatewayZEVM` holds the address of
-ZetaChain's gateway contract, enabling communication between chains.
+ZetaChain's gateway contract. This gateway facilitates communication between
+ZetaChain and connected chains.
 
-The constructor function accepts the address of the ZetaChain gateway contract
-and initializes the `gateway` state variable.
+In the constructor, we initialize the `gateway` state variable with the address
+of the ZetaChain gateway contract.
 
 ### Handling Incoming Cross-Chain Calls
 
-The `onCrossChainCall` function is a special handler that is triggered when the
-contract receives a call from a connected chain through the gateway. This
-function processes the incoming data with the following parameters:
+The `onCrossChainCall` function is a special handler that gets triggered when
+the contract receives a call from a connected chain through the gateway. This
+function processes the incoming data, which includes:
 
 - `context`: A `zContext` struct containing:
-  - `origin`: The EOA or contract address that initiated the gateway call on the
-    connected chain.
+  - `origin`: The address (EOA or contract) that initiated the gateway call on
+    the connected chain.
   - `chainID`: The integer ID of the connected chain from which the cross-chain
     call originated.
   - `sender`: Reserved for future use (currently empty).
@@ -163,49 +163,54 @@ function processes the incoming data with the following parameters:
 - `amount`: The number of tokens transferred.
 - `message`: The encoded data payload.
 
-The `onCrossChainCall` function is restricted to be invoked solely by the
-ZetaChain protocol. This ensures that callers cannot supply arbitrary values in
-the `context`, maintaining the integrity of cross-chain interactions.
-
 Within `onCrossChainCall`, the contract decodes the `name` from the `message`
-and emits a corresponding event to signal successful reception and processing of
-the message.
+and emits a `HelloEvent` to signal successful reception and processing of the
+message. It's important to note that `onCrossChainCall` can only be invoked by
+the ZetaChain protocol, ensuring the integrity of cross-chain interactions.
 
 ### Making an Outgoing Contract Call
 
-The `call` function exemplifies how a universal app can initiate a contract call
-to any arbitrary contract on a connected chain using the Gateway. The function
+The `call` function demonstrates how a universal app can initiate a contract
+call to an arbitrary contract on a connected chain using the gateway. It
 operates as follows:
 
-- **Calculate Gas Fee:** Determines the required gas fee based on the specified
-  `gasLimit`. The gas limit represents the anticipated amount of gas needed to
-  execute the contract on the destination (connected) chain.
-- **Transfer Gas Fee:** Moves the calculated gas fee from the sender to the
-  `Hello` contract. **Note:** The user must grant the `Hello` contract
-  permission to spend their gas fee tokens.
-- **Approve Gateway:** Grants the gateway permission to spend the transferred
-  gas fee.
-- **Execute Cross-Chain Call:** Invokes `gateway.call` to initiate the contract
-  call on the connected chain. The function selector and its arguments are
-  encoded within the `message`. The gateway identifies the target chain based on
-  the ZRC-20 token, as each chain's gas asset is associated with a specific
-  ZRC-20 token.
+1. **Calculate Gas Fee**: Determines the required gas fee based on the specified
+   `gasLimit`. The gas limit represents the anticipated amount of gas needed to
+   execute the contract on the destination chain.
+
+2. **Transfer Gas Fee**: Moves the calculated gas fee from the sender to the
+   `Hello` contract. The user must grant the `Hello` contract permission to
+   spend their gas fee tokens.
+
+3. **Approve Gateway**: Grants the gateway permission to spend the transferred
+   gas fee.
+
+4. **Execute Cross-Chain Call**: Invokes `gateway.call` to initiate the contract
+   call on the connected chain. The function selector and its arguments are
+   encoded within the `message`. The gateway identifies the target chain based
+   on the ZRC-20 token, as each chain's gas asset is associated with a specific
+   ZRC-20 token.
 
 ### Making a Withdrawal and Call
 
-The `withdrawAndCall` function demonstrates how a universal app can perform a
-token withdrawal with a call to an arbitrary contract on a connected chain using
-the Gateway. The function executes the following steps:
+The `withdrawAndCall` function shows how a universal app can perform a token
+withdrawal with a call to an arbitrary contract on a connected chain using the
+gateway. The function executes the following steps:
 
-- **Calculate Gas Fee:** Computes the necessary gas fee based on the provided
-  `gasLimit`.
-- **Transfer Tokens:** Moves the specified `amount` of tokens from the sender to
-  the `Hello` contract. If the token being withdrawn is the gas token of the
-  destination chain, the function transfers and approves both the gas fee and
-  the withdrawal amount. If the target token is not the gas token, it transfers
-  and approves the gas fee separately.
-- **Execute Withdrawal and Call:** Calls `gateway.withdrawAndCall` to withdraw
-  the tokens and initiate the contract call on the connected chain.
+1. **Calculate Gas Fee**: Computes the necessary gas fee based on the provided
+   `gasLimit`.
+
+2. **Transfer Tokens**: Moves the specified `amount` of tokens from the sender
+   to the `Hello` contract. If the token being withdrawn is the gas token of the
+   destination chain, the function transfers and approves both the gas fee and
+   the withdrawal amount. If the target token is not the gas token, it transfers
+   and approves the gas fee separately.
+
+3. **Approve Gateway**: Grants the gateway permission to spend the transferred
+   tokens and gas fee.
+
+4. **Execute Withdrawal and Call**: Calls `gateway.withdrawAndCall` to withdraw
+   the tokens and initiate the contract call on the connected chain.
 
 ## EVM `Echo` Contract
 
@@ -259,23 +264,23 @@ developing and testing ZetaChain contracts locally.
 
 To start localnet, open a terminal window and run:
 
-```
+```bash
 npx hardhat localnet
 ```
 
-This command initializes a local blockchain environment that mimics the behavior
-of ZetaChain protocol contracts.
+This command initializes a local blockchain environment that simulates the
+behavior of ZetaChain protocol contracts.
 
 ## Deploying the Contracts
 
 With localnet running, open a new terminal window to compile and deploy the
 `Hello` and `Echo` contracts:
 
-```
+```bash
 yarn deploy
 ```
 
-Expected output:
+You should see output indicating the successful deployment of the contracts:
 
 ```
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
@@ -289,15 +294,20 @@ Expected output:
 📜 Contract address: 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690
 ```
 
-Node: deployed contract may be different.
+**Note**: The deployed contract addresses may differ in your environment.
 
 ## Calling the `Echo` Contract from `Hello`
 
-In this example, you will invoke the `Echo` contract on EVM, which in turn calls
-the `Hello` contract on ZetaChain.
+In this example, you'll invoke the `Echo` contract on the connected EVM chain,
+which in turn calls the `Hello` contract on ZetaChain. Run the following
+command, replacing the contract addresses with those from your deployment:
 
-```
-npx hardhat echo-call --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --network localhost --types '["string"]' alice
+```bash
+npx hardhat echo-call \
+  --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --network localhost \
+  --types '["string"]' alice
 ```
 
 **Parameters:**
@@ -308,24 +318,30 @@ npx hardhat echo-call --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --re
 - `--types`: ABI types of the message parameters (e.g., `["string"]`).
 - `alice`: The message to send.
 
-Overview:
+**Overview:**
 
-- EVM: Executes the `Echo` contract's `call` function.
-- EVM: The `call` function invokes `gateway.call`, emitting a `Called` event.
-- ZetaChain: The protocol detects the event and triggers the `Hello` contract's
-  `onCrossChainCall`.
-- ZetaChain: The `Hello` contract decodes the message and emits a `HelloEvent`.
+- **EVM Chain**: Executes the `call` function of the `Echo` contract.
+- **EVM Chain**: The `call` function invokes `gateway.call`, emitting a `Called`
+  event.
+- **ZetaChain**: The protocol detects the event and triggers the `Hello`
+  contract's `onCrossChainCall`.
+- **ZetaChain**: The `Hello` contract decodes the message and emits a
+  `HelloEvent`.
 
 ## Simulating a Revert
 
-To demonstrate revert handling, intentionally send incorrect data. Instead of a
-`string`, send a `uint256`:
+To demonstrate how reverts are handled, let's intentionally send incorrect data.
+Instead of a `string`, we'll send a `uint256`:
 
-```
-npx hardhat echo-call --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --network localhost --types '["uint256"]' 42
+```bash
+npx hardhat echo-call \
+  --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --network localhost \
+  --types '["uint256"]' 42
 ```
 
-Overview:
+**What Happens:**
 
 - The `Hello` contract's `onCrossChainCall` attempts to decode a `uint256` as a
   `string`, causing `abi.decode` to fail and revert the transaction.
@@ -334,38 +350,51 @@ Overview:
 
 ## Handling a Revert
 
-To handle reverts, configure the gateway to call the `Echo` contract on the
-source chain upon a revert:
+To handle reverts gracefully, configure the gateway to call the `Echo` contract
+on the source chain upon a revert:
 
-```
-npx hardhat echo-call --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --network localhost --revert-address 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --revert-message 0x --call-on-revert --types '["uint256"]' 42
+```bash
+npx hardhat echo-call \
+  --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --network localhost \
+  --revert-address 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --revert-message 0x \
+  --call-on-revert \
+  --types '["uint256"]' 42
 ```
 
-Parameters:
+**Parameters:**
 
 - `--revert-address`: Address of the `Echo` contract on the source EVM chain.
 - `--revert-message`: Data to pass to the `Echo` contract's `onRevert` function.
 - `--call-on-revert`: Flag indicating that the gateway should invoke a contract
-  upon revert instead of merely returning tokens.
+  upon revert.
 
-Overview:
+**What Happens:**
 
 - When the revert occurs, the gateway invokes the `Echo` contract's `onRevert`
-  function, allowing you to handle the error gracefully within your application
-  logic.
+  function on the EVM chain.
+- This allows you to handle the error gracefully within your application logic.
 
 ## Calling an EVM Contract from a Universal App
 
 Now, let's perform the reverse operation: calling a contract on a connected EVM
-chain from the `Hello` universal app on ZetaChain.
+chain from the `Hello` universal app on ZetaChain. Execute the following
+command, replacing the contract addresses and ZRC-20 token address with those
+from your deployment:
 
-Execute the following command:
-
+```bash
+npx hardhat hello-call \
+  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+  --function "hello(string)" \
+  --network localhost \
+  --types '["string"]' alice
 ```
-npx hardhat hello-call --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --function "hello(string)" --network localhost --types '["string"]' alice
-```
 
-Parameters:
+**Parameters:**
 
 - `--contract`: Address of the `Hello` contract on ZetaChain.
 - `--receiver`: Address of the `Echo` contract on the connected EVM chain.
@@ -374,7 +403,7 @@ Parameters:
 - `--function`: Function signature to invoke on the `Echo` contract (e.g.,
   `"hello(string)"`).
 - `--network`: Network to interact with (`localhost` for localnet).
-- `--types`: ABI types of the message parameters (e.g., `["string"]`).
+- `--types`: ABI types of the message parameters.
 - `alice`: The message to send.
 
 ## Simulating a Revert
@@ -382,13 +411,19 @@ Parameters:
 To simulate a revert when calling an EVM contract from ZetaChain, send incorrect
 data types:
 
-```
-npx hardhat hello-call --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --function "hello(string)" --network localhost --types '["uint256"]' 42
+```bash
+npx hardhat hello-call \
+  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+  --function "hello(string)" \
+  --network localhost \
+  --types '["uint256"]' 42
 ```
 
-Overview:
+**What Happens:**
 
-- The `Echo` contract expects a `string`, but receives a `uint256`, causing the
+- The `Echo` contract expects a `string` but receives a `uint256`, causing the
   function to fail and revert the transaction.
 
 ## Handling a Revert
@@ -396,11 +431,20 @@ Overview:
 To handle reverts gracefully when calling an EVM contract from ZetaChain,
 include revert parameters:
 
-```
-npx hardhat hello-call --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --function "hello(string)" --network localhost --revert-address 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --revert-message 0x --call-on-revert  --types '["uint256"]' 42
+```bash
+npx hardhat hello-call \
+  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+  --function "hello(string)" \
+  --network localhost \
+  --revert-address 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --revert-message 0x \
+  --call-on-revert \
+  --types '["uint256"]' 42
 ```
 
-Parameters:
+**Parameters:**
 
 - `--revert-address`: Address of the `Hello` contract on ZetaChain.
 - `--revert-message`: Data to pass to the `Hello` contract's `onRevert`
@@ -408,23 +452,42 @@ Parameters:
 - `--call-on-revert`: Flag indicating that the gateway should invoke a contract
   upon revert.
 
-Overview:
+**What Happens:**
 
-- Upon revert, the gateway calls the specified `revert-address` contract,
-  allowing you to handle the error within your ZetaChain application.
+- Upon revert, the gateway calls the `onRevert` function of the `Hello` contract
+  on ZetaChain.
+- This allows you to handle the error within your ZetaChain application.
 
 ## Withdrawing and Calling an EVM Contract from a Universal App
 
-To withdraw tokens and call a contract on a connected chain from a universal app
-run the following command:
+To withdraw tokens and call a contract on a connected chain from a universal
+app, run the following command:
 
+```bash
+npx hardhat hello-withdraw-and-call \
+  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c \
+  --function "hello(string)" \
+  --amount 1 \
+  --network localhost \
+  --types '["string"]' hello
 ```
-npx hardhat hello-withdraw-and-call --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --function "hello(string)" --amount 1 --network localhost --types '["string"]' hello
-```
+
+**Parameters:**
+
+- `--contract`: Address of the `Hello` contract on ZetaChain.
+- `--receiver`: Address of the `Echo` contract on the connected EVM chain.
+- `--zrc20`: Address of the ZRC-20 token representing the asset to withdraw.
+- `--function`: Function signature to invoke on the `Echo` contract.
+- `--amount`: Amount of tokens to withdraw.
+- `--network`: Network to interact with.
+- `--types`: ABI types of the message parameters.
+- `hello`: The message to send.
 
 ## Conclusion
 
-In this tutorial, you accomplished the following:
+In this tutorial, you've:
 
 - Defined a universal app contract (`Hello`) to handle cross-chain messages.
 - Deployed both `Hello` and `Echo` contracts to a local development network.
@@ -433,10 +496,11 @@ In this tutorial, you accomplished the following:
 - Simulated revert scenarios and handled them gracefully using revert logic in
   both contracts.
 
-By understanding how to manage cross-chain calls and handle reverts you are now
-equipped to build robust and resilient universal applications on ZetaChain.
+By mastering cross-chain calls and revert handling, you're now prepared to build
+robust and resilient universal applications on ZetaChain.
 
 ## Source Code
 
-Access the complete source code for this tutorial in the [example contracts
+You can find the complete source code for this tutorial in the [example
+contracts
 repository](https://github.com/zeta-chain/example-contracts/tree/main/examples/hello).
