@@ -1,181 +1,178 @@
-Localnet is a local development environment that simplifies the development of
-universal apps.
+Localnet is a powerful local development environment designed to simplify the
+creation and testing of universal applications on ZetaChain. It sets up protocol
+contracts on a single local EVM chain but simulates the behavior as if it were
+two separate chains. This allows developers to interact with protocol contracts,
+tokens, and Uniswap pools locally, mimicking a multi-chain environment. By using
+Localnet, you can build, deploy, and test your applications efficiently before
+moving to the actual testnet or mainnet.
 
-Localnet:
+<div className="mt-8" style={{ width: "100%", height: "auto", "aspect-ratio": "16 / 8" }}>
+  <iframe
+    width="100%"
+    height="100%"
+    src="https://www.youtube.com/embed/b4EWTQ3VCZk?si=kiKncEWFZolVAo0F"
+    filename="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
 
-- Starts an [Anvil](https://book.getfoundry.sh/anvil/) local testnet node
-- Deploys [protocol
-  contracts](https://github.com/zeta-chain/protocol-contracts/tree/main/v2) on
-  the local testnet node. Both [EVM gateway and ZetaChain
-  gateway](/developers/evm/gateway/) are deployed and running on the same local
-  blockchain Simulates the real-world testnet environment of ZetaChain by
-  observing events and relaying the contract calls between EVM gateway and
-  ZetaChain gateway
+# Prerequisites
 
-Clone the example contracts repo and install dependencies:
+Before you begin, ensure you have the following installed on your machine:
+
+- [Node.js](https://nodejs.org/)
+- [Yarn](https://yarnpkg.com/)
+- [Foundry Anvil](https://book.getfoundry.sh/getting-started/installation)
+
+You can set up Localnet in one of two ways:
+
+1. **Cloning the Example Contracts Repository**: This approach is ideal if you
+   want to see practical examples and have a starting point for your own
+   projects.
+2. **Cloning the Localnet Repository**: Choose this method if you prefer to
+   integrate Localnet into your existing projects or want a more customizable
+   setup.
+
+# Option 1: Using the Example Contracts Repository
+
+To get started with the example contracts, clone the repository and install the
+dependencies:
 
 ```
 git clone https://github.com/zeta-chain/example-contracts
-cd universal/hello
+cd example-contracts/universal/hello
 yarn
 ```
 
 Localnet is installed from the `@zetachain/localnet` package. If you need to
-update localnet just run `yarn add --dev @zetachain/localnet`. The template
-ships with the latest version of localnet.
-
-Start the localnet:
+update Localnet, run:
 
 ```
-yarn hardhat localnet
+yarn add --dev @zetachain/localnet
 ```
 
-Once the localnet is started you will see the standard Anvil output with a list
-of accounts, private keys as well as the output from protocol contracts being
-deployed. After the localnet is set up you will see a list of protocol contract
-addresses:
+The examples ships with the latest version of Localnet.
+
+Start the Localnet by running:
+
+```
+npx hardhat localnet
+```
+
+This command initializes the local development environment with all necessary
+contracts and configurations.
+
+# Option 2: Using the Localnet Repository
+
+If you prefer to set up Localnet independently, clone the Localnet repository:
+
+```
+git clone https://github.com/zeta-chain/localnet
+cd localnet
+```
+
+Install the necessary packages:
+
+```
+yarn
+```
+
+Start the Localnet by running:
+
+```
+npx hardhat localnet
+```
+
+This command starts Localnet with a block time of 1 second on port 2000.
+
+# What Localnet Does
+
+When you run Localnet, it performs the following actions:
+
+- **Starts an Anvil Node**: Launches an
+  [Anvil](https://book.getfoundry.sh/anvil/) local testnet node.
+- **Deploys Protocol Contracts**: Deploys [protocol
+  contracts](https://github.com/zeta-chain/protocol-contracts/tree/main/v2) on
+  the local testnet node. Both the [EVM gateway and ZetaChain
+  gateway](/developers/evm/gateway/) are deployed and running on the same local
+  blockchain.
+- **Simulates ZetaChain Environment**: Observes events and relays contract calls
+  between the EVM gateway and ZetaChain gateway, simulating the real-world
+  testnet environment of ZetaChain.
+- **Configures Protocol Contracts**: Sets up the protocol contracts with the
+  necessary configurations for development.
+- **Mints Example Tokens**: Mints an example ERC-20 token (USDC) and ZRC-20
+  versions of the gas token and the example ERC-20 token.
+- **Deploys Uniswap v2**: Deploys Uniswap v2 contracts to enable swapping and
+  liquidity provisioning.
+- **Creates Pools and Adds Liquidity**: Creates pools between ZETA and ZRC-20
+  tokens and adds liquidity to these pools.
+
+# Output
+
+Once the Localnet is started, you will see the standard Anvil output with a list
+of accounts and private keys, as well as the output from protocol contracts
+being deployed. After the Localnet is set up, you will see a list of protocol
+contract addresses:
 
 ```
 EVM Contract Addresses
-======================
-
-Gateway EVM: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-ZETA:        0x5FbDB2315678afecb367f032d93F642f64180aa3
+=======================
+┌──────────────────────┬──────────────────────────────────────────────┐
+│        (index)       │                    Values                    │
+├──────────────────────┼──────────────────────────────────────────────┤
+│     Gateway EVM      │ '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' │
+│    ERC-20 Custody    │ '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9' │
+│         TSS          │ '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' │
+│         ZETA         │ '0x5FbDB2315678afecb367f032d93F642f64180aa3' │
+│   ERC-20 USDC.ETH    │ '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82' │
+└──────────────────────┴──────────────────────────────────────────────┘
 
 ZetaChain Contract Addresses
-============================
-
-Gateway ZetaChain: 0x610178dA211FEF7D417bC0e6FeD39F05609AD788
-ZETA:              0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
-ZRC-20 ETH:        0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c
+=============================
+┌───────────────────────┬──────────────────────────────────────────────┐
+│        (index)        │                    Values                    │
+├───────────────────────┼──────────────────────────────────────────────┤
+│  Gateway ZetaChain    │ '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0' │
+│         ZETA          │ '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853' │
+│    Fungible Module    │ '0x735b14BB79463307AAcBED86DAf3322B1e6226aB' │
+│    System Contract    │ '0x610178dA211FEF7D417bC0e6FeD39F05609AD788' │
+│    ZRC-20 USDC.ETH    │ '0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c' │
+│    ZRC-20 ETH.ETH     │ '0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe' │
+└───────────────────────┴──────────────────────────────────────────────┘
 ```
 
-Keep the terminal window with localnet running open and open a new terminal.
+These addresses correspond to the deployed contracts on your local blockchain.
+You can interact with these contracts using your preferred development tools.
 
-Compile the contracts and deploy both a Hello universal app contract and a
-Receiver contract.
+# Available Parameters
 
-```
-yarn deploy
-```
+Localnet supports the following parameters:
 
-Universal app contract address:
+- `--anvil`: Additional arguments to pass to Anvil (default: `""`).
+- `--exit-on-error`: Exit with an error if a revert is not handled.
+- `--force-kill`: Force kill any process on the port without prompting.
+- `--port`: Port to run Anvil on (default: `8545`).
+- `--stop-after-init`: Stop the Localnet after successful initialization.
 
-```
-🚀 Successfully deployed contract on localhost.
-📜 Contract address: 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82
-```
-
-Receiver contract:
+For an up-to-date list of arguments, run:
 
 ```
-🚀 Successfully deployed contract on localhost.
-📜 Contract address: 0x9A676e781A523b5d0C0e43731313A708CB607508
+npx hardhat localnet --help
 ```
 
-Even though both contracts are deployed on the same local testnet we will think
-of Hello as running on ZetaChain and Receiver as running on a generic EVM chain.
-These two contracts are connected with each other through the
-[gateway](/developers/evm/gateway).
-
-## Call a Universal App from EVM
-
-Call the `depositAndCall` function on the EVM gateway to call a universal app
-contract:
+**Example:**
 
 ```
-yarn hardhat deposit-and-call --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --amount 2 --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message 0x --call-on-revert
+npx hardhat localnet --anvil "--block-time 1" --port 2000
 ```
 
-The command calls the `depositAndCall` function on the EVM gateway.
+# Conclusion
 
-The EVM gateway emits a "Deposited" event acknowledging that the function call
-has been successful:
-
-```
-[EVM]: Gateway: 'Deposited' event emitted
-```
-
-Localnet picks up the "Deposited" event and calls the ZetaChain's gateway
-`execute` function, which calls the universal app:
-
-```
-[ZetaChain]: Universal contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 executing onCrossChainCall (context: {"origin":"0x610178dA211FEF7D417bC0e6FeD39F05609AD788","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c, amount: 2000000000000000000, message: 0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000)
-```
-
-The `onCrossChainCall` is executed and emits an event:
-
-```
-[ZetaChain]: Event from onCrossChainCall: {"_type":"log","address":"0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82","blockHash":"0xc8a8ebc484c5330f118a9e838587b918657ca2b347b7b76846236c00e44006bd","blockNumber":23,"data":"0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001a48656c6c6f2066726f6d206120756e6976657273616c206170700000000000000000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000","index":2,"removed":false,"topics":["0x39f8c79736fed93bca390bb3d6ff7da07482edb61cd7dafcfba496821d6ab7a3"],"transactionHash":"0x3a6612c174d980a13e3ee6b17a21c4708f0f31b823c1fba1037fc6c4124a7b68","transactionIndex":0}
-```
-
-## Call a Universal App from EVM and Revert
-
-Introduce a `revert();` statement anywhere inside the `onCrossChainCall`
-function to force the contract to revert.
-
-Make the same call to the EVM gateway contract:
-
-```
-yarn hardhat deposit-and-call --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message 0x --call-on-revert --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --amount 2
-```
-
-The EVM gateway emits the "Deposited" event:
-
-```
-[EVM]: Gateway: 'Deposited' event emitted
-```
-
-A universal app gets called:
-
-```
-[ZetaChain]: Universal contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 executing onCrossChainCall (context: {"origin":"0x610178dA211FEF7D417bC0e6FeD39F05609AD788","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c, amount: 2000000000000000000, message: 0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000)
-```
-
-Now instead of emitting an event from a universal app we see an error caused by
-the `revert();` statement we introduced earlier:
-
-```
-[ZetaChain]: Error executing onCrossChainCall: Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x735b14BB79463307AAcBED86DAf3322B1e6226aB", "to": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": "1", "blobGasUsed": null, "blockHash": "0x7f313eb2281d3ce784b4470c310b24b5a284cffcde76bd9b60a21b0626067bea", "blockNumber": 27, "contractAddress": null, "cumulativeGasUsed": "77284", "from": "0x735b14BB79463307AAcBED86DAf3322B1e6226aB", "gasPrice": "10000000000", "gasUsed": "77284", "hash": "0xec360d8c235799450d2e5a3ea3386deee9bb0653f26619034601d0bbeaa2095c", "index": 0, "logs": [  ], "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "root": "0xceb5ff1771bf62103eb1b419ad6922afdac15c99dc20326ace7e37434badcd9c", "status": 0, "to": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788" }, code=CALL_EXCEPTION, version=6.13.2)
-```
-
-The EVM gateway executes `onRevert` function of the Receiver contract:
-
-```
-[EVM]: Contract 0x9A676e781A523b5d0C0e43731313A708CB607508 executing onRevert (context: {"asset":"0x0000000000000000000000000000000000000000","amount":0,"revertMessage":"0x3078"})
-```
-
-## Call a Receiver Contract from a Universal App
-
-Execute the `callFromZetaChain` function of the universal app:
-
-```
-yarn hardhat call-from-zetachain --message bob --network localhost --revert-address 0x9A676e781A523b5d0C0e43731313A708CB607508 --revert-message "my revert message" --call-on-revert --contract 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --receiver 0x9A676e781A523b5d0C0e43731313A708CB607508
-```
-
-The function calls the ZetaChain gateway contract. The ZetaChain gateway emits a
-"Called" event acknowledging that the call has been successful.
-
-```
-[ZetaChain]: Gateway: 'Called' event emitted
-```
-
-Localnet picks up the "Called" event and calls the EVM gateway `execute`
-function, which calls the Receiver contract:
-
-```
-[EVM]: Calling 0x9a676e781a523b5d0c0e43731313a708cb607508 with message 0xa777d0dc00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000
-```
-
-The Receiver contract then emits an event:
-
-```
-[EVM]: Event from contract: {"_type":"log","address":"0x9A676e781A523b5d0C0e43731313A708CB607508","blockHash":"0x0deb4a3e22b73320ffad3d916c5e2b2db450dddc162feaafa84546612cebd238","blockNumber":22,"data":"0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003626f620000000000000000000000000000000000000000000000000000000000","index":0,"removed":false,"topics":["0xfa051318aca3e493e16e6cf4bccc017c7e061924a42ef27b3bb373c4707b636a"],"transactionHash":"0x94c4d53aed68c97f18e467207ff6cdc1e855c65bcddab399f100fe2786ee33a8","transactionIndex":0}
-```
-
-Interacting between real networks like ZetaChain and Ethereum follows the same
-steps as Localnet. Developers or users can seamlessly engage with the EVM
-gateway on live networks such as Ethereum, BSC, or Base to call contracts on
-ZetaChain or vice versa. This allows for a consistent development experience,
-whether on a local testnet or across real-world blockchain networks, ensuring
-that the transition from development to production environments is seamless.
+With Localnet set up, you're ready to develop and test your universal
+applications locally with ZetaChain's protocol contracts, tokens, and Uniswap
+pools fully configured. This environment enables rapid development and
+debugging, ensuring that your applications are robust and ready for deployment
+on the testnet or mainnet.
