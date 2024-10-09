@@ -44,6 +44,10 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
                   url: `https://zetachain-mainnet.g.allthatnode.com/archive/evm`,
                   type: "evm",
                 },
+                {
+                  url: `https://zetachain-mainnet.g.allthatnode.com/archive/rest`,
+                  type: "cosmos-http",
+                },
               ],
             },
           },
