@@ -12,15 +12,17 @@ and [`slashing`](https://docs.cosmos.network/main/build/modules/slashing)
 modules.
 
 Currently, staking rewards are comprised of transaction fees collected each
-block and fixed rewards coming from the emissions pool.
+block and fixed rewards coming from the emissions pool. Staking rewards are
+split between validators based on their voting power.
 
-$$
-StakingRewards = TransactionFees + {EmissionsPool \over NumberOfBlocksPerYear
-× 4} × ValidatorRewardsPercentage
-$$
+$$ StakingRewards = TransactionFees + 9.62 ZETA $$
+
+The fixed amount (9.62 ZETA) is defined [in the source
+code](https://github.com/zeta-chain/node/blob/81fc485d78617b29f9676b6b53529411e5824769/x/emissions/types/keys.go#L48)
+of the protocol.
 
 Emissions pool address:
-[zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/emissions/list_addresses)
+[zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy](https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/emissions/list_addresses)
 
 You can find the emissions pool balance by querying the API:
 
