@@ -1,8 +1,8 @@
 # ERC20Custody
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/3a274ce7bad045a879c73669586611d35509cbce/contracts/evm/ERC20Custody.sol)
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/evm/ERC20Custody.sol)
 
 **Inherits:**
-[IERC20Custody](/contracts/evm/interfaces/IERC20Custody.sol/interface.IERC20Custody.md), ReentrancyGuard, AccessControl, Pausable
+Initializable, UUPSUpgradeable, [IERC20Custody](/contracts/evm/interfaces/IERC20Custody.sol/interface.IERC20Custody.md), ReentrancyGuardUpgradeable, AccessControlUpgradeable, PausableUpgradeable
 
 Holds the ERC20 tokens deposited on ZetaChain and includes functionality to call a contract.
 
@@ -15,7 +15,7 @@ Gateway contract.
 
 
 ```solidity
-IGatewayEVM public immutable gateway;
+IGatewayEVM public gateway;
 ```
 
 
@@ -74,16 +74,31 @@ bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE");
 
 
 ## Functions
-### constructor
+### initialize
 
-Constructor for ERC20Custody.
+Initializer for ERC20Custody.
 
 *Set admin as default admin and pauser, and tssAddress as tss role.*
 
 
 ```solidity
-constructor(address gateway_, address tssAddress_, address admin_);
+function initialize(address gateway_, address tssAddress_, address admin_) public initializer;
 ```
+
+### _authorizeUpgrade
+
+*Authorizes the upgrade of the contract, sender must be owner.*
+
+
+```solidity
+function _authorizeUpgrade(address newImplementation) internal override onlyRole(DEFAULT_ADMIN_ROLE);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`newImplementation`|`address`|Address of the new implementation.|
+
 
 ### pause
 
@@ -102,6 +117,21 @@ Unpause contract.
 ```solidity
 function unpause() external onlyRole(PAUSER_ROLE);
 ```
+
+### updateTSSAddress
+
+Update tss address
+
+
+```solidity
+function updateTSSAddress(address newTSSAddress) external onlyRole(DEFAULT_ADMIN_ROLE);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`newTSSAddress`|`address`|new tss address|
+
 
 ### setSupportsLegacy
 
@@ -233,6 +263,9 @@ function withdrawAndRevert(
 ### deposit
 
 Deposits asset to custody and pay fee in zeta erc20.
+
+**Note:**
+This method is deprecated.
 
 
 ```solidity

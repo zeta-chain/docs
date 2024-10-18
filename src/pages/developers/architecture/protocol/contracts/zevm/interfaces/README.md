@@ -13,4 +13,5 @@
 - [CoinType](IZRC20.sol/enum.CoinType.md)
 - [zContext](UniversalContract.sol/struct.zContext.md)
 - [zContract](UniversalContract.sol/interface.zContract.md)
+- [MessageContext](UniversalContract.sol/struct.MessageContext.md)
 - [UniversalContract](UniversalContract.sol/interface.UniversalContract.md)

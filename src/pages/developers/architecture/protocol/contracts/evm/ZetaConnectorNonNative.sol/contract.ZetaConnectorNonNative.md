@@ -1,5 +1,5 @@
 # ZetaConnectorNonNative
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/3a274ce7bad045a879c73669586611d35509cbce/contracts/evm/ZetaConnectorNonNative.sol)
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/evm/ZetaConnectorNonNative.sol)
 
 **Inherits:**
 [ZetaConnectorBase](/contracts/evm/ZetaConnectorBase.sol/abstract.ZetaConnectorBase.md)
@@ -15,22 +15,24 @@ Max supply for minting.
 
 
 ```solidity
-uint256 public maxSupply = type(uint256).max;
+uint256 public maxSupply;
 ```
 
 
 ## Functions
-### constructor
+### initialize
 
 
 ```solidity
-constructor(
+function initialize(
     address gateway_,
     address zetaToken_,
     address tssAddress_,
     address admin_
 )
-    ZetaConnectorBase(gateway_, zetaToken_, tssAddress_, admin_);
+    public
+    override
+    initializer;
 ```
 
 ### setMaxSupply
@@ -161,7 +163,7 @@ function receiveTokens(uint256 amount) external override whenNotPaused;
 
 
 ```solidity
-function _mintTo(address to, uint256 amount, bytes32 internalSendHash) internal;
+function _mintTo(address to, uint256 amount, bytes32 internalSendHash) private;
 ```
 
 ## Events

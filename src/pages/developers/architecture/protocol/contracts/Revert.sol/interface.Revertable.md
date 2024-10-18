@@ -1,5 +1,5 @@
 # Revertable
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/3a274ce7bad045a879c73669586611d35509cbce/contracts/Revert.sol)
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/Revert.sol)
 
 Interface for contracts that support revertable calls.
 
