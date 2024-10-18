@@ -1,5 +1,5 @@
 # ZetaConnectorNative
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/3a274ce7bad045a879c73669586611d35509cbce/contracts/evm/ZetaConnectorNative.sol)
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/evm/ZetaConnectorNative.sol)
 
 **Inherits:**
 [ZetaConnectorBase](/contracts/evm/ZetaConnectorBase.sol/abstract.ZetaConnectorBase.md)
@@ -10,17 +10,19 @@ Implementation of ZetaConnectorBase for native token handling.
 
 
 ## Functions
-### constructor
+### initialize
 
 
 ```solidity
-constructor(
+function initialize(
     address gateway_,
     address zetaToken_,
     address tssAddress_,
     address admin_
 )
-    ZetaConnectorBase(gateway_, zetaToken_, tssAddress_, admin_);
+    public
+    override
+    initializer;
 ```
 
 ### withdraw
@@ -34,7 +36,7 @@ Withdraw tokens to a specified address.
 function withdraw(
     address to,
     uint256 amount,
-    bytes32 internalSendHash
+    bytes32
 )
     external
     override
@@ -48,7 +50,7 @@ function withdraw(
 |----|----|-----------|
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
-|`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
+|`<none>`|`bytes32`||
 
 
 ### withdrawAndCall
@@ -63,7 +65,7 @@ function withdrawAndCall(
     address to,
     uint256 amount,
     bytes calldata data,
-    bytes32 internalSendHash
+    bytes32
 )
     external
     override
@@ -78,7 +80,7 @@ function withdrawAndCall(
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 |`data`|`bytes`|The calldata to pass to the contract call.|
-|`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
+|`<none>`|`bytes32`||
 
 
 ### withdrawAndRevert
@@ -93,7 +95,7 @@ function withdrawAndRevert(
     address to,
     uint256 amount,
     bytes calldata data,
-    bytes32 internalSendHash,
+    bytes32,
     RevertContext calldata revertContext
 )
     external
@@ -109,7 +111,7 @@ function withdrawAndRevert(
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 |`data`|`bytes`|The calldata to pass to the contract call.|
-|`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
+|`<none>`|`bytes32`||
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
