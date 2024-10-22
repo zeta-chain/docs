@@ -14,7 +14,7 @@ export const globalLinks = {
   youTubeLink: "https://www.youtube.com/@ZetaBlockchain",
   redditLink: "https://www.reddit.com/r/zetablockchain",
   supportEmailLink: "mailto:support@zetachain.com",
-  bugBountyLink: "https://hackenproof.com/zetachain",
+  bugBountyLink: "/about/zetachain/bug-bounty",
   techAmbassadorProgramLink: "https://zetachain.deform.cc/TechAmbassadors",
   communityAmbassadorLink: "https://zealy.io/cw/zetachain/questboard",
   workWithUsLink: "https://zetachain.notion.site/Work-With-ZetaChain-5023467bea594d9c83e54e81a1afa97b",
