@@ -31,5 +31,6 @@ export * from "./components/IconTelegram";
 export * from "./components/IconTime";
 export * from "./components/IconTools";
 export * from "./components/IconTwitter";
+export * from "./components/IconWelcome";
 export * from "./components/IconYouTube";
 export * from "./components/IconZetaDocsLogo";

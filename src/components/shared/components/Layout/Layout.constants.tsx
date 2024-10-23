@@ -2,7 +2,16 @@ import { CSSObject, styled, Theme } from "@mui/material";
 import MuiDrawer, { DrawerProps } from "@mui/material/Drawer";
 import { ComponentProps } from "react";
 
-import { IconAbout, IconClaim, IconCode, IconCommunity, IconServer, IconSupport, IconTools } from "../Icons";
+import {
+  IconAbout,
+  IconClaim,
+  IconCode,
+  IconCommunity,
+  IconServer,
+  IconSupport,
+  IconTools,
+  IconWelcome,
+} from "../Icons";
 
 export const openDrawerWidth = 200;
 export const closeDrawerWidth = 75;
@@ -59,15 +68,26 @@ export type NavItem = {
 export const navMainItems: NavItem[][] = [
   [
     {
+      label: "Welcome",
+      icon: IconWelcome,
+      url: "/",
+    },
+  ],
+  [
+    {
       label: "Build",
       icon: IconCode,
       url: "/developers",
     },
+  ],
+  [
     {
       label: "Run a Node",
       icon: IconServer,
       url: "/nodes",
     },
+  ],
+  [
     {
       label: "Use",
       icon: IconClaim,
@@ -81,24 +101,25 @@ export const navMainItems: NavItem[][] = [
       url: "/reference",
     },
   ],
-];
-
-export const navBottomItems: NavItem[] = [
-  {
-    label: "About",
-    icon: IconAbout,
-    url: "/about",
-  },
-  {
-    label: "Support",
-    icon: IconSupport,
-    url: "/support",
-  },
-  {
-    label: "Community",
-    icon: IconCommunity,
-    url: "/community",
-  },
+  [
+    {
+      label: "About",
+      icon: IconAbout,
+      url: "/about",
+    },
+  ],
+  [
+    {
+      label: "Support",
+      icon: IconSupport,
+      url: "/support",
+    },
+    {
+      label: "Community",
+      icon: IconCommunity,
+      url: "/community",
+    },
+  ],
 ];
 
 /**
@@ -106,7 +127,7 @@ export const navBottomItems: NavItem[] = [
  */
 export const mainNavRoutes = [
   "/",
-  ...[...navMainItems, ...navBottomItems]
+  navMainItems
     .flat()
     .map((item) => item.url)
     .filter(Boolean),

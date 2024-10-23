@@ -11,7 +11,7 @@ import { getRevealProps } from "~/lib/helpers/animations";
 import { Footer } from "../../Footer";
 import { IconZetaDocsLogo } from "../../Icons";
 import { ThemeToggle } from "../../ThemeToggle";
-import { closeDrawerWidth, LeftNavDrawer, navBottomItems, navMainItems } from "../Layout.constants";
+import { closeDrawerWidth, LeftNavDrawer, navMainItems } from "../Layout.constants";
 import { Header } from "./Header";
 import { NavigationItem } from "./NavigationItem";
 
@@ -64,11 +64,12 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           </div>
 
           <div className="flex flex-col gap-6 flex-grow">
-            <div className="flex-grow flex flex-col sm:justify-center pt-24 sm:pt-0">
+            <div className="flex-grow flex flex-col pt-24 sm:pt-0">
               {navMainItems.map((items, index) => (
                 <div
                   // eslint-disable-next-line react/no-array-index-key
                   key={index}
+                  className="flex flex-col"
                 >
                   <List className="w-full font-medium">
                     {items.map((item) => (
@@ -84,26 +85,13 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                   </List>
 
                   {index < navMainItems.length - 1 && (
-                    <Divider className="border-grey-200 dark:border-grey-600 w-[calc(100%-32px)] sm:w-6 ml-4 sm:ml-6 my-4" />
+                    <Divider className="border-grey-200 dark:border-grey-600 w-6 my-3 self-center" />
                   )}
                 </div>
               ))}
             </div>
 
             <div className="pb-6">
-              <List className="w-full font-medium">
-                {navBottomItems.map((item) => (
-                  <NavigationItem
-                    key={item.label}
-                    item={item}
-                    isOpen={isLeftDrawerOpen}
-                    onClick={() => {
-                      if (!upSm) setIsLeftDrawerOpen(false);
-                    }}
-                  />
-                ))}
-              </List>
-
               <div className="sm:hidden pl-2 pt-8 text-grey-400 dark:text-grey-300">
                 <ThemeToggle />
               </div>

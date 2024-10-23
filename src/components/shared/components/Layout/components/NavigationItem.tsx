@@ -42,7 +42,7 @@ export const NavigationItem = ({ item, isOpen, withLabel = true, onClick }: Navi
       <NavigationItemWrapper item={item} isSelected={isSelected} onClick={onClick}>
         {icon && (
           <div
-            className={clsx("flex items-center justify-center w-6 h-6 mr-3 flex-shrink-0", {
+            className={clsx("flex items-center justify-center w-5 h-5 mr-1 flex-shrink-0", {
               [nonSelectedColor]: !isSelected,
             })}
           >
