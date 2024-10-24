@@ -4,8 +4,10 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { selectPages } from "~/lib/directories/directories.selectors";
 import { getRevealProps } from "~/lib/helpers/animations";
 
 import { Footer } from "../../Footer";
@@ -13,6 +15,7 @@ import { IconZetaDocsLogo } from "../../Icons";
 import { ThemeToggle } from "../../ThemeToggle";
 import { closeDrawerWidth, LeftNavDrawer, navMainItems } from "../Layout.constants";
 import { Header } from "./Header";
+import { NavigationAccordionLink } from "./NavigationAccordionLink";
 import { NavigationItem } from "./NavigationItem";
 
 type NavigationLayoutProps = PropsWithChildren<{
@@ -24,6 +27,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
+
+  const pages = useSelector(selectPages);
+  const navPages = useMemo(() => pages.filter((page) => page.kind === "Folder"), [pages]);
 
   // To prevent a flash of the drawer on first render given that useCurrentBreakpoint has an issue always returning false for the first render for upLg and others
   useEffect(() => {
@@ -48,7 +54,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
             "sm:w-[200px] sm:border-r-0": !isMainPage,
           })}
           classes={{
-            paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 ${
+            paper: `shadow-none rounded-none bg-grey-50 dark:bg-grey-900 !border-r-0 sm:!border-r !border-grey-200 dark:!border-grey-700 [scrollbar-width:none;] ${
               isLeftDrawerOpen && isMainPage
                 ? `!w-screen sm:!w-[200px]`
                 : isLeftDrawerOpen && !isMainPage
@@ -64,7 +70,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           </div>
 
           <div className="flex flex-col gap-6 flex-grow">
-            <div className="flex-grow flex flex-col pt-24 sm:pt-0">
+            <div className="flex-grow flex flex-col pt-24 sm:pt-0 pb-6 sm:pb-11">
               {navMainItems.map((items, index) => (
                 <div
                   // eslint-disable-next-line react/no-array-index-key
@@ -73,14 +79,38 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                 >
                   <List className="w-full font-medium">
                     {items.map((item) => (
-                      <NavigationItem
-                        key={item.label}
-                        item={item}
-                        isOpen={isLeftDrawerOpen}
-                        onClick={() => {
-                          if (!upSm) setIsLeftDrawerOpen(false);
-                        }}
-                      />
+                      <>
+                        <NavigationItem
+                          key={item.label}
+                          item={item}
+                          isOpen={isLeftDrawerOpen}
+                          onClick={() => {
+                            if (!upSm) setIsLeftDrawerOpen(false);
+                          }}
+                        />
+
+                        {navPages.find((page) => page.route === item.url) && (
+                          <List className="w-full">
+                            {navPages
+                              .filter((page) => page.route === item.url && "children" in page)
+                              .map((page) =>
+                                page.children
+                                  .filter((page) => page.route !== item.url)
+                                  .map((page) => (
+                                    <div className="px-3 pl-12 sm:pr-6">
+                                      <NavigationAccordionLink
+                                        key={page.route}
+                                        page={page}
+                                        onClick={() => {
+                                          if (!upSm) setIsLeftDrawerOpen(false);
+                                        }}
+                                      />
+                                    </div>
+                                  ))
+                              )}
+                          </List>
+                        )}
+                      </>
                     ))}
                   </List>
 
@@ -91,10 +121,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
               ))}
             </div>
 
-            <div className="pb-6">
-              <div className="sm:hidden pl-2 pt-8 text-grey-400 dark:text-grey-300">
-                <ThemeToggle />
-              </div>
+            <div className="sm:hidden pb-6 pl-2 text-grey-400 dark:text-grey-300">
+              <ThemeToggle />
             </div>
           </div>
         </LeftNavDrawer>

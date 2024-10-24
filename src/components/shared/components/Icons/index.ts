@@ -14,6 +14,7 @@ export * from "./components/IconCopy";
 export * from "./components/IconDiscord";
 export * from "./components/IconDocs";
 export * from "./components/IconDocument";
+export * from "./components/IconDropDown";
 export * from "./components/IconExclamation";
 export * from "./components/IconExclamationCircle";
 export * from "./components/IconGitHub";
