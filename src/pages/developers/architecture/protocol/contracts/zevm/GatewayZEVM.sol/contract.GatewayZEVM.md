@@ -58,9 +58,6 @@ modifier onlyProtocol();
 
 ### constructor
 
-**Note:**
-constructor
-
 
 ```solidity
 constructor();
@@ -193,7 +190,6 @@ function withdraw(
     RevertOptions calldata revertOptions
 )
     external
-    nonReentrant
     whenNotPaused;
 ```
 **Parameters**
@@ -221,7 +217,6 @@ function withdrawAndCall(
     RevertOptions calldata revertOptions
 )
     external
-    nonReentrant
     whenNotPaused;
 ```
 **Parameters**
@@ -242,7 +237,7 @@ Withdraw ZETA tokens to an external chain.
 
 
 ```solidity
-function withdraw(bytes memory, uint256, uint256, RevertOptions calldata) external nonReentrant whenNotPaused;
+function withdraw(bytes memory, uint256, uint256, RevertOptions calldata) external whenNotPaused;
 ```
 
 ### withdrawAndCall
@@ -260,7 +255,6 @@ function withdrawAndCall(
     RevertOptions calldata
 )
     external
-    nonReentrant
     whenNotPaused;
 ```
 
@@ -278,7 +272,6 @@ function call(
     RevertOptions calldata revertOptions
 )
     external
-    nonReentrant
     whenNotPaused;
 ```
 **Parameters**
@@ -337,6 +330,7 @@ function execute(
     bytes calldata message
 )
     external
+    nonReentrant
     onlyProtocol
     whenNotPaused;
 ```
@@ -365,6 +359,7 @@ function depositAndCall(
     bytes calldata message
 )
     external
+    nonReentrant
     onlyProtocol
     whenNotPaused;
 ```
@@ -392,6 +387,7 @@ function depositAndCall(
     bytes calldata message
 )
     external
+    nonReentrant
     onlyProtocol
     whenNotPaused;
 ```
@@ -411,7 +407,14 @@ Revert a user-specified contract on ZEVM.
 
 
 ```solidity
-function executeRevert(address target, RevertContext calldata revertContext) external onlyProtocol whenNotPaused;
+function executeRevert(
+    address target,
+    RevertContext calldata revertContext
+)
+    external
+    nonReentrant
+    onlyProtocol
+    whenNotPaused;
 ```
 **Parameters**
 
@@ -434,6 +437,7 @@ function depositAndRevert(
     RevertContext calldata revertContext
 )
     external
+    nonReentrant
     onlyProtocol
     whenNotPaused;
 ```

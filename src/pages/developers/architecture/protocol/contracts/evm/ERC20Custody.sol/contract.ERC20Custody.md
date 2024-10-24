@@ -208,6 +208,7 @@ WithdrawAndCall transfers tokens to Gateway and call a contract through the Gate
 
 ```solidity
 function withdrawAndCall(
+    MessageContext calldata messageContext,
     address to,
     address token,
     uint256 amount,
@@ -222,6 +223,7 @@ function withdrawAndCall(
 
 |Name|Type|Description|
 |----|----|-----------|
+|`messageContext`|`MessageContext`|Message context containing sender.|
 |`to`|`address`|Address of the contract to call.|
 |`token`|`address`|Address of the ERC20 token.|
 |`amount`|`uint256`|Amount of tokens to withdraw.|
@@ -263,9 +265,6 @@ function withdrawAndRevert(
 ### deposit
 
 Deposits asset to custody and pay fee in zeta erc20.
-
-**Note:**
-This method is deprecated.
 
 
 ```solidity

@@ -79,6 +79,32 @@ event Deposited(
 |`receiver`|`address`|The address of the receiver.|
 |`amount`|`uint256`|The amount of ETH or tokens deposited.|
 |`asset`|`address`|The address of the ERC20 token (zero address if ETH).|
+|`payload`|`bytes`|The calldata passed with the deposit. No longer used. Kept to maintain compatibility.|
+|`revertOptions`|`RevertOptions`|Revert options.|
+
+### DepositedAndCalled
+Emitted when a deposit and call is made.
+
+
+```solidity
+event DepositedAndCalled(
+    address indexed sender,
+    address indexed receiver,
+    uint256 amount,
+    address asset,
+    bytes payload,
+    RevertOptions revertOptions
+);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`sender`|`address`|The address of the sender.|
+|`receiver`|`address`|The address of the receiver.|
+|`amount`|`uint256`|The amount of ETH or tokens deposited.|
+|`asset`|`address`|The address of the ERC20 token (zero address if ETH).|
 |`payload`|`bytes`|The calldata passed with the deposit.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
