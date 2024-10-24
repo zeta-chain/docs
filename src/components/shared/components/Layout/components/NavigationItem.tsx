@@ -7,7 +7,7 @@ import { NavItem } from "../Layout.constants";
 import { NavigationItemWrapper } from "./NavigationItemWrapper";
 
 const nonSelectedColor =
-  "text-grey-500 group-hover:text-green-100 dark:text-grey-300 dark:group-hover:text-green-100 transition-all";
+  "text-grey-500 group-hover:text-green-100 dark:text-white dark:group-hover:text-green-100 transition-all";
 
 interface NavigationItemProps {
   item: NavItem;
@@ -42,7 +42,7 @@ export const NavigationItem = ({ item, isOpen, withLabel = true, onClick }: Navi
       <NavigationItemWrapper item={item} isSelected={isSelected} onClick={onClick}>
         {icon && (
           <div
-            className={clsx("flex items-center justify-center w-6 h-6 mr-3 flex-shrink-0", {
+            className={clsx("flex items-center justify-center w-6 h-6 sm:w-5 sm:h-5 mr-2 sm:mr-1 flex-shrink-0", {
               [nonSelectedColor]: !isSelected,
             })}
           >
@@ -54,7 +54,7 @@ export const NavigationItem = ({ item, isOpen, withLabel = true, onClick }: Navi
 
         {isOpen && (
           <p
-            className={clsx("font-inter text-sm transition-all", {
+            className={clsx("font-inter text-lg sm:text-sm transition-all", {
               [nonSelectedColor]: !isSelected,
               "sm:opacity-0": !withLabel,
             })}
