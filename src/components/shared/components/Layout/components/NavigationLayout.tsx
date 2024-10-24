@@ -92,21 +92,23 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                         {navPages.find((page) => page.route === item.url) && (
                           <List className="w-full">
                             {navPages
-                              .filter((page) => page.route === item.url && "children" in page)
+                              .filter((page) => page.route === item.url)
                               .map((page) =>
-                                page.children
-                                  .filter((page) => page.route !== item.url)
-                                  .map((page) => (
-                                    <div className="px-3 pl-12 sm:pr-6">
-                                      <NavigationAccordionLink
-                                        key={page.route}
-                                        page={page}
-                                        onClick={() => {
-                                          if (!upSm) setIsLeftDrawerOpen(false);
-                                        }}
-                                      />
-                                    </div>
-                                  ))
+                                "children" in page
+                                  ? page.children
+                                      .filter((page) => page.route !== item.url)
+                                      .map((page) => (
+                                        <div className="px-3 pl-12 sm:pr-6">
+                                          <NavigationAccordionLink
+                                            key={page.route}
+                                            page={page}
+                                            onClick={() => {
+                                              if (!upSm) setIsLeftDrawerOpen(false);
+                                            }}
+                                          />
+                                        </div>
+                                      ))
+                                  : null
                               )}
                           </List>
                         )}
