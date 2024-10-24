@@ -127,7 +127,7 @@ export const navMainItems: NavItem[][] = [
  */
 export const mainNavRoutes = [
   "/",
-  navMainItems
+  ...[...navMainItems]
     .flat()
     .map((item) => item.url)
     .filter(Boolean),
