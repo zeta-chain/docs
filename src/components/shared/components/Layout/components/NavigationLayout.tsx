@@ -72,48 +72,35 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           <div className="flex flex-col gap-6 flex-grow">
             <div className="flex-grow flex flex-col pt-24 sm:pt-0 pb-6 sm:pb-11">
               {navMainItems.map((items, index) => (
-                <div
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  className="flex flex-col"
-                >
+                <div key={items[0].url} className="flex flex-col">
                   <List className="w-full font-medium">
-                    {items.map((item) => (
-                      <>
-                        <NavigationItem
-                          key={item.label}
-                          item={item}
-                          isOpen={isLeftDrawerOpen}
-                          onClick={() => {
-                            if (!upSm) setIsLeftDrawerOpen(false);
-                          }}
-                        />
+                    {items.map((item) => {
+                      const navSection = navPages.find((page) => page.route === item.url);
+                      const closeMobileDrawer = !upSm ? () => setIsLeftDrawerOpen(false) : undefined;
 
-                        {navPages.find((page) => page.route === item.url) && (
-                          <List className="w-full">
-                            {navPages
-                              .filter((page) => page.route === item.url)
-                              .map((page) =>
-                                "children" in page
-                                  ? page.children
-                                      .filter((page) => page.route !== item.url)
-                                      .map((page) => (
-                                        <div className="px-3 pl-12 sm:pr-6">
-                                          <NavigationAccordionLink
-                                            key={page.route}
-                                            page={page}
-                                            onClick={() => {
-                                              if (!upSm) setIsLeftDrawerOpen(false);
-                                            }}
-                                          />
-                                        </div>
-                                      ))
-                                  : null
-                              )}
-                          </List>
-                        )}
-                      </>
-                    ))}
+                      return (
+                        <>
+                          <NavigationItem
+                            key={item.label}
+                            item={item}
+                            isOpen={isLeftDrawerOpen}
+                            onClick={closeMobileDrawer}
+                          />
+
+                          {!!navSection && "children" in navSection && (
+                            <List className="w-full">
+                              {navSection.children
+                                .filter((page) => page.route !== item.url)
+                                .map((page) => (
+                                  <div className="px-3 pl-12 sm:pr-6">
+                                    <NavigationAccordionLink key={page.route} page={page} onClick={closeMobileDrawer} />
+                                  </div>
+                                ))}
+                            </List>
+                          )}
+                        </>
+                      );
+                    })}
                   </List>
 
                   {index < navMainItems.length - 1 && (
