@@ -3,7 +3,7 @@ import List from "@mui/material/List";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
@@ -27,6 +27,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
+
+  const closeMobileDrawer = useCallback(() => !upSm && setIsLeftDrawerOpen(false), [upSm, setIsLeftDrawerOpen]);
 
   const pages = useSelector(selectPages);
   const navPages = useMemo(() => pages.filter((page) => page.kind === "Folder"), [pages]);
@@ -76,29 +78,23 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                   <List className="w-full font-medium">
                     {items.map((item) => {
                       const navSection = navPages.find((page) => page.route === item.url);
-                      const closeMobileDrawer = !upSm ? () => setIsLeftDrawerOpen(false) : undefined;
 
                       return (
-                        <>
-                          <NavigationItem
-                            key={item.label}
-                            item={item}
-                            isOpen={isLeftDrawerOpen}
-                            onClick={closeMobileDrawer}
-                          />
+                        <div key={item.url}>
+                          <NavigationItem item={item} isOpen={isLeftDrawerOpen} onClick={closeMobileDrawer} />
 
                           {!!navSection && "children" in navSection && (
                             <List className="w-full">
                               {navSection.children
                                 .filter((page) => page.route !== item.url)
                                 .map((page) => (
-                                  <div className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
+                                  <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
                                     <NavigationAccordionLink key={page.route} page={page} onClick={closeMobileDrawer} />
                                   </div>
                                 ))}
                             </List>
                           )}
-                        </>
+                        </div>
                       );
                     })}
                   </List>
