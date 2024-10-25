@@ -92,7 +92,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                               {navSection.children
                                 .filter((page) => page.route !== item.url)
                                 .map((page) => (
-                                  <div className="px-3 pl-12 sm:pr-6">
+                                  <div className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
                                     <NavigationAccordionLink key={page.route} page={page} onClick={closeMobileDrawer} />
                                   </div>
                                 ))}

@@ -11,7 +11,7 @@ import { getPageTitle } from "~/lib/helpers/nextra";
 import { IconDropDown } from "../../Icons";
 
 const StyledAccordion = styled(Accordion)`
-  ${tw`py-3 sm:py-2 shadow-none bg-none bg-[transparent] border-none`}
+  ${tw`py-3 sm:py-2 last:pb-0 shadow-none bg-none bg-[transparent] border-none`}
   box-shadow: none;
 
   :before,
@@ -70,23 +70,25 @@ export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = (
 
   if (page.kind !== "Folder") {
     return (
-      <div className="flex py-3 sm:py-2 last-of-type:pb-0">
-        <div className="w-1 h-1 ml-1 mr-2 mt-2 sm:mt-[5px] bg-grey-200 dark:bg-grey-600 shrink-0" />
+      <Link
+        href={page.route}
+        className={clsx("flex py-3 sm:py-2 last:pb-0 group", {
+          "text-green-100 dark:text-green-100 hover:!text-green-100 dark:hover:!text-green-100": isRouteSelected,
+          "text-grey-400 dark:text-grey-300 hover:!text-green-100 dark:hover:!text-green-100": !isRouteSelected,
+        })}
+        onClick={onClick}
+      >
+        <div
+          className={clsx("w-1 h-1 ml-1 mr-2 mt-2 sm:mt-[5px] shrink-0 transition-all", {
+            "bg-green-100 ": isRouteSelected,
+            "bg-grey-200 dark:bg-grey-600 group-hover:bg-green-100": !isRouteSelected,
+          })}
+        />
 
-        <Link
-          href={page.route}
-          className={clsx(
-            "text-base leading-[130%] sm:text-xs sm:leading-[110%] whitespace-pre-wrap text-ellipsis overflow-hidden",
-            {
-              "text-green-100 dark:text-green-100 hover:!text-green-100 dark:hover:!text-green-100": isRouteSelected,
-              "text-grey-400 dark:text-grey-300 hover:!text-green-100 dark:hover:!text-green-100": !isRouteSelected,
-            }
-          )}
-          onClick={onClick}
-        >
+        <div className="text-base leading-[130%] sm:text-xs sm:leading-[110%] whitespace-pre-wrap text-ellipsis overflow-hidden">
           {getPageTitle(page)}
-        </Link>
-      </div>
+        </div>
+      </Link>
     );
   }
 
