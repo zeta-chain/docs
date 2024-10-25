@@ -38,11 +38,11 @@ const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, chi
   return (
     <StyledAccordion expanded={expanded === page.route} onChange={handleChange(page.route)}>
       <AccordionSummary
-        className="p-0 m-0 min-h-0"
+        className="p-0 m-0 min-h-0 group"
         expandIcon={
           <IconDropDown
             className={clsx({
-              "text-grey-400 dark:text-grey-300": !expanded,
+              "text-grey-400 dark:text-grey-300 group-hover:text-grey-500 dark:group-hover:text-white": !expanded,
               "text-grey-500 dark:text-white": expanded,
             })}
           />
@@ -51,7 +51,7 @@ const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, chi
       >
         <div
           className={clsx("text-base leading-[130%] sm:text-xs sm:leading-[110%]", {
-            "text-grey-400 dark:text-grey-300": !expanded,
+            "text-grey-400 dark:text-grey-300 group-hover:text-grey-500 dark:group-hover:text-white": !expanded,
             "text-grey-500 dark:text-white": expanded,
           })}
         >
