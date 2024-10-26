@@ -44,7 +44,7 @@ account, you can generate a new one using the following command:
 npx hardhat account --save
 ```
 
-This command creates a random wallet, displays the wallet information in the
+This command creates a random EVM wallet and a Solana wallet, and displays the wallet information in the 
 terminal, and saves the private key to a `.env` file, making it accessible to
 Hardhat.
 
@@ -59,11 +59,17 @@ If you already have a private key or mnemonic, you can import it with the
 npx hardhat account --save --recover
 ```
 
-This will prompt you to enter the private key or mnemonic, derive the addresses,
+For EVM wallet, this will prompt you to enter the private key or mnemonic, derive the addresses,
 and save the private key into the `.env` file.
 
+For Solana wallets, the process is as follows:
+1. It first attempts to automatically import the private key from the `~/.config/solana/id.json` file.
+2. If this file doesn't exist or can't be read, you'll be prompted to enter the private key manually.
+
+Finally, the private key is saved into the `.env` file.
+
 The `account` command shows derived addresses in hexadecimal (for EVM-based
-chains), bech32 with `zeta` prefix for ZetaChain, and bech32 for Bitcoin.
+chains), bech32 with `zeta` prefix for ZetaChain, base58 for Solana, and bech32 for Bitcoin.
 
 ## Query Token Balances
 
@@ -84,14 +90,14 @@ npx hardhat balances --json
 ```
 
 If you want to query for token balances for a different account, you can use the
-`--address` flag:
+`--evm`, `--solana`, or `--bitcoin` flag:
 
 ```
-npx hardhat balances --address ADDRESS
+npx hardhat balances --evm EVM_ADDRESS --solana SOLANA_ADDRESS --bitcoin BITCOIN_ADDRESS
 ```
 
 The `balances` command supports querying for native gas tokens, wrapped ZETA on
-all connected chains as well as ZetaChain, ZRC-20 tokens, and BTC on Bitcoin.
+all connected chains as well as ZetaChain, ZRC-20 tokens, SOL on Solana, and BTC on Bitcoin.
 
 ## Request Tokens from the Faucet
 
