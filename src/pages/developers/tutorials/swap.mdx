@@ -266,7 +266,9 @@ their native chain, whether it's an EVM chain or Bitcoin.
 Compile the contract and deploy it to localnet by running:
 
 ```
-yarn deploy
+npx hardhat compile --force
+
+npx hardhat deploy --network localhost
 ```
 
 You should see output similar to:
@@ -275,7 +277,7 @@ You should see output similar to:
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed contract on localhost.
-📜 Contract address: 0x67d269191c92Caf3cD7723F116c85e6E9bf55933
+📜 Contract address: 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
 ```
 
 ## Starting Localnet
@@ -289,62 +291,33 @@ npx hardhat localnet
 
 ## Swapping Gas Tokens for ERC-20 Tokens
 
-To swap gas tokens (such as ETH) for ERC-20 tokens, run the following command:
+To swap gas tokens for ERC-20 tokens, run the following command:
 
 ```
-npx hardhat evm-deposit-and-call --network localhost --receiver 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --amount 1 --types '["address", "bytes"]' 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+npx hardhat swap-from-evm --network localhost --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
-This script deposits tokens into the ZetaChain gateway and sends a message to
-the Swap contract on ZetaChain to execute the swap logic.
+This script deposits tokens into the gateway on a connected EVM chain and sends
+a message to the Swap contract on ZetaChain to execute the swap logic.
 
 In this command, the `--receiver` parameter is the address of the Swap contract
-on ZetaChain (`0x67d269191c92Caf3cD7723F116c85e6E9bf55933`) that will handle the
-swap. The `--amount 1` option indicates that you want to swap 1 ETH. The
-`--types '["address", "bytes"]'` parameter defines the ABI types of the message
-parameters being sent to the `onCrossChainCall` function in the Swap contract.
-The two addresses that follow are the target ERC-20 token address on the
-destination chain (`0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c`) and the
-recipient address (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`) who will
-receive the swapped tokens.
+on ZetaChain (`0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E`) that will handle the
+swap. The `--amount 1` option indicates that you want to swap 1 ETH. `--target`
+is the ZRC-20 address of the destination token (in this example, it's ZRC-20
+USDC).
 
 When you execute this command, the script calls the `gateway.depositAndCall`
 method on the connected EVM chain, depositing 1 ETH and sending a message to the
-Swap contract on ZetaChain. The EVM gateway processes the deposit and emits a
-`Deposited` event:
-
-```
-[EVM]: Gateway: 'Deposited' event emitted
-```
+Swap contract on ZetaChain.
 
 ZetaChain then picks up the event and executes the `onCrossChainCall` function
-of the Swap contract with the provided message. The execution log might look
-like this:
-
-```
-[ZetaChain]: Universal contract 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 executing onCrossChainCall (context: {"origin":"0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x91d18e54DAf4F677cB28167158d6dd21F6aB3921, amount: 1000000000000000000, message: 0x0000000000000000000000009fd96203f7b22bcf72d9dcb40ff98302376ce09c00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000014f39fd6e51aad88f6f4ce6ab8827279cfffb92266000000000000000000000000)
-```
-
-In this context, `origin` refers to the original sender's address, `sender` is
-the address that initiated the cross-chain call, and `chainID` identifies the
-source chain. The `zrc20` field shows the ZRC-20 representation of the deposited
-token on ZetaChain, and `amount` is the number of tokens received. The `message`
-contains the encoded parameters sent to `onCrossChainCall`.
+of the Swap contract with the provided message.
 
 The Swap contract decodes the message, identifies the target ERC-20 token and
-recipient, and initiates the swap logic. After processing, the ZetaChain gateway
-emits a `Withdrawn` event:
-
-```
-[ZetaChain]: Gateway: 'Withdrawn' event emitted
-```
+recipient, and initiates the swap logic.
 
 Finally, the EVM chain receives the withdrawal request, and the swapped ERC-20
 tokens are transferred to the recipient's address:
-
-```
-[EVM]: Transferred 1.013466046281196713 ERC-20 tokens from Custody to 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
-```
 
 ### Swapping ERC-20 Tokens for Gas Tokens
 
@@ -352,7 +325,7 @@ To swap ERC-20 tokens for gas tokens, adjust the command by specifying the
 ERC-20 token you're swapping from using the `--erc20` parameter:
 
 ```
-npx hardhat evm-deposit-and-call --network localhost --receiver 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 --amount 1 --erc20 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82 --types '["address", "bytes"]' 0x91d18e54DAf4F677cB28167158d6dd21F6aB3921 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+npx hardhat swap-from-evm --network localhost --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --erc20 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82
 ```
 
 Here, the `--erc20` option specifies the ERC-20 token address you're swapping
@@ -361,34 +334,16 @@ other parameters remain the same as in the previous command.
 
 When you run the command, the script calls the `gateway.depositAndCall` method
 with the specified ERC-20 token and amount, sending a message to the Swap
-contract on ZetaChain. The EVM gateway processes the deposit of the ERC-20
-tokens and emits a `Deposited` event:
-
-```
-[EVM]: Gateway: 'Deposited' event emitted
-```
+contract on ZetaChain.
 
 ZetaChain picks up the event and executes the `onCrossChainCall` function of the
 Swap contract:
 
-```
-[ZetaChain]: Universal contract 0x67d269191c92Caf3cD7723F116c85e6E9bf55933 executing onCrossChainCall (context: {"origin":"0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0","sender":"0x735b14BB79463307AAcBED86DAf3322B1e6226aB","chainID":1}), zrc20: 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c, amount: 1000000000000000000, message: 0x00000000000000000000000091d18e54daf4f677cb28167158d6dd21f6ab392100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000014f39fd6e51aad88f6f4ce6ab8827279cfffb92266000000000000000000000000)
-```
-
 The Swap contract decodes the message, identifies the target gas token and
-recipient, and initiates the swap logic. After processing, the ZetaChain gateway
-emits a `Withdrawn` event:
-
-```
-[ZetaChain]: Gateway: 'Withdrawn' event emitted
-```
+recipient, and initiates the swap logic.
 
 The EVM chain then receives the withdrawal request, and the swapped gas tokens
-are transferred to the recipient's address:
-
-```
-[EVM]: Transferred 0.974604535974342599 native gas tokens from TSS to 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
-```
+are transferred to the recipient's address.
 
 ## Conclusion
 
