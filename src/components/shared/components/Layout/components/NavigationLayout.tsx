@@ -65,7 +65,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
             }`,
           }}
         >
-          <div className="hidden sm:flex items-center h-[104px] py-6 pl-4 sm:pl-6">
+          <div className="hidden sm:flex items-center h-[104px] py-6 pl-4 sm:pl-6 shrink-0">
             <Link href="/">
               <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
             </Link>
