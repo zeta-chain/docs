@@ -252,6 +252,73 @@ contract Echo {
 }
 ```
 
+## Deploy on Testnet
+
+```
+npx hardhat compile --force
+npx hardhat deploy --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --network zeta_testnet
+npx hardhat deploy --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 --network base_testnet --name Echo
+```
+
+```
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully deployed "Hello" contract on zeta_testnet.
+📜 Contract address: 0x496CD66950a1F1c5B02513809A2d37fFB942be1B
+
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully deployed "Echo" contract on base_sepolia.
+📜 Contract address: 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed
+```
+
+## Call from Base to ZetaChain
+
+```
+npx hardhat echo-call \
+  --contract 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
+  --receiver 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
+  --network base_sepolia \
+  --tx-options-gas-price 20000 --types '["string"]' alice
+```
+
+https://sepolia.basescan.org/tx/0x133cdf3a06195de0a6bb89dd4761ca98d1301534b3c4987f0ff93c95c3fff78c
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x133cdf3a06195de0a6bb89dd4761ca98d1301534b3c4987f0ff93c95c3fff78c
+
+## Call from ZetaChain to Base
+
+```
+npx hardhat hello-call \
+  --contract 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
+  --receiver 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
+  --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
+  --function "hello(string)" \
+  --network zeta_testnet \
+  --tx-options-gas-price 200000 --types '["string"]' alice
+```
+
+https://zetachain-testnet.blockscout.com/tx/0x19d476fa2c3d29ba41467ae7f2742541fd11e0b67d6548fe7655a3d40274323e
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x19d476fa2c3d29ba41467ae7f2742541fd11e0b67d6548fe7655a3d40274323e
+
+## Withdraw And Call from ZetaChain to Base
+
+```
+npx hardhat hello-withdraw-and-call \
+  --contract 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
+  --receiver 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
+  --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
+  --function "hello(string)" \
+  --amount 0.005 \
+  --network zeta_testnet \
+  --types '["string"]' hello
+```
+
+https://zetachain-testnet.blockscout.com/tx/0x67099389ab6cb44ee03602d164320c615720b57762c5ddab042d65bdbe30c7a2
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x67099389ab6cb44ee03602d164320c615720b57762c5ddab042d65bdbe30c7a2
+
 ## Start Localnet
 
 [Localnet](/developers/tutorials/localnet) provides a simulated environment for
