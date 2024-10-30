@@ -22,11 +22,7 @@ In this enhanced version, you will modify the original swap contract to support
 this additional functionality. You will also deploy the modified contract to
 localnet and interact with it by swapping tokens from a connected EVM chain.
 
-<Alert>
-  {" "}
-  This tutorial depends on the gateway, which is available on localnet but not yet deployed on testnet. It will be compatible
-  with testnet after the gateway is deployed. In other words, you cannot deploy this tutorial on testnet yet.{" "}
-</Alert>
+<Alert>This tutorial relies on the Gateway, which is currently available only on localnet and testnet.</Alert>
 
 ## Setting Up Your Environment
 
@@ -80,8 +76,8 @@ contract SwapToAnyToken is UniversalContract {
         bool withdraw;
     }
 
-    function onCrossChainCall(
-        zContext calldata context,
+    function onCall(
+        MessageContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message

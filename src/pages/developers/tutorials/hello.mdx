@@ -1,5 +1,5 @@
 ---
-title: Your First Universal App
+title: Message Passing
 ---
 
 import { Alert } from "~/components/shared";
@@ -17,11 +17,7 @@ By the end of this tutorial, you will have learned how to:
   blockchain in localnet.
 - Gracefully handle reverts by implementing revert logic.
 
-<Alert>
-  {" "}
-  This tutorial relies on the gateway, which is currently available only on localnet. It will support testnet once the gateway
-  is deployed there. Therefore, deploying this tutorial on testnet is not possible at this time.
-</Alert>
+<Alert>This tutorial relies on the Gateway, which is currently available only on localnet and testnet.</Alert>
 
 ## Prerequisites
 
@@ -69,8 +65,8 @@ contract Hello is UniversalContract {
         gateway = GatewayZEVM(gatewayAddress);
     }
 
-    function onCrossChainCall(
-        zContext calldata context,
+    function onCall(
+        MessageContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
@@ -91,9 +87,8 @@ contract Hello is UniversalContract {
         RevertOptions memory revertOptions
     ) external {
         (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
-        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee)) {
+        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee))
             revert TransferFailed();
-        }
         IZRC20(zrc20).approve(address(gateway), gasFee);
         gateway.call(receiver, zrc20, message, gasLimit, revertOptions);
     }
@@ -277,7 +272,7 @@ With localnet running, open a new terminal window to compile and deploy the
 `Hello` and `Echo` contracts:
 
 ```bash
-yarn deploy
+yarn deploy:localnet
 ```
 
 You should see output indicating the successful deployment of the contracts:
@@ -286,12 +281,12 @@ You should see output indicating the successful deployment of the contracts:
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed "Hello" contract on localhost.
-📜 Contract address: 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
+📜 Contract address: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
 
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed "Echo" contract on localhost.
-📜 Contract address: 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690
+📜 Contract address: 0x9E545E3C0baAB3E08CdfD552C960A1050f373042
 ```
 
 **Note**: The deployed contract addresses may differ in your environment.
@@ -304,8 +299,8 @@ command, replacing the contract addresses with those from your deployment:
 
 ```bash
 npx hardhat echo-call \
-  --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
-  --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --contract 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
+  --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
   --network localhost \
   --types '["string"]' alice
 ```
@@ -328,55 +323,6 @@ npx hardhat echo-call \
 - **ZetaChain**: The `Hello` contract decodes the message and emits a
   `HelloEvent`.
 
-## Simulating a Revert
-
-To demonstrate how reverts are handled, let's intentionally send incorrect data.
-Instead of a `string`, we'll send a `uint256`:
-
-```bash
-npx hardhat echo-call \
-  --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
-  --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --network localhost \
-  --types '["uint256"]' 42
-```
-
-**What Happens:**
-
-- The `Hello` contract's `onCrossChainCall` attempts to decode a `uint256` as a
-  `string`, causing `abi.decode` to fail and revert the transaction.
-- The EVM chain detects the revert, and the transaction does not execute the
-  intended logic.
-
-## Handling a Revert
-
-To handle reverts gracefully, configure the gateway to call the `Echo` contract
-on the source chain upon a revert:
-
-```bash
-npx hardhat echo-call \
-  --contract 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
-  --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --network localhost \
-  --revert-address 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
-  --revert-message 0x \
-  --call-on-revert \
-  --types '["uint256"]' 42
-```
-
-**Parameters:**
-
-- `--revert-address`: Address of the `Echo` contract on the source EVM chain.
-- `--revert-message`: Data to pass to the `Echo` contract's `onRevert` function.
-- `--call-on-revert`: Flag indicating that the gateway should invoke a contract
-  upon revert.
-
-**What Happens:**
-
-- When the revert occurs, the gateway invokes the `Echo` contract's `onRevert`
-  function on the EVM chain.
-- This allows you to handle the error gracefully within your application logic.
-
 ## Calling an EVM Contract from a Universal App
 
 Now, let's perform the reverse operation: calling a contract on a connected EVM
@@ -386,8 +332,8 @@ from your deployment:
 
 ```bash
 npx hardhat hello-call \
-  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
+  --receiver 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
   --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
   --function "hello(string)" \
   --network localhost \
@@ -406,58 +352,6 @@ npx hardhat hello-call \
 - `--types`: ABI types of the message parameters.
 - `alice`: The message to send.
 
-## Simulating a Revert
-
-To simulate a revert when calling an EVM contract from ZetaChain, send incorrect
-data types:
-
-```bash
-npx hardhat hello-call \
-  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
-  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
-  --function "hello(string)" \
-  --network localhost \
-  --types '["uint256"]' 42
-```
-
-**What Happens:**
-
-- The `Echo` contract expects a `string` but receives a `uint256`, causing the
-  function to fail and revert the transaction.
-
-## Handling a Revert
-
-To handle reverts gracefully when calling an EVM contract from ZetaChain,
-include revert parameters:
-
-```bash
-npx hardhat hello-call \
-  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
-  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
-  --function "hello(string)" \
-  --network localhost \
-  --revert-address 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --revert-message 0x \
-  --call-on-revert \
-  --types '["uint256"]' 42
-```
-
-**Parameters:**
-
-- `--revert-address`: Address of the `Hello` contract on ZetaChain.
-- `--revert-message`: Data to pass to the `Hello` contract's `onRevert`
-  function.
-- `--call-on-revert`: Flag indicating that the gateway should invoke a contract
-  upon revert.
-
-**What Happens:**
-
-- Upon revert, the gateway calls the `onRevert` function of the `Hello` contract
-  on ZetaChain.
-- This allows you to handle the error within your ZetaChain application.
-
 ## Withdrawing and Calling an EVM Contract from a Universal App
 
 To withdraw tokens and call a contract on a connected chain from a universal
@@ -465,8 +359,8 @@ app, run the following command:
 
 ```bash
 npx hardhat hello-withdraw-and-call \
-  --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --receiver 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690 \
+  --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
+  --receiver 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
   --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c \
   --function "hello(string)" \
   --amount 1 \
