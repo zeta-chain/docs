@@ -256,7 +256,33 @@ their native chain, whether it's an EVM chain or Bitcoin.
   it is associated with. For example, ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
 </Alert>
 
-## Starting Localnet
+## Option 1: Deploy on Testnet
+
+```
+npx hardhat compile --force
+npx hardhat deploy --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --network zeta_testnet
+```
+
+```
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully deployed contract on zeta_testnet.
+📜 Contract address: 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3
+```
+
+## Swap from Base Sepolia to Polygon Amoy
+
+```
+npx hardhat evm-deposit-and-call
+  --receiver 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
+  --amount 0.001 \
+  --network base_sepolia \
+  --gas-price 20000 \
+  --gateway-evm 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+  --types '["address", "bytes"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+```
+
+## Option 2: Deploy on Localnet
 
 Start the local development environment to simulate ZetaChain's behavior by
 running:
@@ -264,8 +290,6 @@ running:
 ```
 npx hardhat localnet
 ```
-
-## Deploying the Contract
 
 Compile the contract and deploy it to localnet by running:
 
