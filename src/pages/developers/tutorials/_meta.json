@@ -19,6 +19,11 @@
     "readTime": "60 min",
     "description": "Enhance the universal swap app with the ability to swap to any token"
   },
+  "nft": {
+    "title": "NFT",
+    "readTime": "60 min",
+    "description": "Mint a universal NFT, which can be transferred between connected chains"
+  },
   "localnet": {
     "title": "Localnet",
     "readTime": "30 min",

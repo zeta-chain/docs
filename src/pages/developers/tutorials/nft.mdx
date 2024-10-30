@@ -1,0 +1,576 @@
+import { Alert } from "~/components/shared";
+
+In this tutorial you will learn how to create a universal ERC-721 NFT that can
+be easily transferred between chains connected to ZetaChain.
+
+The project consists of two ERC-721 NFT contracts.
+
+**Universal** contract is deployed on ZetaChain. The contract is used to:
+
+- Mint NFTs on ZetaChain
+- Transfer NFTs from ZetaChain to a connected chain
+- Handle incoming NFT transfers from connected chain to ZetaChain
+- Handle NFT transfers between connected chains
+
+**Connected** contract is deployed one or more connected EVM chains. The
+contract is used to:
+
+- Mint an NFT on a connected chain
+- Transfer NFT to another connected chain or ZetaChain
+- Handling incoming NFT transfers from ZetaChain or another connected chain
+
+A universal NFT can be minted on any chain: ZetaChain or any connected EVM
+chain. When an NFT is minted, it gets assigned a persistent token ID that is
+unique across all chains. When an NFT is transferred between chains, the token
+ID remains the same.
+
+An NFT can be transferred from ZetaChain to a connected chain, from a connected
+chain to ZetaChain and between connected chains. ZetaChain acts as a hub for
+cross-chain transactions, so all transfers go through ZetaChain. For example,
+when you transfer an NFT from Ethereum to BNB, two cross-chain transactions are
+initiated: Ethereum → ZetaChain → BNB. This doesn't impact the transfer time or
+costs, but makes it easier to connect any number of chains.
+
+Cross-chain NFT transfers are capable of handling reverts. If the transfer fails
+on the destination chain, an NFT will be returned to the original sender on the
+source chain.
+
+NFT contracts only accept cross-chain calls from trusted "counterparty"
+contracts. Each contract on a connected chain stores a "counterparty" address —
+an address of the Universal contract on ZetaChain. The Universal contract stores
+a list of "counterparty" contracts on connected chains. This ensures that only
+the contracts from the same NFT collection can participate in the cross-chain
+transfer.
+
+<Alert>
+  {" "}
+  This tutorial uses the authenticated calls feature of the Gateway, which is currently available only on a pre-release (v4.0.0-rc*)
+  version of localnet, which is installed by default in this example.{" "}
+</Alert>
+
+## Set Up Your Environment
+
+Start by cloning the example contracts repository and installing the necessary
+dependencies:
+
+```bash
+git clone https://github.com/zeta-chain/example-contracts
+cd example-contracts/examples/nft
+yarn
+```
+
+## Universal App Contract
+
+```solidity filename="contracts/Universal.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
+import {SwapHelperLib} from "@zetachain/toolkit/contracts/SwapHelperLib.sol";
+import {SystemContract} from "@zetachain/toolkit/contracts/SystemContract.sol";
+
+contract Universal is
+    ERC721,
+    ERC721Enumerable,
+    ERC721URIStorage,
+    Ownable,
+    UniversalContract
+{
+    GatewayZEVM public immutable gateway;
+    SystemContract public immutable systemContract =
+        SystemContract(0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9);
+    uint256 private _nextTokenId;
+    bool public isUniversal = true;
+    uint256 public gasLimit = 700000;
+
+    error TransferFailed();
+
+    mapping(address => bytes) public counterparty;
+
+    event CounterpartySet(address indexed zrc20, bytes indexed contractAddress);
+
+    constructor(
+        address payable gatewayAddress,
+        address initialOwner
+    ) ERC721("MyToken", "MTK") Ownable(initialOwner) {
+        gateway = GatewayZEVM(gatewayAddress);
+    }
+
+    function setCounterparty(
+        address zrc20,
+        bytes memory contractAddress
+    ) external onlyOwner {
+        counterparty[zrc20] = contractAddress;
+        emit CounterpartySet(zrc20, contractAddress);
+    }
+
+    function transferCrossChain(
+        uint256 tokenId,
+        bytes memory receiver,
+        address zrc20
+    ) public {
+        string memory uri = tokenURI(tokenId);
+        _burn(tokenId);
+
+        (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
+        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee))
+            revert TransferFailed();
+        IZRC20(zrc20).approve(address(gateway), gasFee);
+        bytes memory encodedData = abi.encode(tokenId, msg.sender, uri);
+
+        CallOptions memory callOptions = CallOptions(gasLimit, false);
+
+        RevertOptions memory revertOptions = RevertOptions(
+            address(this),
+            true,
+            address(0),
+            encodedData,
+            gasLimit
+        );
+
+        gateway.call(receiver, zrc20, encodedData, callOptions, revertOptions);
+    }
+
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 hash = uint256(
+            keccak256(
+                abi.encodePacked(address(this), block.number, _nextTokenId++)
+            )
+        );
+
+        uint256 tokenId = hash & 0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    function onCall(
+        MessageContext calldata messageContext,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external override {
+        if (keccak256(messageContext.origin) != keccak256(counterparty[zrc20]))
+            revert("Unauthorized");
+
+        (
+            uint256 tokenId,
+            address sender,
+            string memory uri,
+            address destination
+        ) = abi.decode(message, (uint256, address, string, address));
+
+        if (destination == address(0)) {
+            _safeMint(sender, tokenId);
+            _setTokenURI(tokenId, uri);
+        } else {
+            (, uint256 gasFee) = IZRC20(destination).withdrawGasFeeWithGasLimit(
+                700000
+            );
+
+            SwapHelperLib.swapExactTokensForTokens(
+                systemContract,
+                zrc20,
+                amount,
+                destination,
+                0
+            );
+
+            IZRC20(destination).approve(address(gateway), gasFee);
+            gateway.call(
+                counterparty[destination],
+                destination,
+                abi.encode(tokenId, sender, uri),
+                CallOptions(700000, false),
+                RevertOptions(address(0), false, address(0), "", 0)
+            );
+        }
+    }
+
+    function onRevert(RevertContext calldata context) external {
+        (uint256 tokenId, address sender, string memory uri) = abi.decode(
+            context.revertMessage,
+            (uint256, address, string)
+        );
+
+        _safeMint(sender, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+        return super._update(to, tokenId, auth);
+    }
+
+    function _increaseBalance(
+        address account,
+        uint128 value
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._increaseBalance(account, value);
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(ERC721, ERC721Enumerable, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
+```
+
+### Minting an NFT
+
+`safeMint` mint a new NFT. Token ID is generated from the contract address,
+block time, and an incrementing integer. This ensures that the token ID is
+unique across all chains. The only scenario where ID collision is possible is
+when two contracts are deployed on the same address on two different chains, and
+an NFT is minted on both exactly at the same time using the same integer. You
+can supply your own logic for generating token IDs.
+
+### Transfer NFT from ZetaChain to a Connected Chain
+
+`transferCrossChain` transfers an NFT from ZetaChain to a connected chain.
+Transferring an NFT to a connected chain creates a transaction on a connected
+chain, which costs gas. To pay for gas, the NFT sender must provide the
+universal app with tokens for gas in the form of ZRC-20 version of the gas token
+of the connected chain. For example, when a user transfers an NFT from ZetaChain
+to Ethereum, they need to allow the contract to spend a certain amount of ZRC-20
+ETH.
+
+The function transfers the ZRC-20 tokens to the gateway contract.
+
+Next, the function encodes the token ID, sender's address and the URI into a
+message.
+
+`callOptions` are defined with the gas limit on the destination chain and
+`isArbitraryCall` (the second parameter) is set to false. `isArbitraryCall`
+determines if the call is arbitrary (a call to any contract on the destination
+chain, but without providing address of the universal contract making the call)
+or authenticated (the call is made to `onCall` function, the universal contract
+address is passed as a parameter). Setting `isArbitraryCall` to false is
+important, because the contract on a connected chain must know which universal
+contract is making a call to prevent unauthorized calls.
+
+`revertOptions` contain the address of a contract on ZetaChain, which will be
+called if the contract on the destination chain reverts (in our example we want
+to call the same universal contract), as well as the message that will be passed
+to the `onRevert` function of the revert contract. Pass the same encoded message
+to ensure that the universal contract can successfully mint the token back to
+the sender if the transfer fails.
+
+Finally, `gateway.call` is executed to initiate a cross-chain transfer of an NFT
+from ZetaChain to a connected chain. The destination chain is determined by the
+ZRC-20 contract address, which corresponds to the gas token of the connected
+chain. For example, to transfer the NFT to Ethereum, pass address of ZRC-20 ETH.
+
+### Handling NFT Transfers from Connected Chains
+
+`onCall` is executed when an NFT transfer is received from a connected chain.
+
+First, `onCall` checks that the transfer originates from a trusted counterparty
+contract. This prevents unauthorized minting by malicious contracts.
+
+Since all cross-chain transfers are processed by ZetaChain, there are two
+scenarios when `onCall` is executed: when the destination is ZetaChain or when
+the destination is another connected chain.
+
+If the destination is a zero address, then the destination chain is ZetaChain.
+An NFT is minted and transferred to the recipient.
+
+If the destination is a non-zero address, the destination chain is another
+connected chain identified by the ZRC-20 gas token address in the destination
+field of the message. The contract initiates a transfer to the connected chain.
+First, it queries the withdraw fee on the destination chain. Then, it swaps the
+incoming ZRC-20 tokens into the ZRC-20 gas token of the destination chain. The
+swap uses the built-in Uniswap v2 pools, but any other swap mechanism can be
+used, instead. Finally, `gateway.call` is executed to initiate the transfer to
+the destination chain.
+
+### Revert Handling
+
+If an NFT transfer from ZetaChain to a connected chain fails, `onRevert` is
+called. `onRevert` mints the NFT and transfers it back to original sender.
+
+## Connected Chain Contract
+
+```solidity filename="contracts/Connected.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@zetachain/protocol-contracts/contracts/evm/GatewayEVM.sol";
+import {RevertContext} from "@zetachain/protocol-contracts/contracts/Revert.sol";
+
+contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+    GatewayEVM public immutable gateway;
+    uint256 private _nextTokenId;
+    address public counterparty;
+
+    function setCounterparty(address contractAddress) external onlyOwner {
+        counterparty = contractAddress;
+    }
+
+    constructor(
+        address payable gatewayAddress,
+        address initialOwner
+    ) ERC721("MyToken", "MTK") Ownable(initialOwner) {
+        gateway = GatewayEVM(gatewayAddress);
+    }
+
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 hash = uint256(
+            keccak256(
+                abi.encodePacked(address(this), block.number, _nextTokenId++)
+            )
+        );
+
+        uint256 tokenId = hash & 0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    function transferCrossChain(
+        uint256 tokenId,
+        address receiver,
+        address destination
+    ) external payable {
+        string memory uri = tokenURI(tokenId);
+        _burn(tokenId);
+        bytes memory encodedData = abi.encode(
+            tokenId,
+            msg.sender,
+            uri,
+            destination
+        );
+
+        RevertOptions memory revertOptions = RevertOptions(
+            address(this),
+            true,
+            address(0),
+            encodedData,
+            0
+        );
+
+        if (destination == address(0)) {
+            gateway.call(receiver, encodedData, revertOptions);
+        } else {
+            gateway.depositAndCall{value: msg.value}(
+                receiver,
+                encodedData,
+                revertOptions
+            );
+        }
+    }
+
+    function onCall(
+        MessageContext calldata messageContext,
+        bytes calldata message
+    ) external payable returns (bytes4) {
+        if (messageContext.sender != counterparty) revert("Unauthorized");
+
+        (uint256 tokenId, address sender, string memory uri) = abi.decode(
+            message,
+            (uint256, address, string)
+        );
+        _safeMint(sender, tokenId);
+        _setTokenURI(tokenId, uri);
+        return "";
+    }
+
+    function onRevert(RevertContext calldata context) external {
+        (uint256 tokenId, address sender, string memory uri) = abi.decode(
+            context.revertMessage,
+            (uint256, address, string)
+        );
+
+        _safeMint(sender, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    receive() external payable {}
+
+    fallback() external payable {}
+
+    // The following functions are overrides required by Solidity.
+
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+        return super._update(to, tokenId, auth);
+    }
+
+    function _increaseBalance(
+        address account,
+        uint128 value
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._increaseBalance(account, value);
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(ERC721, ERC721Enumerable, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
+```
+
+```
+./scripts/test.sh
+```
+
+### Transfer NFT from a Connected Chain
+
+`transferCrossChain` initiates a transfer of an NFT to ZetaChain or to another
+connected chain.
+
+To transfer an NFT to ZetaChain the destination address must be specified as a
+zero address.
+
+To transfer an NFT to another connected chain the destination address must be
+the ZRC-20 address of the gas token of the destination chain. For example, to
+transfer to Ethereum, the destination is ZRC-20 ETH address.
+
+When transferring to ZetaChain a no asset `gateway.call` is executed, because
+cross-chain calls to ZetaChain do not require the sender to cover gas costs.
+
+When transferring to another connected chain, `gateway.depositAndCall` is
+executed with some gas tokens to cover the gas costs on the destination chain.
+
+### Handling NFT Transfers
+
+`onCall` is executed when an NFT transfer is received from a connected chain or
+ZetaChain.
+
+Since all cross-chain transactions go through a universal contract on ZetaChain,
+`onCall` checks that the call is made from a trusted counterparty universal
+contract address to prevent unauthorized minting.
+
+### Revert Handling
+
+If an NFT transfer from ZetaChain to a connected chain fails, `onRevert` is
+called. `onRevert` mints the NFT and transfers it back to original sender.
+
+## Start Localnet
+
+[Localnet](/developers/tutorials/localnet) provides a simulated environment for
+developing and testing ZetaChain contracts locally.
+
+To start localnet, open a terminal window and run:
+
+```bash
+npx hardhat localnet
+```
+
+This command initializes a local blockchain environment that simulates the
+behavior of ZetaChain protocol contracts.
+
+## Demo
+
+Run the following script, which will deploy NFT contracts on localnet, set
+counterparty addresses, mint an NFT and transfer it ZetaChain → Ethereum → BNB →
+ZetaChain:
+
+```
+./scripts/test.sh
+```
+
+On localnet Ethereum, BNB, and ZetaChain are all running on the same Anvil
+blockchain, but each has its own Gateway, which allows us to simulate
+cross-chain transfers.
+
+```
+🚀 Deployed NFT contract on ZetaChain: 0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2
+🚀 Deployed NFT contract on EVM chain: 0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43
+🚀 Deployed NFT contract on BNB chain: 0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD
+
+📮 User Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+
+🔗 Setting counterparty contracts...
+
+🖼️  NFT Balance
+---------------------------------------------
+🟢 ZetaChain: 0
+🔵 EVM Chain: 0
+🟡 BNB Chain: 0
+---------------------------------------------
+
+Minted NFT with ID: 360200380862174510501150413599333672688790691765 on ZetaChain.
+
+🖼️  NFT Balance
+---------------------------------------------
+🟢 ZetaChain: 1
+🔵 EVM Chain: 0
+🟡 BNB Chain: 0
+---------------------------------------------
+
+Transferring NFT: ZetaChain → Ethereum...
+{"contractAddress":"0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2","transferTransactionHash":"0x044ac700fe16a498d5474c383606efb996425d62323fcdd8b53eadeaa487cb3a","sender":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","tokenId":"360200380862174510501150413599333672688790691765"}
+
+🖼️  NFT Balance
+---------------------------------------------
+🟢 ZetaChain: 0
+🔵 EVM Chain: 1
+🟡 BNB Chain: 0
+---------------------------------------------
+
+Transferring NFT: Ethereum → BNB...
+{"contractAddress":"0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43","transferTransactionHash":"0xc95a1ca71406dbb2e4a1f01b32b62cfa1f72d3c0923d2ea1e2967f8d837899e2","sender":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","tokenId":"360200380862174510501150413599333672688790691765"}
+
+🖼️  NFT Balance
+---------------------------------------------
+🟢 ZetaChain: 0
+🔵 EVM Chain: 0
+🟡 BNB Chain: 1
+---------------------------------------------
+
+Transferring NFT: BNB → ZetaChain...
+{"contractAddress":"0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD","transferTransactionHash":"0xb139d188c59c347540dbdea26f30f149f8131ce10ebc6f50ed7253dfd04ff014","sender":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","tokenId":"360200380862174510501150413599333672688790691765"}
+
+🖼️  NFT Balance
+---------------------------------------------
+🟢 ZetaChain: 1
+🔵 EVM Chain: 0
+🟡 BNB Chain: 0
+---------------------------------------------
+```
