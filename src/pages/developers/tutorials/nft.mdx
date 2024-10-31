@@ -114,17 +114,20 @@ contract Universal is
 
     function transferCrossChain(
         uint256 tokenId,
-        bytes memory receiver,
-        address zrc20
+        address receiver,
+        address destination
     ) public {
         string memory uri = tokenURI(tokenId);
         _burn(tokenId);
 
-        (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
-        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee))
-            revert TransferFailed();
-        IZRC20(zrc20).approve(address(gateway), gasFee);
-        bytes memory encodedData = abi.encode(tokenId, msg.sender, uri);
+        (, uint256 gasFee) = IZRC20(destination).withdrawGasFeeWithGasLimit(
+            gasLimit
+        );
+        if (
+            !IZRC20(destination).transferFrom(msg.sender, address(this), gasFee)
+        ) revert TransferFailed();
+        IZRC20(destination).approve(address(gateway), gasFee);
+        bytes memory encodedData = abi.encode(tokenId, receiver, uri);
 
         CallOptions memory callOptions = CallOptions(gasLimit, false);
 
@@ -136,7 +139,13 @@ contract Universal is
             gasLimit
         );
 
-        gateway.call(receiver, zrc20, encodedData, callOptions, revertOptions);
+        gateway.call(
+            counterparty[destination],
+            destination,
+            encodedData,
+            callOptions,
+            revertOptions
+        );
     }
 
     function safeMint(address to, string memory uri) public onlyOwner {
@@ -153,12 +162,12 @@ contract Universal is
     }
 
     function onCall(
-        MessageContext calldata messageContext,
+        MessageContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
     ) external override {
-        if (keccak256(messageContext.origin) != keccak256(counterparty[zrc20]))
+        if (keccak256(context.origin) != keccak256(counterparty[zrc20]))
             revert("Unauthorized");
 
         (
@@ -366,7 +375,7 @@ contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         _burn(tokenId);
         bytes memory encodedData = abi.encode(
             tokenId,
-            msg.sender,
+            receiver,
             uri,
             destination
         );
@@ -380,10 +389,10 @@ contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         );
 
         if (destination == address(0)) {
-            gateway.call(receiver, encodedData, revertOptions);
+            gateway.call(counterparty, encodedData, revertOptions);
         } else {
             gateway.depositAndCall{value: msg.value}(
-                receiver,
+                counterparty,
                 encodedData,
                 revertOptions
             );
@@ -396,11 +405,11 @@ contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     ) external payable returns (bytes4) {
         if (messageContext.sender != counterparty) revert("Unauthorized");
 
-        (uint256 tokenId, address sender, string memory uri) = abi.decode(
+        (uint256 tokenId, address receiver, string memory uri) = abi.decode(
             message,
             (uint256, address, string)
         );
-        _safeMint(sender, tokenId);
+        _safeMint(receiver, tokenId);
         _setTokenURI(tokenId, uri);
         return "";
     }
