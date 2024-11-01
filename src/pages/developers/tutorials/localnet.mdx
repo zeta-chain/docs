@@ -42,7 +42,7 @@ dependencies:
 
 ```
 git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/universal/hello
+cd example-contracts/examples/hello
 yarn
 ```
 
@@ -120,32 +120,36 @@ contract addresses:
 ```
 EVM Contract Addresses
 =======================
-┌──────────────────────┬──────────────────────────────────────────────┐
-│        (index)       │                    Values                    │
-├──────────────────────┼──────────────────────────────────────────────┤
-│     Gateway EVM      │ '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' │
-│    ERC-20 Custody    │ '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9' │
-│         TSS          │ '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' │
-│         ZETA         │ '0x5FbDB2315678afecb367f032d93F642f64180aa3' │
-│   ERC-20 USDC.ETH    │ '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82' │
-└──────────────────────┴──────────────────────────────────────────────┘
+┌─────────────────┬──────────────────────────────────────────────┐
+│ (index)         │ Values                                       │
+├─────────────────┼──────────────────────────────────────────────┤
+│ Gateway EVM     │ '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' │
+│ ERC-20 Custody  │ '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9' │
+│ TSS             │ '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' │
+│ ZETA            │ '0x5FbDB2315678afecb367f032d93F642f64180aa3' │
+│ ERC-20 USDC.ETH │ '0x0B306BF915C4d645ff596e518fAf3F9669b97016' │
+└─────────────────┴──────────────────────────────────────────────┘
 
 ZetaChain Contract Addresses
 =============================
-┌───────────────────────┬──────────────────────────────────────────────┐
-│        (index)        │                    Values                    │
-├───────────────────────┼──────────────────────────────────────────────┤
-│  Gateway ZetaChain    │ '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0' │
-│         ZETA          │ '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853' │
-│    Fungible Module    │ '0x735b14BB79463307AAcBED86DAf3322B1e6226aB' │
-│    System Contract    │ '0x610178dA211FEF7D417bC0e6FeD39F05609AD788' │
-│    ZRC-20 USDC.ETH    │ '0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c' │
-│    ZRC-20 ETH.ETH     │ '0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe' │
-└───────────────────────┴──────────────────────────────────────────────┘
+┌───────────────────┬──────────────────────────────────────────────┐
+│ (index)           │ Values                                       │
+├───────────────────┼──────────────────────────────────────────────┤
+│ Gateway ZetaChain │ '0x9A676e781A523b5d0C0e43731313A708CB607508' │
+│ ZETA              │ '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318' │
+│ Fungible Module   │ '0x735b14BB79463307AAcBED86DAf3322B1e6226aB' │
+│ System Contract   │ '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0' │
+│ Uniswap Router    │ '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e' │
+│ ZRC-20 USDC.ETH   │ '0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c' │
+│ ZRC-20 ETH.ETH    │ '0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe' │
+└───────────────────┴──────────────────────────────────────────────┘
 ```
 
-These addresses correspond to the deployed contracts on your local blockchain.
-You can interact with these contracts using your preferred development tools.
+These addresses correspond to the contracts deployed on your local blockchain.
+You can interact with them using your preferred development tools. Note that
+while these addresses remain persistent between restarts, they may vary on
+different instances of localnet. For the latest list of addresses, please refer
+to the table displayed in the terminal window where localnet is running.
 
 # Available Parameters
 

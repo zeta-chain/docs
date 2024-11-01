@@ -56,8 +56,8 @@ function.
 depositAndCall(address receiver, bytes calldata payload, RevertOptions calldata revertOptions) external payable;
 ```
 
-After the cross-chain transaction is processed, the `onCrossChainCall` function
-of a universal app contract is executed.
+After the cross-chain transaction is processed, the `onCall` function of a
+universal app contract is executed.
 
 The `receiver` must be a universal app contract address.
 
@@ -67,8 +67,8 @@ pragma solidity 0.8.7;
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
 contract UniversalApp is UniversalContract {
-    function onCrossChainCall(
-        zContext calldata context,
+    function onCall(
+        MessageContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
@@ -78,7 +78,7 @@ contract UniversalApp is UniversalContract {
 }
 ```
 
-`onCrossChainCall` receives:
+`onCall` receives:
 
 - `message`: value of the `payload`
 - `amount`: amount of deposited tokens
@@ -90,10 +90,9 @@ contract UniversalApp is UniversalContract {
   - `context.chainID`: chain ID of the connected chain from which the call was
     made
 
-When calling a universal app, the payload contains bytes passed to
-`onCrossChainCall` as `message`. You don't need to pass a function selector in
-the payload as the only function that can be called from a connected chain is
-`onCrossChainCall`.
+When calling a universal app, the payload contains bytes passed to `onCall` as
+`message`. You don't need to pass a function selector in the payload as the only
+function that can be called from a connected chain is `onCall`.
 
 ## Deposit ERC-20 Tokens and Call a Universal App
 

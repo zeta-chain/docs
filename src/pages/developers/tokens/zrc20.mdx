@@ -88,11 +88,11 @@ flowchart LR
     SystemContract("System Contract")
     subgraph contract ["Omnichain contract"]
       addr("Contract address")
-      subgraph onCrossChainCall
+      subgraph onCall
         msg("bytes calldata message")
         zrc20("address zrc20")
         amount("uint256 amount")
-        context("zContext calldata context")
+        context("MessageContext calldata context")
       end
     end
   end
@@ -116,8 +116,8 @@ If the input data field is not empty, the protocol looks up the first 20 bytes
 of the input data field. If the first 20 bytes correspond to an EOA address on
 ZetaChain, the token will be deposited to that address. If the first 20 bytes
 correspond to a contract address on ZetaChain, the token will be deposited to
-that contract and the `onCrossChainCall` function of that contract will be
-called with the remaining input data as the `message`.
+that contract and the `onCall` function of that contract will be called with the
+remaining input data as the `message`.
 
 When depositing native gas tokens from EVM-based connected chains, there is no
 additional cross-chain fee. If you send 1 token to a TSS address, you will
@@ -146,11 +146,11 @@ flowchart LR
     SystemContract("System Contract")
     subgraph contract ["Omnichain contract"]
       addr("Contract address")
-      subgraph onCrossChainCall
+      subgraph onCall
         msg("bytes calldata message")
         zrc20("address zrc20")
         amount("uint256 amount")
-        context("zContext calldata context")
+        context("MessageContext calldata context")
       end
     end
   end
@@ -173,13 +173,12 @@ The `deposit` method accepts the following parameters:
 - `recipient`: the address on ZetaChain to deposit the tokens to. If the
   recipient is an EOA, the tokens will be deposited to the recipient's address.
   If the recipient is a contract, the tokens will be deposited to the contract
-  and the `onCrossChainCall` function of that contract will be called with the
-  `message` as an argument.
+  and the `onCall` function of that contract will be called with the `message`
+  as an argument.
 - `asset`: the address of the ERC-20 token to deposit.
 - `amount`: the amount of tokens to deposit.
-- `message`: an arbitrary message to be passed to the `onCrossChainCall`
-  function of the recipient contract. If the recipient is an EOA, the message
-  should be empty.
+- `message`: an arbitrary message to be passed to the `onCall` function of the
+  recipient contract. If the recipient is an EOA, the message should be empty.
 
 ## Withdrawing ZRC-20 Tokens from ZetaChain
 

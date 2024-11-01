@@ -32,8 +32,8 @@ pragma solidity 0.8.26;
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
 
 contract UniversalApp is UniversalContract {
-    function onCrossChainCall(
-        zContext calldata context,
+    function onCall(
+        MessageContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
@@ -67,7 +67,7 @@ universal app:
   allowfullscreen
 ></iframe>
 
-A call to a universal app triggers an `onCrossChainCall` method.
+A call to a universal app triggers an `onCall` method.
 
 A universal app receives:
 
@@ -81,8 +81,8 @@ corresponding ZRC-20 token on ZetaChain. ZRC-20 tokens are ERC-20-compatible and
 can be permissionlessly transferred back (withdrawn) to their original chain
 (ZRC-20 ETH on ZetaChain becomes ETH on Ethereum).
 
-`onCrossChainCall` also has access to additional context information such as the
-original sender address and chain ID.
+`onCall` also has access to additional context information such as the original
+sender address and chain ID.
 
 Universal apps can also initiate token transfers and contract calls to connected
 chains.

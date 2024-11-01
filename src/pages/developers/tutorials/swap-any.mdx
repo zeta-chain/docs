@@ -22,11 +22,7 @@ In this enhanced version, you will modify the original swap contract to support
 this additional functionality. You will also deploy the modified contract to
 localnet and interact with it by swapping tokens from a connected EVM chain.
 
-<Alert>
-  {" "}
-  This tutorial depends on the gateway, which is available on localnet but not yet deployed on testnet. It will be compatible
-  with testnet after the gateway is deployed. In other words, you cannot deploy this tutorial on testnet yet.{" "}
-</Alert>
+<Alert>This tutorial relies on the Gateway, which is currently available only on localnet and testnet.</Alert>
 
 ## Setting Up Your Environment
 
@@ -80,8 +76,8 @@ contract SwapToAnyToken is UniversalContract {
         bool withdraw;
     }
 
-    function onCrossChainCall(
-        zContext calldata context,
+    function onCall(
+        MessageContext calldata context,
         address zrc20,
         uint256 amount,
         bytes calldata message
@@ -216,12 +212,11 @@ have been made to extend its functionality.
 
 First, the `Params` struct has been updated to include a `withdraw` flag. This
 allows users to specify whether they want the swapped tokens withdrawn to a
-connected chain or kept on ZetaChain. The `onCrossChainCall` function now
-decodes this additional flag from the incoming message. For EVM chains and
-Solana, the contract decodes the `withdraw` flag alongside other parameters. For
-Bitcoin, due to the smaller message size allowed by its OP_RETURN, the contract
-checks if the message length is sufficient before extracting the `withdraw`
-flag.
+connected chain or kept on ZetaChain. The `onCall` function now decodes this
+additional flag from the incoming message. For EVM chains and Solana, the
+contract decodes the `withdraw` flag alongside other parameters. For Bitcoin,
+due to the smaller message size allowed by its OP_RETURN, the contract checks if
+the message length is sufficient before extracting the `withdraw` flag.
 
 The `swapAndWithdraw` function has also been modified to conditionally handle
 gas fees based on whether the tokens will be withdrawn. If the `withdraw` flag
@@ -240,9 +235,9 @@ Additionally, a new public `swap` function has been introduced, which allows
 users to interact with the contract directly on ZetaChain. This function is
 particularly useful if you already have tokens on ZetaChain and want to swap
 them without making a cross-chain call. It takes in parameters similar to those
-in `onCrossChainCall`, transfers the input tokens from the sender to the
-contract, and then calls `swapAndWithdraw` to perform the swap and handle
-withdrawal or direct transfer based on the `withdraw` flag.
+in `onCall`, transfers the input tokens from the sender to the contract, and
+then calls `swapAndWithdraw` to perform the swap and handle withdrawal or direct
+transfer based on the `withdraw` flag.
 
 Finally, the contract now imports the `IWETH9` interface to handle direct token
 transfers when `withdraw` is `false`. This interface facilitates the transfer of
@@ -263,9 +258,7 @@ Once your environment is set up, compile the contract and deploy it to localnet
 using the following command:
 
 ```
-npx hardhat compile --force
-
-npx hardhat deploy --network localhost --name SwapToAnyToken
+yarn deploy-any:localnet
 ```
 
 After deployment, you should see an output similar to this:
@@ -274,11 +267,8 @@ After deployment, you should see an output similar to this:
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed contract on localhost.
-📜 Contract address: 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
+📜 Contract address: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
 ```
-
-Ensure that you provide the `systemContractAddress` and `gatewayAddress` when
-deploying the contract. For localnet, these addresses remain the same.
 
 ## Swap and Withdraw Tokens to Connected Chain
 
@@ -286,13 +276,13 @@ To swap tokens from a connected EVM chain and withdraw them to the destination
 chain, use the following command:
 
 ```
-npx hardhat swap-from-evm --network localhost --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw true
+npx hardhat swap-from-evm --network localhost --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw true
 ```
 
 - EVM gateway is called with 1 native gas token (ETH) and a message that
   contains target ZRC-20 token address, receiver address and a boolean that
   indicates to withdraw a token to the destination chain or not.
-- `onCrossChainCall` is called
+- `onCall` is called
 - If `withdraw` is:
   - true, withdraw the ZRC-20 to the destination chain as a native token
   - false, send target ZRC-20 to the recipient
@@ -306,7 +296,7 @@ If you want to swap tokens and keep them on ZetaChain rather than withdrawing
 them, set the `withdraw` flag.
 
 ```
-npx hardhat swap-from-evm --network localhost --receiver 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw false
+npx hardhat swap-from-evm --network localhost --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw false
 ```
 
 In the command above the `withdraw` is `false`, so the target ZRC-20 token will
@@ -318,7 +308,7 @@ To swap a ZRC-20 token for another ZRC-20 on ZetaChain and withdraw to a
 connected chain, run:
 
 ```
-npx hardhat swap-from-zetachain --network localhost --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --withdraw true
+npx hardhat swap-from-zetachain --network localhost --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --withdraw true
 ```
 
 ## Swap on ZetaChain Without Withdrawing
@@ -327,7 +317,7 @@ To swap a ZRC-20 token for another ZRC-20 on ZetaChain and transfer it to a
 recipient on ZetaChain, run:
 
 ```
-npx hardhat swap-from-zetachain --network localhost --contract 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --withdraw false
+npx hardhat swap-from-zetachain --network localhost --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --withdraw false
 ```
 
 ## Conclusion
