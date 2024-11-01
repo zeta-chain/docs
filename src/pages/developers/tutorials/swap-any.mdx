@@ -212,12 +212,11 @@ have been made to extend its functionality.
 
 First, the `Params` struct has been updated to include a `withdraw` flag. This
 allows users to specify whether they want the swapped tokens withdrawn to a
-connected chain or kept on ZetaChain. The `onCrossChainCall` function now
-decodes this additional flag from the incoming message. For EVM chains and
-Solana, the contract decodes the `withdraw` flag alongside other parameters. For
-Bitcoin, due to the smaller message size allowed by its OP_RETURN, the contract
-checks if the message length is sufficient before extracting the `withdraw`
-flag.
+connected chain or kept on ZetaChain. The `onCall` function now decodes this
+additional flag from the incoming message. For EVM chains and Solana, the
+contract decodes the `withdraw` flag alongside other parameters. For Bitcoin,
+due to the smaller message size allowed by its OP_RETURN, the contract checks if
+the message length is sufficient before extracting the `withdraw` flag.
 
 The `swapAndWithdraw` function has also been modified to conditionally handle
 gas fees based on whether the tokens will be withdrawn. If the `withdraw` flag
@@ -236,9 +235,9 @@ Additionally, a new public `swap` function has been introduced, which allows
 users to interact with the contract directly on ZetaChain. This function is
 particularly useful if you already have tokens on ZetaChain and want to swap
 them without making a cross-chain call. It takes in parameters similar to those
-in `onCrossChainCall`, transfers the input tokens from the sender to the
-contract, and then calls `swapAndWithdraw` to perform the swap and handle
-withdrawal or direct transfer based on the `withdraw` flag.
+in `onCall`, transfers the input tokens from the sender to the contract, and
+then calls `swapAndWithdraw` to perform the swap and handle withdrawal or direct
+transfer based on the `withdraw` flag.
 
 Finally, the contract now imports the `IWETH9` interface to handle direct token
 transfers when `withdraw` is `false`. This interface facilitates the transfer of
@@ -283,7 +282,7 @@ npx hardhat swap-from-evm --network localhost --receiver 0x84eA74d481Ee0A5332c45
 - EVM gateway is called with 1 native gas token (ETH) and a message that
   contains target ZRC-20 token address, receiver address and a boolean that
   indicates to withdraw a token to the destination chain or not.
-- `onCrossChainCall` is called
+- `onCall` is called
 - If `withdraw` is:
   - true, withdraw the ZRC-20 to the destination chain as a native token
   - false, send target ZRC-20 to the recipient

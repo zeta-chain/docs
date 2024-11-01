@@ -185,10 +185,10 @@ information:
   `bytes` because the recipient could be on an EVM chain (like Ethereum or BNB)
   or on a non-EVM chain like Bitcoin.
 
-When the `onCrossChainCall` function is invoked, it receives a `message`
-parameter that needs to be decoded to extract the swap details. The encoding of
-this message varies depending on the source chain due to different limitations
-and requirements.
+When the `onCall` function is invoked, it receives a `message` parameter that
+needs to be decoded to extract the swap details. The encoding of this message
+varies depending on the source chain due to different limitations and
+requirements.
 
 - **For Bitcoin**: Since Bitcoin has an upper limit of 80 bytes for OP_RETURN
   messages, the contract uses a more efficient encoding. It extracts the
@@ -326,8 +326,8 @@ When you execute this command, the script calls the `gateway.depositAndCall`
 method on the connected EVM chain, depositing 1 ETH and sending a message to the
 Swap contract on ZetaChain.
 
-ZetaChain then picks up the event and executes the `onCrossChainCall` function
-of the Swap contract with the provided message.
+ZetaChain then picks up the event and executes the `onCall` function of the Swap
+contract with the provided message.
 
 The Swap contract decodes the message, identifies the target ERC-20 token and
 recipient, and initiates the swap logic.
@@ -352,8 +352,8 @@ When you run the command, the script calls the `gateway.depositAndCall` method
 with the specified ERC-20 token and amount, sending a message to the Swap
 contract on ZetaChain.
 
-ZetaChain picks up the event and executes the `onCrossChainCall` function of the
-Swap contract:
+ZetaChain picks up the event and executes the `onCall` function of the Swap
+contract:
 
 The Swap contract decodes the message, identifies the target gas token and
 recipient, and initiates the swap logic.

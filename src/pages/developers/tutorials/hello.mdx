@@ -131,8 +131,8 @@ contract Hello is UniversalContract {
 
 Let's break down what this contract does. The `Hello` contract inherits from the
 [`UniversalContract`](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/zevm/interfaces/UniversalContract.sol)
-interface, which requires the implementation of `onCrossChainCall` and
-`onRevert` functions for handling cross-chain interactions.
+interface, which requires the implementation of `onCall` and `onRevert`
+functions for handling cross-chain interactions.
 
 A state variable `gateway` of type `GatewayZEVM` holds the address of
 ZetaChain's gateway contract. This gateway facilitates communication between
@@ -143,11 +143,11 @@ of the ZetaChain gateway contract.
 
 ### Handling Incoming Cross-Chain Calls
 
-The `onCrossChainCall` function is a special handler that gets triggered when
-the contract receives a call from a connected chain through the gateway. This
-function processes the incoming data, which includes:
+The `onCall` function is a special handler that gets triggered when the contract
+receives a call from a connected chain through the gateway. This function
+processes the incoming data, which includes:
 
-- `context`: A `zContext` struct containing:
+- `context`: A `MessageContext` struct containing:
   - `origin`: The address (EOA or contract) that initiated the gateway call on
     the connected chain.
   - `chainID`: The integer ID of the connected chain from which the cross-chain
@@ -158,10 +158,10 @@ function processes the incoming data, which includes:
 - `amount`: The number of tokens transferred.
 - `message`: The encoded data payload.
 
-Within `onCrossChainCall`, the contract decodes the `name` from the `message`
-and emits a `HelloEvent` to signal successful reception and processing of the
-message. It's important to note that `onCrossChainCall` can only be invoked by
-the ZetaChain protocol, ensuring the integrity of cross-chain interactions.
+Within `onCall`, the contract decodes the `name` from the `message` and emits a
+`HelloEvent` to signal successful reception and processing of the message. It's
+important to note that `onCall` can only be invoked by the ZetaChain protocol,
+ensuring the integrity of cross-chain interactions.
 
 ### Making an Outgoing Contract Call
 
@@ -386,7 +386,7 @@ npx hardhat echo-call \
 - **EVM Chain**: The `call` function invokes `gateway.call`, emitting a `Called`
   event.
 - **ZetaChain**: The protocol detects the event and triggers the `Hello`
-  contract's `onCrossChainCall`.
+  contract's `onCall`.
 - **ZetaChain**: The `Hello` contract decodes the message and emits a
   `HelloEvent`.
 
