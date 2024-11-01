@@ -202,7 +202,7 @@ ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format j
 <Alert variant="danger">
   {" "}
   In this example, we have set `DAEMON_ALLOW_DOWNLOAD_BINARIES=true`. This instructs `cosmovisor` to automatically download
-  the new binaries specified in the upgrade proposal. This would fail if the Github API is down. We suggest keeping this
+  the new binaries specified in the upgrade proposal. This would fail if the GitHub API is down. We suggest keeping this
   feature enabled, but preloading and validating any new binaries before the upgrade to minimize risk. If you have already
   preloaded the binaries, none will be downloaded. Read more about [cosmovisor Auto-Download here](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download).
 </Alert>

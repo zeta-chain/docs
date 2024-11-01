@@ -4,7 +4,7 @@ import { globalLinks } from "~/constants";
 
 const links = [
   {
-    text: "Github",
+    text: "GitHub",
     href: globalLinks.githubLink,
     target: "_blank",
   },
