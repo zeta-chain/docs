@@ -129,9 +129,9 @@ export const GovUpgradeProposals = () => {
                             <InfoOutlined />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Github Release" arrow>
+                        <Tooltip title="GitHub Release" arrow>
                           <IconButton
-                            aria-label="Github Release"
+                            aria-label="GitHub Release"
                             className="text-grey-500 dark:text-grey-300"
                             href={proposal.metadata}
                             target="_blank"
