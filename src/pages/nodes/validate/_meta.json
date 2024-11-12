@@ -4,5 +4,11 @@
     "description": "Become a core validator on the ZetaChain network.",
     "readTime": "1 hr",
     "readType": "Advanced"
+  },
+  "validator-gcp": {
+    "title": "Create a Core Validator on Google Compute Engine",
+    "description": "Host a core validator on Google Compute Engine.",
+    "readTime": "1 hr",
+    "readType": "Advanced"
   }
 }

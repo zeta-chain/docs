@@ -1,0 +1,493 @@
+---
+title: Creating a Core Validator on Google Compute Engine
+---
+
+This guide covers how to quickly set up a ZetaChain validator on Google Compute
+Engine (GCE). This is intended to help engineers get a node up and running
+quickly, and you should consider this a foundation to tailor to your needs.
+
+## Overview
+
+You will need:
+
+- A dedicated service account
+- A VM instance on GCE
+- Recommended: A Cloud Storage bucket to cache critical files
+- Recommended: Two Secret Manager secrets, one for the keyring passphrase, one for the seed phrase
+
+### Service Account
+
+The service account should have the following permissions on the project:
+
+- roles/storage.objectAdmin
+- roles/secretmanager.secretAccessor
+- roles/secretmanager.viewer
+- roles/secretmanager.secretVersionManager
+
+We recommend using a dedicated service account for security, rather than using
+the default service account.
+
+### GCE Instance
+
+For the VM we use:
+
+- n2-standard-4 (4 cores, 16GB RAM)
+- Ubuntu 24.04
+- 20 GB boot disk ("balanced" persistent disk)
+- 2x NVME disk (we'll configure these as a RAID array later)
+- Configure the [service account](https://cloud.google.com/compute/docs/access/service-accounts) to the account created for the validator
+- Set the service account "access scope" to allow full access to all Cloud APIs
+- Set the "enable-oslogin" metadata to "true" to [enable OS login](https://cloud.google.com/compute/docs/oslogin/set-up-oslogin)
+- Enable [shielded VM](https://cloud.google.com/compute/shielded-vm/docs/modifying-shielded-vm)
+
+For reference we use the following Terraform definition for the node, although
+note this will need to be adapted for other users. In particular it references a
+cloud-init configuration, which expects values such as:
+
+- **chain_id:** athens_7001-1
+- **network:** athens3
+- **snapshot_host:** https://testnet-fullnode.snapshots.zetachain.com/
+- **snapshot:** fullnode-snapshot-v20-H7341468-2024-10-22_20-03.tar
+- **protocol_version:** v22
+- **node_version:** v22.0.0
+
+```
+locals {
+  moniker = "cw3-${var.env}-${var.zetachain_node_type}"
+  static_labels = {
+    chain-id = var.zetachain.chain_id
+    # Mark the node as a sentry node, so its peers can find it.
+    node-type = var.zetachain_node_type
+  }
+  variable_labels = var.ops_agent_policy != "" ? map("goog-ops-agent-policy", var.ops_agent_policy) : {}
+}
+
+
+resource "google_compute_instance" "zetachain_node" {
+ name         = var.name
+ project      = var.project
+ machine_type = "n2-standard-4"
+ zone         = var.zone
+
+ boot_disk {
+   initialize_params {
+     image = "projects/ubuntu-os-cloud/global/images/ubuntu-2404-noble-amd64-v20241004"
+     size  = "20"
+     type  = "pd-standard"
+   }
+ }
+
+ // Two local NVME disks
+ scratch_disk {
+   interface = "NVME"
+ }
+ scratch_disk {
+   interface = "NVME"
+ }
+
+ service_account {
+   email = var.service_account
+
+   # allow usage of cloud apis
+   scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+ }
+
+ network_interface {
+   network = var.network
+
+   access_config {
+     // Ephemeral public IP
+   }
+ }
+
+ labels = merge(local.variable_labels, local.static_labels)
+
+ metadata = {
+   user-data = templatefile(
+     "${path.module}/files/cloud-config.yaml.tmpl",
+
+     {
+       gcs_bucket_snapshots    = var.gcs_bucket_snapshots
+       gcs_bucket_static       = var.gcs_bucket_static
+       zetachain_chain_id      = var.zetachain.chain_id
+       zetachain_network       = var.zetachain.network
+       zetachain_snapshot_host = var.zetachain.snapshot_host
+       zetachain_snapshot      = var.zetachain.snapshot
+       zetachain_version       = var.zetachain.protocol_version
+       zetacored_version       = var.zetachain.node_version
+       moniker                 = jsonencode(local.moniker)
+     }
+   )
+
+   # Enable engineers to log into the machine.
+   enable-oslogin = "TRUE"
+
+   # The chain ID of the Zetachain network to connect to.
+   chain-id = var.zetachain.chain_id
+
+ }
+
+ shielded_instance_config {
+   enable_secure_boot          = true
+   enable_integrity_monitoring = true
+ }
+}
+
+```
+
+We use cloud-init to set up the node automatically, which we'll detail below.
+
+### Cloud Storage
+
+We cache binaries in Cloud Storage so we are not dependent on external sources,
+and snapshots to reduce time to copy them to the node in case of recovery.
+
+For resiliency we recommend a
+[dual-region](https://cloud.google.com/storage/docs/locations) bucket, selecting
+a region which includes the location the VM is deployed to.
+
+### Secrets
+
+The seed phrase for the validator needs to be backed up in case it's required
+for recovery, and we recommend using Secret Manager for these backups. Further,
+the keychain on the node disk is secured by a passphrase, and backing up this
+passphrase to Secret Manager is a simple approach to allowing automated access.
+
+## Cloud Init
+
+The [cloud-init](https://cloud-init.io/) configuration is responsible for
+setting up the blockchain node software, while we leave validator key creation
+and deposit for an operator to complete manually.
+
+We break the initialization into the following scripts, which are written then
+executed by cloud-init:
+
+1. Set up disk array
+2. Install Go
+3. Build and install Cosmovisor
+4. Configure system limits for ZetaChain
+5. Install zetacored
+6. Configure zetacored node
+
+The cloud-init configuration also writes the service configuration for
+zetacored, so it is started automatically on VM startup. Lastly, it creates a
+new user "zetachain" to run the node software under.
+
+```
+#cloud-config
+
+package_update: true
+package_upgrade: true
+packages:
+- curl
+- git
+- jq
+- lz4
+- build-essential
+- unzip
+- mdadm
+
+users:
+ - name: zetachain
+   gecos: Zetachain
+   lock_passwd: true
+
+write_files:
+- path: /etc/systemd/system/zetacored.service
+ permissions: 0644
+ owner: root
+ content: |
+   [Unit]
+   Description=zetacored (running under Cosmovisor)
+   After=multi-user.target
+   StartLimitIntervalSec=0
+   [Install]
+   WantedBy=multi-user.target
+   [Service]
+   User=zetachain
+   ExecStart=/usr/local/bin/cosmovisor run start --home /var/lib/zetacored/ --log_format json  --moniker ${moniker}
+   Restart=on-failure
+   RestartSec=3
+   WorkingDirectory=/var/lib/zetacored/cosmovisor
+   Environment="DAEMON_NAME=zetacored"
+   Environment="DAEMON_HOME=/var/lib/zetacored"
+
+   # Note that downloading binaries is enabled due to relatively short
+   # release timescales for ZetaChain.
+   Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+   Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+   Environment="DAEMON_DATA_BACKUP_DIR=/var/lib/zetacored"
+   Environment="CLIENT_DAEMON_NAME=zetaclientd"
+   Environment="CLIENT_SKIP_UPGRADE=false"
+   Environment="CLIENT_START_PROCESS=false"
+   Environment="UNSAFE_SKIP_BACKUP=true"
+   Type=simple
+   LimitNOFILE=262144
+
+- path: /usr/local/bin/setup-disk-array.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+
+   # Set up the RAID arrays.
+   mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/nvme0n1 /dev/nvme0n2
+   mkfs.ext4 /dev/md0
+   echo "Created /dev/md0"
+
+   # Add an fstab entry for the data directory.
+   mkdir -p /var/lib/zetacored
+   UUID=`sudo blkid -o value -s UUID /dev/md0`
+   echo "UUID=$UUID /var/lib/zetacored ext4 defaults 0 0" >> /etc/fstab
+
+   echo "Created fstab entries for /var/lib/zetacored"
+
+   # Reload the systemd service after fstab is updated.
+   systemctl daemon-reload
+
+   # Mount the directory.
+   mount /var/lib/zetacored
+
+- path: /usr/local/bin/configure-system-limits.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+
+   # Update system limits
+   echo "* hard nproc  262144" >> /etc/security/limits.conf
+   echo "* soft nproc  262144" >> /etc/security/limits.conf
+   echo "* hard nofile 262144" >> /etc/security/limits.conf
+   echo "* soft nofile 262144" >> /etc/security/limits.conf
+   echo "fs.file-max=262144" >> /etc/sysctl.conf
+
+- path: /usr/local/bin/configure-zetacored.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+
+   CONFIG_TOML="/var/lib/zetacored/config/config.toml"
+   APP_TOML="/var/lib/zetacored/config/app.toml"
+
+   # Fetch a file from Cloud Storage if available. If not available, fetch from or GitHub then cache in Cloud Storage.
+   fetch_config () {
+     gsutil cp gs://${gcs_bucket_static}/network-config/${zetachain_network}/$1 /var/lib/zetacored/config/$1
+     if [ $? -eq 1 ]; then
+       echo "Downloading $1 from GitHub"
+       wget https://raw.githubusercontent.com/zeta-chain/network-config/main/${zetachain_network}/$1 -O /var/lib/zetacored/config/$1
+       gsutil cp /var/lib/zetacored/config/$1 gs://${gcs_bucket_static}/network-config/${zetachain_network}/$1
+     fi
+   }
+
+   # Initialize the Zetachain node.
+   /usr/local/bin/zetacored init --home /var/lib/zetacored ${moniker} --chain-id ${zetachain_chain_id}
+   if [ $? -eq 1 ]; then
+     echo "Failed to initialize Zetachain node"
+     exit 1
+   fi
+
+   # Copy the network configuration files from Cloud Storage if available.
+   fetch_config app.toml
+   fetch_config client.toml
+   fetch_config config.toml
+   fetch_config genesis.json
+
+   # Set the external IP address
+   external_address=$(wget -qO- eth0.me)
+   sed -i.bak -e "s/^moniker *=.*/moniker = \"${moniker}\"/" $CONFIG_TOML
+   sed -i.bak -e "s/^external_address *=.*/external_address = \"$external_address:26656\"/" $CONFIG_TOML
+
+   # Set up initial binary for Cosmosvisor
+   mkdir -p /var/lib/zetacored/cosmovisor/genesis/bin
+   mkdir -p /var/lib/zetacored/cosmovisor/upgrades
+   cp /usr/local/bin/zetacored /var/lib/zetacored/cosmovisor/genesis/bin/zetacored
+
+   echo "Installed Zetachain node to Cosmosvisor"
+
+   # Fetch the state snapshot.
+   gsutil cp gs://${gcs_bucket_static}/snapshot/${zetachain_network}/${zetachain_snapshot} /var/lib/zetacored/snapshot.tar
+   if [ $? -eq 1 ]; then
+     echo "Downloading state snapshot from ${zetachain_snapshot_host}"
+
+     wget ${zetachain_snapshot_host}${zetachain_snapshot} -O /var/lib/zetacored/snapshot.tar
+     gsutil cp /var/lib/zetacored/snapshot.tar gs://${gcs_bucket_static}/snapshot/${zetachain_network}/${zetachain_snapshot}
+   fi
+
+   tar -xf /var/lib/zetacored/snapshot.tar -C /var/lib/zetacored
+   rm /var/lib/zetacored/snapshot.tar
+
+   # Set the keyring backend. https://docs.cosmos.network/v0.52/user/run-node/keyring
+   /var/lib/zetacored/cosmovisor/genesis/bin/zetacored --home /var/lib/zetacored \
+     config keyring-backend file
+
+   # Change the ownership of the directories.
+   chown -R zetachain:zetachain /var/lib/zetacored/config
+   chown -R zetachain:zetachain /var/lib/zetacored/cosmovisor
+   chown -R zetachain:zetachain /var/lib/zetacored/data
+
+   # Start the Zetachain node.
+   systemctl enable zetacored.service
+   systemctl start zetacored.service
+
+- path: /usr/local/bin/install-zetacored.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+
+   # Copy the Zetachain binary from Cloud Storage if available.
+   echo "Attempting to download Zetachain binary from Cloud Storage"
+   gsutil cp gs://${gcs_bucket_static}/binaries/${zetacored_version}/zetacored-linux-amd64 /usr/local/bin/zetacored
+   if [ $? -eq 1 ]; then
+     echo "Downloading Zetachain binary from GitHub"
+     wget https://github.com/zeta-chain/node/releases/download/${zetacored_version}/zetacored-linux-amd64 -O /usr/local/bin/zetacored
+     gsutil cp /usr/local/bin/zetacored gs://${gcs_bucket_static}/binaries/${zetacored_version}/zetacored-linux-amd64
+   fi
+
+   # Copy the Zetachain client binary to the Cosmovisor directory.
+   mkdir -p /var/lib/zetacored/cosmovisor/genesis/bin
+   mkdir -p /var/lib/zetacored/cosmovisor/upgrades/${zetachain_version}/bin
+   cp /usr/local/bin/zetacored /var/lib/zetacored/cosmovisor/genesis/bin/zetacored
+   cp /usr/local/bin/zetacored /var/lib/zetacored/cosmovisor/upgrades/${zetachain_version}/bin/zetacored
+
+   chmod a+x /usr/local/bin/zetacored
+   echo "Installed Zetachain binary"
+
+- path: /usr/local/bin/install-go.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+
+   GO_VERSION="1.20"
+
+   # Install Go
+   curl -L -O "https://golang.org/dl/go$GO_VERSION.linux-amd64.tar.gz"
+   sudo rm -rf /usr/local/go
+   sudo tar -C /usr/local -xzf "go$GO_VERSION.linux-amd64.tar.gz"
+   rm "go$GO_VERSION.linux-amd64.tar.gz"
+
+- path: /usr/local/bin/install-cosmovisor.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+
+   # Build the Cosmovisor binary.
+   /usr/local/go/bin/go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
+   cp ~/go/bin/cosmovisor /usr/local/bin/
+   echo "Built Cosmovisor"
+
+# The following commands are run by cloud-init in the final boot stage: https://cloudinit.readthedocs.io/en/latest/reference/modules.html#runcmd
+# Logs can be retrieved with `journalctl -u cloud-final.service`
+
+runcmd:
+- sudo /usr/local/bin/setup-disk-array.sh
+- sudo /usr/local/bin/install-go.sh
+- sudo /usr/local/bin/install-cosmovisor.sh
+- sudo /usr/local/bin/configure-system-limits.sh
+- sudo /usr/local/bin/install-zetacored.sh
+- sudo /usr/local/bin/configure-zetacored.sh
+```
+
+## Validator Setup
+
+Configuring the node as a validator is currently performed manually once the
+node is up and running. **Before** deploying the validator, ensure that the node
+is fully synced by comparing the block number in the logs with the block height
+on an explorer such as [ZetaScan](https://explorer.zetachain.com/).
+
+The key steps configuring the validator are:
+
+1. Check node is synced
+2. Create key
+3. Backup seed phrase to Secret Manager
+4. Transfer funds to the wallet for the validator node
+5. Deposit to create the validator on chain
+
+### Check Node Is Synced
+
+You can access the node logs with a command such as:
+
+```
+sudo -u zetachain journalctl -f -u zetacored.service
+```
+
+Look for a log entry such as the one following, where you can see "height":7559702:
+
+```
+Nov 06 22:32:53 athens3-us-south1-b-validator cosmovisor[485856]: {"level":"info","module":"server","server":"node","module":"state","height":7559702,"num_txs":4,"app_hash":"00A3F5A42D9D8C10D84447A6D085DFEB7D5CB9F62FB0A842F859C8529B2C3168","time":"2024-11-06T22:32:53Z","message":"committed state"}
+```
+
+### Create/Restore Key
+
+To create the private key for the validator, run the command:
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored keys add operator --algo secp256k1
+```
+
+This will prompt for a passphrase to be used to secure the keyring. Keep a note
+of the passphrase you set.
+
+This will then write out the public key and the seed phrase.
+
+### Backup Seed Phrase
+
+To back up the seed phrase, we'll put it into a file on disk and then upload it
+using the gcloud command. First, ensure that new files are created without
+read-write permissions for group or other users, using umask 077. Then copy the
+seed phrase produced when generating the key, into a file on disk.
+
+Use the gcloud secrets versions add command to upload the file to Secret Manager, for example:
+
+```
+gcloud secrets versions add my-secret \
+            --data-file=seed_phrase.txt
+```
+
+### Transfer Funds
+
+You can retrieve the address of the newly created key with:
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored keys list
+```
+
+Have the funds for the validator sent to that address. You can check the balance
+once they're sent, with:
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored query bank balances $(/var/lib/zetacored/cosmovisor/current/bin/zetacored keys show operator -a)
+
+```
+
+### Deposit
+
+The final step is to send a deposit transaction to create the validator. You'll
+need to extract the ED25519 public key (note this is not the key displayed when
+adding a new key, above), with a command such as:
+
+```
+sudo -u mantrachain mantrachaind --home /var/lib/mantrachain tendermint show-validator | jq .key
+```
+
+You can then deposit to create the validator, replacing \<KEY\> with the ED25519
+key, and \<MONIKER\> with the **public** identifier for the validator. You
+should also update the amount being deposited, and the chain ID:
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored tx staking create-validator \
+  --amount=1000000000000000000azeta \
+  --pubkey="{\"@type\":\"/cosmos.crypto.ed25519.PubKey\",\"key\":\"<KEY>\"}" \
+  --moniker="<MONIKER>" \
+  --chain-id=athens_7001-1 \
+  --commission-rate="1.00" \
+  --commission-max-rate="1.00" \
+  --commission-max-change-rate="0.01" \
+  --min-self-delegation="1000000" \
+  --gas="auto" \
+  --gas-adjustment=1.15 \
+  --gas-prices="1.0azeta" \
+  --from=operator
+```
+
+This will prompt for the keyring passphrase set when creating the key, and ask
+you to confirm the transaction. Once the transaction succeeds the validator is
+created on chain and can be confirmed in the [ZetaChain
+Explorer](https://explorer.zetachain.com/validators).
