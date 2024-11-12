@@ -47,8 +47,6 @@ New assets can be added or removed by broadcasting a transaction with a
 corresponding message of the [`fungible`
 module](/developers/architecture/modules/fungible/messages/) on ZetaChain.
 
-## Introduction
-
 At a high-level, ZRC-20 tokens are an extension of the standard
 [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/)
 tokens found in the Ethereum ecosystem, ZRC-20 tokens have the added ability to
@@ -56,75 +54,6 @@ manage assets on all ZetaChain-connected chains. Any fungible token, including
 Bitcoin, ETH, other gas assets and ERC-20-equivalents on other chains, may be
 represented on ZetaChain as a ZRC-20 and orchestrated as if it were any other
 fungible token (like an ERC-20).
-
-## Interface
-
-ZRC-20 is based on ERC-20, with three additional functions and some associated
-events for integration with Cross-Chain Transactions (CCTXs) in ZetaChain (see
-the [`IZRC20`
-interface](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)).
-
-Comparing ZRC-20 to ERC-20, there are additional external functions to deposit
-and withdraw, and additional events for each of them. This makes ZRC-20
-completely compatible with any applications built for ERC-20s, but with an
-extremely simple interface to also function in an omnichain way.
-
-## Depositing Native Gas Tokens as ZRC-20
-
-```mermaid
-flowchart LR
-  subgraph Ethereum ["Ethereum (Polygon or BSC)"]
-    direction LR
-    subgraph send ["Transaction"]
-      direction LR
-      Data -- contains --- Message("Message")
-      Data((Data)) -- contains --- address("Omnichain contract address")
-      Value((Value)) -- contains --- eth("1 ETH")
-    end
-    account("Account") -- sends --- send
-    send --> TSS("TSS Address")
-  end
-  subgraph ZetaChain
-    SystemContract("System Contract")
-    subgraph contract ["Omnichain contract"]
-      addr("Contract address")
-      subgraph onCall
-        msg("bytes calldata message")
-        zrc20("address zrc20")
-        amount("uint256 amount")
-        context("MessageContext calldata context")
-      end
-    end
-  end
-  TSS --> SystemContract
-  SystemContract -- calls --> contract
-  address -.- addr
-  eth -. ZRC-20 contract address of ETH .- zrc20
-  eth -. deposited amount .- amount
-  Ethereum -. chainID .- context
-  Message -. arbitrary data .- msg
-  account -. "origin" .- context
-```
-
-To deposit a native gas token (like sETH, tMATIC, tBNB, or tBTC) to ZetaChain,
-send it to the [TSS address](/reference/network/contracts) on a connected chain.
-
-If the input data field of the transaction is empty, the token will be deposited
-to the sender's address on ZetaChain.
-
-If the input data field is not empty, the protocol looks up the first 20 bytes
-of the input data field. If the first 20 bytes correspond to an EOA address on
-ZetaChain, the token will be deposited to that address. If the first 20 bytes
-correspond to a contract address on ZetaChain, the token will be deposited to
-that contract and the `onCall` function of that contract will be called with the
-remaining input data as the `message`.
-
-When depositing native gas tokens from EVM-based connected chains, there is no
-additional cross-chain fee. If you send 1 token to a TSS address, you will
-receive 1 ZRC-20 version of the same token on ZetaChain.
-
-For Bitcoin deposits, which utilize the UTXO (Unspent Transaction Output) model,
-the process [incurs additional fees](/developers/chains/bitcoin#deposit-fee).
 
 ## Block Confirmations
 
