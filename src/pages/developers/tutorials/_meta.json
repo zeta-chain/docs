@@ -2,10 +2,15 @@
   "intro": {
     "title": "Getting Started",
     "readTime": "10 min",
-    "description": "Learn how to set up a smart contract template, create an account, and use faucet"
+    "description": "Learn more about universal apps"
   },
   "hello": {
-    "title": "Message Passing",
+    "title": "First Universal App",
+    "readTime": "10 min",
+    "description": "Build your first universal app"
+  },
+  "call": {
+    "title": "Call & Deposit",
     "readTime": "30 min",
     "description": "Learn the fundamentals of message passing and cross-chain contract calls"
   },
