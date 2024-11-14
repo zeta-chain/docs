@@ -44,7 +44,14 @@ const groupDataByChain = (data: ChainParamData[], chainNamesMap: Record<string, 
     return acc;
   }, {} as ContractAddressesByChain);
 
-const formatLabel = (key: string) => key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+const formatLabel = (key: string) =>
+  key
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+    .replace(/Zeta/g, "ZETA")
+    .replace(/Erc20/g, "ERC-20")
+    .replace(/ Contract Address$/, "")
+    .replace(/ Address$/, "");
 
 export const ContractAddresses = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
@@ -132,7 +139,7 @@ export const ContractAddresses = () => {
                         ))}
                       {chainName.toLowerCase().includes("btc") && btcTssAddress && (
                         <tr>
-                          <td>Gateway Address (TSS)</td>
+                          <td>Gateway (TSS)</td>
                           <td>{btcTssAddress}</td>
                         </tr>
                       )}
