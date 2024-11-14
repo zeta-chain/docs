@@ -8,6 +8,7 @@ type ChainParamData = {
   connector_contract_address: string;
   erc20_custody_contract_address: string;
   gateway_address: string;
+  system_contract: string;
   is_supported: boolean;
 };
 
@@ -32,6 +33,11 @@ const chainNamesUrl: Record<NetworkType, string> = {
 const tssAddressUrl: Record<NetworkType, string> = {
   testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/get_tss_address/18332",
   mainnet: "https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/observer/get_tss_address/8332",
+};
+
+const zetaSystemContractUrl: Record<NetworkType, string> = {
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/system_contract",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/fungible/system_contract",
 };
 
 const groupDataByChain = (data: ChainParamData[], chainNamesMap: Record<string, { name: string; consensus: string }>) =>
@@ -67,24 +73,45 @@ export const ContractAddresses = () => {
     const fetchAndGroupAddresses = async () => {
       setIsLoading(true);
 
-      const [addressesResponse, chainNamesResponse, tssAddressResponse] = await Promise.all([
-        fetch(addressesUrl[activeTab.networkType]),
-        fetch(chainNamesUrl[activeTab.networkType]),
-        fetch(tssAddressUrl[activeTab.networkType]),
-      ]);
+      const [addressesResponse, chainNamesResponse, tssAddressResponse, zetaSystemContractResponse] = await Promise.all(
+        [
+          fetch(addressesUrl[activeTab.networkType]),
+          fetch(chainNamesUrl[activeTab.networkType]),
+          fetch(tssAddressUrl[activeTab.networkType]),
+          fetch(zetaSystemContractUrl[activeTab.networkType]),
+        ]
+      );
 
       const addressesData: { chain_params: { chain_params: ChainParamData[] } } = await addressesResponse.json();
       const chainNamesData: { chains: ChainInfo[] } = await chainNamesResponse.json();
       const tssAddressData: { eth: string; btc: string } = await tssAddressResponse.json();
+      const zetaSystemContractData: { SystemContract: Record<string, string> } =
+        await zetaSystemContractResponse.json();
 
       const chainNamesMap = chainNamesData.chains.reduce(
         (acc, chain) => ({ ...acc, [chain.chain_id]: { name: chain.chain_name, consensus: chain.consensus } }),
         {} as Record<string, { name: string; consensus: string }>
       );
 
+      // Add ZetaChain system contract and ZETA token data to either `zeta_testnet` or `zeta_mainnet`
+      const zetaChainKey = activeTab.networkType === "testnet" ? "zeta_testnet" : "zeta_mainnet";
+      const zetaChainData: ChainParamData = {
+        chain_id: activeTab.networkType === "testnet" ? "7001" : "7000",
+        zeta_token_contract_address: zetaSystemContractData.SystemContract.zeta_token, // Actual ZETA token address
+        connector_contract_address: zetaSystemContractData.SystemContract.connector_zevm,
+        erc20_custody_contract_address: "",
+        gateway_address: zetaSystemContractData.SystemContract.gateway,
+        system_contract: zetaSystemContractData.SystemContract.system_contract, // System contract address
+        is_supported: true,
+      };
+
+      // Group data and include ZetaChain system contract and token addresses
       setGroupedData((prevData) => ({
         ...prevData,
-        [activeTab.networkType]: groupDataByChain(addressesData.chain_params.chain_params, chainNamesMap),
+        [activeTab.networkType]: {
+          ...groupDataByChain(addressesData.chain_params.chain_params, chainNamesMap),
+          [zetaChainKey]: [zetaChainData],
+        },
       }));
 
       setEthTssAddress(tssAddressData.eth);
@@ -100,6 +127,7 @@ export const ContractAddresses = () => {
     "connector_contract_address",
     "erc20_custody_contract_address",
     "gateway_address",
+    "system_contract", // Include the system contract as a separate key
   ];
 
   return (
