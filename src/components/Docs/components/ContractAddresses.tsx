@@ -1,36 +1,50 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, Fragment } from "react";
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
-type ContractAddressData = {
+type ChainParamData = {
+  chain_id: string;
+  zeta_token_contract_address: string;
+  connector_contract_address: string;
+  erc20_custody_contract_address: string;
+  gateway_address: string;
+  is_supported: boolean;
+};
+
+type ChainInfo = {
   chain_id: string;
   chain_name: string;
-  type: string;
-  category: string;
-  address: string;
-  symbol?: string;
+  consensus: string;
 };
 
-type ContractAddressesByChain = Record<string, ContractAddressData[]>;
+type ContractAddressesByChain = Record<string, ChainParamData[]>;
 
 const addressesUrl: Record<NetworkType, string> = {
-  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v2/data/addresses.testnet.json",
-  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v2/data/addresses.mainnet.json",
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/get_chain_params",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/observer/get_chain_params",
 };
 
-const groupDataByChain = (data: ContractAddressData[]) =>
+const chainNamesUrl: Record<NetworkType, string> = {
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/supportedChains",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/observer/supportedChains",
+};
+
+const tssAddressUrl: Record<NetworkType, string> = {
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/observer/get_tss_address/18332",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/observer/get_tss_address/8332",
+};
+
+const groupDataByChain = (data: ChainParamData[], chainNamesMap: Record<string, { name: string; consensus: string }>) =>
   data.reduce((acc, item) => {
-    (acc[item.chain_name] = acc[item.chain_name] || []).push(item);
+    if (item.is_supported) {
+      const chainInfo = chainNamesMap[item.chain_id];
+      const chainName = chainInfo?.name || `Chain ${item.chain_id}`;
+      (acc[chainName] = acc[chainName] || []).push({ ...item, consensus: chainInfo?.consensus });
+    }
     return acc;
   }, {} as ContractAddressesByChain);
 
-const sortGroupedData = (groupedData: ContractAddressesByChain) => {
-  Object.keys(groupedData).forEach((chainName) => {
-    groupedData[chainName].sort((a, b) => a.type.localeCompare(b.type));
-  });
-  return groupedData;
-};
+const formatLabel = (key: string) => key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 export const ContractAddresses = () => {
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
@@ -39,24 +53,47 @@ export const ContractAddresses = () => {
     testnet: {},
     mainnet: {},
   });
+  const [ethTssAddress, setEthTssAddress] = useState<string>("");
+  const [btcTssAddress, setBtcTssAddress] = useState<string>("");
 
   useEffect(() => {
     const fetchAndGroupAddresses = async () => {
       setIsLoading(true);
 
-      const responses = await Promise.all([fetch(addressesUrl.testnet), fetch(addressesUrl.mainnet)]);
-      const [testnetData, mainnetData]: ContractAddressData[][] = await Promise.all(responses.map((res) => res.json()));
+      const [addressesResponse, chainNamesResponse, tssAddressResponse] = await Promise.all([
+        fetch(addressesUrl[activeTab.networkType]),
+        fetch(chainNamesUrl[activeTab.networkType]),
+        fetch(tssAddressUrl[activeTab.networkType]),
+      ]);
 
-      setGroupedData({
-        testnet: sortGroupedData(groupDataByChain(testnetData)),
-        mainnet: sortGroupedData(groupDataByChain(mainnetData)),
-      });
+      const addressesData: { chain_params: { chain_params: ChainParamData[] } } = await addressesResponse.json();
+      const chainNamesData: { chains: ChainInfo[] } = await chainNamesResponse.json();
+      const tssAddressData: { eth: string; btc: string } = await tssAddressResponse.json();
 
+      const chainNamesMap = chainNamesData.chains.reduce(
+        (acc, chain) => ({ ...acc, [chain.chain_id]: { name: chain.chain_name, consensus: chain.consensus } }),
+        {} as Record<string, { name: string; consensus: string }>
+      );
+
+      setGroupedData((prevData) => ({
+        ...prevData,
+        [activeTab.networkType]: groupDataByChain(addressesData.chain_params.chain_params, chainNamesMap),
+      }));
+
+      setEthTssAddress(tssAddressData.eth);
+      setBtcTssAddress(tssAddressData.btc);
       setIsLoading(false);
     };
 
     fetchAndGroupAddresses();
-  }, []);
+  }, [activeTab]);
+
+  const selectedKeys = [
+    "zeta_token_contract_address",
+    "connector_contract_address",
+    "erc20_custody_contract_address",
+    "gateway_address",
+  ];
 
   return (
     <div className="mt-8 first:mt-0">
@@ -73,20 +110,39 @@ export const ContractAddresses = () => {
               <table>
                 <thead>
                   <tr>
-                    <th>Type</th>
-                    <th>Symbol</th>
+                    <th>Contract Type</th>
                     <th>Address</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {contracts.map((contract, index) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <tr key={index}>
-                      <td>{contract.type}</td>
-                      <td>{contract.symbol || "-"}</td>
-                      <td>{contract.address}</td>
-                    </tr>
+                    <Fragment key={index}>
+                      {selectedKeys
+                        .filter(
+                          (key) =>
+                            contract[key as keyof ChainParamData] &&
+                            contract[key as keyof ChainParamData] !== "0x0000000000000000000000000000000000000000"
+                        )
+                        .map((key) => (
+                          <tr key={key}>
+                            <td>{formatLabel(key)}</td>
+                            <td>{contract[key as keyof ChainParamData]}</td>
+                          </tr>
+                        ))}
+                      {chainName.toLowerCase().includes("btc") && btcTssAddress && (
+                        <tr>
+                          <td>Gateway Address (TSS)</td>
+                          <td>{btcTssAddress}</td>
+                        </tr>
+                      )}
+                      {contract.consensus === "ethereum" && ethTssAddress && (
+                        <tr>
+                          <td>TSS</td>
+                          <td>{ethTssAddress}</td>
+                        </tr>
+                      )}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
