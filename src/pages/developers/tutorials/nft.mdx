@@ -76,45 +76,64 @@ pragma solidity ^0.8.26;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
 import {SwapHelperLib} from "@zetachain/toolkit/contracts/SwapHelperLib.sol";
 import {SystemContract} from "@zetachain/toolkit/contracts/SystemContract.sol";
+import "./shared/Events.sol";
 
 contract Universal is
     ERC721,
     ERC721Enumerable,
     ERC721URIStorage,
-    Ownable,
-    UniversalContract
+    Ownable2Step,
+    UniversalContract,
+    Events
 {
     GatewayZEVM public immutable gateway;
-    SystemContract public immutable systemContract =
-        SystemContract(0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9);
+    SystemContract public immutable systemContract;
     uint256 private _nextTokenId;
     bool public isUniversal = true;
-    uint256 public gasLimit = 700000;
+    uint256 public gasLimit;
 
     error TransferFailed();
+    error Unauthorized();
+    error InvalidAddress();
+    error InvalidGasLimit();
 
-    mapping(address => bytes) public counterparty;
+    mapping(address => address) public counterparty;
 
-    event CounterpartySet(address indexed zrc20, bytes indexed contractAddress);
+    modifier onlyGateway() {
+        if (msg.sender != address(gateway)) revert Unauthorized();
+        _;
+    }
 
     constructor(
         address payable gatewayAddress,
-        address initialOwner
-    ) ERC721("MyToken", "MTK") Ownable(initialOwner) {
+        address owner,
+        string memory name,
+        string memory symbol,
+        uint256 gas,
+        address systemContractAddress
+    ) ERC721(name, symbol) Ownable(owner) {
+        if (
+            gatewayAddress == address(0) ||
+            owner == address(0) ||
+            systemContractAddress == address(0)
+        ) revert InvalidAddress();
+        if (gas == 0) revert InvalidGasLimit();
         gateway = GatewayZEVM(gatewayAddress);
+        systemContract = SystemContract(systemContractAddress);
+        gasLimit = gas;
     }
 
     function setCounterparty(
         address zrc20,
-        bytes memory contractAddress
+        address contractAddress
     ) external onlyOwner {
         counterparty[zrc20] = contractAddress;
         emit CounterpartySet(zrc20, contractAddress);
@@ -125,6 +144,7 @@ contract Universal is
         address receiver,
         address destination
     ) public {
+        if (receiver == address(0)) revert InvalidAddress();
         string memory uri = tokenURI(tokenId);
         _burn(tokenId);
 
@@ -135,7 +155,7 @@ contract Universal is
             !IZRC20(destination).transferFrom(msg.sender, address(this), gasFee)
         ) revert TransferFailed();
         IZRC20(destination).approve(address(gateway), gasFee);
-        bytes memory encodedData = abi.encode(tokenId, receiver, uri);
+        bytes memory message = abi.encode(receiver, tokenId, uri);
 
         CallOptions memory callOptions = CallOptions(gasLimit, false);
 
@@ -143,17 +163,19 @@ contract Universal is
             address(this),
             true,
             address(0),
-            encodedData,
+            message,
             gasLimit
         );
 
         gateway.call(
-            counterparty[destination],
+            abi.encodePacked(counterparty[destination]),
             destination,
-            encodedData,
+            message,
             callOptions,
             revertOptions
         );
+
+        emit TokenTransfer(receiver, destination, tokenId, uri);
     }
 
     function safeMint(address to, string memory uri) public onlyOwner {
@@ -174,23 +196,23 @@ contract Universal is
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external override {
-        if (keccak256(context.origin) != keccak256(counterparty[zrc20]))
-            revert("Unauthorized");
+    ) external override onlyGateway {
+        if (context.sender != counterparty[zrc20]) revert("Unauthorized");
 
         (
-            uint256 tokenId,
+            address destination,
             address sender,
-            string memory uri,
-            address destination
-        ) = abi.decode(message, (uint256, address, string, address));
+            uint256 tokenId,
+            string memory uri
+        ) = abi.decode(message, (address, address, uint256, string));
 
         if (destination == address(0)) {
             _safeMint(sender, tokenId);
             _setTokenURI(tokenId, uri);
+            emit TokenTransferReceived(sender, tokenId, uri);
         } else {
             (, uint256 gasFee) = IZRC20(destination).withdrawGasFeeWithGasLimit(
-                700000
+                gasLimit
             );
 
             SwapHelperLib.swapExactTokensForTokens(
@@ -203,23 +225,25 @@ contract Universal is
 
             IZRC20(destination).approve(address(gateway), gasFee);
             gateway.call(
-                counterparty[destination],
+                abi.encodePacked(counterparty[destination]),
                 destination,
-                abi.encode(tokenId, sender, uri),
-                CallOptions(700000, false),
+                abi.encode(sender, tokenId, uri),
+                CallOptions(gasLimit, false),
                 RevertOptions(address(0), false, address(0), "", 0)
             );
+            emit TokenTransferToDestination(sender, destination, tokenId, uri);
         }
     }
 
-    function onRevert(RevertContext calldata context) external {
-        (uint256 tokenId, address sender, string memory uri) = abi.decode(
+    function onRevert(RevertContext calldata context) external onlyGateway {
+        (address sender, uint256 tokenId, string memory uri) = abi.decode(
             context.revertMessage,
-            (uint256, address, string)
+            (address, uint256, string)
         );
 
         _safeMint(sender, tokenId);
         _setTokenURI(tokenId, uri);
+        emit TokenTransferReverted(sender, tokenId, uri);
     }
 
     // The following functions are overrides required by Solidity.
@@ -340,24 +364,50 @@ pragma solidity 0.8.26;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@zetachain/protocol-contracts/contracts/evm/GatewayEVM.sol";
 import {RevertContext} from "@zetachain/protocol-contracts/contracts/Revert.sol";
+import "./shared/Events.sol";
 
-contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+contract Connected is
+    ERC721,
+    ERC721Enumerable,
+    ERC721URIStorage,
+    Ownable2Step,
+    Events
+{
     GatewayEVM public immutable gateway;
     uint256 private _nextTokenId;
     address public counterparty;
+    uint256 public gasLimit;
+
+    error InvalidAddress();
+    error Unauthorized();
+    error InvalidGasLimit();
 
     function setCounterparty(address contractAddress) external onlyOwner {
+        if (contractAddress == address(0)) revert InvalidAddress();
         counterparty = contractAddress;
+        emit SetCounterparty(contractAddress);
+    }
+
+    modifier onlyGateway() {
+        if (msg.sender != address(gateway)) revert Unauthorized();
+        _;
     }
 
     constructor(
         address payable gatewayAddress,
-        address initialOwner
-    ) ERC721("MyToken", "MTK") Ownable(initialOwner) {
+        address owner,
+        string memory name,
+        string memory symbol,
+        uint256 gas
+    ) ERC721(name, symbol) Ownable(owner) {
+        if (gatewayAddress == address(0) || owner == address(0))
+            revert InvalidAddress();
+        if (gas == 0) revert InvalidGasLimit();
+        gasLimit = gas;
         gateway = GatewayEVM(gatewayAddress);
     }
 
@@ -372,6 +422,7 @@ contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+        emit TokenMinted(to, tokenId, uri);
     }
 
     function transferCrossChain(
@@ -379,57 +430,60 @@ contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         address receiver,
         address destination
     ) external payable {
+        if (receiver == address(0)) revert InvalidAddress();
+
         string memory uri = tokenURI(tokenId);
         _burn(tokenId);
-        bytes memory encodedData = abi.encode(
-            tokenId,
-            receiver,
-            uri,
-            destination
-        );
-
-        RevertOptions memory revertOptions = RevertOptions(
-            address(this),
-            true,
-            address(0),
-            encodedData,
-            0
-        );
-
+        bytes memory message = abi.encode(destination, receiver, tokenId, uri);
         if (destination == address(0)) {
-            gateway.call(counterparty, encodedData, revertOptions);
+            gateway.call(
+                counterparty,
+                message,
+                RevertOptions(address(this), false, address(0), message, 0)
+            );
         } else {
             gateway.depositAndCall{value: msg.value}(
                 counterparty,
-                encodedData,
-                revertOptions
+                message,
+                RevertOptions(
+                    address(this),
+                    true,
+                    address(0),
+                    message,
+                    gasLimit
+                )
             );
         }
+
+        emit TokenTransfer(destination, receiver, tokenId, uri);
     }
 
     function onCall(
-        MessageContext calldata messageContext,
+        MessageContext calldata context,
         bytes calldata message
-    ) external payable returns (bytes4) {
-        if (messageContext.sender != counterparty) revert("Unauthorized");
+    ) external payable onlyGateway returns (bytes4) {
+        if (context.sender != counterparty) revert Unauthorized();
 
-        (uint256 tokenId, address receiver, string memory uri) = abi.decode(
+        (address receiver, uint256 tokenId, string memory uri) = abi.decode(
             message,
-            (uint256, address, string)
+            (address, uint256, string)
         );
+
         _safeMint(receiver, tokenId);
         _setTokenURI(tokenId, uri);
+        emit TokenTransferReceived(receiver, tokenId, uri);
         return "";
     }
 
-    function onRevert(RevertContext calldata context) external {
-        (uint256 tokenId, address sender, string memory uri) = abi.decode(
+    function onRevert(RevertContext calldata context) external onlyGateway {
+        (address sender, uint256 tokenId, string memory uri) = abi.decode(
             context.revertMessage,
-            (uint256, address, string)
+            (address, uint256, string)
         );
 
         _safeMint(sender, tokenId);
         _setTokenURI(tokenId, uri);
+        emit TokenTransferReverted(sender, tokenId, uri);
     }
 
     receive() external payable {}
@@ -472,10 +526,6 @@ contract Connected is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 }
 ```
 
-```
-./scripts/test.sh
-```
-
 ### Transfer NFT from a Connected Chain
 
 `transferCrossChain` initiates a transfer of an NFT to ZetaChain or to another
@@ -508,7 +558,7 @@ contract address to prevent unauthorized minting.
 If an NFT transfer from ZetaChain to a connected chain fails, `onRevert` is
 called. `onRevert` mints the NFT and transfers it back to original sender.
 
-## Start Localnet
+## Option 1: Deploy on Localnet
 
 [Localnet](/developers/tutorials/localnet) provides a simulated environment for
 developing and testing ZetaChain contracts locally.
@@ -591,3 +641,92 @@ Transferring NFT: BNB → ZetaChain...
 🟡 BNB Chain: 0
 ---------------------------------------------
 ```
+
+## Option 2: Deploy on Testnet
+
+To launch a universal NFT, deploy the Universal contract to ZetaChain and the
+Connected contract to one or more connected chains, and set counterparty
+addresses. To set everything up automatically run `./scripts/testnet.sh` or
+follow the steps below to do it manually.
+
+```
+npx hardhat compile --force --quiet
+```
+
+```
+npx hardhat deploy --name Universal --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --system-contract 0xEdf1c3275d13489aCdC6cD6eD246E72458B8795B --gas-limit 500000 --json
+
+UNIVERSAL=0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1
+```
+
+```
+npx hardhat deploy --name Connected --network base_sepolia --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 --gas-limit 500000 --json
+
+CONNECTED_BASE=0x0A6DdaA0C1592593632EbE96B02a1305B6aA72c8
+```
+
+```
+npx hardhat deploy --name Connected --network bsc_testnet --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 --gas-limit 500000 --json
+
+CONNECTED_BNB=0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
+```
+
+```
+npx hardhat connected-set-counterparty --network base_sepolia --contract 0x0A6DdaA0C1592593632EbE96B02a1305B6aA72c8 --counterparty 0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1 --json
+```
+
+```
+npx hardhat connected-set-counterparty --network bsc_testnet --contract 0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7 --counterparty 0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1 --json
+```
+
+```
+npx hardhat universal-set-counterparty --network zeta_testnet --contract 0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1 --counterparty 0x0A6DdaA0C1592593632EbE96B02a1305B6aA72c8 --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD --json
+```
+
+```
+npx hardhat universal-set-counterparty --network zeta_testnet --contract 0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1 --counterparty 0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7 --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 --json
+```
+
+Mint a universal NFT on ZetaChain:
+
+```
+npx hardhat mint --network zeta_testnet --json --contract 0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1 --token-uri https://example.com/nft/metadata/1
+
+{"contractAddress":"0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1","mintTransactionHash":"0xf2544827e5ac4434a300bca190f6b5e391e3cd7c87e515ac2dee4f7cb3b14e44","recipient":"0x4955a3F38ff86ae92A914445099caa8eA2B9bA32","tokenURI":"https://example.com/nft/metadata/1","tokenId":"1145931601449361378070955209842677114337257109052"}
+```
+
+Transfer the NFT from ZetaChain to BNB testnet (represented by its ZRC-20 gas
+token address `0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891`):
+
+```
+npx hardhat transfer --network zeta_testnet --json --token-id 1145931601449361378070955209842677114337257109052 --from 0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1 --to 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891
+```
+
+```
+{"contractAddress":"0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1","transferTransactionHash":"0x418ebe5cd999c19ec4a93a2295f25508728c655fb95bc5773c366a956ceac842","sender":"0x4955a3F38ff86ae92A914445099caa8eA2B9bA32","tokenId":"1145931601449361378070955209842677114337257109052"}
+```
+
+Notice that the transaction has been processed on ZetaChain:
+
+https://zetachain-testnet.blockscout.com/tx/0x418ebe5cd999c19ec4a93a2295f25508728c655fb95bc5773c366a956ceac842
+
+You can track the cross-chain transaction (CCTX) progress using the API:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x418ebe5cd999c19ec4a93a2295f25508728c655fb95bc5773c366a956ceac842
+
+After the CCTX has been processed, you will see the NFT with the same token ID
+in the recipient's address on the BNB testnet.
+
+You can send the NFT back from BNB testnet to ZetaChain:
+
+```
+npx hardhat transfer --network bsc_testnet --json --token-id 1145931601449361378070955209842677114337257109052 --from 0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7
+```
+
+```
+{"contractAddress":"0x48D512595699A1c1c40C7B5Fc378512Ab0dCFAd7","transferTransactionHash":"0x4459aa5369f7a1c5caf8f7eb26082ff5699cffec7748e95145030df7493ffe17","sender":"0x4955a3F38ff86ae92A914445099caa8eA2B9bA32","tokenId":"1145931601449361378070955209842677114337257109052"}
+```
+
+https://testnet.bscscan.com/tx/0x4459aa5369f7a1c5caf8f7eb26082ff5699cffec7748e95145030df7493ffe17
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x4459aa5369f7a1c5caf8f7eb26082ff5699cffec7748e95145030df7493ffe17
