@@ -54,6 +54,10 @@ contract Universal is UniversalContract {
 }
 ```
 
+The constructor accepts the ZetaChain's Gateway address and saves it into a
+state variable. Gateway is used to make outgoing contract calls and token
+withdrawals.
+
 A universal contract must implement the `onCall` function. `onCall` is a
 function that gets triggered when the contract receives a call from a connected
 chain through the Gateway. This function processes the incoming data, which

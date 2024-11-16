@@ -1,21 +1,21 @@
 ---
-title: Calls, Deposits and Withdrawals
+title: Call, Deposit & Withdraw
 ---
 
 import { Alert } from "~/components/shared";
 
-In this tutorial, you'll build a universal app contract that accepts messages
-from connected chains and emits corresponding events on ZetaChain. For example,
-a user on Ethereum can send the message `"alice"`, and the universal contract on
-ZetaChain will emit an event with the string `"Hello on ZetaChain, alice"`.
+In this tutorial, you'll create two contracts: a Universal contract on ZetaChain
+and a Connected contract, deployed on one of the connected EVM chains. The
+Connected contract implements functions that use the Gateway contract to make
+calls and token deposits to the Universal contract. The Universal app implements
+functions to make calls and tokens withdrawals to a connected chain.
 
 By the end of this tutorial, you will have learned how to:
 
-- Define a universal app contract to handle messages from connected chains.
-- Deploy the contract to localnet.
-- Interact with the contract by sending a message from a connected EVM
-  blockchain in localnet.
-- Gracefully handle reverts by implementing revert logic.
+- Create contracts that use the Gateway to make cross-chain calls
+- Make cross-chain calls, token deposits and withdrawals (both native gas and
+  supported ERC-20s)
+- Gracefully handle reverts
 
 <Alert>This tutorial relies on the Gateway, which is currently available only on localnet and testnet.</Alert>
 
@@ -25,6 +25,7 @@ Before you begin, make sure you've completed the following tutorials:
 
 - [Introduction to Universal Apps](/developers/apps/intro/)
 - [Getting Started with ZetaChain](/developers/tutorials/intro)
+- [First Universal App](/developers/tutorials/hello)
 
 ## Set Up Your Environment
 
@@ -33,17 +34,11 @@ dependencies:
 
 ```bash
 git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/examples/hello
+cd example-contracts/examples/call
 yarn
 ```
 
 ## Universal Contract
-
-The `Universal` contract is a simple universal app deployed on ZetaChain. It
-implements the `UniversalContract` interface, enabling it to handle cross-chain
-calls and token transfers from connected chains.
-
-Here's the code for the `Universal` contract:
 
 ```solidity filename="contracts/Universal.sol"
 // SPDX-License-Identifier: MIT
@@ -200,16 +195,17 @@ operates as follows:
    gas fee.
 
 4. **Execute Cross-Chain Call**: Invokes `gateway.call` to initiate the contract
-   call on the connected chain. The function selector and its arguments are
-   encoded within the `message`. The gateway identifies the target chain based
-   on the ZRC-20 token, as each chain's gas asset is associated with a specific
-   ZRC-20 token.
+   call on the connected chain. The message (for authenticated calls) or the
+   function selector and its arguments (for arbitrary calls) are encoded within
+   the `message`. Learn more about arbitrary and authenticated calls in the
+   [Call Options doc](/developers/chains/zetachain/#call-options). The gateway
+   identifies the target chain based on the ZRC-20 token, as each chain's gas
+   asset is associated with a specific ZRC-20 token.
 
-### Making a Withdrawal and Call
+### Withdrawing Tokens
 
-The `withdrawAndCall` function shows how a universal app can perform a token
-withdrawal with a call to an arbitrary contract on a connected chain using the
-gateway. The function executes the following steps:
+The `withdraw` function withdraws ZRC-20 tokens from ZetaChain to a connected
+chain. The function executes the following steps:
 
 1. **Calculate Gas Fee**: Computes the necessary gas fee based on the provided
    `gasLimit`.
@@ -223,14 +219,28 @@ gateway. The function executes the following steps:
 3. **Approve Gateway**: Grants the gateway permission to spend the transferred
    tokens and gas fee.
 
-4. **Execute Withdrawal and Call**: Calls `gateway.withdrawAndCall` to withdraw
-   the tokens and initiate the contract call on the connected chain.
+4. **Execute Withdrawal**: Calls `gateway.withdraw` to withdraw the tokens.
+
+If a user withdraws an ERC-20 token, the contract assumes that the user has a
+required amount of gas ZRC-20 tokens to pay the withdraw fee. In a
+production-ready contract the contract might need to swap a fraction of the
+token being withdrawn to cover the withdraw fee.
+
+### Withdrawing Tokens and Making a Call
+
+The `withdrawAndCall` function shows how a universal app can perform a token
+withdrawal with a call to an arbitrary contract on a connected chain using the
+gateway. The function executes the following steps:
+
+1. **Calculate gas fee, transfer tokens, approve gateway**: execute the same
+   steps as `withdraw`.
+2. **Execute Withdrawal and Call**: Calls `gateway.withdrawAndCall` to withdraw
+   the tokens and initiate the contract call on the connected chain. Compared to
+   simple withdrawing, `withdrawAndCall` also accepts a message (similar to
+   `call` it can be a regular message for authenticated calls or a function
+   selector and parameters for arbitrary calls) and call options.
 
 ## Connected Contract
-
-The `Connected` contract is a simple contract deployed on an EVM-compatible
-chain. It can be invoked by the `Universal` contract on ZetaChain to demonstrate
-cross-chain communication.
 
 ```solidity filename="contracts/Connected.sol"
 // SPDX-License-Identifier: MIT
@@ -339,9 +349,31 @@ contract Connected {
 }
 ```
 
+### Making a Contract Call
+
+The `call` functions executes `gateway.call` to make a cross-chain call to the
+`onCall` function of a universal contract on ZetaChain. The `receiver` parameter
+determines which universal contract will be called, and the `message` contains
+the bytes that will be passed to the `onCall` function.
+
+### Depositing Tokens
+
+The `deposit` function uses the Gateway to deposit native gas or supported
+ERC-20 tokens to a contract or an EOA on ZetaChain. `deposit` only makes a
+cross-chain transfer without executing logic on ZetaChain, even if the
+`receiver` is a universal contract.
+
+Tokens deposited through the Gateway end up as ZRC-20 assets on ZetaChain.
+
+### Depositing Tokens and Making a Call
+
+The `depositAndCall` function uses the Gateway to deposit native gas or
+supported ERC-20 tokens and make a cross-chain call to the `onCall` function of
+a universal contract on ZetaChain.
+
 ## Option 1: Deploy on Testnet
 
-```
+```bash
 npx hardhat compile --force
 npx hardhat deploy --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --network zeta_testnet --name Universal
 npx hardhat deploy --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 --network base_sepolia --name Connected
@@ -406,7 +438,7 @@ https://zetachain-testnet.blockscout.com/tx/0x67099389ab6cb44ee03602d164320c6157
 
 https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x67099389ab6cb44ee03602d164320c615720b57762c5ddab042d65bdbe30c7a2
 
-## Option 2: Start Localnet
+## Option 2: Deploy on Localnet
 
 [Localnet](/developers/tutorials/localnet) provides a simulated environment for
 developing and testing ZetaChain contracts locally.
@@ -460,24 +492,6 @@ npx hardhat connected-call \
   --types '["string"]' alice
 ```
 
-**Parameters:**
-
-- `--contract`: Address of the `Connected` contract on the connected EVM chain.
-- `--receiver`: Address of the `Universal` contract on ZetaChain.
-- `--network`: Network to interact with (`localhost` for localnet).
-- `--types`: ABI types of the message parameters (e.g., `["string"]`).
-- `alice`: The message to send.
-
-**Overview:**
-
-- **EVM Chain**: Executes the `call` function of the `Connected` contract.
-- **EVM Chain**: The `call` function invokes `gateway.call`, emitting a `Called`
-  event.
-- **ZetaChain**: The protocol detects the event and triggers the `Universal`
-  contract's `onCall`.
-- **ZetaChain**: The `Universal` contract decodes the message and emits a
-  `HelloEvent`.
-
 ## Calling an EVM Contract from a Universal App
 
 Now, let's perform the reverse operation: calling a contract on a connected EVM
@@ -495,18 +509,6 @@ npx hardhat universal-call \
   --types '["string"]' alice
 ```
 
-**Parameters:**
-
-- `--contract`: Address of the `Universal` contract on ZetaChain.
-- `--receiver`: Address of the `Connected` contract on the connected EVM chain.
-- `--zrc20`: Address of the ZRC-20 token representing the gas token of the
-  connected chain. This determines the destination chain.
-- `--function`: Function signature to invoke on the `Connected` contract (e.g.,
-  `"hello(string)"`).
-- `--network`: Network to interact with (`localhost` for localnet).
-- `--types`: ABI types of the message parameters.
-- `alice`: The message to send.
-
 ## Withdrawing and Calling an EVM Contract from a Universal App
 
 To withdraw tokens and call a contract on a connected chain from a universal
@@ -522,17 +524,6 @@ npx hardhat universal-withdraw-and-call \
   --network localhost \
   --types '["string"]' hello
 ```
-
-**Parameters:**
-
-- `--contract`: Address of the `Universal` contract on ZetaChain.
-- `--receiver`: Address of the `Connected` contract on the connected EVM chain.
-- `--zrc20`: Address of the ZRC-20 token representing the asset to withdraw.
-- `--function`: Function signature to invoke on the `Connected` contract.
-- `--amount`: Amount of tokens to withdraw.
-- `--network`: Network to interact with.
-- `--types`: ABI types of the message parameters.
-- `hello`: The message to send.
 
 ## Conclusion
 
