@@ -197,7 +197,7 @@ contract Universal is
         uint256 amount,
         bytes calldata message
     ) external override onlyGateway {
-        if (context.sender != counterparty[zrc20]) revert("Unauthorized");
+        if (context.sender != counterparty[zrc20]) revert Unauthorized();
 
         (
             address destination,
@@ -449,7 +449,7 @@ contract Connected is
                     address(this),
                     true,
                     address(0),
-                    message,
+                    abi.encode(receiver, tokenId, uri),
                     gasLimit
                 )
             );
