@@ -30,8 +30,13 @@
     "description": "Mint a universal NFT, which can be transferred between connected chains"
   },
   "localnet": {
-    "title": "Localnet",
+    "title": "Localnet Setup",
     "readTime": "30 min",
     "description": "Build and interact with your universal app in a local dev environment"
+  },
+  "testnet": {
+    "title": "Testnet Setup",
+    "readTime": "10 min",
+    "description": "Setup your account, request test tokens from the faucet"
   }
 }
