@@ -391,7 +391,9 @@ With localnet running, open a new terminal window to compile and deploy the
 `Universal` and `Connected` contracts:
 
 ```bash
-yarn deploy:localnet
+npx hardhat compile --force
+npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+npx hardhat deploy --name Connected --json --network localhost --gateway 0x610178dA211FEF7D417bC0e6FeD39F05609AD788
 ```
 
 You should see output indicating the successful deployment of the contracts:
@@ -399,12 +401,12 @@ You should see output indicating the successful deployment of the contracts:
 ```
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
-🚀 Successfully deployed "Hello" contract on localhost.
+🚀 Successfully deployed "Universal" contract on localhost.
 📜 Contract address: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
 
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
-🚀 Successfully deployed "Echo" contract on localhost.
+🚀 Successfully deployed "Conntected" contract on localhost.
 📜 Contract address: 0x9E545E3C0baAB3E08CdfD552C960A1050f373042
 ```
 
