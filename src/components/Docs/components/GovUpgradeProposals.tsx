@@ -1,6 +1,6 @@
-import moment from "moment";
 import { GitHub, InfoOutlined } from "@mui/icons-material";
 import { Box, IconButton, Modal, Tooltip } from "@mui/material";
+import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
