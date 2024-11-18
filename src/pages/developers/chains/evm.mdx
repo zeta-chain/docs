@@ -28,8 +28,8 @@ call. If you want to deposit and call a universal app, please, use the
 `depositAndCall` function, instead.
 
 After the deposit is processed, the receiver gets [ZRC-20
-version](/developers/tokens/zrc20) of the deposited token, for example (ZRC-20
-ETH).
+version](/developers/tokens/zrc20) of the deposited token, for example ZRC-20
+ETH.
 
 ## Deposit ERC-20 Tokens
 
@@ -85,8 +85,8 @@ contract UniversalApp is UniversalContract {
 - `zrc20`: ZRC-20 address of a the deposited tokens (for example, contract
   address of ZRC-20 ETH)
 - `context`:
-  - `context.origin`: the original sender address on a connected chain (the EOA
-    or contract that called the Gateway)
+  - `context.sender`: the sender address on a connected chain (the EOA or
+    contract that called the Gateway)
   - `context.chainID`: chain ID of the connected chain from which the call was
     made
 
