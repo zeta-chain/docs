@@ -110,7 +110,7 @@ export const GovUpgradeProposals = () => {
 
   const calculateUpgradeTime = (upgradeHeight: number) => {
     const blocksRemaining = upgradeHeight - latestBlock;
-    const secondsRemaining = blocksRemaining * 5.5;
+    const secondsRemaining = blocksRemaining * 6;
     return moment().add(secondsRemaining, "seconds").fromNow();
   };
 
