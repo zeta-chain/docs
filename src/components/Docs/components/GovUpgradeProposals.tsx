@@ -1,22 +1,19 @@
 import { GitHub, InfoOutlined } from "@mui/icons-material";
 import { Box, IconButton, Modal, Tooltip } from "@mui/material";
+import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
-const API: Record<NetworkType, string> = {
+const API_PROPOSALS: Record<NetworkType, string> = {
   testnet: "https://zetachain-athens.g.allthatnode.com/archive/rest/cosmos/gov/v1/proposals",
   mainnet: "https://zetachain-mainnet.g.allthatnode.com/archive/rest/cosmos/gov/v1/proposals",
 };
 
-const convertIpfsLink = (link: string) => {
-  const ipfsPrefix = "ipfs://";
-  const gatewayPrefix = "https://ipfs.io/ipfs/";
-  if (link.startsWith(ipfsPrefix)) {
-    return link.replace(ipfsPrefix, gatewayPrefix);
-  }
-  return link;
+const API_BLOCKS: Record<NetworkType, string> = {
+  testnet: "https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/base/tendermint/v1beta1/blocks/latest",
+  mainnet: "https://zetachain.blockpi.network/lcd/v1/public/cosmos/base/tendermint/v1beta1/blocks/latest",
 };
 
 const modalStyles = {
@@ -33,9 +30,19 @@ const modalStyles = {
   minWidth: "75%",
 };
 
+const convertIpfsLink = (link: string) => {
+  const ipfsPrefix = "ipfs://";
+  const gatewayPrefix = "https://ipfs.io/ipfs/";
+  if (link.startsWith(ipfsPrefix)) {
+    return link.replace(ipfsPrefix, gatewayPrefix);
+  }
+  return link;
+};
+
 export const GovUpgradeProposals = () => {
   const [mainnetProposals, setMainnetProposals] = useState<any>([]);
   const [testnetProposals, setTestnetProposals] = useState<any>([]);
+  const [latestBlock, setLatestBlock] = useState<number>(0);
 
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
@@ -45,11 +52,30 @@ export const GovUpgradeProposals = () => {
   const handleModalClose = () => setIsModalOpen(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    const fetchData = async () => {
+    const fetchLatestBlock = async () => {
       try {
-        const response = await fetch(API[activeTab.networkType]);
+        const response = await fetch(API_BLOCKS[activeTab.networkType]);
         const data = await response.json();
+        setLatestBlock(parseInt(data.block.header.height, 10));
+      } catch (error) {
+        console.error("Error fetching latest block:", error);
+      }
+    };
+
+    fetchLatestBlock();
+  }, [activeTab.networkType]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchProposals = async () => {
+      try {
+        const response = await fetch(API_PROPOSALS[activeTab.networkType]);
+        const data = await response.json();
+
+        if (!data || !data.proposals) {
+          console.error("Proposals data not found in the response");
+          return;
+        }
 
         const softwareUpgradeProposals = data.proposals
           .filter(
@@ -69,18 +95,24 @@ export const GovUpgradeProposals = () => {
         if (activeTab.networkType === "mainnet") setMainnetProposals(softwareUpgradeProposals);
         if (activeTab.networkType === "testnet") setTestnetProposals(softwareUpgradeProposals);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching proposals:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchProposals();
   }, [activeTab.networkType]);
 
   const proposals = useMemo(() => {
     return activeTab.networkType === "mainnet" ? mainnetProposals : testnetProposals;
   }, [activeTab.networkType, mainnetProposals, testnetProposals]);
+
+  const calculateUpgradeTime = (upgradeHeight: number) => {
+    const blocksRemaining = upgradeHeight - latestBlock;
+    const secondsRemaining = blocksRemaining * 6;
+    return moment().add(secondsRemaining, "seconds").fromNow();
+  };
 
   return (
     <div className="mt-8 first:mt-0">
@@ -102,6 +134,7 @@ export const GovUpgradeProposals = () => {
                 <th>Upgrade Name</th>
                 <th>Upgrade Height</th>
                 <th>Status</th>
+                <th>Estimated Upgrade Time</th>
                 <th>Details</th>
               </tr>
             </thead>
@@ -112,6 +145,7 @@ export const GovUpgradeProposals = () => {
                   <td>{proposal.plan.name}</td>
                   <td>{proposal.plan.height}</td>
                   <td>{proposal.status}</td>
+                  <td>{calculateUpgradeTime(proposal.plan.height)}</td>
                   <td>
                     {proposal.plan.info.startsWith("{") ? (
                       <>
