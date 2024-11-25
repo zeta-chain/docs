@@ -1,144 +1,41 @@
-# Getting Started
+ZetaChain is a blockchain designed for universal apps—smart contracts on the
+ZetaChain EVM that are natively connected to other blockchains like Ethereum,
+BNB, Solana, and Bitcoin.
 
-This introductory tutorial will guide you through the essential steps to set up
-your smart contract template, create and configure your account, and request
-tokens for testing on ZetaChain.
+A universal app can accept incoming contract calls, messages, and token
+transfers from connected chains and initiate outgoing transactions to those
+chains.
 
-## Prerequisites
+Each chain, including ZetaChain, has a Gateway. On ZetaChain and EVM chains, the
+Gateway is a smart contract; on Solana, it is a program; and on Bitcoin, it is
+an address. All interactions with universal apps happen through Gateways.
 
-- A Unix-like environment (for example, macOS)
-- [Node.js](https://nodejs.org/en/) (version 18 or above)
-- [Yarn](https://yarnpkg.com/)
-- [Git](https://git-scm.com/)
+ZetaChain acts as a hub in the hub-spoke-model and developers build universal
+apps that can orchestrate cross-chain transactions. This architecture allows
+most of the app's logic to be encapsulated in a single universal contract.
 
-## Universal App Template
+## Native Token Transfer
 
-ZetaChain provides [a smart contract
-template](https://github.com/zeta-chain/template) to help you start building
-universal apps quickly. First, clone the template from GitHub:
+Universal apps can accept transfers of supported native tokens from connected
+chains. For example, native USDC can be transferred (deposited) from Ethereum
+through the Gateway to a universal app on ZetaChain. Assets transferred from
+connected chains are represented as ZRC-20 tokens on ZetaChain. A ZRC-20 token
+can be transferred back (withdrawn) to its origin chain as a native asset. To
+facilitate native token transfers ZetaChain validators maintain custody of
+tokens on every connected chain. Tokens get locked in the custody when being
+transferred to ZetaChain and get unlocked when being transferred from ZetaChain.
 
-```
-git clone https://github.com/zeta-chain/template
-```
+There are ZRC-20 liquidity pools on ZetaChain, which can be used by universal
+apps to swap between ZRC-20s and other tokens, to acquire ZRC-20 to pay for gas
+for outgoing transactions and by the ZetaChain protocol to handle gas when
+processing reverts.
 
-Next, navigate to the template directory and install the necessary dependencies:
+## Gas Fees
 
-```
-cd template/contracts
-yarn
-```
+Making an incoming call or a deposit to a universal app only costs a gas fee on
+the connected chain from which the call is made. Execution of universal apps is
+free when called from a connected chain.
 
-The template uses [Hardhat](https://hardhat.org/) for compiling, testing, and
-deploying contracts. It also uses
-[`@zetachain/toolkit`](https://github.com/zeta-chain/toolkit/), which offers
-various utilities for creating contracts, querying balances, tracking
-cross-chain transactions, accessing the faucet, and more. The template exposes
-most of the features available in the toolkit through Hardhat tasks.
-
-## Create an Account
-
-To interact with a blockchain, you'll need an account. If you don't have an
-account, you can generate a new one using the following command:
-
-```
-npx hardhat account --save
-```
-
-This command creates a random EVM wallet and a Solana wallet, and displays the wallet information in the 
-terminal, and saves the private key to a `.env` file, making it accessible to
-Hardhat.
-
-If you don't want to save the wallet (for example, if you just need an address
-to send tokens to for testing purposes), you can run the command without the
-`--save` flag.
-
-If you already have a private key or mnemonic, you can import it with the
-`--recover` flag:
-
-```
-npx hardhat account --save --recover
-```
-
-For EVM wallet, this will prompt you to enter the private key or mnemonic, derive the addresses,
-and save the private key into the `.env` file.
-
-For Solana wallets, the process is as follows:
-1. It first attempts to automatically import the private key from the `~/.config/solana/id.json` file.
-2. If this file doesn't exist or can't be read, you'll be prompted to enter the private key manually.
-
-Finally, the private key is saved into the `.env` file.
-
-The `account` command shows derived addresses in hexadecimal (for EVM-based
-chains), bech32 with `zeta` prefix for ZetaChain, base58 for Solana, and bech32 for Bitcoin.
-
-## Query Token Balances
-
-To check the token balances:
-
-```
-npx hardhat balances
-```
-
-This command queries token balances for the account address derived from the
-private key specified in the `.env`.
-
-If you need to query for balances as part of a script, you can also use a
-`--json` flag to output the balances in JSON format:
-
-```
-npx hardhat balances --json
-```
-
-If you want to query for token balances for a different account, you can use the
-`--evm`, `--solana`, or `--bitcoin` flag:
-
-```
-npx hardhat balances --evm EVM_ADDRESS --solana SOLANA_ADDRESS --bitcoin BITCOIN_ADDRESS
-```
-
-The `balances` command supports querying for native gas tokens, wrapped ZETA on
-all connected chains as well as ZetaChain, ZRC-20 tokens, SOL on Solana, and BTC on Bitcoin.
-
-## Request Tokens from the Faucet
-
-To request ZETA tokens from the faucet:
-
-```
-npx hardhat faucet
-```
-
-This command requests tokens from the faucet for the account address derived
-from the private key specified in the `.env`. To prevent abuse, the faucet will
-prompt you to sign in with GitHub. Once the process is complete, you will
-receive native ZETA tokens on ZetaChain testnet. It may take a few minutes for
-your request to be processed.
-
-To send tokens to a different address, use:
-
-```
-npx hardhat faucet --address ADDRESS
-```
-
-Alternatively, you can install a standalone faucet CLI:
-
-```
-yarn global add @zetachain/faucet-cli
-```
-
-You can then use it with the following command:
-
-```
-zetafaucet -h
-```
-
-If the faucet is throwing an error, delete the `access_token` file from the
-project and try again.
-
-In addition to ZETA tokens on ZetaChain, you might need tokens on connected
-blockchains like Ethereun, BNB and Bitcoin testnets.
-
-- https://www.bnbchain.org/en/testnet-faucet
-- https://www.alchemy.com/faucets/ethereum-sepolia
-- https://www.infura.io/faucet/sepolia
-- https://bitcoinfaucet.uo1.net/
-- https://cloud.google.com/application/web3/faucet/ethereum/sepolia
+Making an outgoing call or a withdrawal from a universal app costs a gas fee on
+the destination chain. The Gateway charges a universal app making a call in
+ZRC-20 token. To cover the gas fee a universal app can swap tokens

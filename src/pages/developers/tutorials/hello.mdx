@@ -1,30 +1,19 @@
----
-title: Message Passing
----
-
-import { Alert } from "~/components/shared";
-
-In this tutorial, you'll build a universal app contract that accepts messages
-from connected chains and emits corresponding events on ZetaChain. For example,
-a user on Ethereum can send the message `"alice"`, and the universal contract on
-ZetaChain will emit an event with the string `"Hello on ZetaChain, alice"`.
+In this tutorial you will create a simple universal app deployed on ZetaChain,
+which emits when called from a connected chain.
 
 By the end of this tutorial, you will have learned how to:
 
-- Define a universal app contract to handle messages from connected chains.
-- Deploy the contract to localnet.
-- Interact with the contract by sending a message from a connected EVM
-  blockchain in localnet.
-- Gracefully handle reverts by implementing revert logic.
+- Build a simple universal app
+- Deploy the universal app on localnet
+- Use the Gateway on a connected chain to call a universal app
 
-<Alert>This tutorial relies on the Gateway, which is currently available only on localnet and testnet.</Alert>
-
-## Prerequisites
-
-Before you begin, make sure you've completed the following tutorials:
-
-- [Introduction to Universal Apps](/developers/apps/intro/)
-- [Getting Started with ZetaChain](/developers/tutorials/intro)
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/4ZIdAmKA2NmzqM6bpCWmxO/Protocol-%7C-Tutorial%3A-Hello?node-id=0-1&embed-host=share"
+  allowfullscreen
+></iframe>
 
 ## Set Up Your Environment
 
@@ -37,29 +26,26 @@ cd example-contracts/examples/hello
 yarn
 ```
 
-## Universal App Contract: `Hello`
+## Universal Contract
 
-The `Hello` contract is a simple universal app deployed on ZetaChain. It
-implements the `UniversalContract` interface, enabling it to handle cross-chain
-calls and token transfers from connected chains.
+A universal app is a contract that inherits from `UniversalContract` interface.
 
-Here's the code for the `Hello` contract:
-
-```solidity filename="contracts/Hello.sol"
+```solidity filename="contracts/Universal.sol"
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
 
-contract Hello is UniversalContract {
+contract Universal is UniversalContract {
     GatewayZEVM public immutable gateway;
 
     event HelloEvent(string, string);
-    event RevertEvent(string, RevertContext);
-    error TransferFailed();
+    error Unauthorized();
+
+    modifier onlyGateway() {
+        if (msg.sender != address(gateway)) revert Unauthorized();
+        _;
+    }
 
     constructor(address payable gatewayAddress) {
         gateway = GatewayZEVM(gatewayAddress);
@@ -70,398 +56,124 @@ contract Hello is UniversalContract {
         address zrc20,
         uint256 amount,
         bytes calldata message
-    ) external override {
+    ) external override onlyGateway {
         string memory name = abi.decode(message, (string));
-        emit HelloEvent("Hello on ZetaChain", name);
-    }
-
-    function onRevert(RevertContext calldata revertContext) external override {
-        emit RevertEvent("Revert on ZetaChain", revertContext);
-    }
-
-    function call(
-        bytes memory receiver,
-        address zrc20,
-        bytes calldata message,
-        uint256 gasLimit,
-        RevertOptions memory revertOptions
-    ) external {
-        (, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
-        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee))
-            revert TransferFailed();
-        IZRC20(zrc20).approve(address(gateway), gasFee);
-        gateway.call(receiver, zrc20, message, gasLimit, revertOptions);
-    }
-
-    function withdrawAndCall(
-        bytes memory receiver,
-        uint256 amount,
-        address zrc20,
-        bytes calldata message,
-        uint256 gasLimit,
-        RevertOptions memory revertOptions
-    ) external {
-        (address gasZRC20, uint256 gasFee) = IZRC20(zrc20)
-            .withdrawGasFeeWithGasLimit(gasLimit);
-        uint256 target = zrc20 == gasZRC20 ? amount + gasFee : amount;
-        if (!IZRC20(zrc20).transferFrom(msg.sender, address(this), target))
-            revert TransferFailed();
-        IZRC20(zrc20).approve(address(gateway), target);
-        if (zrc20 != gasZRC20) {
-            if (
-                !IZRC20(gasZRC20).transferFrom(
-                    msg.sender,
-                    address(this),
-                    gasFee
-                )
-            ) revert TransferFailed();
-            IZRC20(gasZRC20).approve(address(gateway), gasFee);
-        }
-        gateway.withdrawAndCall(
-            receiver,
-            amount,
-            zrc20,
-            message,
-            gasLimit,
-            revertOptions
-        );
+        emit HelloEvent("Hello: ", name);
     }
 }
 ```
 
-Let's break down what this contract does. The `Hello` contract inherits from the
-[`UniversalContract`](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/zevm/interfaces/UniversalContract.sol)
-interface, which requires the implementation of `onCall` and `onRevert`
-functions for handling cross-chain interactions.
+The constructor accepts the ZetaChain's Gateway address and saves it into a
+state variable. Gateway is used to make outgoing contract calls and token
+withdrawals.
 
-A state variable `gateway` of type `GatewayZEVM` holds the address of
-ZetaChain's gateway contract. This gateway facilitates communication between
-ZetaChain and connected chains.
-
-In the constructor, we initialize the `gateway` state variable with the address
-of the ZetaChain gateway contract.
-
-### Handling Incoming Cross-Chain Calls
-
-The `onCall` function is a special handler that gets triggered when the contract
-receives a call from a connected chain through the gateway. This function
-processes the incoming data, which includes:
+A universal contract must implement the `onCall` function. `onCall` is a
+function that gets triggered when the contract receives a call from a connected
+chain through the Gateway. This function processes the incoming data, which
+includes:
 
 - `context`: A `MessageContext` struct containing:
-  - `origin`: The address (EOA or contract) that initiated the gateway call on
-    the connected chain.
   - `chainID`: The integer ID of the connected chain from which the cross-chain
     call originated.
-  - `sender`: Reserved for future use (currently empty).
+  - `sender`: The address (EOA or contract) that initiated the gateway call on
+    the connected chain.
+  - `origin`: deprecated.
 - `zrc20`: The address of the ZRC-20 token representing the asset from the
   source chain.
 - `amount`: The number of tokens transferred.
 - `message`: The encoded data payload.
 
-Within `onCall`, the contract decodes the `name` from the `message` and emits a
-`HelloEvent` to signal successful reception and processing of the message. It's
-important to note that `onCall` can only be invoked by the ZetaChain protocol,
-ensuring the integrity of cross-chain interactions.
+In this example, `onCall` simply decodes the message into a variable and emits
+an event.
 
-### Making an Outgoing Contract Call
+`onCall` should only be called by the Gateway to ensure that it is only called
+as a response to a call on a connected chain and that you can trust the values
+of the function parameters.
 
-The `call` function demonstrates how a universal app can initiate a contract
-call to an arbitrary contract on a connected chain using the gateway. It
-operates as follows:
+## Options 1: Deploy on Localnet
 
-1. **Calculate Gas Fee**: Determines the required gas fee based on the specified
-   `gasLimit`. The gas limit represents the anticipated amount of gas needed to
-   execute the contract on the destination chain.
-
-2. **Transfer Gas Fee**: Moves the calculated gas fee from the sender to the
-   `Hello` contract. The user must grant the `Hello` contract permission to
-   spend their gas fee tokens.
-
-3. **Approve Gateway**: Grants the gateway permission to spend the transferred
-   gas fee.
-
-4. **Execute Cross-Chain Call**: Invokes `gateway.call` to initiate the contract
-   call on the connected chain. The function selector and its arguments are
-   encoded within the `message`. The gateway identifies the target chain based
-   on the ZRC-20 token, as each chain's gas asset is associated with a specific
-   ZRC-20 token.
-
-### Making a Withdrawal and Call
-
-The `withdrawAndCall` function shows how a universal app can perform a token
-withdrawal with a call to an arbitrary contract on a connected chain using the
-gateway. The function executes the following steps:
-
-1. **Calculate Gas Fee**: Computes the necessary gas fee based on the provided
-   `gasLimit`.
-
-2. **Transfer Tokens**: Moves the specified `amount` of tokens from the sender
-   to the `Hello` contract. If the token being withdrawn is the gas token of the
-   destination chain, the function transfers and approves both the gas fee and
-   the withdrawal amount. If the target token is not the gas token, it transfers
-   and approves the gas fee separately.
-
-3. **Approve Gateway**: Grants the gateway permission to spend the transferred
-   tokens and gas fee.
-
-4. **Execute Withdrawal and Call**: Calls `gateway.withdrawAndCall` to withdraw
-   the tokens and initiate the contract call on the connected chain.
-
-## EVM `Echo` Contract
-
-The `Echo` contract is a simple contract deployed on an EVM-compatible chain. It
-can be invoked by the `Hello` contract on ZetaChain to demonstrate cross-chain
-communication.
-
-```solidity filename="contracts/Echo.sol"
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-
-import {RevertContext} from "@zetachain/protocol-contracts/contracts/Revert.sol";
-import "@zetachain/protocol-contracts/contracts/evm/GatewayEVM.sol";
-
-contract Echo {
-    GatewayEVM public immutable gateway;
-
-    event RevertEvent(string, RevertContext);
-    event HelloEvent(string, string);
-
-    constructor(address payable gatewayAddress) {
-        gateway = GatewayEVM(gatewayAddress);
-    }
-
-    function hello(string memory message) external payable {
-        emit HelloEvent("Hello on EVM", message);
-    }
-
-    function onRevert(RevertContext calldata revertContext) external {
-        emit RevertEvent("Revert on EVM", revertContext);
-    }
-
-    function call(
-        address receiver,
-        bytes calldata message,
-        RevertOptions memory revertOptions
-    ) external {
-        gateway.call(receiver, message, revertOptions);
-    }
-
-    receive() external payable {}
-
-    fallback() external payable {}
-}
-```
-
-## Option 1: Deploy on Testnet
+[Localnet](/developers/tutorials/localnet) is a local development environment,
+which simulates the behavior of Gateways deployed on multiple EVM blockchains.
+Start localnet:
 
 ```
-npx hardhat compile --force
-npx hardhat deploy --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --network zeta_testnet
-npx hardhat deploy --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 --network base_testnet --name Echo
-```
-
-```
-🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
-
-🚀 Successfully deployed "Hello" contract on zeta_testnet.
-📜 Contract address: 0x496CD66950a1F1c5B02513809A2d37fFB942be1B
-
-🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
-
-🚀 Successfully deployed "Echo" contract on base_sepolia.
-📜 Contract address: 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed
-```
-
-## Call from Base to ZetaChain
-
-```
-npx hardhat echo-call \
-  --contract 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
-  --receiver 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
-  --network base_sepolia \
-  --tx-options-gas-price 20000 --types '["string"]' alice
-```
-
-https://sepolia.basescan.org/tx/0x133cdf3a06195de0a6bb89dd4761ca98d1301534b3c4987f0ff93c95c3fff78c
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x133cdf3a06195de0a6bb89dd4761ca98d1301534b3c4987f0ff93c95c3fff78c
-
-## Call from ZetaChain to Base
-
-```
-npx hardhat hello-call \
-  --contract 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
-  --receiver 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
-  --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
-  --function "hello(string)" \
-  --network zeta_testnet \
-  --tx-options-gas-price 200000 --types '["string"]' alice
-```
-
-https://zetachain-testnet.blockscout.com/tx/0x19d476fa2c3d29ba41467ae7f2742541fd11e0b67d6548fe7655a3d40274323e
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x19d476fa2c3d29ba41467ae7f2742541fd11e0b67d6548fe7655a3d40274323e
-
-## Withdraw And Call from ZetaChain to Base
-
-```
-npx hardhat hello-withdraw-and-call \
-  --contract 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
-  --receiver 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
-  --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
-  --function "hello(string)" \
-  --amount 0.005 \
-  --network zeta_testnet \
-  --types '["string"]' hello
-```
-
-https://zetachain-testnet.blockscout.com/tx/0x67099389ab6cb44ee03602d164320c615720b57762c5ddab042d65bdbe30c7a2
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x67099389ab6cb44ee03602d164320c615720b57762c5ddab042d65bdbe30c7a2
-
-## Option 2: Start Localnet
-
-[Localnet](/developers/tutorials/localnet) provides a simulated environment for
-developing and testing ZetaChain contracts locally.
-
-To start localnet, open a terminal window and run:
-
-```bash
 npx hardhat localnet
 ```
 
-This command initializes a local blockchain environment that simulates the
-behavior of ZetaChain protocol contracts.
-
-## Deploying the Contracts
-
-With localnet running, open a new terminal window to compile and deploy the
-`Hello` and `Echo` contracts:
-
-```bash
-yarn deploy:localnet
+```
+npx hardhat compile --force
 ```
 
-You should see output indicating the successful deployment of the contracts:
+Deploy the universal contract and pass ZetaChain's Gateway address to the
+constructor. You can find the Gateway address in the output of Localnet.
 
 ```
-🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-
-🚀 Successfully deployed "Hello" contract on localhost.
-📜 Contract address: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
-
-🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-
-🚀 Successfully deployed "Echo" contract on localhost.
-📜 Contract address: 0x9E545E3C0baAB3E08CdfD552C960A1050f373042
+npx hardhat deploy --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
 ```
 
-**Note**: The deployed contract addresses may differ in your environment.
+```
+🚀 Successfully deployed "Universal" contract on localhost.
+📜 Contract address: 0xc351628EB244ec633d5f21fBD6621e1a683B1181
+```
 
-## Calling the `Echo` Contract from `Hello`
+## Make a Call to the Universal App
 
-In this example, you'll invoke the `Echo` contract on the connected EVM chain,
-which in turn calls the `Hello` contract on ZetaChain. Run the following
-command, replacing the contract addresses with those from your deployment:
+To call the universal app deployed on ZetaChain from a connected chain, make a
+call to the Gateway contract on a connected EVM chain using the `evm-call` task:
 
-```bash
-npx hardhat echo-call \
-  --contract 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
-  --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
+```
+npx hardhat evm-call \
   --network localhost \
+  --gateway-evm 0x610178dA211FEF7D417bC0e6FeD39F05609AD788 \
+  --receiver 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
   --types '["string"]' alice
 ```
 
-**Parameters:**
+Pass the EVM Gateway Address from the Localnet's table of addresses and the
+universal contract address as the receiver. A universal app expects to receive a
+single string in the message, so pass the appropriate type and value to the
+command.
 
-- `--contract`: Address of the `Echo` contract on the connected EVM chain.
-- `--receiver`: Address of the `Hello` contract on ZetaChain.
-- `--network`: Network to interact with (`localhost` for localnet).
-- `--types`: ABI types of the message parameters (e.g., `["string"]`).
-- `alice`: The message to send.
+After the transaction is processed you will see an `[ZetaChain]: Event from onCall` message in the terminal where Localnet is running.
 
-**Overview:**
+## Option 2: Deploy on Testnet
 
-- **EVM Chain**: Executes the `call` function of the `Echo` contract.
-- **EVM Chain**: The `call` function invokes `gateway.call`, emitting a `Called`
-  event.
-- **ZetaChain**: The protocol detects the event and triggers the `Hello`
-  contract's `onCall`.
-- **ZetaChain**: The `Hello` contract decodes the message and emits a
-  `HelloEvent`.
+Before proceeding, you might want to check out the [Testnet
+Setup](/developers/tutorials/testnet) guide to learn how to set up an account
+and request testnet tokens.
 
-## Calling an EVM Contract from a Universal App
+Deploy the contract to ZetaChain's testnet using the Gateway address from
+[`Contract Addresses page`](/reference/network/contracts/).
 
-Now, let's perform the reverse operation: calling a contract on a connected EVM
-chain from the `Hello` universal app on ZetaChain. Execute the following
-command, replacing the contract addresses and ZRC-20 token address with those
-from your deployment:
+```
+npx hardhat deploy --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7
+```
 
-```bash
-npx hardhat hello-call \
-  --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
-  --receiver 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
-  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
-  --function "hello(string)" \
-  --network localhost \
+```
+🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+
+🚀 Successfully deployed "Universal" contract on zeta_testnet.
+📜 Contract address: 0x11998e1A5D2e770753263376ceE78B14c9617f16
+```
+
+Make a transaction to the Gateway on the Base Sepolia testnet to make a
+cross-chain call to the universal app on ZetaChain. Make sure to use Gateway
+address on Base Sepolia.
+
+```
+npx hardhat evm-call \
+  --network base_sepolia \
+  --gateway-evm 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+  --receiver 0x11998e1A5D2e770753263376ceE78B14c9617f16 \
   --types '["string"]' alice
 ```
 
-**Parameters:**
-
-- `--contract`: Address of the `Hello` contract on ZetaChain.
-- `--receiver`: Address of the `Echo` contract on the connected EVM chain.
-- `--zrc20`: Address of the ZRC-20 token representing the gas token of the
-  connected chain. This determines the destination chain.
-- `--function`: Function signature to invoke on the `Echo` contract (e.g.,
-  `"hello(string)"`).
-- `--network`: Network to interact with (`localhost` for localnet).
-- `--types`: ABI types of the message parameters.
-- `alice`: The message to send.
-
-## Withdrawing and Calling an EVM Contract from a Universal App
-
-To withdraw tokens and call a contract on a connected chain from a universal
-app, run the following command:
-
-```bash
-npx hardhat hello-withdraw-and-call \
-  --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
-  --receiver 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
-  --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c \
-  --function "hello(string)" \
-  --amount 1 \
-  --network localhost \
-  --types '["string"]' hello
+```
+Transaction hash: 0x3fbed0a3dc48eda00212aff6e930940d84b142f7da316b9186f0c68edd0793b2
 ```
 
-**Parameters:**
+https://sepolia.basescan.org/tx/0x3fbed0a3dc48eda00212aff6e930940d84b142f7da316b9186f0c68edd0793b2
 
-- `--contract`: Address of the `Hello` contract on ZetaChain.
-- `--receiver`: Address of the `Echo` contract on the connected EVM chain.
-- `--zrc20`: Address of the ZRC-20 token representing the asset to withdraw.
-- `--function`: Function signature to invoke on the `Echo` contract.
-- `--amount`: Amount of tokens to withdraw.
-- `--network`: Network to interact with.
-- `--types`: ABI types of the message parameters.
-- `hello`: The message to send.
+You can track the progress of a cross-chain transaction using ZetaChain's API:
 
-## Conclusion
-
-In this tutorial, you've:
-
-- Defined a universal app contract (`Hello`) to handle cross-chain messages.
-- Deployed both `Hello` and `Echo` contracts to a local development network.
-- Interacted with the `Hello` contract by sending messages from a connected EVM
-  chain via the `Echo` contract.
-- Simulated revert scenarios and handled them gracefully using revert logic in
-  both contracts.
-
-By mastering cross-chain calls and revert handling, you're now prepared to build
-robust and resilient universal applications on ZetaChain.
-
-## Source Code
-
-You can find the complete source code for this tutorial in the [example
-contracts
-repository](https://github.com/zeta-chain/example-contracts/tree/main/examples/hello).
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x3fbed0a3dc48eda00212aff6e930940d84b142f7da316b9186f0c68edd0793b2

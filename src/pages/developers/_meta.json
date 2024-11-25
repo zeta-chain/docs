@@ -4,7 +4,7 @@
     "description": "Begin your journey on ZetaChain, the decentralized blockchain and smart contract platform designed for omnichain interoperability."
   },
   "apps": {
-    "title": "Building Universal Apps",
+    "title": "Universal Apps",
     "description": "Explore the basics of developing on ZetaChain."
   },
   "evm": {
@@ -12,7 +12,7 @@
     "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
   },
   "chains": {
-    "title": "Connected Blockchains",
+    "title": "Connected Chains",
     "description": "Use Gateway to make calls to and from universal apps, deposit and withdraw tokens."
   },
   "tutorials": {
