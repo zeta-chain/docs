@@ -45,11 +45,17 @@ $ forge snapshot
 $ anvil
 ```
 
-### Deploy using script
+### Deploy
 
 ```shell
 $ forge script script/<DeployScript>.s.sol:<DeployScript> --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
+
+##### More detailed instructions
+
+To view detailed instructions on how to deploy the contracts, please refer to the [Deployment Guide](./scripts/deploy/readme.md).
+
+This guide covers all steps required to deploy the contracts, including environment setup, commands, and best practices.
 
 ### Cast
 

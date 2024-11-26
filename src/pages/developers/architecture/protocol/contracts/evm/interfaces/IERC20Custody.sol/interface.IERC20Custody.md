@@ -42,12 +42,20 @@ WithdrawAndCall transfers tokens to Gateway and call a contract through the Gate
 
 
 ```solidity
-function withdrawAndCall(address token, address to, uint256 amount, bytes calldata data) external;
+function withdrawAndCall(
+    MessageContext calldata messageContext,
+    address token,
+    address to,
+    uint256 amount,
+    bytes calldata data
+)
+    external;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
+|`messageContext`|`MessageContext`|Message context containing sender.|
 |`token`|`address`|Address of the ERC20 token.|
 |`to`|`address`|Address of the contract to call.|
 |`amount`|`uint256`|Amount of tokens to withdraw.|

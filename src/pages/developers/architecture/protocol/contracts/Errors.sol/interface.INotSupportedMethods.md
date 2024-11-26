@@ -11,3 +11,9 @@ Interface for contracts that with non supported methods.
 error ZETANotSupported();
 ```
 
+### CallOnRevertNotSupported
+
+```solidity
+error CallOnRevertNotSupported();
+```
+
