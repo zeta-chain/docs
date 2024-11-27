@@ -1,0 +1,10 @@
+{
+  "nft": {
+    "title": "Universal NFT",
+    "description": "Universal NFT."
+  },
+  "token": {
+    "title": "Universal Token",
+    "description": "Universal fungible tokens."
+  }
+}
