@@ -12,9 +12,6 @@ message MsgAddOutboundTracker {
 	int64 chain_id = 2;
 	uint64 nonce = 3;
 	string tx_hash = 4;
-	pkg.proofs.Proof proof = 5;
-	string block_hash = 6;
-	int64 tx_index = 7;
 }
 ```
 
@@ -28,9 +25,6 @@ message MsgAddInboundTracker {
 	int64 chain_id = 2;
 	string tx_hash = 3;
 	pkg.coin.CoinType coin_type = 4;
-	pkg.proofs.Proof proof = 5;
-	string block_hash = 6;
-	int64 tx_index = 7;
 }
 ```
 
@@ -63,6 +57,7 @@ message MsgVoteGasPrice {
 	uint64 price = 3;
 	uint64 priority_fee = 6;
 	uint64 block_number = 4;
+	string supply = 5;
 }
 ```
 
@@ -190,6 +185,7 @@ message MsgVoteInbound {
 	ProtocolContractVersion protocol_contract_version = 16;
 	RevertOptions revert_options = 17;
 	CallOptions call_options = 18;
+	bool is_cross_chain_call = 19;
 }
 ```
 

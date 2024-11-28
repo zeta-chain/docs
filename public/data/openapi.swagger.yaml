@@ -57202,6 +57202,11 @@ definitions:
         format: uint64
       tx_finalization_status:
         $ref: '#/definitions/crosschainTxFinalizationStatus'
+      is_cross_chain_call:
+        type: boolean
+        title: |-
+          this field describes if a smart contract call should be made for a inbound
+          with assets only used for protocol contract version 2
   crosschainInboundTracker:
     type: object
     properties:
@@ -57598,8 +57603,6 @@ definitions:
         type: string
       tx_signer:
         type: string
-      proved:
-        type: boolean
   cryptoPubKeySet:
     type: object
     properties:
