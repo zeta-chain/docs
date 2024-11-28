@@ -89,6 +89,7 @@ Withdraw tokens and call a contract through Gateway.
 
 ```solidity
 function withdrawAndCall(
+    MessageContext calldata messageContext,
     address to,
     uint256 amount,
     bytes calldata data,
@@ -104,6 +105,7 @@ function withdrawAndCall(
 
 |Name|Type|Description|
 |----|----|-----------|
+|`messageContext`|`MessageContext`|Message context containing sender.|
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 |`data`|`bytes`|The calldata to pass to the contract call.|

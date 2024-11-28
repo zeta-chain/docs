@@ -86,7 +86,7 @@ uint256 public constant MAX_PAYLOAD_SIZE = 1024;
 ### constructor
 
 **Note:**
-constructor
+oz-upgrades-unsafe-allow: constructor
 
 
 ```solidity
@@ -167,9 +167,9 @@ function executeRevert(
 )
     public
     payable
+    nonReentrant
     onlyRole(TSS_ROLE)
-    whenNotPaused
-    nonReentrant;
+    whenNotPaused;
 ```
 **Parameters**
 
@@ -182,7 +182,7 @@ function executeRevert(
 
 ### execute
 
-Executes an authenticated call to a destination address without ERC20 tokens.
+Executes a call to a destination address without ERC20 tokens.
 
 *This function can only be called by the TSS address and it is payable.*
 
@@ -195,9 +195,9 @@ function execute(
 )
     external
     payable
+    nonReentrant
     onlyRole(TSS_ROLE)
     whenNotPaused
-    nonReentrant
     returns (bytes memory);
 ```
 **Parameters**
@@ -205,38 +205,6 @@ function execute(
 |Name|Type|Description|
 |----|----|-----------|
 |`messageContext`|`MessageContext`|Message context containing sender.|
-|`destination`|`address`|Address to call.|
-|`data`|`bytes`|Calldata to pass to the call.|
-
-**Returns**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`<none>`|`bytes`|The result of the call.|
-
-
-### execute
-
-Executes an arbitrary call to a destination address without ERC20 tokens.
-
-*This function can only be called by the TSS address and it is payable.*
-
-
-```solidity
-function execute(
-    address destination,
-    bytes calldata data
-)
-    external
-    payable
-    onlyRole(TSS_ROLE)
-    whenNotPaused
-    returns (bytes memory);
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
 |`destination`|`address`|Address to call.|
 |`data`|`bytes`|Calldata to pass to the call.|
 
@@ -257,20 +225,22 @@ It uses the ERC20 allowance system, resetting gateway allowance at the end.*
 
 ```solidity
 function executeWithERC20(
+    MessageContext calldata messageContext,
     address token,
     address to,
     uint256 amount,
     bytes calldata data
 )
     public
+    nonReentrant
     onlyRole(ASSET_HANDLER_ROLE)
-    whenNotPaused
-    nonReentrant;
+    whenNotPaused;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
+|`messageContext`|`MessageContext`|Message context containing sender.|
 |`token`|`address`|Address of the ERC20 token.|
 |`to`|`address`|Address of the contract to call.|
 |`amount`|`uint256`|Amount of tokens to transfer.|
@@ -293,9 +263,9 @@ function revertWithERC20(
     RevertContext calldata revertContext
 )
     external
+    nonReentrant
     onlyRole(ASSET_HANDLER_ROLE)
-    whenNotPaused
-    nonReentrant;
+    whenNotPaused;
 ```
 **Parameters**
 
@@ -314,7 +284,7 @@ Deposits ETH to the TSS address.
 
 
 ```solidity
-function deposit(address receiver, RevertOptions calldata revertOptions) external payable whenNotPaused nonReentrant;
+function deposit(address receiver, RevertOptions calldata revertOptions) external payable whenNotPaused;
 ```
 **Parameters**
 
@@ -337,8 +307,7 @@ function deposit(
     RevertOptions calldata revertOptions
 )
     external
-    whenNotPaused
-    nonReentrant;
+    whenNotPaused;
 ```
 **Parameters**
 
@@ -363,8 +332,7 @@ function depositAndCall(
 )
     external
     payable
-    whenNotPaused
-    nonReentrant;
+    whenNotPaused;
 ```
 **Parameters**
 
@@ -389,8 +357,7 @@ function depositAndCall(
     RevertOptions calldata revertOptions
 )
     external
-    whenNotPaused
-    nonReentrant;
+    whenNotPaused;
 ```
 **Parameters**
 
@@ -409,14 +376,7 @@ Calls an omnichain smart contract without asset transfer.
 
 
 ```solidity
-function call(
-    address receiver,
-    bytes calldata payload,
-    RevertOptions calldata revertOptions
-)
-    external
-    whenNotPaused
-    nonReentrant;
+function call(address receiver, bytes calldata payload, RevertOptions calldata revertOptions) external whenNotPaused;
 ```
 **Parameters**
 
