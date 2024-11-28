@@ -404,12 +404,12 @@ You should see output indicating the successful deployment of the contracts:
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed "Universal" contract on localhost.
-📜 Contract address: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
+📜 Contract address: 0xc351628EB244ec633d5f21fBD6621e1a683B1181
 
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
-🚀 Successfully deployed "Conntected" contract on localhost.
-📜 Contract address: 0x9E545E3C0baAB3E08CdfD552C960A1050f373042
+🚀 Successfully deployed "Connected" contract on localhost.
+📜 Contract address: 0xFD471836031dc5108809D173A067e8486B9047A3
 ```
 
 **Note**: The deployed contract addresses may differ in your environment.
@@ -423,8 +423,8 @@ deployment:
 
 ```bash
 npx hardhat connected-call \
-  --contract 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
-  --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
+  --contract 0xFD471836031dc5108809D173A067e8486B9047A3 \
+  --receiver 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
   --network localhost \
   --types '["string"]' alice
 ```
@@ -438,8 +438,8 @@ from your deployment:
 
 ```bash
 npx hardhat universal-call \
-  --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
-  --receiver 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
+  --contract 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
+  --receiver 0xFD471836031dc5108809D173A067e8486B9047A3 \
   --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
   --function "hello(string)" \
   --network localhost \
@@ -453,11 +453,12 @@ app, run the following command:
 
 ```bash
 npx hardhat universal-withdraw-and-call \
-  --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB \
-  --receiver 0x9E545E3C0baAB3E08CdfD552C960A1050f373042 \
-  --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c \
+  --contract 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
+  --receiver 0xFD471836031dc5108809D173A067e8486B9047A3 \
+  --zrc20 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
   --function "hello(string)" \
   --amount 1 \
+  --call-options-is-arbitrary-call \
   --network localhost \
   --types '["string"]' hello
 ```
