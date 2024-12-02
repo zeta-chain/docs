@@ -26,5 +26,9 @@
   "goldrush": {
     "title": "GoldRush",
     "description": "Historical blockchain data API"
+  },
+  "space-id": {
+    "title": "Web3 Name SDK",
+    "description": "SPACE ID Web3 Name SDK"
   }
 }
