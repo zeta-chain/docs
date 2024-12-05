@@ -1,10 +1,10 @@
 {
   "nft": {
     "title": "Universal NFT",
-    "description": "Universal NFT."
+    "description": "The Universal NFT standard enables non-fungible tokens (ERC-721 NFT) to be minted on any chain and seamlessly transferred between connected chains."
   },
   "token": {
     "title": "Universal Token",
-    "description": "Universal fungible tokens."
+    "description": "The Universal Token standard enables ERC-20 fungible tokens to be minted on any chain and seamlessly transferred between connected chains."
   }
 }
