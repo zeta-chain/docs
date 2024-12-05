@@ -338,7 +338,11 @@ Once your environment is set up, compile the contract and deploy it to localnet
 using the following command:
 
 ```
-yarn deploy-any:localnet
+npx hardhat deploy \
+  --name SwapToAnyToken \
+  --network localhost \
+  --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --uniswap-router 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
 ```
 
 After deployment, you should see an output similar to this:
@@ -347,7 +351,7 @@ After deployment, you should see an output similar to this:
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed contract on localhost.
-📜 Contract address: 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB
+📜 Contract address: 0xc351628EB244ec633d5f21fBD6621e1a683B1181
 ```
 
 ## Swap and Withdraw Tokens to Connected Chain
@@ -356,7 +360,13 @@ To swap tokens from a connected EVM chain and withdraw them to the destination
 chain, use the following command:
 
 ```
-npx hardhat swap-from-evm --network localhost --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw true
+npx hardhat swap-from-evm \
+  --network localhost \
+  --receiver 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
+  --amount 1 \
+  --target 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  --withdraw true
 ```
 
 - EVM gateway is called with 1 native gas token (ETH) and a message that
@@ -376,7 +386,13 @@ If you want to swap tokens and keep them on ZetaChain rather than withdrawing
 them, set the `withdraw` flag.
 
 ```
-npx hardhat swap-from-evm --network localhost --receiver 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --withdraw false
+npx hardhat swap-from-evm \
+  --network localhost \
+  --receiver 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
+  --amount 1 \
+  --target 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  --withdraw false
 ```
 
 In the command above the `withdraw` is `false`, so the target ZRC-20 token will
@@ -388,7 +404,14 @@ To swap a ZRC-20 token for another ZRC-20 on ZetaChain and withdraw to a
 connected chain, run:
 
 ```
-npx hardhat swap-from-zetachain --network localhost --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --withdraw true
+npx hardhat swap-from-zetachain \
+  --network localhost \
+  --contract 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
+  --amount 1 \
+  --target 0x65a45c57636f9BcCeD4fe193A602008578BcA90b \
+  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  --zrc20 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --withdraw true
 ```
 
 ## Swap on ZetaChain Without Withdrawing
@@ -397,7 +420,14 @@ To swap a ZRC-20 token for another ZRC-20 on ZetaChain and transfer it to a
 recipient on ZetaChain, run:
 
 ```
-npx hardhat swap-from-zetachain --network localhost --contract 0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB --amount 1 --target 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --zrc20 0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c --withdraw false
+npx hardhat swap-from-zetachain \
+  --network localhost \
+  --contract 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
+  --amount 1 \
+  --target 0x65a45c57636f9BcCeD4fe193A602008578BcA90b \
+  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  --zrc20 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --withdraw false
 ```
 
 ## Conclusion
@@ -413,4 +443,4 @@ on ZetaChain, providing greater flexibility for a variety of use cases.
 You can find the source code for this tutorial in the example contracts
 repository:
 
-https://github.com/zeta-chain/example-contracts/tree/main/examples/swap]
+https://github.com/zeta-chain/example-contracts/tree/main/examples/swap
