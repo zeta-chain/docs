@@ -272,7 +272,11 @@ their native chain, whether it's an EVM chain or Bitcoin.
 
 ```
 npx hardhat compile --force
-npx hardhat deploy --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe --network zeta_testnet
+ 
+npx hardhat deploy \
+  --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 \
+  --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+  --network zeta_testnet
 ```
 
 ```
@@ -306,7 +310,11 @@ npx hardhat localnet
 Compile the contract and deploy it to localnet by running:
 
 ```
-npx hardhat deploy --name Swap --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 --uniswap-router 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+npx hardhat deploy \
+  --name Swap \
+  --network localhost \
+  --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --uniswap-router 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
 ```
 
 You should see output similar to:

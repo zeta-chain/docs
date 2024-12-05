@@ -270,7 +270,11 @@ Once your environment is set up, compile the contract and deploy it to localnet
 using the following command:
 
 ```
-npx hardhat deploy --name SwapToAnyToken --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 --uniswap-router 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+npx hardhat deploy \
+  --name SwapToAnyToken \
+  --network localhost \
+  --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --uniswap-router 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
 ```
 
 After deployment, you should see an output similar to this:
