@@ -11,6 +11,10 @@
     "title": "Universal EVM",
     "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
   },
+  "standards": {
+    "title": "Contract Standards",
+    "description": "Learn about the different contract standards available on ZetaChain and how to use them."
+  },
   "chains": {
     "title": "Connected Chains",
     "description": "Use Gateway to make calls to and from universal apps, deposit and withdraw tokens."
