@@ -6,45 +6,65 @@ import { Fees } from "~/components/Docs";
 
 import { Alert } from "~/components/shared";
 
-## Overview
+## Calling Universal Apps
 
-When interacting with smart contracts on ZetaChain, users need to include a fee
-for gas for each transaction.
+When interacting with a universal app on ZetaChain from a connected chain
+through the Gateway, fees are paid in the native gas token of the source chain,
+just like in standard transactions. There are no additional charges or fees, and
+execution of universal apps on ZetaChain can be considered gasless when a call
+is made from a connected chain.
 
-The gas market mechanism for smart contracts on ZetaChain's EVM is similar to
-that of [Ethermint](https://docs.ethermint.zone/basics/gas.html) and follows
-Ethereum's EIP 1559 gas fee structure. This system is designed to deter spamming
-activities on the network.
-
-## Deposit
-
-When depositing tokens to ZetaChain by sending them to the TSS (Threshold
-Signature Scheme) address on a connected chain, you will pay the fee in the
-native gas token of that chain, similar to a standard transaction.
-
-For example, if you are depositing ETH from Ethereum to ZetaChain, the fee will
-be in ETH, comparable to a regular token transfer on the Ethereum network. For
-more information on Ethereum gas and fees, refer to the [official
+For instance, depositing ETH from Ethereum to ZetaChain incurs a fee in ETH,
+aligning with Ethereum's usual gas fee structure. For detailed information on
+Ethereum gas, refer to the [official
 documentation](https://ethereum.org/en/developers/docs/gas/).
 
-## Withdraw
+Direct calls to contracts on ZetaChain's EVM (not cross-chain calls) require
+users to provide gas fees for each transaction. The ZetaChain EVM employs a gas
+market mechanism inspired by
+[Ethermint](https://docs.ethermint.zone/basics/gas.html) and adheres to
+Ethereum's EIP 1559 fee model, which helps maintain network security and
+prevents spam.
 
-When withdrawing ZRC-20 tokens back to a connected connected chain, the
-"withdraw gas fee" is applicable (listed as "Total fee" in the table below).
+## Outgoing Calls and Withdrawals
 
-To find out the fee amount, call the `withdrawGasFee` function on the [ZRC-20
-contract](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/zevm/ZRC20.sol)
-for the token you wish to withdraw. This function will return the fee in the
-native gas token of the connected chain.
+Universal apps on ZetaChain can initiate calls to contracts on connected chains
+or facilitate withdrawals of ZRC-20 tokens back to a connected chain. These
+operations require a "withdraw gas fee," which is calculated based on the gas
+limit of the target chain.
 
-The `withdraw` function will deduct this gas fee from your ZRC-20 balance and
-proceed with the withdrawal to the destination chain.
+Before making a call from a universal app to a contract on a connected chain,
+query the withdraw gas fee for the expected gas limit:
 
-## Current omnichain fees
+```solidity
+(address gasZRC20, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
+```
 
-In the table below you can see the current fees. The fees are defined in native
-gas tokens on the destination chain (the chain to which ZRC-20 tokens are
-withdrawn). The fees are calculated with the gas limit of 500000.
+- `gasZRC20` is the address of the gas token for the destination chain of the
+  call or withdrawal. For example, the gas token for both Ethereum USDC and ETH 
+  is ZRC-20 ETH.
+- `gasFee` is the required amount for the specified gas limit. This ensures you
+  can accurately estimate the necessary fees for successful execution.
+
+Before withdrawing ZRC-20 tokens to a connected chain, query the withdraw gas
+fee:
+
+```solidity
+(address gasZRC20, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
+```
+
+Withdrawals to connected chains result in token transfers and do not require an
+explicit gas limit.
+
+It’s important to query the current gas fee, approve the Gateway to spend the
+necessary amount, and ensure the gas ZRC-20 token balance is sufficient. If the
+Gateway cannot transfer the required fee to itself, the operation will fail.
+
+## Current Fees
+
+The table below displays the current withdraw gas fees, calculated using a
+default gas limit of 500,000. Fees are represented in the native gas token of
+the destination chain.
 
 <Fees type="omnichain" />
 
