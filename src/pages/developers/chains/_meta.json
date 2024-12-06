@@ -3,6 +3,10 @@
     "title": "List of Chains",
     "description": ""
   },
+  "functionality": {
+    "title": "Functionality",
+    "description": "State of ZetaChain Functionality"
+  },
   "zetachain": {
     "title": "ZetaChain",
     "description": "Make calls from universal apps and withdraw tokens to connected chains"
