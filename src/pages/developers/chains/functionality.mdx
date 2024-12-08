@@ -1,0 +1,66 @@
+| Feature                            | Chain   | Mainnet  | Testnet  | E2E | Localnet |
+| :--------------------------------- | :------ | :------- | :------- | :-- | :------- |
+| Deposit/withdraw native coin       | EVM     | ✅       | ✅       | ✅  | ✅       |
+| Deposit/withdraw fungible token    | EVM     | ✅       | ✅       | ✅  | ✅       |
+| Deposit and call (native coin)     | EVM     | ✅       | ✅       | ✅  | ✅       |
+| Deposit and call (fungible token)  | EVM     | ✅       | ✅       | ✅  | ✅       |
+| Withdraw and call (native coin)    | EVM     | Dec 2024 | ✅       | ✅  | ✅       |
+| Withdraw and call (fungible token) | EVM     | Dec 2024 | ✅       | ✅  | ✅       |
+| Deposit ZETA                       | EVM     | ✅       | ✅       | ✅  | ❌       |
+| Withdraw ZETA                      | EVM     | ✅       | ✅       | ✅  | ❌       |
+| Deposit and call (ZETA)            | EVM     | ❌       | ❌       | ❌  | ❌       |
+| Withdraw and call (ZETA)           | EVM     | ❌       | ❌       | ❌  | ❌       |
+| Call                               | EVM     | ✅       | ✅       | ✅  | ✅       |
+| Deposit/withdraw native coin       | Bitcoin | ✅       | ✅       | ✅  | ❌       |
+| Deposit and call (native coin)     | Bitcoin | ✅       | ✅       | ✅  | ❌       |
+| Deposit/withdraw native coin       | Solana  | Dec 2024 | ✅       | ✅  | ❌       |
+| Deposit/withdraw fungible token    | Solana  | Dec 2024 | Dec 2024 | ❌  | ❌       |
+| Deposit and call (native coin)     | Solana  | Dec 2024 | ✅       | ✅  | ❌       |
+| Deposit and call (fungible token)  | Solana  | Dec 2024 | Dec 2024 | ❌  | ❌       |
+| Withdraw and call (fungible token) | Solana  | ❌       | Feb 25   | ❌  | ❌       |
+| Withdraw and call (native coin)    | Solana  | ❌       | Feb 25   | ❌  | ❌       |
+| Deposit ZETA                       | Solana  | ❌       | ❌       | ❌  | ❌       |
+| Withdraw ZETA                      | Solana  | ❌       | ❌       | ❌  | ❌       |
+| Deposit and call (ZETA)            | Solana  | ❌       | ❌       | ❌  | ❌       |
+| Withdraw and call (ZETA)           | Solana  | ❌       | ❌       | ❌  | ❌       |
+| Call                               | Solana  | ❌       | ❌       | ❌  | ❌       |
+| Deposit/withdraw native coin       | TON     | ❌       | ❌       | ✅  | ❌       |
+| Deposit/withdraw fungible token    | TON     | ❌       | ❌       | ❌  | ❌       |
+| Deposit and call (native coin)     | TON     | ❌       | ❌       | ✅  | ❌       |
+| Deposit and call (fungible token)  | TON     | ❌       | ❌       | ❌  | ❌       |
+| Withdraw and call (native coin)    | TON     | ❌       | ❌       | ❌  | ❌       |
+| Withdraw and call (fungible token) | TON     | ❌       | ❌       | ❌  | ❌       |
+| Deposit ZETA                       | TON     | ❌       | ❌       | ❌  | ❌       |
+| Withdraw ZETA                      | TON     | ❌       | ❌       | ❌  | ❌       |
+| Deposit and call (ZETA)            | TON     | ❌       | ❌       | ❌  | ❌       |
+| Call                               | TON     | ❌       | ❌       | ❌  | ❌       |
+
+## Terminology
+
+- **Deposit/Withdraw Native Coin**  
+  Transfer of the native asset (e.g., ETH, SOL) between ZetaChain and a
+  Connected Chain without smart contract calls.
+
+- **Deposit/Withdraw Fungible Token**  
+  Transfer of fungible tokens (e.g., ERC20 for Ethereum, SPL for Solana) between
+  ZetaChain and a Connected Chain without smart contract calls.
+
+- **Deposit and Call (Native Coin)**  
+  Transfer of a native coin from a Connected Chain to ZetaChain, followed by a
+  smart contract call on ZetaChain.
+
+- **Deposit and Call (Fungible Token)**  
+  Transfer of a fungible token from a Connected Chain to ZetaChain, followed by
+  a smart contract call on ZetaChain.
+
+- **Withdraw and Call (Native Coin)**  
+  Transfer of a native coin from ZetaChain to a Connected Chain, followed by a
+  smart contract call on the Connected Chain.
+
+- **Withdraw and Call (Fungible Token)**  
+  Transfer of a fungible token from ZetaChain to a Connected Chain, followed by
+  a smart contract call on the Connected Chain.
+
+- **Call**  
+  A smart contract call between ZetaChain and a Connected Chain without
+  transferring assets.
