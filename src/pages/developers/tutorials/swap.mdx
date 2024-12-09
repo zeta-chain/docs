@@ -29,16 +29,16 @@ assets.
 
 The swap contract will:
 
-- Accept a contract call from a connected chain containing native gas or
-  supported ERC-20 tokens and a message.
-- Decode the message, which should include:
-  - Target token address (represented as ZRC-20)
-  - Recipient address on the destination chain
-- Query withdraw gas fee of the target token.
-- Swap a fraction of the input token for a ZRC-20 gas token to cover the
-  withdrawal fee using the Uniswap v2 liquidity pools.
-- Swap the remaining input token amount for the target token ZRC-20.
-- Withdraw ZRC-20 tokens to the destination chain.
+1. Accept a contract call from a connected chain containing native gas or
+   supported ERC-20 tokens and a message.
+2. Decode the message to extract:
+   - The target token's address (represented as ZRC-20).
+   - The recipient's address on the destination chain.
+3. Query the withdrawal gas fee for the target token.
+4. Swap part of the input token for ZRC-20 gas tokens to cover the withdrawal
+   fee using Uniswap v2 liquidity pools.
+5. Swap the remaining input token amount for the target ZRC-20 token.
+6. Withdraw the ZRC-20 tokens to the destination chain.
 
 ## Setting Up Your Environment
 
@@ -343,118 +343,94 @@ contract Swap is
 
 ### Decoding the Message
 
-The contract defines a `Params` struct to store the following pieces of
+The contract uses a `Params` struct to store the following pieces of
 information:
 
 - **`address target`**: The ZRC-20 address of the target token on ZetaChain.
 - **`bytes to`**: The recipient's address on the destination chain, stored as
-  `bytes` because the recipient could be on an EVM chain (like Ethereum or BNB)
-  or on a non-EVM chain like Bitcoin.
-- **`bool withdraw`**: Determines whether to withdraw the swapped token to the
-  destination chain or to transfer the token to the recipient on ZetaChain.
+  `bytes` to support both EVM chains (e.g., Ethereum, BNB) and non-EVM chains
+  like Bitcoin.
+- **`bool withdraw`**: Indicates whether to withdraw the swapped token to the
+  destination chain or transfer it to the recipient on ZetaChain.
 
 When the `onCall` function is invoked, it receives a `message` parameter that
-needs to be decoded to extract the swap details. The encoding of this message
-varies depending on the source chain due to different limitations and
-requirements.
+must be decoded to extract the swap details. The decoding logic adapts to the
+source chain's specific requirements and limitations.
 
-- **For Bitcoin**: Since Bitcoin has an upper limit of 80 bytes for OP_RETURN
-  messages, the contract uses a more efficient encoding. It extracts the
-  `params.target` by reading the first 20 bytes of the `message` and converting
-  it to an `address` using the `bytesToAddress` helper method. The recipient's
-  address is then obtained by reading the next 20 bytes and packing it into
-  `bytes` using `abi.encodePacked`.
+- **For Bitcoin**: Due to Bitcoin's 80-byte OP_RETURN limit, the contract
+  employs an efficient encoding method. The target token address
+  (`params.target`) is extracted from the first 20 bytes of the `message`,
+  converted into an `address` using a helper function. The recipient’s address
+  is extracted from the next 20 bytes and encoded into `bytes` format.
+- **For EVM Chains and Solana**: Without strict size limitations on messages,
+  the contract uses `abi.decode` to extract all parameters directly.
 
-- **For EVM Chains And Solana**: EVM chains don't have strict message size
-  limits, so the contract uses `abi.decode` to extract the params directly from
-  the `message`.
+The source chain is identified using the `context.chainID`, which determines the
+appropriate decoding logic. After decoding, the contract proceeds to handle the
+token swap by invoking `handleGasAndSwap` and, if required, initiating a
+withdrawal.
 
-The `context.chainID` is utilized to determine the source chain and apply the
-appropriate decoding logic.
+---
 
-After decoding the message, the contract proceeds to handle the token swap by
-calling `handleGasAndSwap` and `withdraw`.
+### Handling Gas and Swapping Tokens
 
-### Handling Gas Swapping Tokens
+The `handleGasAndSwap` function handles both obtaining gas tokens for withdrawal
+fees and swapping the remaining tokens for the target token.
 
-The `handleGasAndSwap` function encapsulates the logic for swapping the required
-amount of tokens for gas and swapping the rest for the destination token.
+The contract ensures sufficient gas tokens to cover the withdrawal fee on the
+destination chain by calculating the required amount through the ZRC-20
+contract's `withdrawGasFee` method. This method provides the fee amount
+(`gasFee`) and the gas token address (`gasZRC20`).
 
-#### Swapping for Gas Token
+If the incoming token is already the gas token, the required gas fee is deducted
+directly. Otherwise, the contract swaps a portion of the incoming tokens for the
+gas fee using a helper function. This ensures the contract is always prepared
+for cross-chain withdrawal operations.
 
-The contract first addresses the gas fee required for the withdrawal on the
-destination chain. It uses the `withdrawGasFee` method of the target token's
-ZRC-20 contract to obtain the gas fee amount (`gasFee`) and the gas fee token
-address (`gasZRC20`).
-
-If the incoming token (`inputToken`) is the same as the gas fee token
-(`gasZRC20`), it deducts the gas fee directly from the incoming amount.
-Otherwise, it swaps a portion of the incoming tokens for the required gas fee
-using the `swapTokensForExactTokens` helper method. This ensures that the
-contract has enough gas tokens to cover the withdrawal fee on the destination
-chain.
-
-#### Swapping for Target Token
-
-Next, the contract swaps the remaining tokens (`swapAmount`) for the target
-token specified in `targetToken`. It uses the `swapExactTokensForTokens` helper
-method to perform this swap through ZetaChain's internal liquidity pools. This
-method returns the amount of the target token received (`out`).
+After addressing the gas fee, the remaining tokens are swapped for the target
+token using ZetaChain's internal liquidity pools. This step ensures that the
+recipient receives the correct token as specified in the `Params`.
 
 ### Withdrawing Target Token to Connected Chain
 
-At this stage, the contract holds the required gas fee in `gasZRC20` tokens and
-the swapped target tokens.
+Once the gas and target tokens are prepared, the contract determines the
+appropriate action based on the `withdraw` parameter:
 
-`withdraw` dispatches different logic based on whether the token must with
-withdrawn and on the type of tokens.
-
-If the target token is the same as the gas token, the contract approves the
-total amount (both target amount and gas). Otherwise, it approves these amount
-separately.
-
-Then it calls `gateway.withdraw` to withdraw tokens to the destination chain.
-Use `abi.encodePacked` to convert the `address` into `bytes`. Pass Swap contract
-as the revert address and supply the sender address as well as the input token
-as a revert message.
-
-The `withdraw` call results in a simple token transfer on the destination chain,
-so it's unlikely that it could fail. However, if the destination happens to be a
-contract that does not accept tokens, it might revert, so you need to account
-for that possibility and implement revert logic.
-
-Note that you don't have to specify which chain to withdraw to because each
-ZRC-20 contract knows which connected chain it is associated with. For example,
-ZRC-20 Ethereum USDC can only be withdrawn to Ethereum.
-
-If `withdraw` is `false`, simply transfer the target token to the recipient on
-ZetaChain.
+- **If `withdraw` is `true`**: The target token and gas tokens are approved,
+  either combined or separately depending on whether they are the same. The
+  contract calls `gateway.withdraw` to transfer the tokens to the destination
+  chain. The recipient's address is encoded using `abi.encodePacked`. The Swap
+  contract is supplied as the revert address, while the sender's address and
+  input token are included as a revert message for potential recovery. The
+  ZRC-20 contract inherently ensures that tokens are withdrawn to the correct
+  connected chain.
+- **If `withdraw` is `false`**: The target token is transferred directly to the
+  recipient on ZetaChain, bypassing the withdrawal process.
 
 ### Revert Logic
 
-If the withdraw call on the destination chain reverts, the `onRevert` function
-is called.
+If a withdrawal fails on the destination chain, the `onRevert` function is
+invoked to recover the funds. The sender's address and the original token are
+decoded from the revert message, ensuring the correct data for recovery.
 
-First decode the sender and token address from the message (which was supplied
-as revert options).
+The contract swaps the reverted tokens back to the original token sent from the
+source chain. Finally, it attempts to withdraw the tokens back to the source
+chain. If this withdrawal also fails, the tokens are transferred directly to the
+sender on ZetaChain. This approach minimizes the risk of lost funds and ensures
+a robust fallback mechanism.
 
-Next, call `handleGasAndSwap` to swap back to the original token sent from the
-source chain.
+### Companion Contract
 
-Finally, call `gateway.withdraw` to send the tokens back to the source chain. If
-the withdrawal also fails, transfer the tokens to the sender on ZetaChain.
+The Swap contract can be called in two ways:
 
-## Companion Contract
-
-There are two ways to call the universal Swap contract:
-
-- calling the `depositAndCall` on the EVM gateway on a connected chain directly.
-  This is convenient, because you don't have to to have a contract on a
-  connected chain.
-- calling a contract on a connected chain, which calls the gateway. This is
-  useful, when you want to execute additional logic on a connected chain before
-  executing a swap. An example of such a contract is presented as
-  `SwapCompanion.sol`.
+1. **Directly via `depositAndCall`**: This method uses the EVM gateway on a
+   connected chain, eliminating the need for an intermediary contract. It is
+   suitable for straightforward swaps without additional logic on the connected
+   chain.
+2. **Through a companion contract**: This approach is useful when additional
+   logic must be executed on the connected chain before initiating the swap. The
+   tutorial provides an example of such a companion contract in
+   `SwapCompanion.sol`.
 
 ## Option 1: Deploy on Testnet
 
