@@ -365,7 +365,7 @@ source chain's specific requirements and limitations.
 - **For EVM Chains and Solana**: Without strict size limitations on messages,
   the contract uses `abi.decode` to extract all parameters directly.
 
-The source chain is identified using the `context.chainID`, which determines the
+The source chain is identified using `context.chainID`, which determines the
 appropriate decoding logic. After decoding, the contract proceeds to handle the
 token swap by invoking `handleGasAndSwap` and, if required, initiating a
 withdrawal.
