@@ -361,7 +361,7 @@ source chain's specific requirements and limitations.
   employs an efficient encoding method. The target token address
   (`params.target`) is extracted from the first 20 bytes of the `message`,
   converted into an `address` using a helper function. The recipient’s address
-  is extracted from the next 20 bytes and encoded into `bytes` format.
+  is extracted from the next 20 bytes and encoded as `bytes` format.
 - **For EVM Chains and Solana**: Without strict size limitations on messages,
   the contract uses `abi.decode` to extract all parameters directly.
 
