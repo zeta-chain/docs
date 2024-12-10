@@ -19,11 +19,6 @@
     "readTime": "30 min",
     "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
   },
-  "swap-any": {
-    "title": "Swap Any Token",
-    "readTime": "60 min",
-    "description": "Enhance the universal swap app with the ability to swap to any token"
-  },
   "nft": {
     "title": "NFT",
     "readTime": "60 min",
