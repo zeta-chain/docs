@@ -65,3 +65,11 @@ Support for multi-asset withdrawals will be added in the future updates to the
 protocol.
 
 Learn more about [ZetaChain Gateway](/developers/chains/zetachain).
+
+## Revert Handling
+
+The Gateway supports handling reverts during cross-chain operations with
+flexible refund mechanisms. If a Gateway call fails on the destination chain,
+refunds can either be issued by calling a specified contract on the source chain
+or sent directly to an externally owned account (EOA) without invoking any
+contract.
