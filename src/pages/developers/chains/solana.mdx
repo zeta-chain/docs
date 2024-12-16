@@ -2,10 +2,7 @@ To interact with universal applications from Solana, use the Solana Gateway. The
 Solana Gateway allows you to deposit SOL (the native gas token of Solana) to an
 externally-owned account (EOA) or a universal application on ZetaChain. You can
 also deposit SOL and call a universal application in a single transaction using
-the same `deposit` instruction.
-
-**Note:** In the next version of the Solana Gateway, the `deposit` and
-`deposit_and_call` functionalities will be separate functions.
+the `deposit_and_call` instruction.
 
 ## Deposit SOL
 
@@ -13,82 +10,28 @@ To deposit SOL to an EOA or a universal application on ZetaChain, use the
 `deposit` instruction of the Solana Gateway program.
 
 ```rust
-pub fn deposit(ctx: Context<Deposit>, amount: u64, memo: Vec<u8>) -> Result<()>
+pub fn deposit(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20]) -> Result<()>
 ```
 
-### Parameters
-
 - `amount`: The amount of SOL (in lamports) to deposit.
-- `memo`: A vector of bytes containing the receiver's address and an optional
-  payload.
-
-### Memo Format
-
-- **Minimum Length:** The `memo` must be at least 20 bytes long.
-- **Maximum Length:** The `memo` must not exceed 512 bytes.
-- **Structure:**
-  - **First 20 Bytes:** Receiver's address on ZetaChain (similar to an Ethereum
-    address).
-  - **Remaining Bytes (Optional):** Payload to be sent to the universal
-    application.
-
-### Usage
+- `receiver`: An array of bytes containing the receiver's address
 
 When you call the `deposit` instruction, the specified amount of SOL is
 transferred from your account to the Solana Gateway's Program Derived Account
-(PDA). The `memo` parameter is used to specify the receiver's address and an
-optional message. If the `memo` contains only the receiver's address (20 bytes),
-the SOL will be deposited to the receiver without triggering a contract call. If
-the `memo` contains additional data beyond the 20-byte address, it will initiate
-a cross-chain call to the universal application with the provided payload.
+(PDA).
 
-**Example of Depositing SOL to an EOA:**
+Example of Depositing SOL to an EOA:
 
 ```rust
 let receiver_address: [u8; 20] = [/* receiver's ZetaChain address */];
 let amount_in_lamports: u64 = 1_000_000; // Amount in lamports (1 SOL = 1,000,000,000 lamports)
 
-// Memo consists of only the receiver's address
-let memo = receiver_address.to_vec();
-
 gateway::deposit(
     ctx,
     amount_in_lamports,
-    memo,
+    receiver_address,
 )?;
 ```
-
-**Example of Depositing SOL and Calling a Universal Application:**
-
-```rust
-let receiver_address: [u8; 20] = [/* universal application's ZetaChain address */];
-let amount_in_lamports: u64 = 1_000_000; // Amount in lamports
-let payload: Vec<u8> = b"Hello, ZetaChain!".to_vec();
-
-// Memo consists of the receiver's address followed by the payload
-let mut memo = receiver_address.to_vec();
-memo.extend_from_slice(&payload);
-
-gateway::deposit(
-    ctx,
-    amount_in_lamports,
-    memo,
-)?;
-```
-
-### Notes
-
-- The `receiver` is specified in the first 20 bytes of the `memo`.
-- If the `memo` length is exactly 20 bytes (only the receiver's address),
-  depositing SOL will **not** trigger a contract call.
-- If the `memo` length is greater than 20 bytes, depositing SOL will **trigger**
-  a cross-chain call to the universal application with the provided payload.
-- After the deposit is processed, the receiver gets the ZRC-20 version of the
-  deposited SOL (e.g., ZRC-20 SOL).
-- The `memo` must be at least 20 bytes (to include the receiver's address) and
-  at most 512 bytes.
-
-## Calling `deposit` from the Frontend
 
 To interact with the Solana Gateway from a frontend application, you can refer
 to the [solanaDeposit function in the ZetaChain
@@ -96,91 +39,36 @@ Toolkit](https://github.com/zeta-chain/toolkit/blob/main/packages/client/src/sol
 This function demonstrates how to call the `deposit` instruction from the
 frontend using Anchor and the Solana Web3.js library.
 
-**High-Level Steps:**
+Depositing SOL using the Toolkit:
 
-1. **Load the User's Keypair:**
+```
+npx hardhat solana-deposit --amount 0.01 --recipient 0x2DCB13e7Eb5253fD5255Ce3CbCB199B48A0C7dD9
+```
 
-   Load the user's Solana keypair to sign transactions.
+## Deposit SOL and Call Universal Apps
 
-   ```typescript
-   const keypair = await getKeypairFromFile(args.idPath);
-   const wallet = new anchor.Wallet(keypair);
-   ```
+To deposit SOL to an EOA or a universal application on ZetaChain, use the
+`deposit_and_call` instruction of the Solana Gateway program.
 
-2. **Set Up the Connection and Provider:**
+```rust
+pub fn deposit_and_call(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20], message: Vec<u8>) -> Result<()>
+```
 
-   Establish a connection to the Solana cluster and set up the Anchor provider.
+- `amount`: The amount of SOL (in lamports) to deposit.
+- `receiver`: An array of bytes containing a universal contract address on
+  ZetaChain.
+- `message`: A message passed to the universal contract.
 
-   ```typescript
-   const connection = new anchor.web3.Connection(args.api);
-   const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
-   anchor.setProvider(provider);
-   ```
+Note: `deposit_and_call` currently calls universal contract's `onCrossChainCall`
+function and not the new `onCall` function that the EVM Gateway calls. This will
+be changed in the upcoming versions of the protocol after the full migration to
+Gateway.
 
-3. **Load the Gateway Program:**
+Depositing SOL and calling a universal contract using the Toolkit:
 
-   Load the Gateway program using its IDL and program ID.
-
-   ```typescript
-   const programId = new anchor.web3.PublicKey(Gateway_IDL.address);
-   const gatewayProgram = new anchor.Program(Gateway_IDL as anchor.Idl, programId, provider);
-   ```
-
-4. **Calculate the Deposit Amount:**
-
-   Convert the amount of SOL to lamports.
-
-   ```typescript
-   const depositAmount = new anchor.BN(anchor.web3.LAMPORTS_PER_SOL * args.amount);
-   ```
-
-5. **Prepare the Memo:**
-
-   - **Recipient Address:** Convert the recipient's ZetaChain address to a
-     buffer.
-
-     ```typescript
-     const recipientBuffer = Buffer.from(args.recipient.slice(2), "hex");
-     ```
-
-   - **Message Formatting:** If there are additional parameters, encode them
-     using ABI encoding.
-
-     ```typescript
-     const encodedParams = ethers.utils.defaultAbiCoder.encode(args.params[0], args.params[1]);
-     const paramsBuffer = Buffer.from(encodedParams.slice(2), "hex");
-     ```
-
-   - **Combine Recipient and Parameters:**
-
-     ```typescript
-     const memo = Buffer.concat([recipientBuffer, paramsBuffer]);
-     ```
-
-6. **Create and Send the Transaction:**
-
-   Create the `deposit` instruction and send the transaction.
-
-   ```typescript
-   const depositInstruction = await gatewayProgram.methods
-     .deposit(depositAmount, memo)
-     .accounts({
-       pda: pdaAccount,
-       signer: wallet.publicKey,
-       systemProgram: anchor.web3.SystemProgram.programId,
-     })
-     .instruction();
-
-   const tx = new anchor.web3.Transaction().add(depositInstruction);
-
-   const txSignature = await anchor.web3.sendAndConfirmTransaction(connection, tx, [keypair]);
-
-   console.log("Transaction signature:", txSignature);
-   ```
-
-**Note:** The full code and implementation details can be found in the
-[ZetaChain Toolkit
-repository](https://github.com/zeta-chain/toolkit/blob/main/packages/client/src/solanaDeposit.ts).
+```
+npx hardhat solana-deposit-and-call --amount 0.01 --recipient 0x0b28dd447932003D40563B0e3707ab3b80a4d956 --types '["address", "address"]' 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 0xe7508B5026f032b37663718192bA63a40954F2c0
+```
 
 ### Recommendation on Message Formatting
 
@@ -209,16 +97,11 @@ const paramsBuffer = Buffer.from(encodedParams.slice(2), "hex"); // Remove '0x' 
 
 - **Lamports and SOL:** 1 SOL equals 1,000,000,000 lamports. Ensure you convert
   SOL amounts to lamports when specifying the `amount` parameter.
-- **Address Format:** The receiver's address is specified in the first 20 bytes
-  of the `memo`, consistent with Ethereum-style addresses used on ZetaChain.
 - **Program Derived Account (PDA):** The PDA is a special account used by the
   Solana Gateway program to manage deposited funds securely.
 
 ## Future Support
 
-- **Separate `deposit` and `deposit_and_call` Functions:** In the next version
-  of the Solana Gateway, the `deposit` and `deposit_and_call` functionalities
-  will be separate functions to improve clarity and usability.
 - **SPL Tokens:** Support for SPL tokens (Solana's native token standard) is
   coming soon. This will allow you to deposit SPL tokens and interact with
   universal applications on ZetaChain using these tokens.
@@ -233,12 +116,6 @@ failure scenarios:
 
 - `SignerIsNotAuthority`: The signer is not authorized to perform the action.
 - `DepositPaused`: Deposits are currently paused.
-- `MemoLengthTooShort`: The `memo` payload is less than the minimum required
-  length of 20 bytes.
-- `MemoLengthExceeded`: The `memo` payload exceeds the maximum allowed length of
-  512 bytes.
-
-Ensure to handle these errors appropriately in your application.
 
 ## Revert Transactions
 
@@ -249,6 +126,6 @@ back to the original sender on Solana.
 ## Conclusion
 
 The Solana Gateway provides a seamless way to interact with universal
-applications on ZetaChain from Solana. By using the `deposit` instruction, you
-can deposit SOL and optionally trigger cross-chain contract calls to universal
-applications on ZetaChain by including a payload in the `memo`.
+applications on ZetaChain from Solana. By using the Gateway instruction, you can
+deposit SOL and make cross-chain contract calls to universal applications on
+ZetaChain.
