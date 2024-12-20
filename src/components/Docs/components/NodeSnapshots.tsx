@@ -6,7 +6,6 @@ import { LoadingTable, NetworkTypeTabs, networkTypeTabs, IconLink } from "~/comp
 
 import { CopyToClipboard } from "../../shared/components/CodeBlock/components/CopyToClipboard";
 
-
 interface NodeSnapshotsProps {
   apiUrl: string;
 }
@@ -125,50 +124,44 @@ const NodeSnapshots: React.FC<NodeSnapshotsProps> = ({ apiUrl }) => {
                   <td>{formatDate(snapshot.creationDate)}</td>
 
                   <td>
-                    {
-                    snapshot.size
+                    {snapshot.size
                       ? snapshot.size >= 1024 ** 4
-                      ? (snapshot.size / (1024 ** 4)).toFixed(1) + "TB"
-                      : (snapshot.size / (1024 ** 3)).toFixed(1) + "GB"
-                      : ""
-                    }
+                        ? (snapshot.size / 1024 ** 4).toFixed(1) + "TB"
+                        : (snapshot.size / 1024 ** 3).toFixed(1) + "GB"
+                      : ""}
                   </td>
-                    <td>
-                  {snapshot.link ? (
-                    <a href={snapshot.link} target="_blank" rel="noopener noreferrer">
-                      <button>Download</button>
-                    </a>
-                  ) : snapshot.links ? (
-                    <div>
-                      <button
-                        onClick={() => setDropdownOpen(dropdownOpen === index ? null : index)}
-                        className="hover:text-[rgb(176,255,97,0.8)]"
-                      >
-                        {dropdownOpen === index ? "Hide Parts" : "Show Parts"}
-                      </button>
-                      {dropdownOpen === index && (
-                        <div className="mt-2">
-                          <ul>
-                            {snapshot.links.map((link: string, linkIndex: number) => (
-                              <li key={linkIndex} className="mt-1">
-                                <a href={link} target="_blank" rel="noopener noreferrer">
-                                  Part {linkIndex + 1}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                          <div className="mt-2 flex items-center gap-4">
-                            <p>Script</p>
-                            <CopyToClipboard
-                              getValue={() =>
-                                snapshot.instructions || "No instructions available"
-                              }
-                            />
+                  <td>
+                    {snapshot.link ? (
+                      <a href={snapshot.link} target="_blank" rel="noopener noreferrer">
+                        <button>Download</button>
+                      </a>
+                    ) : snapshot.links ? (
+                      <div>
+                        <button
+                          onClick={() => setDropdownOpen(dropdownOpen === index ? null : index)}
+                          className="hover:text-[rgb(176,255,97,0.8)]"
+                        >
+                          {dropdownOpen === index ? "Hide Parts" : "Show Parts"}
+                        </button>
+                        {dropdownOpen === index && (
+                          <div className="mt-2">
+                            <ul>
+                              {snapshot.links.map((link: string, linkIndex: number) => (
+                                <li key={linkIndex} className="mt-1">
+                                  <a href={link} target="_blank" rel="noopener noreferrer">
+                                    Part {linkIndex + 1}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                            <div className="mt-2 flex items-center gap-4">
+                              <p>Script</p>
+                              <CopyToClipboard getValue={() => snapshot.instructions || "No instructions available"} />
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
+                        )}
+                      </div>
+                    ) : null}
                   </td>
                   <td>
                     <a
