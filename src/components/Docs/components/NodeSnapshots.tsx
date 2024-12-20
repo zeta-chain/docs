@@ -2,7 +2,7 @@ import axios from "axios";
 import { format } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 
-import { LoadingTable, NetworkTypeTabs, networkTypeTabs, IconLink } from "~/components/shared";
+import { IconLink, LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 
 import { CopyToClipboard } from "../../shared/components/CodeBlock/components/CopyToClipboard";
 
