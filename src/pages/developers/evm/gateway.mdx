@@ -1,6 +1,14 @@
 Gateway is an interface that serves as a unified entry point for interactions
 between contracts on connected chains and universal apps on ZetaChain.
 
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="800"
+  height="450"
+  src="https://embed.figma.com/design/mYXNTORUuvGVaQ01SF7h9Y/Gateway-for-Universal-Apps?node-id=0-1&embed-host=share&footer=false"
+  allowfullscreen
+></iframe>
+
 ## Gateway on Connected Chains
 
 The gateway on connected chains (like Ethereum, Solana and Bitcoin) facilitates
@@ -28,12 +36,17 @@ Gateway supports the following features:
   data passing) to a universal app
 - making a contract call (with arbitrary data passing) to a universal app
 
-These features may vary depending on each specific connected chain. For example,
-deposits from Bitcoin can only be made in native gas token (BTC). And deposits
-from Solana can be made in SOL and (soon) SPL tokens.
+[These features may vary](/developers/chains/functionality) depending on each
+specific connected chain. For example, deposits from Bitcoin can only be made in
+native gas token (BTC). And deposits from Solana can be made in SOL and (soon)
+SPL tokens.
 
 Currently, only one asset can be deposited at a time to a universal app. Support
 for multi-asset deposits will be added in the future updates to the protocol.
+
+Learn more about Gateway functionality on connected chains:
+[EVM](/developers/chains/evm), [Solana](/developers/chains/solana),
+[Bitcoin](/developers/chains/bitcoin).
 
 ## Gateway on ZetaChain
 
@@ -50,3 +63,13 @@ Gateway supports the following features:
 Currently, only one asset can be withdrawn at a time from a universal app.
 Support for multi-asset withdrawals will be added in the future updates to the
 protocol.
+
+Learn more about [ZetaChain Gateway](/developers/chains/zetachain).
+
+## Revert Handling
+
+The Gateway supports handling reverts during cross-chain operations with
+flexible refund mechanisms. If a Gateway call fails on the destination chain,
+refunds can either be issued by calling a specified contract on the source chain
+or sent directly to an externally owned account (EOA) without invoking any
+contract.
