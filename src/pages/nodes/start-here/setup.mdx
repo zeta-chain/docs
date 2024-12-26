@@ -194,7 +194,7 @@ Environment="CLIENT_START_PROCESS=false"
 Environment="UNSAFE_SKIP_BACKUP=true"
 Type=simple
 Restart=always
-RestartSec=600
+RestartSec=10
 User=zetachain
 LimitNOFILE=262144
 ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format json  --moniker <YOUR_NODE_NAME_HERE>
