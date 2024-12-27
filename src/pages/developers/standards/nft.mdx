@@ -7,7 +7,7 @@ When transferring tokens between chains, a token is burned on the source chain.
 The token's metadata and information are sent in a message to the token contract
 on the destination chain, where a corresponding token is minted.
 
-The project consists of two ERC-721 contracts: **Connected** and **Universal**.
+The project consists of two ERC-721 contracts: **Universal** and **Connected**.
 
 Universal contract is deployed on ZetaChain. The contract is used to:
 
@@ -50,483 +50,116 @@ of the Universal contract on ZetaChain. The Universal contract stores a list of
 connected contracts on connected chains. This ensures that only the contracts
 from the same NFT collection can participate in the cross-chain transfer.
 
-Universal NFT can be imported from npm:
-
-```solidity filename="contracts/Connected.sol"
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-
-import "@zetachain/standard-contracts/nft/contracts/evm/UniversalNFT.sol";
-
-contract Connected is UniversalNFT {
-    constructor(
-        address payable gatewayAddress,
-        address owner,
-        string memory name,
-        string memory symbol,
-        uint256 gasLimit
-    )
-        UniversalNFT(gatewayAddress, gasLimit)
-        Ownable(owner)
-        ERC721(name, symbol)
-    {}
-}
-```
-
-```solidity filename="contracts/Universal.sol"
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-
-import "@zetachain/standard-contracts/nft/contracts/zetachain/UniversalNFT.sol";
-
-contract Universal is UniversalNFT {
-    constructor(
-        address payable gatewayAddress,
-        address owner,
-        string memory name,
-        string memory symbol,
-        uint256 gasLimit,
-        address uniswapRouter
-    )
-        UniversalNFT(gatewayAddress, gasLimit, uniswapRouter)
-        Ownable(owner)
-        ERC721(name, symbol)
-    {}
-}
-```
-
-The Universal contract constructor accepts a Uniswap router address. It is
-recommended to use [the official Uniswap v2 router
-address](/reference/network/contracts), however, any Uniswap v2-compatible
-router should work. Uniswap is used to swap between ZRC-20 versions of gas
-tokens to cover outgoing (ZetaChain to connected chain) calls.
-
-## Setting Universal and Connected Addresses
-
-After deploying a Connected contract but before making cross-chain transfers,
-you must set the Universal contract address.
-
-```
-npx hardhat connected-set-universal --contract "$CONTRACT_ETHEREUM" --universal "$CONTRACT_ZETACHAIN" --network sepolia_testnet
-```
-
-You also need to set the mapping between a Connected contract address and a
-ZRC-20 address of the gas token of the connected chain.
-
-```
-npx hardhat universal-set-connected --contract "$CONTRACT_ZETACHAIN" --connected "$CONTRACT_ETHEREUM" --zrc20 "$ZRC20_ETHEREUM" --network zeta_testnet
-```
-
-Setting both addresses establishes a trusted connection between a Connected
-contract and a Universal contract.
-
-## Mint an NFT
-
-Mint an NFT on ZetaChain:
-
-```
-npx hardhat mint --network zeta_testnet --contract "$CONTRACT_ZETACHAIN" --token-uri https://example.com/nft/metadata/1
-```
-
-```
-{"contractAddress":"0x83E60C63b38974Cfe89c287f2b9ddF153eBD13A1","mintTransactionHash":"0xf2544827e5ac4434a300bca190f6b5e391e3cd7c87e515ac2dee4f7cb3b14e44","recipient":"0x4955a3F38ff86ae92A914445099caa8eA2B9bA32","tokenURI":"https://example.com/nft/metadata/1","tokenId":"1145931601449361378070955209842677114337257109052"}
-```
-
-## Cross-Chain NFT Transfer
-
-```
-npx hardhat transfer --network zeta_testnet --json --token-id "$TOKEN_ID" --from "$CONTRACT_ZETACHAIN" --to "$ZRC20_ETHEREUM"
-```
-
-## Implementation Details
-
-<div className="mt-8" style={{ width: "100%", height: "auto", "aspect-ratio": "16 / 8" }}>
-  <iframe
-    width="100%"
-    height="100%"
-    src="https://www.youtube.com/embed/fRv1iyi1IjQ?si=R02nUzS0NpoclZa_"
-    filename="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-  ></iframe>
-</div>
-
-<Alert>
-  {" "}
-  Information below is only relevant if you're interested in how universal NFTs work under the hood. You don't need to copy
-  or edit these contracts directly, they are imported from npm by your universal NFT contract.{" "}
-</Alert>
-
 ![https://excalidraw.com/#json=dQJisu_uJ0N8T6IPi2m0E,PJU63ktFfbi1WsfAXsompA](/img/docs/tutorials-nft.png)
 
-### Universal App Contract
+## Using ThirdWeb
 
-```solidity filename="evm/UniversalNFT.sol"
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+[Thirdweb](https://thirdweb.com/) is a web3 development platform that enables
+developers to deploy and interact with smart contracts across EVM-compatible
+blockchains.
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable2Step.sol";
-import "@zetachain/protocol-contracts/contracts/evm/GatewayEVM.sol";
-import {RevertContext} from "@zetachain/protocol-contracts/contracts/Revert.sol";
-import "../shared/Events.sol";
+- [Universal NFT on
+  ZetaChain](https://thirdweb.com/0xe7508B5026f032b37663718192bA63a40954F2c0/ZetaChainUniversalNFT)
+- [Universal NFT on
+  EVM](https://thirdweb.com/0xe7508B5026f032b37663718192bA63a40954F2c0/EVMUniversalNFT)
 
-abstract contract UniversalNFT is
-    ERC721,
-    ERC721Enumerable,
-    ERC721URIStorage,
-    Ownable2Step,
-    Events
-{
-    GatewayEVM public immutable gateway;
-    uint256 private _nextTokenId;
-    address public universal;
-    uint256 public immutable gasLimitAmount;
+## Installing from NPM
 
-    error InvalidAddress();
-    error Unauthorized();
-    error InvalidGasLimit();
-    error GasTokenTransferFailed();
-
-    function setUniversal(address contractAddress) external onlyOwner {
-        if (contractAddress == address(0)) revert InvalidAddress();
-        universal = contractAddress;
-        emit SetUniversal(contractAddress);
-    }
-
-    modifier onlyGateway() {
-        if (msg.sender != address(gateway)) revert Unauthorized();
-        _;
-    }
-
-    constructor(address payable gatewayAddress, uint256 gas) {
-        if (gatewayAddress == address(0)) revert InvalidAddress();
-        if (gas == 0) revert InvalidGasLimit();
-        gasLimitAmount = gas;
-        gateway = GatewayEVM(gatewayAddress);
-    }
-
-    function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 hash = uint256(
-            keccak256(
-                abi.encodePacked(address(this), block.number, _nextTokenId++)
-            )
-        );
-
-        uint256 tokenId = hash & 0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-        emit TokenMinted(to, tokenId, uri);
-    }
-
-    function transferCrossChain(
-        uint256 tokenId,
-        address receiver,
-        address destination
-    ) external payable {
-        if (receiver == address(0)) revert InvalidAddress();
-
-        string memory uri = tokenURI(tokenId);
-        _burn(tokenId);
-        bytes memory message = abi.encode(
-            destination,
-            receiver,
-            tokenId,
-            uri,
-            msg.sender
-        );
-        if (destination == address(0)) {
-            gateway.call(
-                universal,
-                message,
-                RevertOptions(address(this), false, address(0), message, 0)
-            );
-        } else {
-            gateway.depositAndCall{value: msg.value}(
-                universal,
-                message,
-                RevertOptions(
-                    address(this),
-                    true,
-                    address(0),
-                    abi.encode(receiver, tokenId, uri, msg.sender),
-                    gasLimitAmount
-                )
-            );
-        }
-
-        emit TokenTransfer(destination, receiver, tokenId, uri);
-    }
-
-    function onCall(
-        MessageContext calldata context,
-        bytes calldata message
-    ) external payable onlyGateway returns (bytes4) {
-        if (context.sender != universal) revert Unauthorized();
-
-        (
-            address receiver,
-            uint256 tokenId,
-            string memory uri,
-            uint256 gasAmount,
-            address sender
-        ) = abi.decode(message, (address, uint256, string, uint256, address));
-
-        _safeMint(receiver, tokenId);
-        _setTokenURI(tokenId, uri);
-        if (gasAmount > 0) {
-            if (sender == address(0)) revert InvalidAddress();
-            (bool success, ) = payable(sender).call{value: gasAmount}("");
-            if (!success) revert GasTokenTransferFailed();
-        }
-        emit TokenTransferReceived(receiver, tokenId, uri);
-        return "";
-    }
-
-    function onRevert(RevertContext calldata context) external onlyGateway {
-        (, uint256 tokenId, string memory uri, address sender) = abi.decode(
-            context.revertMessage,
-            (address, uint256, string, address)
-        );
-
-        _safeMint(sender, tokenId);
-        _setTokenURI(tokenId, uri);
-        emit TokenTransferReverted(sender, tokenId, uri);
-    }
-
-    receive() external payable {}
-
-    fallback() external payable {}
-
-    // The following functions are overrides required by Solidity.
-
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    ) internal override(ERC721, ERC721Enumerable) returns (address) {
-        return super._update(to, tokenId, auth);
-    }
-
-    function _increaseBalance(
-        address account,
-        uint128 value
-    ) internal override(ERC721, ERC721Enumerable) {
-        super._increaseBalance(account, value);
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-}
+```
+yarn add @zetachain/standard-contracts@v1.0.0-rc2
 ```
 
-#### Minting an NFT
+## Starting from Scratch
 
-`safeMint` mint a new NFT. Token ID is generated from the contract address,
-block time, and an incrementing integer. This ensures that the token ID is
-unique across all chains. The only scenario where ID collision is possible is
-when two contracts are deployed on the same address on two different chains, and
-an NFT is minted on both exactly at the same time using the same integer. You
-can supply your own logic for generating token IDs.
+Contract on ZetaChain:
 
-#### Transfer NFT from ZetaChain to a Connected Chain
-
-`transferCrossChain` transfers an NFT from ZetaChain to a connected chain.
-Transferring an NFT to a connected chain creates a transaction on a connected
-chain, which costs gas. To pay for gas, the NFT sender must provide the
-universal app with tokens for gas in the form of ZRC-20 version of the gas token
-of the connected chain. For example, when a user transfers an NFT from ZetaChain
-to Ethereum, they need to allow the contract to spend a certain amount of ZRC-20
-ETH.
-
-The function transfers the ZRC-20 tokens to the gateway contract.
-
-Next, the function encodes the token ID, sender's address and the URI into a
-message.
-
-`callOptions` are defined with the gas limit on the destination chain and
-`isArbitraryCall` (the second parameter) is set to false. `isArbitraryCall`
-determines if the call is arbitrary (a call to any contract on the destination
-chain, but without providing address of the universal contract making the call)
-or authenticated (the call is made to `onCall` function, the universal contract
-address is passed as a parameter). Setting `isArbitraryCall` to false is
-important, because the contract on a connected chain must know which universal
-contract is making a call to prevent unauthorized calls.
-
-`revertOptions` contain the address of a contract on ZetaChain, which will be
-called if the contract on the destination chain reverts (in our example we want
-to call the same universal contract), as well as the message that will be passed
-to the `onRevert` function of the revert contract. Pass the same encoded message
-to ensure that the universal contract can successfully mint the token back to
-the sender if the transfer fails.
-
-Finally, `gateway.call` is executed to initiate a cross-chain transfer of an NFT
-from ZetaChain to a connected chain. The destination chain is determined by the
-ZRC-20 contract address, which corresponds to the gas token of the connected
-chain. For example, to transfer the NFT to Ethereum, pass address of ZRC-20 ETH.
-
-#### Handling NFT Transfers from Connected Chains
-
-`onCall` is executed when an NFT transfer is received from a connected chain.
-
-First, `onCall` checks that the transfer originates from a trusted counterparty
-contract. This prevents unauthorized minting by malicious contracts.
-
-Since all cross-chain transfers are processed by ZetaChain, there are two
-scenarios when `onCall` is executed: when the destination is ZetaChain or when
-the destination is another connected chain.
-
-If the destination is a zero address, then the destination chain is ZetaChain.
-An NFT is minted and transferred to the recipient.
-
-If the destination is a non-zero address, the destination chain is another
-connected chain identified by the ZRC-20 gas token address in the destination
-field of the message. The contract initiates a transfer to the connected chain.
-First, it queries the withdraw fee on the destination chain. Then, it swaps the
-incoming ZRC-20 tokens into the ZRC-20 gas token of the destination chain. The
-swap uses the built-in Uniswap v2 pools, but any other swap mechanism can be
-used, instead. Finally, `gateway.call` is executed to initiate the transfer to
-the destination chain.
-
-#### Revert Handling
-
-If an NFT transfer from ZetaChain to a connected chain fails, `onRevert` is
-called. `onRevert` mints the NFT and transfers it back to original sender.
-
-### Connected Chain Contract
-
-```solidity filename="zetachain/UniversalNFT.sol"
+```solidity filename="contracts/ZetaChainUniversalNFT.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable2Step.sol";
-import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
-import {SwapHelperLib} from "@zetachain/toolkit/contracts/SwapHelperLib.sol";
-import {SystemContract} from "@zetachain/toolkit/contracts/SystemContract.sol";
-import "../shared/Events.sol";
+import "@zetachain/standard-contracts/contracts/nft/contracts/zetachain/UniversalNFT.sol";
 
-abstract contract UniversalNFT is
-    ERC721,
-    ERC721Enumerable,
-    ERC721URIStorage,
-    Ownable2Step,
-    UniversalContract,
-    Events
+contract ZetaChainUniversalNFT is UniversalNFT {}
+```
+
+Contract on an EVM chain:
+
+```solidity filename="contracts/EVMUniversalNFT.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import "@zetachain/standard-contracts/contracts/nft/contracts/evm/UniversalNFT.sol";
+
+contract EVMUniversalNFT is UniversalNFT {}
+```
+
+`UniversalNFT` is an upgradeable contract that uses [OpenZeppelin
+UUPSUpgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeable).
+Instead of a `constructor` it uses the `initialize` function.
+
+## Starting from an OpenZeppelin Template
+
+If you already have an ERC-721 contract you want make universal or you prefer to
+start from an OpenZeppelin template, you can import Universal NFT functionality
+with just a few lines of code:
+
+```solidity filename="contracts/ZetaChainUniversalNFT.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import {ERC721BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import {ERC721PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
+import {ERC721URIStorageUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
+// Import UniversalNFTCore for universal NFT functionality
+import "@zetachain/standard-contracts/contracts/nft/contracts/zetachain/UniversalNFTCore.sol";
+
+contract UniversalNFT is
+    Initializable, // Allows upgradeable contract initialization
+    ERC721Upgradeable, // Base ERC721 implementation
+    ERC721URIStorageUpgradeable, // Enables metadata URI storage
+    ERC721EnumerableUpgradeable, // Provides enumerable token support
+    ERC721PausableUpgradeable, // Allows pausing token operations
+    OwnableUpgradeable, // Restricts access to owner-only functions
+    ERC721BurnableUpgradeable, // Adds burnable functionality
+    UUPSUpgradeable, // Supports upgradeable proxy pattern
+    UniversalNFTCore // Custom core for additional logic
 {
-    GatewayZEVM public immutable gateway;
-    address public immutable uniswapRouter;
-    uint256 private _nextTokenId;
-    bool public constant isUniversal = true;
-    uint256 public immutable gasLimitAmount;
+    uint256 private _nextTokenId; // Track next token ID for minting
 
-    error TransferFailed();
-    error Unauthorized();
-    error InvalidAddress();
-    error InvalidGasLimit();
-    error ApproveFailed();
-
-    mapping(address => address) public connected;
-
-    modifier onlyGateway() {
-        if (msg.sender != address(gateway)) revert Unauthorized();
-        _;
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
     }
 
-    constructor(
-        address payable gatewayAddress,
-        uint256 gas,
-        address uniswapRouterAddress
-    ) {
-        if (gatewayAddress == address(0) || uniswapRouterAddress == address(0))
-            revert InvalidAddress();
-        if (gas == 0) revert InvalidGasLimit();
-        gateway = GatewayZEVM(gatewayAddress);
-        uniswapRouter = uniswapRouterAddress;
-        gasLimitAmount = gas;
+    function initialize(
+        address initialOwner,
+        string memory name,
+        string memory symbol,
+        address payable gatewayAddress, // Include EVM gateway address
+        uint256 gas, // Set gas limit for universal NFT calls
+        address uniswapRouterAddress // Uniswap v2 router address for gas token swaps
+    ) public initializer {
+        __ERC721_init(name, symbol);
+        __ERC721Enumerable_init();
+        __ERC721URIStorage_init();
+        __ERC721Pausable_init();
+        __Ownable_init(initialOwner);
+        __ERC721Burnable_init();
+        __UUPSUpgradeable_init();
+        __UniversalNFTCore_init(gatewayAddress, gas, uniswapRouterAddress); // Initialize universal NFT core
     }
 
-    function setConnected(
-        address zrc20,
-        address contractAddress
-    ) external onlyOwner {
-        connected[zrc20] = contractAddress;
-        emit SetConnected(zrc20, contractAddress);
-    }
-
-    function transferCrossChain(
-        uint256 tokenId,
-        address receiver,
-        address destination
-    ) public {
-        if (receiver == address(0)) revert InvalidAddress();
-        string memory uri = tokenURI(tokenId);
-        _burn(tokenId);
-
-        (address gasZRC20, uint256 gasFee) = IZRC20(destination)
-            .withdrawGasFeeWithGasLimit(gasLimitAmount);
-        if (destination != gasZRC20) revert InvalidAddress();
-        if (
-            !IZRC20(destination).transferFrom(msg.sender, address(this), gasFee)
-        ) revert TransferFailed();
-        if (!IZRC20(destination).approve(address(gateway), gasFee)) {
-            revert ApproveFailed();
-        }
-        bytes memory message = abi.encode(
-            receiver,
-            tokenId,
-            uri,
-            0,
-            msg.sender
-        );
-
-        CallOptions memory callOptions = CallOptions(gasLimitAmount, false);
-
-        RevertOptions memory revertOptions = RevertOptions(
-            address(this),
-            true,
-            address(0),
-            abi.encode(tokenId, uri, msg.sender),
-            gasLimitAmount
-        );
-
-        gateway.call(
-            abi.encodePacked(connected[destination]),
-            destination,
-            message,
-            callOptions,
-            revertOptions
-        );
-
-        emit TokenTransfer(receiver, destination, tokenId, uri);
-    }
-
-    function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(
+        address to,
+        string memory uri
+    ) public onlyOwner whenNotPaused {
+        // Generate globally unique token ID, feel free to supply your own logic
         uint256 hash = uint256(
             keccak256(
                 abi.encodePacked(address(this), block.number, _nextTokenId++)
@@ -539,91 +172,43 @@ abstract contract UniversalNFT is
         _setTokenURI(tokenId, uri);
     }
 
-    function onCall(
-        MessageContext calldata context,
-        address zrc20,
-        uint256 amount,
-        bytes calldata message
-    ) external override onlyGateway {
-        if (context.sender != connected[zrc20]) revert Unauthorized();
-
-        (
-            address destination,
-            address receiver,
-            uint256 tokenId,
-            string memory uri,
-            address sender
-        ) = abi.decode(message, (address, address, uint256, string, address));
-
-        if (destination == address(0)) {
-            _safeMint(receiver, tokenId);
-            _setTokenURI(tokenId, uri);
-            emit TokenTransferReceived(receiver, tokenId, uri);
-        } else {
-            (address gasZRC20, uint256 gasFee) = IZRC20(destination)
-                .withdrawGasFeeWithGasLimit(gasLimitAmount);
-            if (destination != gasZRC20) revert InvalidAddress();
-
-            uint256 out = SwapHelperLib.swapExactTokensForTokens(
-                uniswapRouter,
-                zrc20,
-                amount,
-                destination,
-                0
-            );
-
-            if (!IZRC20(destination).approve(address(gateway), out)) {
-                revert ApproveFailed();
-            }
-            gateway.withdrawAndCall(
-                abi.encodePacked(connected[destination]),
-                out - gasFee,
-                destination,
-                abi.encode(receiver, tokenId, uri, out - gasFee, sender),
-                CallOptions(gasLimitAmount, false),
-                RevertOptions(
-                    address(this),
-                    true,
-                    address(0),
-                    abi.encode(tokenId, uri, sender),
-                    0
-                )
-            );
-        }
-        emit TokenTransferToDestination(receiver, destination, tokenId, uri);
-    }
-
-    function onRevert(RevertContext calldata context) external onlyGateway {
-        (uint256 tokenId, string memory uri, address sender) = abi.decode(
-            context.revertMessage,
-            (uint256, string, address)
-        );
-
-        _safeMint(sender, tokenId);
-        _setTokenURI(tokenId, uri);
-        emit TokenTransferReverted(sender, tokenId, uri);
-    }
-
     // The following functions are overrides required by Solidity.
 
     function _update(
         address to,
         uint256 tokenId,
         address auth
-    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+    )
+        internal
+        override(
+            ERC721Upgradeable,
+            ERC721EnumerableUpgradeable,
+            ERC721PausableUpgradeable
+        )
+        returns (address)
+    {
         return super._update(to, tokenId, auth);
     }
 
     function _increaseBalance(
         address account,
         uint128 value
-    ) internal override(ERC721, ERC721Enumerable) {
+    ) internal override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
         super._increaseBalance(account, value);
     }
 
     function tokenURI(
         uint256 tokenId
-    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    )
+        public
+        view
+        override(
+            ERC721Upgradeable,
+            ERC721URIStorageUpgradeable,
+            UniversalNFTCore // Include UniversalNFTCore for URI overrides
+        )
+        returns (string memory)
+    {
         return super.tokenURI(tokenId);
     }
 
@@ -632,7 +217,164 @@ abstract contract UniversalNFT is
     )
         public
         view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage)
+        override(
+            ERC721Upgradeable,
+            ERC721EnumerableUpgradeable,
+            ERC721URIStorageUpgradeable,
+            UniversalNFTCore // Include UniversalNFTCore for interface overrides
+        )
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    receive() external payable {} // Receive ZETA to pay for gas
+}
+```
+
+```solidity filename="contracts/EVMUniversalNFT.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import {ERC721BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import {ERC721PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
+import {ERC721URIStorageUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
+// Import UniversalNFTCore for universal NFT functionality
+import "@zetachain/standard-contracts/contracts/nft/contracts/evm/UniversalNFTCore.sol";
+
+contract UniversalNFT is
+    Initializable,
+    ERC721Upgradeable,
+    ERC721EnumerableUpgradeable,
+    ERC721URIStorageUpgradeable,
+    ERC721PausableUpgradeable,
+    OwnableUpgradeable,
+    ERC721BurnableUpgradeable,
+    UUPSUpgradeable,
+    UniversalNFTCore // Add UniversalNFTCore for universal features
+{
+    uint256 private _nextTokenId; // Track next token ID for minting
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(
+        address initialOwner,
+        string memory name,
+        string memory symbol,
+        address payable gatewayAddress, // Include EVM gateway address
+        uint256 gas // Set gas limit for universal NFT calls
+    ) public initializer {
+        __ERC721_init(name, symbol);
+        __ERC721Enumerable_init();
+        __ERC721URIStorage_init();
+        __ERC721Pausable_init();
+        __Ownable_init(initialOwner);
+        __ERC721Burnable_init();
+        __UUPSUpgradeable_init();
+        __UniversalNFTCore_init(gatewayAddress, address(this), gas); // Initialize universal NFT core
+    }
+
+    function safeMint(
+        address to,
+        string memory uri
+    ) public onlyOwner whenNotPaused {
+        // Generate globally unique token ID, feel free to supply your own logic
+        uint256 hash = uint256(
+            keccak256(
+                abi.encodePacked(address(this), block.number, _nextTokenId++)
+            )
+        );
+
+        uint256 tokenId = hash & 0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
+
+    // The following functions are overrides required by Solidity.
+
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    )
+        internal
+        override(
+            ERC721Upgradeable,
+            ERC721EnumerableUpgradeable,
+            ERC721PausableUpgradeable
+        )
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
+    }
+
+    function _increaseBalance(
+        address account,
+        uint128 value
+    ) internal override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
+        super._increaseBalance(account, value);
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    )
+        public
+        view
+        override(
+            ERC721Upgradeable,
+            ERC721URIStorageUpgradeable,
+            UniversalNFTCore // Include UniversalNFTCore for URI overrides
+        )
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(
+            ERC721Upgradeable,
+            ERC721EnumerableUpgradeable,
+            ERC721URIStorageUpgradeable,
+            UniversalNFTCore // Include UniversalNFTCore for interface overrides
+        )
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -640,34 +382,52 @@ abstract contract UniversalNFT is
 }
 ```
 
-#### Transfer NFT from a Connected Chain
+## Deployment
 
-`transferCrossChain` initiates a transfer of an NFT to ZetaChain or to another
-connected chain.
+1. Deploy Universal NFT on ZetaChain. This is a required step, because a
+   contract on ZetaChain handles all cross-chain token transfers, even between
+   EVM chains.
+2. Deploy Universal NFT on a connected EVM chain (for example, Ethereum, Base,
+   Polygon or BNB)
+3. Run `ZetaChainUniversalNFT.setConnected(zrc20, contractAddress)`, where zrc20
+   is the [ZRC-20 contract](/developers/tokens/zrc20) of the gas token of a
+   connected EVM chain, this acts as an identifier for a chain, and
+   `contractAddress` is the address of a Universal NFT on a connected EVM chain
+   (see step 2).
+4. Run `EVMUniversalNFT.setUniversal(contractAddress)`, where `contractAddress`
+   is an address of a Universal NFT on ZetaChain (see step 1).
 
-To transfer an NFT to ZetaChain the destination address must be specified as a
-zero address.
+You now have two NFT contracts on ZetaChain and on an EVM chain connected. To
+add deploy an NFT contract on another EVM chain, repeat steps 2 and 3.
 
-To transfer an NFT to another connected chain the destination address must be
-the ZRC-20 address of the gas token of the destination chain. For example, to
-transfer to Ethereum, the destination is ZRC-20 ETH address.
+`setConnected` and `setUniversal` steps are required to establish a trusted
+connection between Universal NFT contracts on different chains. When accepting a
+cross-chain transfer a contract first checks that the transfer is coming from a
+trusted contract. On ZetaChain setting connected contract addresses helps the
+contract to route cross-chain transfers.
 
-When transferring to ZetaChain a no asset `gateway.call` is executed, because
-cross-chain calls to ZetaChain do not require the sender to cover gas costs.
+## Gas Fees
 
-When transferring to another connected chain, `gateway.depositAndCall` is
-executed with some gas tokens to cover the gas costs on the destination chain.
+EVM → ZetaChain: no cross-chain fee is applied.
 
-#### Handling NFT Transfers
+ZetaChain → EVM: a cross-chain fee is paid in ZETA. The amount depends on the
+ZRC-20 withdraw fee for the destination chain. ZETA is swapped for the
+destination chain's gas token ZRC-20.
 
-`onCall` is executed when an NFT transfer is received from a connected chain or
-ZetaChain.
+EVM → EVM: a cross-chain fee is paid in the gas token of the source chain. The
+amount depends on the ZRC-20 withdraw fee for the destination chain. For
+example, if an NFT is transferred from Ethereum to BNB chain, the cross-chain
+fee is paid in ETH. On ZetaChain ZRC-20 ETH is swapped for ZRC-20 BNB, which is
+used to cover a call to the BNB chain.
 
-Since all cross-chain transactions go through a universal contract on ZetaChain,
-`onCall` checks that the call is made from a trusted counterparty universal
-contract address to prevent unauthorized minting.
+## Revert Handling
 
-#### Revert Handling
+EVM → EVM: if a transfer between two EVM chains reverts, the NFT will be
+transferred to **the original sender on ZetaChain**. This is prevent potential
+high gas fees associated with returning the NFT back to chain from which it was
+transferred in the first place. After the revert, the original sender can
+transfer the NFT from ZetaChain to any other chain.
 
-If an NFT transfer from ZetaChain to a connected chain fails, `onRevert` is
-called. `onRevert` mints the NFT and transfers it back to original sender.
+## Source Code
+
+https://github.com/zeta-chain/standard-contracts/tree/main/contracts/nft
