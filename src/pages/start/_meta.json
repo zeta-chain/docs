@@ -1,0 +1,18 @@
+{
+  "zetachain": {
+    "title": "What is ZetaChain?",
+    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+  },
+  "build": {
+    "title": "Why Build on ZetaChain?",
+    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+  },
+  "evm": {
+    "title": "Universal EVM",
+    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+  },
+  "app": {
+    "title": "Universal App",
+    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+  }
+}

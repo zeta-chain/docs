@@ -75,6 +75,13 @@ export const navMainItems: NavItem[][] = [
   ],
   [
     {
+      label: "Get Started",
+      icon: IconAbout,
+      url: "/start",
+    },
+  ],
+  [
+    {
       label: "Build",
       icon: IconCode,
       url: "/developers",
