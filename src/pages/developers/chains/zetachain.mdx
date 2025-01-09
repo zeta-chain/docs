@@ -92,8 +92,9 @@ universal app, rejecting unauthorized calls.
 
 ## Format of the `message` Parameter
 
-The `message` parameter in the `withdrawAndCall` and `call` functions contains
-the encoded function selector and arguments for the target contract:
+For arbitrary calls (when `isArbitraryCall` is `true`) the `message` parameter
+in the `withdrawAndCall` and `call` functions contains the encoded function
+selector and arguments for the target contract:
 
 - **Function Selector**: The first 4 bytes of the Keccak-256 hash of the
   function signature.
@@ -108,6 +109,10 @@ For example:
 - **Function Selector**: `0xa777d0dc` corresponds to `hello(string)`.
 - **Arguments**: The remaining data represents the argument `alice`, encoded in
   hexadecimal (`616c696365`).
+
+For authenticated calls the `message` is just ABI-encoded arguments (no function
+selector in the beginning, because authenticated calls are routed to a specific
+`onCall` function).
 
 ## Revert Transactions
 
@@ -124,14 +129,39 @@ struct RevertOptions {
 }
 ```
 
-- **`revertAddress`**: The address to return assets to if the transaction
-  reverts.
-- **`callOnRevert`**: A flag indicating whether to call the `onRevert` function
-  on the `revertAddress`.
-- **`abortAddress`**: The address to receive funds on ZetaChain if the CCTX
-  aborts (not currently used).
-- **`revertMessage`**: Context passed to the `onRevert` function.
-- **`onRevertGasLimit`**: Gas limit for executing the `onRevert` function.
+`revertAddress` is the address of an EOA or contract, which will receive the
+tokens if a cross-chain transaction reverts. If a zero address is specified, the
+tokens will be transferred the the `msg.sender` that initiated the Gateway call.
+It's recommended to always specify the revert address to make sure tokens are
+refunded to the correct address.
+
+`callOnRevert` is a flag indicating whether a reverted cross-chain transaction
+should result in a contract call on the chain on which the Gateway call was
+made. If call on revert is true, the `onRevert` function of the `revertAddress`
+contract is called. If call on revert is false, then a reverted cross-chain
+transaction will make a token transfer to the revert address without a contract
+call.
+
+`abortAddress` is the address to receive funds on ZetaChain if the CCTX aborts
+(this functionality is not implemented yet).
+
+`revertMessage` is a message passed to the `onRevert` function inside the revert
+context.
+
+`onRevertGasLimit` is a limit for executing the `onRevert` function.
+
+For CCTXs from ZetaChain to a connected chain, revert execution is free, so the
+same amount that has been withdrawn will be returned back as
+`revertContext.amount` in ZRC-20 tokens.
+
+For CCTXS from a connected chain to ZetaChain, however, gas fees for revert
+execution are deducted from the deposit amount. If a CCTX reverts, the protocol
+will swap a fraction of the deposit amount into ZRC-20 gas tokens of the chain
+on which the revert is to be executed. If the deposit amount is insufficient,
+the CCTX will abort and `onRevert` will not be called.
+
+Gateway `call` (no asset call) from a connected chain to ZetaChain does not
+support reverts, because there are no assets to cover the revert gas costs.
 
 ### Revertable Contracts
 
@@ -149,5 +179,9 @@ interface Revertable {
 }
 ```
 
-This interface allows contracts to handle reverts dynamically, using the
-information provided in the `RevertContext`.
+On a connected chain `asset` is an address of an ERC-20 deposited using
+Gateway's `deposit` or `depositAndCall`. If a gas token was deposited, the
+`asset` is a zero address.
+
+On ZetaChain `asset` is an address of a ZRC-20 withdrawn using Gateway's
+`withdraw` or `withdrawAndCall`.
