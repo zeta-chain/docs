@@ -28,7 +28,7 @@ event Called(
 |`zrc20`|`address`|Address of zrc20 to pay fees.|
 |`receiver`|`bytes`|The receiver address on the external chain.|
 |`message`|`bytes`|The calldata passed to the contract call.|
-|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbitrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 ### Withdrawn
@@ -62,7 +62,7 @@ event Withdrawn(
 |`gasfee`|`uint256`|The gas fee for the withdrawal.|
 |`protocolFlatFee`|`uint256`|The protocol flat fee for the withdrawal.|
 |`message`|`bytes`|The calldata passed with the withdraw. No longer used. Kept to maintain compatibility.|
-|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbitrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 ### WithdrawnAndCalled
@@ -96,6 +96,6 @@ event WithdrawnAndCalled(
 |`gasfee`|`uint256`|The gas fee for the withdrawal.|
 |`protocolFlatFee`|`uint256`|The protocol flat fee for the withdrawal.|
 |`message`|`bytes`|The calldata passed to the contract call.|
-|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbitrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
