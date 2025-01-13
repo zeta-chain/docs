@@ -282,7 +282,7 @@ CCTX.
 ## Incoming & Abort
 
 Consider an example of making call from Ethereum Sepolia to a universal app
-contract on ZetaChain, which reverts.
+contract on ZetaChain, which aborts.
 
 In this example a user calls EVM Gateway's `depositAndCall` to call [a universal
 swap contract on ZetaChain](/developers/tutorials/swap), which swaps incoming
@@ -387,3 +387,112 @@ https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inb
   ]
 }
 ```
+
+## Incoming & Revert
+
+An example of making call from Base Sepolia to a universal app contract on
+ZetaChain, which reverts.
+
+In this example a user calls EVM Gateway's `depositAndCall` to call [a universal
+swap contract on ZetaChain](/developers/tutorials/swap), which swaps incoming
+tokens for target ZRC-20 tokens, but the amount of supplied tokens is not enough
+to cover the withdraw gas fee to Polygon Amoy, so the transaction reverts.
+
+An inbound transaction on Base Sepolia:
+
+https://sepolia.basescan.org/tx/0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407
+
+```json
+{
+  "CrossChainTxs": [
+    {
+      "creator": "zeta1w5czgpk5kc9etxw2anzhr0uyrr4fqks32qmk6k",
+      "index": "0xd573fe0a42f6f236e789b6cad8c4e0b6b3639a3c0bc0e01de9a5ee92183c1431",
+      "zeta_fees": "0",
+      "relayed_message": "00000000000000000000000005ba149a7bd6dc1f937fa9046a9e05c05f3b18b00000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000144955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000",
+      "cctx_status": {
+        "status": "Reverted",
+        "status_message": "Status changed from PendingRevert to Reverted",
+        "error_message": "revert executed",
+        "lastUpdate_timestamp": "1736770365",
+        "isAbortRefunded": false,
+        "created_timestamp": "1736770253"
+      },
+      "inbound_params": {
+        "sender": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+        "sender_chain_id": "84532",
+        "tx_origin": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+        "coin_type": "Gas",
+        "asset": "0x0000000000000000000000000000000000000000",
+        "amount": "200000000000000",
+        "observed_hash": "0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407",
+        "observed_external_height": "20500946",
+        "ballot_index": "0xd573fe0a42f6f236e789b6cad8c4e0b6b3639a3c0bc0e01de9a5ee92183c1431",
+        "finalized_zeta_height": "8546178",
+        "tx_finalization_status": "Executed",
+        "is_cross_chain_call": true
+      },
+      "outbound_params": [
+        {
+          "receiver": "0x9644A8759108C1235572bB14110cA078BeAE87EA",
+          "receiver_chainId": "7001",
+          "coin_type": "Gas",
+          "amount": "0",
+          "tss_nonce": "0",
+          "gas_limit": "0",
+          "gas_price": "",
+          "gas_priority_fee": "",
+          "hash": "0x9ca133da011a8492bea1115edcf5675245ebbde6826b747bff54bb7f83d9e94c",
+          "ballot_index": "",
+          "observed_external_height": "8546178",
+          "gas_used": "0",
+          "effective_gas_price": "0",
+          "effective_gas_limit": "0",
+          "tss_pubkey": "zetapub1addwnpepq28c57cvcs0a2htsem5zxr6qnlvq9mzhmm76z3jncsnzz32rclangr2g35p",
+          "tx_finalization_status": "Executed",
+          "call_options": {
+            "gas_limit": "1500000",
+            "is_arbitrary_call": false
+          }
+        },
+        {
+          "receiver": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+          "receiver_chainId": "84532",
+          "coin_type": "Zeta",
+          "amount": "193262732120000",
+          "tss_nonce": "232",
+          "gas_limit": "0",
+          "gas_price": "320822280",
+          "gas_priority_fee": "781641",
+          "hash": "0xd86a5babfb7c3297b98d05d145707010aa8f7b690af151729035c3e2d0567eae",
+          "ballot_index": "0x7cfba6c8a02a2f294397d51cc5d20e3a14fbc54b36fb0d6b06a142ea9b0a69f1",
+          "observed_external_height": "20501005",
+          "gas_used": "21000",
+          "effective_gas_price": "320822280",
+          "effective_gas_limit": "21000",
+          "tss_pubkey": "zetapub1addwnpepq28c57cvcs0a2htsem5zxr6qnlvq9mzhmm76z3jncsnzz32rclangr2g35p",
+          "tx_finalization_status": "Executed",
+          "call_options": {
+            "gas_limit": "21000",
+            "is_arbitrary_call": false
+          }
+        }
+      ],
+      "protocol_contract_version": "V2",
+      "revert_options": {
+        "revert_address": "0x0000000000000000000000000000000000000000",
+        "call_on_revert": false,
+        "abort_address": "0x0000000000000000000000000000000000000000",
+        "revert_message": "MHg=",
+        "revert_gas_limit": "7000000"
+      }
+    }
+  ]
+}
+```
+
+Revert transaction back on Base Sepolia:
+
+https://sepolia.basescan.org/tx/0xd86a5babfb7c3297b98d05d145707010aa8f7b690af151729035c3e2d0567eae
