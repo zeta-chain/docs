@@ -4,6 +4,10 @@ externally-owned account (EOA) or a universal application on ZetaChain. You can
 also deposit SOL and call a universal application in a single transaction using
 the `deposit_and_call` instruction.
 
+Note: until full Gateway support is released on Solana, when withdrawing ZRC-20
+tokens from ZetaChain to Solana, use ZRC-20 `withdraw()` method directly,
+instead of using ZetaChain's Gateway.
+
 ## Deposit SOL
 
 To deposit SOL to an EOA or a universal application on ZetaChain, use the
