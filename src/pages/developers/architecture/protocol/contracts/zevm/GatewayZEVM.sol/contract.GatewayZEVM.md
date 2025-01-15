@@ -240,7 +240,7 @@ Withdraw ZETA tokens to an external chain.
 
 
 ```solidity
-function withdraw(bytes memory, uint256, uint256, RevertOptions calldata) external whenNotPaused;
+function withdraw(bytes memory, uint256, uint256, RevertOptions calldata) external view whenNotPaused;
 ```
 
 ### withdrawAndCall
@@ -258,6 +258,7 @@ function withdrawAndCall(
     RevertOptions calldata
 )
     external
+    view
     whenNotPaused;
 ```
 
