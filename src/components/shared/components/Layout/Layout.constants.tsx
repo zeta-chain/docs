@@ -89,6 +89,13 @@ export const navMainItems: NavItem[][] = [
   ],
   [
     {
+      label: "Tools",
+      icon: IconTools,
+      url: "/reference",
+    },
+  ],
+  [
+    {
       label: "Run a Node",
       icon: IconServer,
       url: "/nodes",
@@ -99,13 +106,6 @@ export const navMainItems: NavItem[][] = [
       label: "Use",
       icon: IconClaim,
       url: "/users",
-    },
-  ],
-  [
-    {
-      label: "Tools",
-      icon: IconTools,
-      url: "/reference",
     },
   ],
   [

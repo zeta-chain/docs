@@ -11,6 +11,10 @@
     "title": "Build",
     "description": "Learn how to build on ZetaChain."
   },
+  "reference": {
+    "title": "Tools",
+    "description": "Useful articles to help get you up and running."
+  },
   "nodes": {
     "title": "Run a Node",
     "description": "Setup and run a ZetaChain node.",
@@ -20,10 +24,6 @@
   "users": {
     "title": "Using our Products",
     "description": "Start using our many products."
-  },
-  "reference": {
-    "title": "Tools",
-    "description": "Useful articles to help get you up and running."
   },
   "about": {
     "title": "About",
