@@ -494,7 +494,7 @@ npx hardhat connected-call \
   --contract 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
   --receiver 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
   --network base_sepolia \
-  --tx-options-gas-price 20000 --types '["string"]' alice
+  --types '["string"]' alice
 ```
 
 https://sepolia.basescan.org/tx/0x133cdf3a06195de0a6bb89dd4761ca98d1301534b3c4987f0ff93c95c3fff78c
@@ -510,7 +510,7 @@ npx hardhat universal-call \
   --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
   --function "hello(string)" \
   --network zeta_testnet \
-  --tx-options-gas-price 200000 --types '["string"]' alice
+  --types '["string"]' alice
 ```
 
 https://zetachain-testnet.blockscout.com/tx/0x19d476fa2c3d29ba41467ae7f2742541fd11e0b67d6548fe7655a3d40274323e
@@ -527,6 +527,7 @@ npx hardhat universal-withdraw-and-call \
   --function "hello(string)" \
   --amount 0.005 \
   --network zeta_testnet \
+  --call-options-is-arbitrary-call \
   --types '["string"]' hello
 ```
 
