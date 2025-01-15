@@ -1,22 +1,21 @@
 {
   "index": {
-    "title": "Get Started",
-    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "title": "Get Started"
   },
   "zetachain": {
     "title": "What is ZetaChain?",
-    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "description": "ZetaChain enables seamless interoperability for universal apps, simplifying cross-chain interactions with powerful tools like chain orchestration and native token transfers."
   },
   "build": {
     "title": "Why Build on ZetaChain?",
-    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "description": "ZetaChain empowers developers to build universal apps with omnichain interoperability, offering seamless cross-chain interactions, native token transfers, forward compatibility, and a gasless execution environment."
   },
   "evm": {
     "title": "Universal EVM",
-    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "description": "The Universal EVM on ZetaChain is a decentralized smart contract platform that unifies cross-chain interactions, allowing developers to build omnichain-compatible applications with EVM functionality."
   },
   "app": {
     "title": "Universal App",
-    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "description": "Universal apps are smart contracts that seamlessly interact with multiple blockchains, enabling cross-chain calls, token transfers, and gas abstraction, supporting EVM, Bitcoin, and other connected networks."
   }
 }
