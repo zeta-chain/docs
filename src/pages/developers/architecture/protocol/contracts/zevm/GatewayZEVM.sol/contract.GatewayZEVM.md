@@ -230,7 +230,7 @@ function withdrawAndCall(
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 |`zrc20`|`address`|The address of the ZRC20 token.|
 |`message`|`bytes`|The calldata to pass to the contract call.|
-|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbitrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
@@ -284,7 +284,7 @@ function call(
 |`receiver`|`bytes`|The receiver address on the external chain.|
 |`zrc20`|`address`|Address of zrc20 to pay fees.|
 |`message`|`bytes`|The calldata to pass to the contract call.|
-|`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
+|`callOptions`|`CallOptions`|Call options including gas limit and arbitrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 

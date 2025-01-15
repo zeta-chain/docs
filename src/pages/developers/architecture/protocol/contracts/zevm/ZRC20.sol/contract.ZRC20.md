@@ -447,7 +447,7 @@ function withdrawGasFeeWithGasLimit(uint256 gasLimit) public view override retur
 
 ### withdraw
 
-*Withraws ZRC20 tokens to external chains, this function causes cctx module to send out outbound tx to the
+*Withdraws ZRC20 tokens to external chains, this function causes cctx module to send out outbound tx to the
 outbound chain
 this contract should be given enough allowance of the gas ZRC20 to pay for outbound tx gas fee.*
 
