@@ -20,7 +20,11 @@ const StyledAccordion = styled(Accordion)`
   }
 `;
 
-type NavigationAccordionLinkProps = PropsWithChildren<{ page: Page; onClick?: () => void }>;
+type NavigationAccordionLinkProps = PropsWithChildren<{
+  page: Page;
+  onClick?: () => void;
+  isTopLevelPage?: boolean;
+}>;
 
 const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, children }) => {
   const router = useRouter();
@@ -64,7 +68,7 @@ const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, chi
   );
 };
 
-export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = ({ page, onClick }) => {
+export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = ({ page, onClick, isTopLevelPage }) => {
   const router = useRouter();
   const isRouteSelected = router.pathname === page.route;
 
@@ -78,12 +82,14 @@ export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = (
         })}
         onClick={onClick}
       >
-        <div
-          className={clsx("w-1 h-1 ml-1 mr-2 mt-2 sm:mt-[5px] shrink-0 transition-all", {
-            "bg-green-100 ": isRouteSelected,
-            "bg-grey-200 dark:bg-grey-600 group-hover:bg-green-100": !isRouteSelected,
-          })}
-        />
+        {!isTopLevelPage && (
+          <div
+            className={clsx("w-1 h-1 ml-1 mr-2 mt-2 sm:mt-[5px] shrink-0 transition-all", {
+              "bg-green-100 ": isRouteSelected,
+              "bg-grey-200 dark:bg-grey-600 group-hover:bg-green-100": !isRouteSelected,
+            })}
+          />
+        )}
 
         <div className="text-base leading-[130%] sm:text-xs sm:leading-[110%] whitespace-pre-wrap text-ellipsis overflow-hidden">
           {getPageTitle(page)}

@@ -89,7 +89,12 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                                 .filter((page) => page.route !== item.url)
                                 .map((page) => (
                                   <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
-                                    <NavigationAccordionLink key={page.route} page={page} onClick={closeMobileDrawer} />
+                                    <NavigationAccordionLink
+                                      key={page.route}
+                                      page={page}
+                                      onClick={closeMobileDrawer}
+                                      isTopLevelPage
+                                    />
                                   </div>
                                 ))}
                             </List>

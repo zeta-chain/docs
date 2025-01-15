@@ -17,13 +17,13 @@ export const HomeHero: React.FC = () => {
         <div className="description flex flex-col gap-8 sm:gap-10">
           <div className="grid grid-cols-10 gap-5 md:gap-8 text-base leading-[160%] font-normal text-grey-400 dark:text-grey-300">
             <p className="col-span-10 md:col-span-5">
-              ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain
-              interoperability.
+              ZetaChain is the first Universal Blockchain with native access to Bitcoin, Ethereum, Solana, and more,
+              offering seamless UX and unified liquidity to the next billions of users.
             </p>
 
             <p className="col-span-10 md:col-span-5">
-              A truly fluid, multi-chain crypto ecosystem, where users and developers can use and appreciate the
-              benefits of any blockchain.
+              With its Universal EVM, ZetaChain empowers developers to build Universal Apps that operate natively across
+              any blockchain, creating a fluid crypto ecosystem from a single platform.
             </p>
           </div>
 

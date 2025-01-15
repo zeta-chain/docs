@@ -1,8 +1,4 @@
 {
-  "overview": {
-    "title": "Architecture",
-    "description": "Architecture overview of ZetaChain"
-  },
   "gateway": {
     "title": "Gateway",
     "description": "A single point of entry for interacting with universal apps"
