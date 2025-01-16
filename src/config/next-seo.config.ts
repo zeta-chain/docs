@@ -1,8 +1,7 @@
 import { NextSeoProps } from "next-seo";
 
-export const defaultTitle = "ZetaDocs";
-export const defaultDescription =
-  "ZetaChain Docs. ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.";
+export const defaultTitle = "ZetaChain Docs";
+export const defaultDescription = "ZetaChain Docs are designed to help you build with ZetaChain.";
 export const defaultBaseUrl = "https://www.zetachain.com/docs/";
 
 export const nextSeoProps: NextSeoProps = {
