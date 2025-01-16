@@ -11,6 +11,7 @@ import {
   IconSupport,
   IconTools,
   IconWelcome,
+  IconCoffeeCup,
 } from "../Icons";
 
 export const openDrawerWidth = 200;
@@ -76,7 +77,7 @@ export const navMainItems: NavItem[][] = [
   [
     {
       label: "Get Started",
-      icon: IconAbout,
+      icon: IconCoffeeCup,
       url: "/start",
     },
   ],

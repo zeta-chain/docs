@@ -35,3 +35,4 @@ export * from "./components/IconTwitter";
 export * from "./components/IconWelcome";
 export * from "./components/IconYouTube";
 export * from "./components/IconZetaDocsLogo";
+export * from "./components/IconCoffeeCup";
