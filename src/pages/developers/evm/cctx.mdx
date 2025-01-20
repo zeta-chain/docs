@@ -1,0 +1,128 @@
+Cross-chain transactions (CCTXs) can be classified into two main types: incoming
+and outgoing.
+
+**Incoming transactions** (connected chain → ZetaChain) are initiated on a
+connected chain and result in a transaction on ZetaChain. An incoming
+transaction consists of two transactions:
+
+- Inbound: a transaction is initiated and observed on the connected chain.
+- Outbound: the corresponding transaction is broadcasted and executed on
+  ZetaChain.
+
+**Outgoing transactions** (ZetaChain → connected chain) are initiated on
+ZetaChain and result in a transaction on a connected chain. An outgoing
+transaction consists of two transactions:
+
+- Inbound: A transaction is initiated and observed on ZetaChain.
+- Outbound: The corresponding transaction is broadcasted and executed on the
+  connected chain.
+
+Tracking a CCTX involves querying ZetaChain's Cosmos SDK HTTP API with an
+inbound transaction hash to get a CCTX hash. If a CCTX results in another CCTX
+(for example, an incoming results in an outgoing), the first CCTX hash can be
+used as a inbound hash to get the second CCTX hash.
+
+## Incoming & Outgoing
+
+Consider an example of making a call from Ethereum Sepolia to a universal app
+contract on ZetaChain, which triggers an outgoing call from ZetaChain to Polygon
+Amoy.
+
+In this example a user calls EVM Gateway's `depositAndCall` to call [a universal
+swap contract on ZetaChain](/developers/tutorials/swap), which swaps incoming
+tokens for target ZRC-20 tokens and calls ZetaChain's Gateway `withdraw`
+function, which triggers a token transfer on Polygon Amoy.
+
+This example involves two CCTXs:
+
+1. Ethereum Sepolia → ZetaChain Testnet
+2. ZetaChain Testnet → Polygon Amoy
+
+An inbound transaction on Ethereum Sepolia:
+
+https://sepolia.etherscan.io/tx/0x8e925fa63c69bd27a3aa8e30f4c0f1e67e5fd3fedb23339b387b51b1543e55af
+
+Use the inbound transaction hash to get the CCTX 1 hash:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x8e925fa63c69bd27a3aa8e30f4c0f1e67e5fd3fedb23339b387b51b1543e55af
+
+Use the CCTX 1 hash (`0x542b...11da`) as an inbound hash to get CCTX 2 hash:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x542b6bd80004f4013b725c2170b9ed01731b8af9dc61bfb5c0534dc2f0d511da
+
+Outbound hash on Polygon Amoy:
+
+https://amoy.polygonscan.com/tx/0x49f67ece0c0b59d58312df91342d46b14496abf2d8a52a1a5ce9f4c6136e8d75
+
+## Incoming
+
+Consider an example of making call from Ethereum Sepolia to a universal app
+contract on ZetaChain.
+
+In this example a user calls EVM Gateway's `depositAndCall` to call [a universal
+swap contract on ZetaChain](/developers/tutorials/swap), which swaps incoming
+tokens for target ZRC-20 tokens, which are transferred to the recipient on
+ZetaChain.
+
+This example results in a single CCTX: Ethereum Sepolia → ZetaChain Testnet.
+
+An inbound transaction on Ethereum Sepolia:
+
+https://sepolia.etherscan.io/tx/0xfacdad3d12988e1065e32b757d1bbc7e868fb8cbae51c909b3f178027d233f79
+
+CCTX:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xfacdad3d12988e1065e32b757d1bbc7e868fb8cbae51c909b3f178027d233f79
+
+If you try querying the API with the CCTX hash as an inbound hash, the API
+responds with HTTP 404 response, because this CCTX does not trigger another
+CCTX.
+
+## Incoming & Abort
+
+Consider an example of making call from Ethereum Sepolia to a universal app
+contract on ZetaChain, which aborts.
+
+In this example a user calls EVM Gateway's `depositAndCall` to call [a universal
+swap contract on ZetaChain](/developers/tutorials/swap), which swaps incoming
+tokens for target ZRC-20 tokens, but the amount of supplied tokens is not enough
+to cover the withdraw gas fee to Polygon Amoy, so the transaction reverts. The
+amount of tokens is also not sufficient to cover a revert transaction to
+Ethereum Sepolia, so the transaction aborts.
+
+An inbound transaction on Ethereum Sepolia:
+
+https://sepolia.etherscan.io/tx/0x254d687404ff8f1cd481d2b25866e8c0a68c5d7fde08deaa60e61577752e1466
+
+CCTX:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x254d687404ff8f1cd481d2b25866e8c0a68c5d7fde08deaa60e61577752e1466
+
+## Incoming & Revert
+
+An example of making call from Base Sepolia to a universal app contract on
+ZetaChain, which reverts.
+
+In this example a user calls EVM Gateway's `depositAndCall` to call [a universal
+swap contract on ZetaChain](/developers/tutorials/swap), which swaps incoming
+tokens for target ZRC-20 tokens, but the amount of supplied tokens is not enough
+to cover the withdraw gas fee to Polygon Amoy, so the transaction reverts.
+
+An inbound transaction on Base Sepolia:
+
+https://sepolia.basescan.org/tx/0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407
+
+Revert transaction back on Base Sepolia:
+
+https://sepolia.basescan.org/tx/0xd86a5babfb7c3297b98d05d145707010aa8f7b690af151729035c3e2d0567eae
+
+## Multiple Outgoing
+
+A single transaction can trigger more than one CCTXs.
+
+In this example a single function call on ZetaChain makes multiple Gateway
+`call`s to different chains.
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x3d56898690abb98a514b0b05b799c0d61c0e305a5f962504f3b301adf01b1b34
