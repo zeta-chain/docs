@@ -577,6 +577,9 @@ https://zetachain-testnet.blockscout.com/tx/0x9afec4281397af879f9b22146125a748c8
 Transfer the token from ZetaChain to Base. Gas amount (specified in ZETA) is an
 estimate. Unused tokens are refunded to the user.
 
+User ZRC-20 Base ETH as the destination address to specify the chain to which
+the NFT will be transferred.
+
 ```
 npx hardhat nft:transfer \
   --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
@@ -595,6 +598,8 @@ npx hardhat nft:transfer \
   "tokenId": "1133890395085443587238793966499147269485704287551"
 }
 ```
+
+Outgoing cross-chain transaction from ZetaChain to Base:
 
 https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x85592700ffadaa9afe2475af03e597d2d15a2edaa8d7aa73b76c022bfd18483f
 
@@ -621,7 +626,11 @@ npx hardhat nft:transfer \
 }
 ```
 
+Incoming cross-chain transaction from Base to ZetaChain:
+
 https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x87b2119ad69e03fb7d9839d013f826c2281a1c7d0ce12ca4aaaa33875454e8a7
+
+Outgoing cross-chain transaction from ZetaChain to Ethereum:
 
 https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x47a0a03411631a6c758948ec22a215f561fcf326bbbbeda2720ca1e5b35f9ee2
 
