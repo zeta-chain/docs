@@ -11,6 +11,10 @@
     "title": "Gas Fees",
     "description": "Learn about ZRC-20 withdraw fees, message passing fees"
   },
+  "cctx": {
+    "title": "Cross-Chain Transactions",
+    "description": "Cross-Chain Transactions"
+  },
   "addresses": {
     "title": "Account Addresses",
     "description": "Learn about types of account address, how to use and convert between them"
