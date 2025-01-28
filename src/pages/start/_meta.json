@@ -8,14 +8,14 @@
   },
   "build": {
     "title": "Why Build on ZetaChain?",
-    "description": "Cross-chain contract calls, native token transfers, gasless execution environment"
+    "description": "Chain orchestration, cross-chain native token transfers, gasless execution environment."
   },
   "evm": {
     "title": "Universal EVM",
-    "description": "Smart contract platform that allows developers to build omnichain-compatible applications with EVM functionality."
+    "description": "Smart contract platform with built-in interoperability."
   },
   "app": {
-    "title": "Universal App",
-    "description": "Universal apps are smart contracts that seamlessly interact with multiple blockchains, enabling cross-chain calls, token transfers, and gas abstraction, supporting EVM, Bitcoin, and other connected networks."
+    "title": "Universal Apps",
+    "description": "Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more."
   }
 }
