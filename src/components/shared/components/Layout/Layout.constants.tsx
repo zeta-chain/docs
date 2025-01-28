@@ -6,12 +6,12 @@ import {
   IconAbout,
   IconClaim,
   IconCode,
+  IconCoffeeCup,
   IconCommunity,
   IconServer,
   IconSupport,
   IconTools,
   IconWelcome,
-  IconCoffeeCup,
 } from "../Icons";
 
 export const openDrawerWidth = 200;

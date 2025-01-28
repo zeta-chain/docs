@@ -4,15 +4,15 @@
   },
   "zetachain": {
     "title": "What is ZetaChain?",
-    "description": "ZetaChain enables seamless interoperability for universal apps, simplifying cross-chain interactions with powerful tools like chain orchestration and native token transfers."
+    "description": "Universal Blockchain with native access to any chain, making crypto as accessible, diverse, and connected as the internet."
   },
   "build": {
     "title": "Why Build on ZetaChain?",
-    "description": "ZetaChain empowers developers to build universal apps with omnichain interoperability, offering seamless cross-chain interactions, native token transfers, forward compatibility, and a gasless execution environment."
+    "description": "Cross-chain contract calls, native token transfers, gasless execution environment"
   },
   "evm": {
     "title": "Universal EVM",
-    "description": "The Universal EVM is a smart contract platform that unifies cross-chain interactions, allowing developers to build omnichain-compatible applications with EVM functionality."
+    "description": "Smart contract platform that allows developers to build omnichain-compatible applications with EVM functionality."
   },
   "app": {
     "title": "Universal App",
