@@ -12,6 +12,9 @@ message MsgAddOutboundTracker {
 	int64 chain_id = 2;
 	uint64 nonce = 3;
 	string tx_hash = 4;
+	pkg.proofs.Proof proof = 5;
+	string block_hash = 6;
+	int64 tx_index = 7;
 }
 ```
 
@@ -25,6 +28,9 @@ message MsgAddInboundTracker {
 	int64 chain_id = 2;
 	string tx_hash = 3;
 	pkg.coin.CoinType coin_type = 4;
+	pkg.proofs.Proof proof = 5;
+	string block_hash = 6;
+	int64 tx_index = 7;
 }
 ```
 
@@ -186,6 +192,7 @@ message MsgVoteInbound {
 	RevertOptions revert_options = 17;
 	CallOptions call_options = 18;
 	bool is_cross_chain_call = 19;
+	InboundStatus status = 20;
 }
 ```
 
@@ -205,6 +212,7 @@ message MsgWhitelistERC20 {
 	string symbol = 5;
 	uint32 decimals = 6;
 	int64 gas_limit = 7;
+	string liquidity_cap = 8;
 }
 ```
 

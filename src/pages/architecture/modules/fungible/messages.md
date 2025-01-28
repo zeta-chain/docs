@@ -43,6 +43,7 @@ message MsgDeployFungibleCoinZRC20 {
 	string symbol = 6;
 	pkg.coin.CoinType coin_type = 7;
 	int64 gas_limit = 8;
+	string liquidity_cap = 9;
 }
 ```
 
@@ -79,7 +80,7 @@ can be updated IMPORTANT: the new contract bytecode must have the same
 storage layout as the old contract bytecode the new contract can add new
 variable but cannot remove any existing variable
 
-Authorized: admin policy group 2
+Authozied: admin policy group 2
 
 ```proto
 message MsgUpdateContractBytecode {
