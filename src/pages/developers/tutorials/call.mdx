@@ -17,8 +17,6 @@ By the end of this tutorial, you will have learned how to:
   supported ERC-20s)
 - Gracefully handle reverts
 
-<Alert>This tutorial relies on the Gateway, which is currently available only on localnet and testnet.</Alert>
-
 ## Prerequisites
 
 Before you begin, make sure you've completed the following tutorials:
@@ -82,6 +80,36 @@ contract Universal is UniversalContract {
         }
         IZRC20(zrc20).approve(address(gateway), gasFee);
         gateway.call(receiver, zrc20, message, callOptions, revertOptions);
+    }
+
+    function callMulti(
+        bytes[] memory receiverArray,
+        address[] memory zrc20Array,
+        bytes calldata messages,
+        CallOptions memory callOptions,
+        RevertOptions memory revertOptions
+    ) external {
+        for (uint256 i = 0; i < zrc20Array.length; i++) {
+            (, uint256 gasFee) = IZRC20(zrc20Array[i])
+                .withdrawGasFeeWithGasLimit(callOptions.gasLimit);
+            if (
+                !IZRC20(zrc20Array[i]).transferFrom(
+                    msg.sender,
+                    address(this),
+                    gasFee
+                )
+            ) {
+                revert TransferFailed();
+            }
+            IZRC20(zrc20Array[i]).approve(address(gateway), gasFee);
+            gateway.call(
+                receiverArray[i],
+                zrc20Array[i],
+                messages,
+                callOptions,
+                revertOptions
+            );
+        }
     }
 
     function withdraw(
@@ -494,7 +522,7 @@ npx hardhat connected-call \
   --contract 0x775329c70A8d09AEb5e5ca92C369FF3155C5f1Ed \
   --receiver 0x496CD66950a1F1c5B02513809A2d37fFB942be1B \
   --network base_sepolia \
-  --tx-options-gas-price 20000 --types '["string"]' alice
+  --types '["string"]' alice
 ```
 
 https://sepolia.basescan.org/tx/0x133cdf3a06195de0a6bb89dd4761ca98d1301534b3c4987f0ff93c95c3fff78c
@@ -510,7 +538,7 @@ npx hardhat universal-call \
   --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
   --function "hello(string)" \
   --network zeta_testnet \
-  --tx-options-gas-price 200000 --types '["string"]' alice
+  --types '["string"]' alice
 ```
 
 https://zetachain-testnet.blockscout.com/tx/0x19d476fa2c3d29ba41467ae7f2742541fd11e0b67d6548fe7655a3d40274323e
@@ -527,6 +555,7 @@ npx hardhat universal-withdraw-and-call \
   --function "hello(string)" \
   --amount 0.005 \
   --network zeta_testnet \
+  --call-options-is-arbitrary-call \
   --types '["string"]' hello
 ```
 
