@@ -428,6 +428,214 @@ high gas fees associated with returning the NFT back to chain from which it was
 transferred in the first place. After the revert, the original sender can
 transfer the NFT from ZetaChain to any other chain.
 
+## Demo on Testnet
+
+### Deploy
+
+```
+npx hardhat nft:deploy \
+  --network zeta_testnet \
+  --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+  --name ZetaChainUniversalNFT \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "deployer": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+  "network": "zeta_testnet"
+}
+```
+
+```
+npx hardhat nft:deploy \
+  --network base_sepolia \
+  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+  --name EVMUniversalNFT \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
+  "deployer": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+  "network": "base_sepolia"
+}
+```
+
+```
+npx hardhat nft:deploy \
+  --network sepolia_testnet \
+  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+  --name EVMUniversalNFT \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4",
+  "deployer": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+  "network": "sepolia_testnet"
+}
+```
+
+### Connect Contracts
+
+```
+npx hardhat nft:set-connected \
+  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --connected 0xd74e5D85828F4928AB22cd58f015F4245C0808C1 \
+  --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
+  --network zeta_testnet \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "zrc20": "0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD",
+  "connectedContractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
+  "transactionHash": "0xa666b88e05c2fe807075eb9eaff72a223e262b71493cbfe1d01ad580affa5039"
+}
+```
+
+```
+npx hardhat nft:set-connected \
+  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --connected 0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4 \
+  --zrc20 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --network zeta_testnet \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "zrc20": "0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0",
+  "connectedContractAddress": "0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4",
+  "transactionHash": "0x39249ebc1a888cb73aad4393fb68a900d0ce3a23c84aafd5d9126651696ace2a"
+}
+```
+
+```
+npx hardhat nft:set-universal \
+  --contract 0xd74e5D85828F4928AB22cd58f015F4245C0808C1 \
+  --universal 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --network base_sepolia \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
+  "universalContract": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "transactionHash": "0xe16f57df5521ca5cb54738e053cbd86b2ac104780e92c7c570b0984a47bf2cf4"
+}
+```
+
+```
+npx hardhat nft:set-universal \
+  --contract 0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4 \
+  --universal 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --network sepolia_testnet \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4",
+  "universalContract": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "transactionHash": "0x500b244feb0aaccb4fce2e451b988b1affaf5bf3a670392492a42f292012cc88"
+}
+```
+
+### Mint on ZetaChain
+
+```
+npx hardhat nft:mint \
+  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --token-uri https://example.org \
+  --network zeta_testnet \
+  --json
+```
+
+```json
+{
+  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "mintTransactionHash": "0x9afec4281397af879f9b22146125a748c84d0a489d3cdaf6434908616cf41024",
+  "recipient": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+  "tokenURI": "https://example.org",
+  "tokenId": "1133890395085443587238793966499147269485704287551"
+}
+```
+
+https://zetachain-testnet.blockscout.com/tx/0x9afec4281397af879f9b22146125a748c84d0a489d3cdaf6434908616cf41024
+
+### Transfer from ZetaChain to Base
+
+Transfer the token from ZetaChain to Base. Gas amount (specified in ZETA) is an
+estimate. Unused tokens are refunded to the user.
+
+User ZRC-20 Base ETH as the destination address to specify the chain to which
+the NFT will be transferred.
+
+```
+npx hardhat nft:transfer \
+  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --network zeta_testnet \
+  --receiver 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 \
+  --destination 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
+  --token-id 1133890395085443587238793966499147269485704287551 \
+  --gas-amount 5
+```
+
+```json
+{
+  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
+  "transferTransactionHash": "0x85592700ffadaa9afe2475af03e597d2d15a2edaa8d7aa73b76c022bfd18483f",
+  "sender": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+  "tokenId": "1133890395085443587238793966499147269485704287551"
+}
+```
+
+Outgoing cross-chain transaction from ZetaChain to Base:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x85592700ffadaa9afe2475af03e597d2d15a2edaa8d7aa73b76c022bfd18483f
+
+https://sepolia.basescan.org/tx/0xa2c78ea6cc559e89c49ae6c552fd790600c8660247e31210eda42e069aea54c8
+
+### Transfer from Base to Ethereum
+
+```
+npx hardhat nft:transfer \
+  --contract 0xd74e5D85828F4928AB22cd58f015F4245C0808C1 \
+  --network base_sepolia \
+  --receiver 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 \
+  --destination 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --token-id 1133890395085443587238793966499147269485704287551 \
+  --gas-amount 0.005
+```
+
+```json
+{
+  "contractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
+  "transferTransactionHash": "0x87b2119ad69e03fb7d9839d013f826c2281a1c7d0ce12ca4aaaa33875454e8a7",
+  "sender": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
+  "tokenId": "1133890395085443587238793966499147269485704287551"
+}
+```
+
+Incoming cross-chain transaction from Base to ZetaChain:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x87b2119ad69e03fb7d9839d013f826c2281a1c7d0ce12ca4aaaa33875454e8a7
+
+Outgoing cross-chain transaction from ZetaChain to Ethereum:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x47a0a03411631a6c758948ec22a215f561fcf326bbbbeda2720ca1e5b35f9ee2
+
+https://sepolia.etherscan.io/tx/0x9a0e46f5e1f917d482abf2d471c23afeef55098177089cfeb2b4e199ef6cdba8
+
 ## Source Code
 
 https://github.com/zeta-chain/standard-contracts/tree/main/contracts/nft
