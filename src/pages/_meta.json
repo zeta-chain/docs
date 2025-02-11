@@ -3,9 +3,17 @@
     "title": "ZetaChain Documentation",
     "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
   },
+  "start": {
+    "title": "Get Started",
+    "description": "Start building on ZetaChain."
+  },
   "developers": {
     "title": "Build",
     "description": "Learn how to build on ZetaChain."
+  },
+  "reference": {
+    "title": "Tools",
+    "description": "Useful articles to help get you up and running."
   },
   "nodes": {
     "title": "Run a Node",
@@ -16,10 +24,6 @@
   "users": {
     "title": "Using our Products",
     "description": "Start using our many products."
-  },
-  "reference": {
-    "title": "Tools",
-    "description": "Useful articles to help get you up and running."
   },
   "about": {
     "title": "About",

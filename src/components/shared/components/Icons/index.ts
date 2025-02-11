@@ -9,6 +9,7 @@ export * from "./components/IconChat";
 export * from "./components/IconCheck";
 export * from "./components/IconClaim";
 export * from "./components/IconCode";
+export * from "./components/IconCoffeeCup";
 export * from "./components/IconCommunity";
 export * from "./components/IconCopy";
 export * from "./components/IconDiscord";

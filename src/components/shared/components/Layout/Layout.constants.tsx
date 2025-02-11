@@ -6,6 +6,7 @@ import {
   IconAbout,
   IconClaim,
   IconCode,
+  IconCoffeeCup,
   IconCommunity,
   IconServer,
   IconSupport,
@@ -75,9 +76,23 @@ export const navMainItems: NavItem[][] = [
   ],
   [
     {
+      label: "Get Started",
+      icon: IconCoffeeCup,
+      url: "/start",
+    },
+  ],
+  [
+    {
       label: "Build",
       icon: IconCode,
       url: "/developers",
+    },
+  ],
+  [
+    {
+      label: "Tools",
+      icon: IconTools,
+      url: "/reference",
     },
   ],
   [
@@ -92,13 +107,6 @@ export const navMainItems: NavItem[][] = [
       label: "Use",
       icon: IconClaim,
       url: "/users",
-    },
-  ],
-  [
-    {
-      label: "Tools",
-      icon: IconTools,
-      url: "/reference",
     },
   ],
   [
