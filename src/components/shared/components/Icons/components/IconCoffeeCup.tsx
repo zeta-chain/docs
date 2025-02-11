@@ -5,7 +5,7 @@ const IconCoffeeCup = <T extends unknown>({
   color,
   size = 24,
   ...otherProps
-}: SVGProps<T, SVGSVGElement> & { color?: string; size?: number; }) => (
+}: SVGProps<T, SVGSVGElement> & { color?: string; size?: number }) => (
   <svg
     width={size}
     height={size}
