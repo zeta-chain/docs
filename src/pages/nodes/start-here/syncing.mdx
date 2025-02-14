@@ -19,6 +19,9 @@ inside `/home/zetachain/.zetacored` directory.
 ## Download the latest full node snapshot
 This set of commands will download and extract the latest full node snapshot.
 ```bash
+# Ensure lz4 is installed
+sudo apt update && sudo apt install lz4 -y
+
 # Capture the JSON response once
 SNAPSHOT_JSON=$(curl -s https://snapshots.rpc.zetachain.com/mainnet/fullnode/latest.json)
 
