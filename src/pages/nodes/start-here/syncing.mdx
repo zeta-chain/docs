@@ -27,7 +27,8 @@ SNAPSHOT_LINK=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].link')
 SNAPSHOT_FILENAME=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].filename')
 
 # Download and extract the snapshot
-sudo -u zetachain curl "$SNAPSHOT_LINK" -o "/home/zetachain/$SNAPSHOT_FILENAME" && lz4 -dc /home/zetachain/$SNAPSHOT_FILENAME | tar -C /home/zetachain/.zetacored/ -xvf -
+sudo -u zetachain curl "$SNAPSHOT_LINK" -o "/home/zetachain/$SNAPSHOT_FILENAME" && \
+sudo -u zetachain lz4 -dc /home/zetachain/$SNAPSHOT_FILENAME | sudo -u zetachain tar -C /home/zetachain/.zetacored/ -xvf -
 ```
 
 <NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
