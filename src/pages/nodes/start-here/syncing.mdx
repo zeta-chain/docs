@@ -11,10 +11,10 @@ import { NodeSnapshots } from "~/components/Docs";
 
 # Option 1: Snapshot method
 
-Downloads the data directory backed up from an existing node.
+This option downloads a data directory backed up from an existing node.
 
 Choose the network and snapshot type, download the snapshot and extract the snapshot
-inside `~/.zetacored` directory.
+inside `/home/zetachain/.zetacored` directory.
 
 <NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
 
@@ -75,7 +75,7 @@ ksync version
 
 And change the following config in the `config.toml` file:
 
-```text filename="~/.zetacored/config/config.toml"
+```text filename="/home/zetachain/.zetacored/config/config.toml"
 db_backend = "goleveldb"
 ```
 
