@@ -27,7 +27,7 @@ SNAPSHOT_LINK=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].link')
 SNAPSHOT_FILENAME=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].filename')
 
 # Download and extract the snapshot
-sudo -u zetachain curl "$SNAPSHOT_LINK" -o "/home/zetachain/$SNAPSHOT_FILENAME" && lz4 -d /home/zetachain/$SNAPSHOT_FILENAME /home/zetachain/.zetacored/
+sudo -u zetachain curl "$SNAPSHOT_LINK" -o "/home/zetachain/$SNAPSHOT_FILENAME" && lz4 -dc /home/zetachain/$SNAPSHOT_FILENAME | tar -C /home/zetachain/.zetacored/ -xvf -
 ```
 
 <NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
@@ -105,6 +105,17 @@ ksync state-sync --binary="/path/to/zetacored" --chain-id=zetachain_7000-1 --sna
 
 # Checking Node Health
 
+### Query Node Status
+
+You can confirm that the node is synced by querying the node status endpoint:
+
+```
+curl http://localhost:26657/status | jq
+```
+
+Make sure that `catching_up` is false. Also, check `latest_block_height` and
+`latest_block_time`.
+
 ### Check Logs
 
 To confirm that the node is working, you can watch the logs. The node should be
@@ -117,14 +128,3 @@ printing `INF` logs like these:
 4:10AM INF indexed block events height=3468229 module=txindex server=node
 4:11AM INF Timed out dur=4468.382473 height=3468230 module=consensus round=0 server=node step=1
 ```
-
-### Query Node Status
-
-You can confirm that the node is synced by querying the node status endpoint:
-
-```
-curl localhost:26657/status
-```
-
-Make sure that `catching_up` is false. Also, check `latest_block_height` and
-`latest_block_time`.
