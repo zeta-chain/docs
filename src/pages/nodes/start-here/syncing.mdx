@@ -11,10 +11,29 @@ import { NodeSnapshots } from "~/components/Docs";
 
 # Option 1: Snapshot method
 
-Downloads the data directory backed up from an existing node.
+This option downloads a data directory backed up from an existing node.
 
 Choose the network and snapshot type, download the snapshot and extract the snapshot
-inside `~/.zetacored` directory.
+inside `/home/zetachain/.zetacored` directory.
+
+## Download the latest full node snapshot
+This set of commands will download and extract the latest full node snapshot.
+```bash
+# Ensure lz4 is installed
+sudo apt update && sudo apt install lz4 -y
+
+# Capture the JSON response once
+SNAPSHOT_JSON=$(curl -s https://snapshots.rpc.zetachain.com/mainnet/fullnode/latest.json)
+
+# Extract link and filename into variables
+SNAPSHOT_LINK=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].link')
+SNAPSHOT_FILENAME=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].filename')
+
+# Download and extract the snapshot
+sudo -u zetachain curl "$SNAPSHOT_LINK" -o "/home/zetachain/$SNAPSHOT_FILENAME" && \
+sudo -u zetachain lz4 -dc /home/zetachain/$SNAPSHOT_FILENAME | sudo -u zetachain tar -C /home/zetachain/.zetacored/ -xvf - && \
+sudo systemctl start zetacored
+```
 
 <NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
 
@@ -75,7 +94,7 @@ ksync version
 
 And change the following config in the `config.toml` file:
 
-```text filename="~/.zetacored/config/config.toml"
+```text filename="/home/zetachain/.zetacored/config/config.toml"
 db_backend = "goleveldb"
 ```
 
@@ -91,6 +110,17 @@ ksync state-sync --binary="/path/to/zetacored" --chain-id=zetachain_7000-1 --sna
 
 # Checking Node Health
 
+### Query Node Status
+
+You can confirm that the node is synced by querying the node status endpoint:
+
+```
+curl http://localhost:26657/status | jq
+```
+
+Make sure that `catching_up` is false. Also, check `latest_block_height` and
+`latest_block_time`.
+
 ### Check Logs
 
 To confirm that the node is working, you can watch the logs. The node should be
@@ -103,14 +133,3 @@ printing `INF` logs like these:
 4:10AM INF indexed block events height=3468229 module=txindex server=node
 4:11AM INF Timed out dur=4468.382473 height=3468230 module=consensus round=0 server=node step=1
 ```
-
-### Query Node Status
-
-You can confirm that the node is synced by querying the node status endpoint:
-
-```
-curl localhost:26657/status
-```
-
-Make sure that `catching_up` is false. Also, check `latest_block_height` and
-`latest_block_time`.
