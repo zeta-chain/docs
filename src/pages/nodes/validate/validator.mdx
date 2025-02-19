@@ -17,6 +17,11 @@ key management. We recommend you follow best practices when it comes to secure
 key generation and key management. We are unable to offer support outside of the
 basic setup of a ZetaChain validator.
 
+This guide should be run as the account under which your validator will be running. If you have completed our node setup documentation, the command to switch to that user is:
+```bash
+sudo su -l zetachain
+```
+
 ### Create a Validator Account
 
 Create the account `operator`.
@@ -52,27 +57,25 @@ zetacored query bank balances $(zetacored keys show operator -a)
 ### Create Your Validator
 
 Create a new validator by staking **_azeta_** tokens. Here is an example of
-creating a validator on Zetachain Testnet. Save the transaction hash from the
+creating a validator on Zetachain Mainnet. Save the transaction hash from the
 output.
 
-```bash
-zetacored tx staking create-validator \
-  --amount=1000000000000000000azeta \
-  --pubkey=$(zetacored tendermint show-validator) \
-  --moniker="MY_NODE_NAME" \
-  --chain-id=athens_7001-1 \
-  --commission-rate="0.10" \
-  --commission-max-rate="0.20" \
-  --commission-max-change-rate="0.01" \
-  --min-self-delegation="1000000" \
-  --gas="auto" \
-  --gas-adjustment=1.15 \
-  --gas-prices="0.1azeta" \
-  --from=operator
+First, create and adjust as needed a ~/validator.json file, copying the template below. Be sure to update all fields with appropriate values:
+```text
+{
+	"pubkey": {"@type":"/cosmos.crypto.ed25519.PubKey","key":"EXAMPLE+F405Jcm2vXV+2v4fnjodh6aafuIdeoW+rUw="},
+	"amount": "1000000000000000000azeta",
+	"moniker": "myvalidator",
+	"identity": "validator's (optional) identity signature (ex. UPort or Keybase)",
+	"website": "validator's (optional) website",
+	"security": "validator's (optional) security contact email",
+	"details": "validator's (optional) details",
+	"commission-rate": "0.1",
+	"commission-max-rate": "0.2",
+	"commission-max-change-rate": "0.01",
+	"min-self-delegation": "1000000"
+}
 ```
-
----
-
 - `amount` is the amount of tokens to be bonded
 - `moniker` is the validator's name
 - `commission-rate` is the commission rate on block rewards and fees charged to
@@ -87,12 +90,23 @@ zetacored tx staking create-validator \
   requires to have bonded at all time. If the validator's self-delegated stake
   falls below this limit, the validator gets jailed and kicked out of the active
   validator set
-- `gas-prices` is gas prices in decimal format to determine the transaction fee
 - When specifying commission parameters, the `commission-max-change-rate` is
   used to measure % *point* change over the `commission-rate`. E.g. 1% to 2% is
   a 100% rate increase, but only 1 percentage point
 - `min-self-delegation` is a strictly positive integer that represents the
   minimum amount of self-delegated voting power your validator must always have
+
+Next, ensure that you have replaced the validator's pubkey in validator.json with the output from this command: `zetacored tendermint show-validator`.
+
+Finally, create and execute your validator creation transaction, capturing the txhash from the output. 
+```bash
+zetacored tx staking create-validator ~/validator.json \
+  --gas=10000000 \
+  --gas-prices=10000000000azeta \
+  --from=operator
+```
+
+---
 
 ### Check Transaction Status
 
@@ -122,10 +136,12 @@ it does not earn rewards. It can however, receive delegations.
 
 To delegate additional tokens to your validator use the following command.
 Adjust the amount of tokens accordingly to reach the minimum required bonded
-tokens.
+tokens. Your validator must have enough tokens to be in the top 100 validators 
+by voting power. As of early Q1 2025, this requires a minimum of 700 ZETA.
 
 ```bash
-zetacored tx staking delegate $(zetacored keys show operator --bech val -a) 1000000azeta --from operator
+zetacored tx staking delegate $(zetacored keys show operator --bech val -a) 2000000azeta \
+--gas=10000000 --gas-prices=10000000000azeta  --from operator
 ```
 
 Once your validator receives sufficient bonded tokens it automatically join the
