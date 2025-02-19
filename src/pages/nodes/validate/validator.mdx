@@ -162,6 +162,13 @@ and verify that `missed_blocks_counter: "0”` and `index_offset:` is increasing
 ```bash
 zetacored query slashing signing-info $(zetacored tendermint show-validator)
 ```
+### Backup Your Validator's Concensus Key
+
+By default, the validator's consensus key exists only on the validator node itself. 
+It is important to maintain a backup of this key to protect yourself from losing control 
+of your validator in the event of unexpected data loss. Please ensure that you create a 
+backup copy of the `~/.zetacored/config/priv_validator_key.json` file, and securely save 
+in another location other than the node itself.
 
 ### Unjail Your Validator
 
