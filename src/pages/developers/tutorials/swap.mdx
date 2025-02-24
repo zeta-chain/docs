@@ -176,7 +176,8 @@ contract Swap is
         (uint256 out, address gasZRC20, uint256 gasFee) = handleGasAndSwap(
             zrc20,
             amount,
-            params.target
+            params.target,
+            params.withdraw
         );
         emit TokenSwap(
             context.sender,
@@ -213,7 +214,8 @@ contract Swap is
         (uint256 out, address gasZRC20, uint256 gasFee) = handleGasAndSwap(
             inputToken,
             amount,
-            targetToken
+            targetToken,
+            withdrawFlag
         );
         emit TokenSwap(
             msg.sender,
@@ -243,33 +245,34 @@ contract Swap is
     function handleGasAndSwap(
         address inputToken,
         uint256 amount,
-        address targetToken
+        address targetToken,
+        bool withdraw
     ) internal returns (uint256, address, uint256) {
         uint256 inputForGas;
         address gasZRC20;
-        uint256 gasFee;
-        uint256 swapAmount;
+        uint256 gasFee = 0;
+        uint256 swapAmount = amount;
 
-        (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
-
-        uint256 minInput = quoteMinInput(inputToken, targetToken);
-        if (amount < minInput) {
-            revert InsufficientAmount(
-                "The input amount is less than the min amount required to cover the withdraw gas fee"
-            );
-        }
-
-        if (gasZRC20 == inputToken) {
-            swapAmount = amount - gasFee;
-        } else {
-            inputForGas = SwapHelperLib.swapTokensForExactTokens(
-                uniswapRouter,
-                inputToken,
-                gasFee,
-                gasZRC20,
-                amount
-            );
-            swapAmount = amount - inputForGas;
+        if (withdraw) {
+            (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
+            uint256 minInput = quoteMinInput(inputToken, targetToken);
+            if (amount < minInput) {
+                revert InsufficientAmount(
+                    "The input amount is less than the min amount required to cover the withdraw gas fee"
+                );
+            }
+            if (gasZRC20 == inputToken) {
+                swapAmount = amount - gasFee;
+            } else {
+                inputForGas = SwapHelperLib.swapTokensForExactTokens(
+                    uniswapRouter,
+                    inputToken,
+                    gasFee,
+                    gasZRC20,
+                    amount
+                );
+                swapAmount = amount - inputForGas;
+            }
         }
 
         uint256 out = SwapHelperLib.swapExactTokensForTokens(
@@ -343,7 +346,8 @@ contract Swap is
         (uint256 out, , ) = handleGasAndSwap(
             context.asset,
             context.amount,
-            zrc20
+            zrc20,
+            true
         );
 
         gateway.withdraw(
@@ -546,7 +550,7 @@ You should see output similar to:
 🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 🚀 Successfully deployed contract on localhost.
-📜 Contract address: 0xc351628EB244ec633d5f21fBD6621e1a683B1181
+📜 Contract address: =0x0355B7B8cb128fA5692729Ab3AAa199C1753f726
 ```
 
 ## Swapping Gas Tokens for ERC-20 Tokens
@@ -556,9 +560,11 @@ To swap gas tokens for ERC-20 tokens, run the following command:
 ```
 npx hardhat evm-swap \
   --network localhost \
-  --receiver 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
-  --amount 1 \
+  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
+  --amount 0.1 \
+  --gateway-evm 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0 \
   --target 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --skip-checks \
   --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
@@ -591,11 +597,13 @@ ERC-20 token you're swapping from using the `--erc20` parameter:
 ```
 npx hardhat evm-swap \
   --network localhost \
-  --receiver 0xc351628EB244ec633d5f21fBD6621e1a683B1181 \
-  --amount 1 \
-  --target 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
-  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
-  --erc20 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
+  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
+  --amount 0.1 \
+  --target 0x65a45c57636f9BcCeD4fe193A602008578BcA90b \
+  --gateway-evm 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0 \
+  --skip-checks \
+  --erc20 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
+  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
 Here, the `--erc20` option specifies the ERC-20 token address you're swapping
