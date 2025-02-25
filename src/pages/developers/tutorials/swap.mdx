@@ -499,7 +499,7 @@ The Swap contract can be called in two ways:
 
 ```
 npx hardhat compile --force
- 
+
 npx hardhat deploy \
   --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 \
   --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
@@ -524,6 +524,47 @@ npx hardhat evm-deposit-and-call \
   --gateway-evm 0x0c487a766110c85d301d96e33579c5b317fa4995 \
   --types '["address", "bytes"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 ```
+
+Transaction on Base:
+
+https://sepolia.basescan.org/tx/0xe873b59c2c2398236279aa04fff2134bd3391e8879ae6b99cabd00c97021ae38
+
+Incoming transaction from Base to ZetaChain:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xe873b59c2c2398236279aa04fff2134bd3391e8879ae6b99cabd00c97021ae38
+
+Outgoing transaction from ZetaChain to Polygon:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xb8e9120290a1a36cfbd0cbdacadab4746d1b47830952bd588330456c62701058
+
+Transaction on Polygon:
+
+https://amoy.polygonscan.com/tx/0x5a83fe0321c13f386d0953052a0335f06095455fcf1470b8e8fe9c3119adbb40
+
+## Swap from Solana SOL to Base Sepolia ETH
+
+```
+npx hardhat solana-deposit-and-call \
+  --amount 0.1 \
+  --recipient 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
+  --types '["address", "bytes", "bool"]' 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 true
+```
+
+Transaction on Solana:
+
+https://solana.fm/tx/4TyLdAt2jcxPwnddbwvHSUzrUTZrLoJ8idTGgNXySFw5vDsW3uo4qwGVxBFD3ziLzbWrVrmfx9boYM9pWooftM5x?cluster=devnet-solana
+
+Incoming transaction from Solana to ZetaChain:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/4TyLdAt2jcxPwnddbwvHSUzrUTZrLoJ8idTGgNXySFw5vDsW3uo4qwGVxBFD3ziLzbWrVrmfx9boYM9pWooftM5x
+
+Outgoing transaction from ZetaChain to Base:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x52e483e4b8d0945a77955cc8abed4ae51f1a2fc0482c43c16f367bd73bf67290
+
+Transaction on Base:
+
+https://sepolia.basescan.org/tx/0xd70e5a437f730b0e64ae24dd188994c0c2d9cccfc0582942cb0dea4198dc8a15
 
 ## Option 2: Deploy on Localnet
 
@@ -622,6 +663,55 @@ recipient, and initiates the swap logic.
 
 The EVM chain then receives the withdrawal request, and the swapped gas tokens
 are transferred to the recipient's address.
+
+## Swapping SUI for Solana SOL
+
+```
+npx hardhat localnet:sui-deposit-and-call \
+  --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
+  --gateway 0x36f26de84772c7dc8d4b9e291c92c2b067c448e14936aa7bad546ed9a5f348d3 \
+  --module 0x7418f0a63ff1d1fdc0b4dd2a1b7fc1760c62e7bc7609e1fb71ec30f0fbfb0a00 \
+  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
+  --amount 1000000 \
+  --types '["address", "bytes", "bool"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd true
+```
+
+### Swapping Solana SOL for SUI
+
+```
+npx hardhat localnet:solana-deposit-and-call \
+  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
+  --amount 0.0001 \
+  --types '["address", "bytes", "bool"]' 0xe573a6e11f8506620F123DBF930222163D46BCB6 0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65 true
+```
+
+Before swapping to Sui, make sure you have either deposited tokens from Sui or
+deposited and made a call from Sui first. Otherwise, there will be no tokens
+available in custody on Sui.
+
+### Swapping Solana SPL for SUI
+
+```
+npx hardhat localnet:solana-deposit-and-call \
+  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
+  --mint 2rJE9EiWx7hrCKiBsAgtmTZbcuDRESkEvw9ZaAwX1YHN \
+  --to 7nHtQCVaUMRkwiUhDmoJUJ2p1WMatoz3k22C3xGvid64 \
+  --from DdTS9SENotAj5z96TQX5pRKd11TkvHKaSneK1GnCCrKD \
+  --amount 0.1 \
+  --types '["address", "bytes", "bool"]' 0xe573a6e11f8506620F123DBF930222163D46BCB6 0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65 true
+```
+
+### Swapping SUI for Solana SPL
+
+```
+npx hardhat localnet:sui-deposit-and-call \
+  --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
+  --gateway 0xb58507c84f8247d2866b393fbd11467211c89e4e4935d01714a868b2dde493ae \
+  --module 0xb98bb74211a4f8463d87b61ace7d36f703370dae989baf8c620131d28525a899 \
+  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
+  --amount 100000 \
+  --types '["address", "bytes", "bool"]' 0xfC9201f4116aE6b054722E10b98D904829b469c3 DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd true
+```
 
 ## Conclusion
 
