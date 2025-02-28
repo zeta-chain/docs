@@ -7,6 +7,7 @@
 | Withdraw and call (native coin)    | EVM     | ✅      | ✅      | ✅  | ✅       |
 | Withdraw and call (fungible token) | EVM     | ✅      | ✅      | ✅  | ✅       |
 | Deposit ZETA                       | EVM     | ✅      | ✅      | ✅  | ❌       |
+| TSS Direct Deposits                | EVM     | ⚠️      | ⚠️      | ⚠️  | ❌       |
 | Withdraw ZETA                      | EVM     | ✅      | ✅      | ✅  | ❌       |
 | Deposit and call (ZETA)            | EVM     | ❌      | ❌      | ❌  | ❌       |
 | Withdraw and call (ZETA)           | EVM     | ❌      | ❌      | ❌  | ❌       |
@@ -17,8 +18,8 @@
 | Deposit/withdraw fungible token    | Solana  | ✅      | ✅      | ❌  | ❌       |
 | Deposit and call (native coin)     | Solana  | ✅      | ✅      | ✅  | ❌       |
 | Deposit and call (fungible token)  | Solana  | ✅      | ✅      | ❌  | ❌       |
-| Withdraw and call (fungible token) | Solana  | ❌      | Feb 25  | ❌  | ❌       |
-| Withdraw and call (native coin)    | Solana  | ❌      | Feb 25  | ❌  | ❌       |
+| Withdraw and call (fungible token) | Solana  | ❌      | Mar 10  | ✅  | ❌       |
+| Withdraw and call (native coin)    | Solana  | ❌      | Mar 10  | ✅  | ❌       |
 | Deposit ZETA                       | Solana  | ❌      | ❌      | ❌  | ❌       |
 | Withdraw ZETA                      | Solana  | ❌      | ❌      | ❌  | ❌       |
 | Deposit and call (ZETA)            | Solana  | ❌      | ❌      | ❌  | ❌       |
@@ -61,6 +62,14 @@
   Transfer of a fungible token from ZetaChain to a Connected Chain, followed by
   a smart contract call on the Connected Chain.
 
+- **TSS Direct Deposits**   
+  Transfers directly to the TSS address on EVM Connected Chains. This feature is only
+  supported on Ethereum and is being disabled on all other EVM chains.
+
 - **Call**  
   A smart contract call between ZetaChain and a Connected Chain without
   transferring assets.
+
+- **E2E**  
+  The protocol level development environment 
+  ([link](https://github.com/zeta-chain/node/tree/develop/contrib/localnet)).
