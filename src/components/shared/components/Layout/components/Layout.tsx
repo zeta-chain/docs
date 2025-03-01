@@ -8,22 +8,26 @@ import { mainNavRoutes } from "../Layout.constants";
 import { NavigationLayout } from "./NavigationLayout";
 
 export const StyledOrderedList = styled.ol`
-  ${tw`mt-8 first:mt-0 list-none ml-[36px]`}
-  counter-reset: ol;
+  ${tw`mt-8 first:mt-0 list-decimal ml-[32px]`}
 
-  li::before {
-    counter-increment: ol;
-    content: counter(ol) ". ";
-    ${tw`absolute top-0 -left-[20px] text-base leading-[160%] font-medium text-grey-400 dark:text-grey-300`};
+  li {
+    ${tw`pl-1`}
+  }
+
+  li::marker {
+    ${tw`font-medium`}
   }
 `;
 
 export const StyledUnorderedList = styled.ul`
-  ${tw`mt-8 first:mt-0 list-none ml-[36px]`}
+  ${tw`mt-8 first:mt-0 list-disc ml-[28px]`}
 
-  li::before {
-    content: "";
-    ${tw`absolute top-[11px] -left-[20px] w-1 h-1 bg-grey-400 dark:bg-grey-300 rounded-full block`}
+  li {
+    ${tw`pl-2`}
+  }
+
+  li::marker {
+    ${tw`text-xs`}
   }
 `;
 
