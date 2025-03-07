@@ -8,6 +8,10 @@ calling Solana programs as part of the withdraw process.
 Below are instructions to set up the local development environment and try out
 each of these workflows.
 
+## Prerequisites
+
+- [`solana` CLI](https://solana.com/docs/intro/installation)
+
 ## Clone Example and Install Dependencies
 
 ```bash
@@ -84,7 +88,7 @@ contract function with arguments of type `string` and value `"hello"`.
 ## Withdraw from ZetaChain to Solana
 
 ```bash
-npx hardhat zetachain-withdraw
+npx hardhat zetachain-withdraw \
   --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
   --receiver DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd \
   --network localhost \
