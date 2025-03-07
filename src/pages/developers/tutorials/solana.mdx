@@ -112,8 +112,15 @@ npx hardhat zetachain-withdraw \
 
 ### Build and Set Up the Example Solana Program
 
+Set the SPL-20 USDC address. You can find this address in a table in the output
+of `localnet`:
+
 ```bash
-cd solana && anchor build && npx ts-node setup/main.ts && cd -
+USDC_SPL=3Kx5SY7SwzdUZSorLVSpPgxBL8DZFiu8mg4FWduu2tQp
+```
+
+```bash
+cd solana && anchor build && npx ts-node setup/main.ts "$USDC_SPL" && cd -
 ```
 
 After running this, you should see output indicating that the program was
@@ -125,14 +132,8 @@ Connected program deployment output: Program Id: 9BjVGjn28E58LgSi547JYEpqpgRoo1T
 
 ### Withdraw SOL and Call the Solana Program
 
-Pass `sol` to encode your accounts/data to pass to your Solana program:
-
-```
-USDC_SPL=FWoDc17eRYqQUYG6RwYgC7ZDBtKNaUvvNqwRYi1rD9US
-ENCODED_ACCOUNTS_AND_DATA=$(npx ts-node solana/setup/encodeCallArgs.ts "sol" "$USDC_SPL")
-```
-
-Use ZRC-20 SOL address as `--zrc20`:
+Make a call to the ZetaChain Gateway to withdraw SOL and call a program on
+Solana:
 
 ```bash
 npx hardhat zetachain-withdraw-and-call \
@@ -141,7 +142,7 @@ npx hardhat zetachain-withdraw-and-call \
   --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 \
   --amount 0.01 \
   --network localhost \
-  --types '["bytes"]' "$ENCODED_ACCOUNTS_AND_DATA"
+  --types '["bytes"]' $(npx ts-node solana/setup/encodeCallArgs.ts "sol" "$USDC_SPL")
 ```
 
 - `--receiver`: The Solana program ID you want to call.
@@ -149,17 +150,12 @@ npx hardhat zetachain-withdraw-and-call \
   array (the encoded Solana call data).
 - `"$ENCODED_ACCOUNTS_AND_DATA"`: The encoded Solana program call arguments we
   generated in the previous step.
+- `--zrc20`: ZRC-20 address of SOL on ZetaChain.
 
 ### Withdraw SPL-20 and Call the Solana Program
 
-Pass `spl` to encode your accounts/data to pass to your Solana program:
-
-```
-USDC_SPL=FWoDc17eRYqQUYG6RwYgC7ZDBtKNaUvvNqwRYi1rD9US
-ENCODED_ACCOUNTS_AND_DATA=$(npx ts-node solana/setup/encodeCallArgs.ts "spl" "$USDC_SPL")
-```
-
-Use ZRC-20 USDC address as `--zrc20`:
+Make a call to the ZetaChain Gateway to withdraw ZRC-20 SPL-20 USDC and call a
+program on Solana:
 
 ```bash
 npx hardhat zetachain-withdraw-and-call \
@@ -168,8 +164,10 @@ npx hardhat zetachain-withdraw-and-call \
   --zrc20 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb \
   --amount 0.01 \
   --network localhost \
-  --types '["bytes"]' "$ENCODED_ACCOUNTS_AND_DATA"
+  --types '["bytes"]' $(npx ts-node solana/setup/encodeCallArgs.ts "spl" "$USDC_SPL")
 ```
+
+- `--zrc20`: ZRC-20 address of SPL-20 USDC on ZetaChain.
 
 In this tutorial you’ve learned how to deploy a universal contract on ZetaChain,
 deposit SOL and SPL-20 tokens from Solana, call contracts during deposits,
