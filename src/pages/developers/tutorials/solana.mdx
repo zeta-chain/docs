@@ -107,6 +107,20 @@ npx hardhat zetachain-withdraw \
 
 ## Withdraw and Call a Program on Solana
 
+Beyond simply withdrawing tokens from ZetaChain back to Solana, you can also
+execute a Solana program as part of the withdrawal process. This allows for more
+complex interactions, such as triggering on-chain logic immediately upon
+receiving funds. For example, you can withdraw SOL or SPL-20 tokens and call a
+Solana program in a single transaction, enabling use cases like automatic
+staking, swaps, or contract executions.
+
+The `solana` directory contains an example Solana program with an `on_call`
+function, which can be invoked by a universal app on ZetaChain during the
+withdrawal process.
+
+The following steps will guide you through setting up an example Solana program
+and using the ZetaChain Gateway to perform a "withdraw and call".
+
 > **Note:** Currently, withdraw-and-call support is **only** available on
 > localnet. Support for testnet and mainnet is coming soon.
 
