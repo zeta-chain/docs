@@ -1,0 +1,69 @@
+```bash
+git clone https://github.com/zeta-chain/example-contracts
+cd example-contracts/examples/call
+yarn
+```
+
+```bash
+npx hardhat localnet
+```
+
+```bash
+npx hardhat compile --force
+npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+```
+
+```
+🚀 Successfully deployed "Universal" contract on localhost.
+📜 Contract address: 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
+```
+
+## Deposit and Call from Solana
+
+```
+npx hardhat localnet:solana-deposit \
+  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
+  --amount 0.1
+```
+
+```
+npx hardhat localnet:solana-deposit-and-call \
+  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
+  --amount 0.1 \
+  --types '["string"]' hello
+```
+
+## Withdraw from ZetaChain to Solana
+
+```
+npx hardhat zetachain-withdraw
+  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --receiver DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd \
+  --network localhost \
+  --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 \
+  --amount 0.1
+```
+
+## Withdraw and Call a Program on Solana
+
+```bash
+cd solana && anchor build && npx ts-node setup/main.ts && cd -
+```
+
+```
+Connected program deployment output: Program Id: 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy
+```
+
+```
+ENCODED_ACCOUNTS_AND_DATA=$(npx ts-node solana/setup/encodeCallArgs.ts "sol" "$USDC_SPL")
+```
+
+```
+npx hardhat zetachain-withdraw-and-call \
+  --receiver 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy \
+  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --zrc20 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb \
+  --amount 0.01 \
+  --network localhost \
+  --types '["bytes"]' "$ENCODED_ACCOUNTS_AND_DATA"
+```
