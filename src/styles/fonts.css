@@ -122,22 +122,24 @@
   src: url("/fonts/roobert/roobert-semi-bold.ttf") format("truetype");
 }
 
-/* DM Mono Font Family */
+/* Roboto Mono Font Family */
 
 @font-face {
-  font-family: "DM Mono";
-  font-weight: 400;
+  font-family: "Roboto Mono";
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/dm/dm-mono-regular.ttf") format("truetype");
+  font-variant-numeric: slashed-zero;
+  src: url("/fonts/roboto/roboto-mono-variable-font-wght.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "DM Mono";
-  font-weight: 400;
+  font-family: "Roboto Mono";
+  font-weight: 100 900;
   font-style: italic;
   font-display: swap;
-  src: url("/fonts/dm/dm-mono-italic.ttf") format("truetype");
+  font-variant-numeric: slashed-zero;
+  src: url("/fonts/roboto/roboto-mono-italic-variable-font-wght.ttf") format("truetype");
 }
 
 /* Inter Font Family specific for questions marks */
