@@ -1,21 +1,27 @@
-# Universal Apps and Solana
+Building universal applications with ZetaChain and Solana is easy. You can
+deposit SOL and SPL-20 tokens directly from Solana into accounts or smart
+contracts on ZetaChain. Universal contracts on ZetaChain can handle these
+deposits and execute contract calls initiated from the Solana blockchain.
 
-ZetaChain supports bridging tokens from Solana, including both SOL and SPL-20
-tokens. You can deposit tokens from Solana to ZetaChain, call universal
-contracts deployed on ZetaChain, and withdraw tokens back to Solana — even
-calling Solana programs as part of the withdraw process.
-
-Below are instructions to set up the local development environment and try out
-each of these workflows.
+- In this tutorial, you'll:
+- Set up a local development environment using localnet.
+- Deploy a universal contract on ZetaChain.
+- Deposit tokens (SOL and SPL-20) from Solana to ZetaChain.
+- Execute deposit-and-call transactions, depositing tokens and calling a
+  universal app simultaneously.
+- Withdraw tokens back to Solana, optionally calling Solana programs as part of
+  the withdrawal.
 
 Interactions with universal apps from Solana are handled by the Solana Gateway
 program, [learn more about it in the docs](/developers/chains/solana).
 
 ## Prerequisites
 
+Ensure you have installed and configured the following before starting:
+
 - [`solana` CLI](https://solana.com/docs/intro/installation)
 
-## Clone Example and Install Dependencies
+## Clone the Example Project
 
 ```bash
 git clone https://github.com/zeta-chain/example-contracts
@@ -23,7 +29,7 @@ cd example-contracts/examples/call
 yarn
 ```
 
-## Run Localnet
+## Launch Localnet
 
 This command brings up the local development environment with ZetaChain and
 Solana:
@@ -36,15 +42,14 @@ Leave this running in one terminal window.
 
 ## Compile and Deploy an Example Universal Contract
 
-Open a new terminal window, then compile and deploy the contract to your
-localnet:
+In a new terminal window, compile and deploy the universal contract:
 
 ```bash
 npx hardhat compile --force
 npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
 ```
 
-You should see output similar to the following:
+You will see a confirmation with your contract address:
 
 ```
 🚀 Successfully deployed "Universal" contract on localhost.
@@ -54,27 +59,23 @@ You should see output similar to the following:
 Keep track of the contract address for later (in this example,
 `0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7`).
 
-## Deposit and Call from Solana
+## Deposit
 
-Solana tokens can be deposited to ZetaChain. Below are two ways to do that:
+Deposit SOL tokens from Solana to ZetaChain:
 
-- Deposit Only: Sends tokens from Solana to ZetaChain.
-- Deposit and Call: Sends tokens from Solana to ZetaChain and immediately calls
-  the deployed universal contract on ZetaChain.
-
-### Deposit
-
-```bash
+```
 npx hardhat localnet:solana-deposit \
   --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
   --amount 0.1
 ```
 
-- `--receiver`: The address of a universal contract on ZetaChain that will
-  receive the tokens.
-- `--amount`: The amount of SOL tokens to deposit.
+--receiver: Universal contract address on ZetaChain.
 
-### Deposit and Call
+--amount: Amount of SOL to deposit.
+
+## Deposit and Call
+
+Deposit tokens and simultaneously call the deployed universal contract:
 
 ```bash
 npx hardhat localnet:solana-deposit-and-call \
@@ -83,10 +84,12 @@ npx hardhat localnet:solana-deposit-and-call \
   --types '["string"]' hello
 ```
 
-This command deposits 0.1 tokens to the universal contract, then calls the
-contract function with arguments of type `string` and value `"hello"`.
+This command deposits tokens and triggers the universal contract function with
+the argument "hello".
 
-## Withdraw from ZetaChain to Solana
+## Withdraw Tokens to Solana
+
+Withdraw tokens from ZetaChain back to Solana:
 
 ```bash
 npx hardhat zetachain-withdraw \
