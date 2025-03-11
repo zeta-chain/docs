@@ -1,5 +1,3 @@
-import "src/styles/globals.css";
-
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import { ThemeProvider } from "@mui/material/styles";
 import { compose } from "@reduxjs/toolkit";
