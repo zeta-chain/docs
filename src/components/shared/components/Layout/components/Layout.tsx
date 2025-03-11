@@ -191,10 +191,9 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
 
 type LayoutProps = {
   className?: string;
-  setIsCmdkOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children, setIsCmdkOpen }) => {
+export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
   const { route } = useRouter();
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
 
@@ -206,9 +205,7 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
   return (
     <LayoutContainer className={className} isMainPage={isMainPage}>
       {!isMounted && <div className="absolute inset-0 z-[999999999] w-screen h-screen initial-overlay" />}
-      <NavigationLayout isMainPage={isMainPage} setIsCmdkOpen={setIsCmdkOpen}>
-        {children}
-      </NavigationLayout>
+      <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>
   );
 };

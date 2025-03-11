@@ -20,10 +20,9 @@ import { NavigationItem } from "./NavigationItem";
 
 type NavigationLayoutProps = PropsWithChildren<{
   isMainPage: boolean;
-  setIsCmdkOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }>;
 
-export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children, setIsCmdkOpen }) => {
+export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
   const { upSm } = useCurrentBreakpoint();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
@@ -126,11 +125,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         })}
       >
         <Header
-          setIsCmdkOpen={setIsCmdkOpen}
           isLeftDrawerOpen={isLeftDrawerOpen}
           toggleDrawerOpen={() => setIsLeftDrawerOpen((prev) => !prev)}
           setIsLeftDrawerOpen={setIsLeftDrawerOpen}
-          upSm={upSm}
         />
 
         <motion.div

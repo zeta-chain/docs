@@ -7,7 +7,6 @@ import type { AppProps } from "next/app";
 import Script from "next/script";
 import React from "react";
 
-import { Cmdk } from "~/components/Cmdk";
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
 import { useAppAnalytics } from "~/hooks/useAppAnalytics";
@@ -25,7 +24,6 @@ export const getIsTextTarget = (target: any) => target?.nodeName && textTargetTa
 
 const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: EmotionCache }) => {
   const { emotionCache = clientSideEmotionCache, router } = rest;
-  const [isCmdkOpen, setIsCmdkOpen] = React.useState(false);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -33,19 +31,9 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
       const key = e.key.toLowerCase();
 
       switch (key) {
-        case "Escape":
-          setIsCmdkOpen(false);
-          break;
-        case "k":
-          if (e.metaKey || e.ctrlKey) {
-            e.preventDefault();
-            setIsCmdkOpen((open) => !open);
-          }
-          break;
         case "b": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
-            setIsCmdkOpen(false);
             router.push("/developers");
           }
           break;
@@ -53,7 +41,6 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "h": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
-            setIsCmdkOpen(false);
             router.push("/");
           }
           break;
@@ -61,7 +48,6 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "n": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
-            setIsCmdkOpen(false);
             router.push("/nodes");
           }
           break;
@@ -69,7 +55,6 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "u": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
-            setIsCmdkOpen(false);
             router.push("/users");
           }
           break;
@@ -93,8 +78,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
           <GlobalStyles />
           <HeadProgressBar />
 
-          <Layout setIsCmdkOpen={setIsCmdkOpen}>
-            <Cmdk isOpen={isCmdkOpen} setIsCmdkOpen={setIsCmdkOpen} />
+          <Layout>
             <Component {...pageProps} />
           </Layout>
         </ThemeProvider>
