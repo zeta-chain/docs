@@ -19,6 +19,11 @@
     "readTime": "60 min",
     "description": "Deposit assets and call universal apps from Solana, make outgoing calls to Solana"
   },
+  "sui": {
+    "title": "Sui",
+    "readTime": "60 min",
+    "description": "Deposit assets and call universal apps from Sui"
+  },
   "swap": {
     "title": "Swap",
     "readTime": "30 min",
