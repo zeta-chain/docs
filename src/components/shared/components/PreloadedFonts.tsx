@@ -19,8 +19,8 @@ export const PreloadedFonts = () => (
     <link rel="preload" href="/fonts/roobert/roobert-regular.ttf" as="font" crossOrigin="" />
     <link rel="preload" href="/fonts/roobert/roobert-semi-bold.ttf" as="font" crossOrigin="" />
 
-    {/* DM Mono Font Family */}
-    <link rel="preload" href="/fonts/dm/dm-mono-regular.ttf" as="font" crossOrigin="" />
-    <link rel="preload" href="/fonts/dm/dm-mono-italic.ttf" as="font" crossOrigin="" />
+    {/* Roboto Mono Font Family */}
+    <link rel="preload" href="/fonts/roboto/roboto-mono-variable-font-wght.ttf" as="font" crossOrigin="" />
+    <link rel="preload" href="/fonts/roboto/roboto-mono-italic-variable-font-wght.ttf" as="font" crossOrigin="" />
   </>
 );
