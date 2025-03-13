@@ -18,7 +18,7 @@ type CoinsData = {
 type ChainsData = {
   chains: {
     chain_id: string;
-    chain_name: string;
+    name: string;
   }[];
 };
 
@@ -56,7 +56,7 @@ export const ForeignCoinsTable = () => {
         const chainsData: ChainsData = await responseChains.json();
 
         const chainIdToName = chainsData.chains.reduce((acc, chain) => {
-          acc[chain.chain_id] = formatString(chain.chain_name);
+          acc[chain.chain_id] = formatString(chain.name);
           return acc;
         }, {} as Record<string, string>);
 
