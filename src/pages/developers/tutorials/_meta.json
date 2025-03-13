@@ -14,15 +14,20 @@
     "readTime": "30 min",
     "description": "Learn the fundamentals of message passing and cross-chain contract calls"
   },
+  "solana": {
+    "title": "Solana",
+    "readTime": "60 min",
+    "description": "Deposit assets and call universal apps from Solana, make outgoing calls to Solana"
+  },
+  "sui": {
+    "title": "Sui",
+    "readTime": "60 min",
+    "description": "Deposit assets and call universal apps from Sui"
+  },
   "swap": {
     "title": "Swap",
     "readTime": "30 min",
     "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
-  },
-  "nft": {
-    "title": "NFT",
-    "readTime": "60 min",
-    "description": "Mint a universal NFT, which can be transferred between connected chains"
   },
   "localnet": {
     "title": "Localnet Setup",
