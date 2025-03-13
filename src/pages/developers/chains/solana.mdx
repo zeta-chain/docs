@@ -4,10 +4,6 @@ externally-owned account (EOA) or a universal application on ZetaChain. You can
 also deposit SOL and call a universal application in a single transaction using
 the `deposit_and_call` instruction.
 
-Note: until full Gateway support is released on Solana, when withdrawing ZRC-20
-tokens from ZetaChain to Solana, use ZRC-20 `withdraw()` method directly,
-instead of using ZetaChain's Gateway.
-
 ## Deposit SOL
 
 To deposit SOL to an EOA or a universal application on ZetaChain, use the
@@ -63,15 +59,13 @@ pub fn deposit_and_call(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20], 
   ZetaChain.
 - `message`: A message passed to the universal contract.
 
-Note: `deposit_and_call` currently calls universal contract's `onCrossChainCall`
-function and not the new `onCall` function that the EVM Gateway calls. This will
-be changed in the upcoming versions of the protocol after the full migration to
-Gateway.
-
 Depositing SOL and calling a universal contract using the Toolkit:
 
 ```
-npx hardhat solana-deposit-and-call --amount 0.01 --recipient 0x0b28dd447932003D40563B0e3707ab3b80a4d956 --types '["address", "address"]' 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 0xe7508B5026f032b37663718192bA63a40954F2c0
+npx hardhat solana-deposit-and-call \
+  --amount 0.1 \
+  --recipient 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
+  --types '["address", "bytes", "bool"]' 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 true
 ```
 
 ### Recommendation on Message Formatting
