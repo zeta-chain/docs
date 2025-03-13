@@ -4,8 +4,8 @@ import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/sha
 import { NetworkType } from "~/lib/app.types";
 
 const API: Record<NetworkType, string> = {
-  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v1/data/addresses.mainnet.json",
-  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/v1/data/addresses.testnet.json",
+  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.mainnet.json",
+  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.testnet.json",
 };
 
 type AddressData = {
