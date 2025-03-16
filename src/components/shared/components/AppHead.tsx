@@ -12,7 +12,7 @@ export const AppHead: React.FC = () => {
 
   // Get page metadata - fallback to defaults if not available
   const title = config.title || defaultTitle;
-  const description = config.description || defaultDescription;
+  const description = defaultDescription;
   const url = `${defaultBaseUrl}${asPath}`;
 
   // Create JSON-LD structured data
