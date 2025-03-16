@@ -9,6 +9,16 @@ const nextraConfig = {
   themeConfig: "./src/theme.config.tsx",
   latex: true,
   defaultShowCopyCode: true,
+  frontmatter: {
+    additionalProperties: {
+      description: true,
+      readTime: true,
+      readType: true,
+      heroImgUrl: true,
+      heroImgWidth: true,
+      relatedTutorialUrl: true,
+    },
+  },
 };
 
 const withNextra = require("nextra")(nextraConfig);
