@@ -1,27 +1,17 @@
 import { darkMode } from "@zetachain/ui-toolkit/theme/mui.dark.theme";
-import { useRouter } from "next/router";
-import { useConfig } from "nextra-theme-docs";
 
 import { defaultBaseUrl, defaultDescription, defaultTitle } from "~/config/next-seo.config";
 
 import { PreloadedFonts } from "./PreloadedFonts";
 
 export const AppHead: React.FC = () => {
-  const { asPath } = useRouter();
-  const config = useConfig();
-
-  // Get page metadata - fallback to defaults if not available
-  const title = config.title || defaultTitle;
-  const description = defaultDescription;
-  const url = `${defaultBaseUrl}${asPath}`;
-
-  // Create JSON-LD structured data
+  // Create JSON-LD structured data for the documentation site
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "TechArticle",
-    headline: title,
-    description: description,
-    image: `${defaultBaseUrl}img/logos/og-banner.png`,
+    "@type": "WebSite",
+    name: defaultTitle,
+    description: defaultDescription || "Official documentation for the ZetaChain blockchain platform",
+    url: defaultBaseUrl,
     publisher: {
       "@type": "Organization",
       name: "ZetaChain",
@@ -30,12 +20,14 @@ export const AppHead: React.FC = () => {
         url: `${defaultBaseUrl}img/logo.png`,
       },
     },
-    url: url,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": url,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${defaultBaseUrl}?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
     },
-    dateModified: new Date().toISOString().split("T")[0],
   };
 
   return (
