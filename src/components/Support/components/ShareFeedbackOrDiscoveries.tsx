@@ -35,7 +35,7 @@ export const ShareFeedbackOrDiscoveries = () => {
             easy and simple.
           </p>
 
-          <PrimaryLink href={globalLinks.supportEmailLink} target="_blank" icon={<IconChat />}>
+          <PrimaryLink href={globalLinks.publicIssueTracker} target="_blank" icon={<IconChat />}>
             Share your thoughts
           </PrimaryLink>
         </div>
