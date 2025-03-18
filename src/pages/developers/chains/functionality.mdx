@@ -14,6 +14,7 @@
 | Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
 | Withdraw and call (ZETA)           | ❌      | ❌      | ❌  | ❌       |
 | Call                               | ✅      | ✅      | ✅  | ✅       |
+| onRevert                           | ✅      | ✅      | ✅  | ✅       |
 
 ## Bitcoin
 
@@ -37,6 +38,7 @@
 | Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
 | Withdraw and call (ZETA)           | ❌      | ❌      | ❌  | ❌       |
 | Call                               | ❌      | ❌      | ❌  | ❌       |
+| onRevert                           | ❌      | ❌      | ❌  | ❌       |
 
 ## Sui
 
@@ -52,6 +54,7 @@
 | Withdraw ZETA                      | ❌      | ❌      | ❌  | ❌       |
 | Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
 | Call                               | ❌      | ❌      | ❌  | ❌       |
+| onRevert                           | ❌      | ❌      | ❌  | ❌       |
 
 ## TON
 
@@ -67,6 +70,7 @@
 | Withdraw ZETA                      | ❌      | ❌      | ❌  | ❌       |
 | Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
 | Call                               | ❌      | ✅      | ❌  | ❌       |
+| onRevert                           | ❌      | ❌      | ❌  | ❌       |
 
 ## Terminology
 
@@ -101,6 +105,11 @@
 - **Call**  
   A smart contract call between ZetaChain and a Connected Chain without
   transferring assets.
+
+- **onRevert**  
+  Execution of the `onRevert` function of a contract on a connected chain as a
+  result of a reverted call from a connected chain to a universal contract on
+  ZetaChain.
 
 - **E2E**  
   The protocol level development environment
