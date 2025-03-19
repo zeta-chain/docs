@@ -2,7 +2,7 @@
 
 # Function: getPools()
 
-> **getPools**(`this`): `Promise`\<`any`[]\>
+> **getPools**(`this`): `Promise`\<`object`[]\>
 
 ## Parameters
 
@@ -10,8 +10,8 @@
 
 ## Returns
 
-`Promise`\<`any`[]\>
+`Promise`\<`object`[]\>
 
 ## Defined in
 
-[getPools.ts:16](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/getPools.ts#L16)
+[getPools.ts:31](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/getPools.ts#L31)

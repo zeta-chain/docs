@@ -2,7 +2,7 @@
 
 # Function: trackCCTX()
 
-> **trackCCTX**(`this`, `__namedParameters`): `Promise`\<`void`\>
+> **trackCCTX**(`this`, `__namedParameters`): `Promise`\<`CCTXs`\>
 
 ## Parameters
 
@@ -10,16 +10,16 @@
 
 • **\_\_namedParameters**
 
-• **\_\_namedParameters.emitter**: `any` = `null`
+• **\_\_namedParameters.emitter**: `null` \| `Emitter` = `null`
 
 • **\_\_namedParameters.hash**: `string`
 
-• **\_\_namedParameters.json**: `Boolean` = `false`
+• **\_\_namedParameters.json**: `boolean` = `false`
 
 ## Returns
 
-`Promise`\<`void`\>
+`Promise`\<`CCTXs`\>
 
 ## Defined in
 
-[trackCCTX.ts:138](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/trackCCTX.ts#L138)
+[trackCCTX.ts:169](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/trackCCTX.ts#L169)

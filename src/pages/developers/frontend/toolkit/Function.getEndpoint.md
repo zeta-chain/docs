@@ -2,20 +2,20 @@
 
 # Function: getEndpoint()
 
-> **getEndpoint**(`this`, `type`, `network`): `any`
+> **getEndpoint**(`this`, `type`, `network`): `string`
 
 ## Parameters
 
 • **this**: [`ZetaChainClient`](toolkit/Class.ZetaChainClient.md)
 
-• **type**: `any`
+• **type**: `string`
 
-• **network**: `any`
+• **network**: `string`
 
 ## Returns
 
-`any`
+`string`
 
 ## Defined in
 
-[getEndpoint.ts:3](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/getEndpoint.ts#L3)
+[getEndpoint.ts:3](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/getEndpoint.ts#L3)

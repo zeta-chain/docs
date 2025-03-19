@@ -2,7 +2,7 @@
 
 # Function: getZRC20GasToken()
 
-> **getZRC20GasToken**(`this`, `network`): `Promise`\<`any`\>
+> **getZRC20GasToken**(`this`, `network`): `Promise`\<`undefined` \| `string`\>
 
 Retrieves the ZRC20 contract address for the gas token of a given network.
 
@@ -16,10 +16,10 @@ The network name.
 
 ## Returns
 
-`Promise`\<`any`\>
+`Promise`\<`undefined` \| `string`\>
 
 - The ZRC20 contract address for the gas token.
 
 ## Defined in
 
-[getQuote.ts:32](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/getQuote.ts#L32)
+[getQuote.ts:73](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/getQuote.ts#L73)

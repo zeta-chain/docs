@@ -2,7 +2,7 @@
 
 # Function: getForeignCoins()
 
-> **getForeignCoins**(`this`): `Promise`\<`any`\>
+> **getForeignCoins**(`this`): `Promise`\<`ForeignCoin`[]\>
 
 ## Parameters
 
@@ -10,8 +10,8 @@
 
 ## Returns
 
-`Promise`\<`any`\>
+`Promise`\<`ForeignCoin`[]\>
 
 ## Defined in
 
-[getForeignCoins.ts:3](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/getForeignCoins.ts#L3)
+[getForeignCoins.ts:6](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/getForeignCoins.ts#L6)

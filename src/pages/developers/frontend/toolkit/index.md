@@ -9,9 +9,8 @@ utility functions that make it easier to build with ZetaChain.
 
 ## Building a dApp on ZetaChain
 
-If you're looking to build a dapp on ZetaChain, we recommend using the Hardhat
-[template](https://github.com/zeta-chain/template). This template has all the
-toolkit featured imported, so you don't need to install this package manually.
+If you're looking to build a dapp on ZetaChain, we recommend checking out
+[the tutorials section](https://www.zetachain.com/docs/developers/tutorials/hello/) in ZetaChain docs.
 
 ## Prerequisites
 
@@ -74,22 +73,32 @@ yarn
 yarn build
 ```
 
+## Enumerations
+
+- [EncodingFormat](toolkit/Enumeration.EncodingFormat.md)
+- [OpCode](toolkit/Enumeration.OpCode.md)
+
 ## Classes
 
+- [FieldsV0](toolkit/Class.FieldsV0.md)
+- [Header](toolkit/Class.Header.md)
 - [ZetaChainClient](toolkit/Class.ZetaChainClient.md)
 
 ## Interfaces
 
-- [TokenBalance](toolkit/Interface.TokenBalance.md)
 - [ZetaChainClientParamsBase](toolkit/Interface.ZetaChainClientParamsBase.md)
 
 ## Type Aliases
 
+- [SupportedArgType](toolkit/TypeAlias.SupportedArgType.md)
 - [ZetaChainClientParams](toolkit/TypeAlias.ZetaChainClientParams.md)
 
 ## Functions
 
-- [deposit](toolkit/Function.deposit.md)
+- [encodeToBytes](toolkit/Function.encodeToBytes.md)
+- [evmCall](toolkit/Function.evmCall.md)
+- [evmDeposit](toolkit/Function.evmDeposit.md)
+- [evmDepositAndCall](toolkit/Function.evmDepositAndCall.md)
 - [getBalances](toolkit/Function.getBalances.md)
 - [getChainId](toolkit/Function.getChainId.md)
 - [getEndpoint](toolkit/Function.getEndpoint.md)
@@ -106,5 +115,9 @@ yarn build
 - [prepareData](toolkit/Function.prepareData.md)
 - [prepareParams](toolkit/Function.prepareParams.md)
 - [sendZeta](toolkit/Function.sendZeta.md)
+- [solanaDeposit](toolkit/Function.solanaDeposit.md)
+- [solanaDepositAndCall](toolkit/Function.solanaDepositAndCall.md)
 - [trackCCTX](toolkit/Function.trackCCTX.md)
-- [withdraw](toolkit/Function.withdraw.md)
+- [zetachainCall](toolkit/Function.zetachainCall.md)
+- [zetachainWithdraw](toolkit/Function.zetachainWithdraw.md)
+- [zetachainWithdrawAndCall](toolkit/Function.zetachainWithdrawAndCall.md)
