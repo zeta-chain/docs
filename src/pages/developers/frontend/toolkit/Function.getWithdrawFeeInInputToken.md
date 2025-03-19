@@ -26,12 +26,12 @@ The output ZRC20 token address.
 
 ### amount
 
-> **amount**: `any`
+> **amount**: `BigNumber`
 
 ### decimals
 
-> **decimals**: `any` = `inputDecimals`
+> **decimals**: `number` = `inputDecimals`
 
 ## Defined in
 
-[getQuote.ts:103](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/getQuote.ts#L103)
+[getQuote.ts:153](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/getQuote.ts#L153)

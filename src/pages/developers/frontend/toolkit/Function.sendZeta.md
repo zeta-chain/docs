@@ -2,7 +2,7 @@
 
 # Function: sendZeta()
 
-> **sendZeta**(`this`, `options`): `Promise`\<`any`\>
+> **sendZeta**(`this`, `options`): `Promise`\<`ContractTransaction`\>
 
 Initiates a cross-chain transfer of ZETA tokens from the source chain to the
 destination chain.
@@ -29,7 +29,7 @@ Source chain label.
 
 Destination chain label.
 
-• **options.gasLimit?**: `Number` = `500000`
+• **options.gasLimit?**: `number` = `500000`
 
 Optional gas limit on the destination chain.
 
@@ -40,10 +40,10 @@ provided, the token transfer is made to the signer's address.
 
 ## Returns
 
-`Promise`\<`any`\>
+`Promise`\<`ContractTransaction`\>
 
 A promise that resolves with the transaction details upon success.
 
 ## Defined in
 
-[sendZeta.ts:25](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/sendZeta.ts#L25)
+[sendZeta.ts:28](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/sendZeta.ts#L28)

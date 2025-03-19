@@ -2,7 +2,7 @@
 
 # Function: getBalances()
 
-> **getBalances**(`this`, `__namedParameters`): `Promise`\<[`TokenBalance`](toolkit/Interface.TokenBalance.md)[]\>
+> **getBalances**(`this`, `__namedParameters`): `Promise`\<`TokenBalance`[]\>
 
 Get token balances of all tokens on all chains connected to ZetaChain.
 
@@ -16,12 +16,14 @@ ZetaChainClient instance.
 
 • **\_\_namedParameters.btcAddress?**: `string`
 
-• **\_\_namedParameters.evmAddress**: `string`
+• **\_\_namedParameters.evmAddress?**: `string`
+
+• **\_\_namedParameters.solanaAddress?**: `string`
 
 ## Returns
 
-`Promise`\<[`TokenBalance`](toolkit/Interface.TokenBalance.md)[]\>
+`Promise`\<`TokenBalance`[]\>
 
 ## Defined in
 
-[getBalances.ts:54](https://github.com/zeta-chain/toolkit/blob/ff9b248edd3cba24d9f8444af6a768e2af201e71/packages/client/src/getBalances.ts#L54)
+[getBalances.ts:35](https://github.com/zeta-chain/toolkit/blob/542ef856894da0ed38ef2a757d2c0d70c2bb020d/packages/client/src/getBalances.ts#L35)
