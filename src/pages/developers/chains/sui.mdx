@@ -1,0 +1,96 @@
+# Sui Gateway
+
+To interact with universal applications from Sui chain, use the Sui Gateway.
+
+For step-by-step examples of using the Sui gateway, see the [Sui
+tutorial](/developers/tutorials/sui/).
+
+The Sui Gateway supports:
+
+- Depositing native SUI and other coins to a universal app or an account on
+  ZetaChain
+- Depositing coins and calling a universal app
+
+## Deposit Coins
+
+To deposit coins to an EOA or a universal contract on ZetaChain, use the
+`deposit` function:
+
+```move
+public entry fun deposit<T>(
+    gateway: &mut Gateway,
+    coins: Coin<T>,
+    receiver: String,
+    ctx: &mut TxContext,
+)
+```
+
+The `deposit` function accepts any whitelisted coin type `T` (including native
+SUI), which will be sent to the specified `receiver` on ZetaChain.
+
+The `receiver` parameter should be a valid EVM-style address (0x-prefixed hex
+string) representing either an externally-owned account (EOA) or a universal app
+address on ZetaChain. Even if the receiver is a universal app contract, the
+`deposit` function will not trigger a contract call. If you want to deposit and
+call a universal app, use the `deposit_and_call` function instead.
+
+After the deposit is processed, the receiver receives the ZRC-20 version of the
+deposited token on ZetaChain.
+
+## Deposit Coins and Call a Universal App
+
+To deposit coins and call a universal app contract, use the `deposit_and_call`
+function:
+
+```move
+public entry fun deposit_and_call<T>(
+    gateway: &mut Gateway,
+    coins: Coin<T>,
+    receiver: String,
+    payload: vector<u8>,
+    ctx: &mut TxContext,
+)
+```
+
+The `receiver` must be the address of a universal app contract on ZetaChain. The
+`payload` parameter will be passed to the `onCall` function of the universal app
+contract.
+
+The maximum payload size is 1024 bytes. The transaction will fail if the payload
+exceeds this limit.
+
+## Administrative Functions
+
+The Sui Gateway includes several administrative functions that require special
+capability objects:
+
+- `whitelist<T>` - Enables deposits for a new coin type (requires
+  `WhitelistCap`)
+- `withdraw<T>` - Called by the TSS address when tokens are withdrawn from
+  ZetaChain to Sui. This function requires a special capability object
+  (`WithdrawCap`) that is only held by the TSS nodes. The `nonce` parameter
+  prevents replay attacks by ensuring each withdrawal is processed exactly once.
+- `unwhitelist<T>` - Disables deposits for a coin type (requires `AdminCap`)
+- `pause` - Temporarily disables all deposits (requires `AdminCap`)
+- `unpause` - Re-enables deposits (requires `AdminCap`)
+- `issue_withdraw_and_whitelist_cap` - Rotates the TSS capabilities (requires
+  `AdminCap`)
+
+## Events
+
+The Gateway emits several events that can be monitored:
+
+- `DepositEvent` - Emitted when coins are deposited
+- `DepositAndCallEvent` - Emitted when coins are deposited with a contract call
+- `WithdrawEvent` - Emitted when coins are withdrawn
+- `NonceIncreaseEvent` - Emitted when the withdrawal nonce is increased
+
+## View Functions
+
+The Gateway provides several read-only functions:
+
+- `nonce()` - Returns the current withdrawal nonce
+- `vault_balance<T>()` - Returns the balance of a specific coin type in the
+  gateway
+- `is_whitelisted<T>()` - Checks if a coin type is enabled for deposits
+- `is_paused()` - Checks if deposits are currently paused
