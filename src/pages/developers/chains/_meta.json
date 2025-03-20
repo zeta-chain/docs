@@ -17,7 +17,11 @@
   },
   "solana": {
     "title": "Solana",
-    "description": "Make calls to universal apps and deposit SOL from Solana"
+    "description": "Make calls to universal apps and deposit tokens from Solana"
+  },
+  "sui": {
+    "title": "Sui",
+    "description": "Make calls to universal apps and deposit tokens from Sui"
   },
   "bitcoin": {
     "title": "Bitcoin",
