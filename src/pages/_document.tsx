@@ -3,6 +3,7 @@ import Document, { DocumentContext, Head, Html, Main, NextScript } from "next/do
 import React from "react";
 
 import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
+import { chatbaseScript } from "~/lib/scripts/chatbase";
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -41,6 +42,7 @@ export default class MyDocument extends Document {
         <body className="no-scrollbar">
           <Main />
           <NextScript />
+          <script dangerouslySetInnerHTML={{ __html: chatbaseScript }} />
         </body>
       </Html>
     );
