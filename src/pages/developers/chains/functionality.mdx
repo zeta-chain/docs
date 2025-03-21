@@ -1,40 +1,80 @@
-| Feature                            | Chain   | Mainnet | Testnet | E2E | Localnet |
-| :--------------------------------- | :------ | :------ | :------ | :-- | :------- |
-| Deposit/withdraw native coin       | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Deposit/withdraw fungible token    | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Deposit and call (native coin)     | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Deposit and call (fungible token)  | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Withdraw and call (native coin)    | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Withdraw and call (fungible token) | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Deposit ZETA                       | EVM     | ✅      | ✅      | ✅  | ❌       |
-| TSS Direct Deposits                | EVM     | ⚠️      | ⚠️      | ⚠️  | ❌       |
-| Withdraw ZETA                      | EVM     | ✅      | ✅      | ✅  | ❌       |
-| Deposit and call (ZETA)            | EVM     | ❌      | ❌      | ❌  | ❌       |
-| Withdraw and call (ZETA)           | EVM     | ❌      | ❌      | ❌  | ❌       |
-| Call                               | EVM     | ✅      | ✅      | ✅  | ✅       |
-| Deposit/withdraw native coin       | Bitcoin | ✅      | ✅      | ✅  | ❌       |
-| Deposit and call (native coin)     | Bitcoin | ✅      | ✅      | ✅  | ❌       |
-| Deposit/withdraw native coin       | Solana  | ✅      | ✅      | ✅  | ❌       |
-| Deposit/withdraw fungible token    | Solana  | ✅      | ✅      | ❌  | ❌       |
-| Deposit and call (native coin)     | Solana  | ✅      | ✅      | ✅  | ❌       |
-| Deposit and call (fungible token)  | Solana  | ✅      | ✅      | ❌  | ❌       |
-| Withdraw and call (fungible token) | Solana  | ❌      | Mar 10  | ✅  | ❌       |
-| Withdraw and call (native coin)    | Solana  | ❌      | Mar 10  | ✅  | ❌       |
-| Deposit ZETA                       | Solana  | ❌      | ❌      | ❌  | ❌       |
-| Withdraw ZETA                      | Solana  | ❌      | ❌      | ❌  | ❌       |
-| Deposit and call (ZETA)            | Solana  | ❌      | ❌      | ❌  | ❌       |
-| Withdraw and call (ZETA)           | Solana  | ❌      | ❌      | ❌  | ❌       |
-| Call                               | Solana  | ❌      | ❌      | ❌  | ❌       |
-| Deposit/withdraw native coin       | TON     | ❌      | ❌      | ✅  | ❌       |
-| Deposit/withdraw fungible token    | TON     | ❌      | ❌      | ❌  | ❌       |
-| Deposit and call (native coin)     | TON     | ❌      | ❌      | ✅  | ❌       |
-| Deposit and call (fungible token)  | TON     | ❌      | ❌      | ❌  | ❌       |
-| Withdraw and call (native coin)    | TON     | ❌      | ❌      | ❌  | ❌       |
-| Withdraw and call (fungible token) | TON     | ❌      | ❌      | ❌  | ❌       |
-| Deposit ZETA                       | TON     | ❌      | ❌      | ❌  | ❌       |
-| Withdraw ZETA                      | TON     | ❌      | ❌      | ❌  | ❌       |
-| Deposit and call (ZETA)            | TON     | ❌      | ❌      | ❌  | ❌       |
-| Call                               | TON     | ❌      | ❌      | ❌  | ❌       |
+## EVM
+
+| Feature                            | Mainnet | Testnet | E2E | Localnet |
+| :--------------------------------- | :------ | :------ | :-- | :------- |
+| Deposit/withdraw native coin       | ✅      | ✅      | ✅  | ✅       |
+| Deposit/withdraw fungible token    | ✅      | ✅      | ✅  | ✅       |
+| Deposit and call (native coin)     | ✅      | ✅      | ✅  | ✅       |
+| Deposit and call (fungible token)  | ✅      | ✅      | ✅  | ✅       |
+| Withdraw and call (native coin)    | ✅      | ✅      | ✅  | ✅       |
+| Withdraw and call (fungible token) | ✅      | ✅      | ✅  | ✅       |
+| Deposit ZETA                       | ✅      | ✅      | ✅  | ❌       |
+| TSS Direct Deposits                | ⚠️      | ⚠️      | ⚠️  | ❌       |
+| Withdraw ZETA                      | ✅      | ✅      | ✅  | ❌       |
+| Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
+| Withdraw and call (ZETA)           | ❌      | ❌      | ❌  | ❌       |
+| No asset call to ZetaChain         | ✅      | ✅      | ✅  | ✅       |
+| No asset call to connected chain   | ✅      | ✅      | ✅  | ✅       |
+| onRevert                           | ✅      | ✅      | ✅  | ✅       |
+
+## Bitcoin
+
+| Feature                        | Mainnet | Testnet | E2E | Localnet |
+| :----------------------------- | :------ | :------ | :-- | :------- |
+| Deposit/withdraw native coin   | ✅      | ✅      | ✅  | ❌       |
+| Deposit and call (native coin) | ✅      | ✅      | ✅  | ❌       |
+
+## Solana
+
+| Feature                            | Mainnet | Testnet | E2E | Localnet |
+| :--------------------------------- | :------ | :------ | :-- | :------- |
+| Deposit/withdraw native coin       | ✅      | ✅      | ✅  | ✅       |
+| Deposit/withdraw fungible token    | ✅      | ✅      | ❌  | ✅       |
+| Deposit and call (native coin)     | ✅      | ✅      | ✅  | ✅       |
+| Deposit and call (fungible token)  | ✅      | ✅      | ❌  | ✅       |
+| Withdraw and call (fungible token) | ❌      | ✅      | ✅  | ✅       |
+| Withdraw and call (native coin)    | ❌      | ✅      | ✅  | ✅       |
+| Deposit ZETA                       | ❌      | ❌      | ❌  | ❌       |
+| Withdraw ZETA                      | ❌      | ❌      | ❌  | ❌       |
+| Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
+| Withdraw and call (ZETA)           | ❌      | ❌      | ❌  | ❌       |
+| No asset call to ZetaChain         | ❌      | ❌      | ❌  | ❌       |
+| No asset call to connected chain   | ❌      | ❌      | ❌  | ❌       |
+| onRevert                           | ❌      | ❌      | ❌  | ❌       |
+
+## Sui
+
+| Feature                            | Mainnet | Testnet | E2E | Localnet |
+| :--------------------------------- | :------ | :------ | :-- | :------- |
+| Deposit/withdraw native coin       | ❌      | ✅      | ✅  | ✅       |
+| Deposit/withdraw fungible token    | ❌      | ✅      | ✅  | ❌       |
+| Deposit and call (native coin)     | ❌      | ✅      | ✅  | ✅       |
+| Deposit and call (fungible token)  | ❌      | ✅      | ✅  | ❌       |
+| Withdraw and call (native coin)    | ❌      | ❌      | ❌  | ❌       |
+| Withdraw and call (fungible token) | ❌      | ❌      | ❌  | ❌       |
+| Deposit ZETA                       | ❌      | ❌      | ❌  | ❌       |
+| Withdraw ZETA                      | ❌      | ❌      | ❌  | ❌       |
+| Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
+| No asset call to ZetaChain         | ❌      | ❌      | ❌  | ❌       |
+| No asset call to connected chain   | ❌      | ❌      | ❌  | ❌       |
+| onRevert                           | ❌      | ❌      | ❌  | ❌       |
+
+## TON
+
+| Feature                            | Mainnet | Testnet | E2E | Localnet |
+| :--------------------------------- | :------ | :------ | :-- | :------- |
+| Deposit/withdraw native coin       | ❌      | ✅      | ✅  | ❌       |
+| Deposit/withdraw fungible token    | ❌      | ❌      | ❌  | ❌       |
+| Deposit and call (native coin)     | ❌      | ✅      | ✅  | ❌       |
+| Deposit and call (fungible token)  | ❌      | ❌      | ❌  | ❌       |
+| Withdraw and call (native coin)    | ❌      | ❌      | ❌  | ❌       |
+| Withdraw and call (fungible token) | ❌      | ❌      | ❌  | ❌       |
+| Deposit ZETA                       | ❌      | ❌      | ❌  | ❌       |
+| Withdraw ZETA                      | ❌      | ❌      | ❌  | ❌       |
+| Deposit and call (ZETA)            | ❌      | ❌      | ❌  | ❌       |
+| No asset call to ZetaChain         | ❌      | ❌      | ❌  | ❌       |
+| No asset call to connected chain   | ❌      | ❌      | ❌  | ❌       |
+| onRevert                           | ❌      | ❌      | ❌  | ❌       |
 
 ## Terminology
 
@@ -62,14 +102,19 @@
   Transfer of a fungible token from ZetaChain to a Connected Chain, followed by
   a smart contract call on the Connected Chain.
 
-- **TSS Direct Deposits**   
-  Transfers directly to the TSS address on EVM Connected Chains. This feature is only
-  supported on Ethereum and is being disabled on all other EVM chains.
+- **TSS Direct Deposits**  
+  Transfers directly to the TSS address on EVM Connected Chains. This feature is
+  only supported on Ethereum and is being disabled on all other EVM chains.
 
 - **Call**  
   A smart contract call between ZetaChain and a Connected Chain without
   transferring assets.
 
+- **onRevert**  
+  Execution of the `onRevert` function of a contract on a connected chain as a
+  result of a reverted call from a connected chain to a universal contract on
+  ZetaChain.
+
 - **E2E**  
-  The protocol level development environment 
+  The protocol level development environment
   ([link](https://github.com/zeta-chain/node/tree/develop/contrib/localnet)).
