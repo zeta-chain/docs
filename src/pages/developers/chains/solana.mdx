@@ -1,111 +1,148 @@
 To interact with universal applications from Solana, use the Solana Gateway. The
-Solana Gateway allows you to deposit SOL (the native gas token of Solana) to an
-externally-owned account (EOA) or a universal application on ZetaChain. You can
-also deposit SOL and call a universal application in a single transaction using
-the `deposit_and_call` instruction.
+Solana Gateway supports:
+
+- Depositing SOL to a universal app or an account on ZetaChain
+- Depositing supported SPL tokens
+- Depositing SOL and calling a universal app
+- Depositing supported SPL tokens and calling a universal app
 
 ## Deposit SOL
 
-To deposit SOL to an EOA or a universal application on ZetaChain, use the
-`deposit` instruction of the Solana Gateway program.
+To deposit SOL to an EOA or a universal contract, call the `deposit` instruction
+of the Solana Gateway program:
 
 ```rust
 pub fn deposit(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20]) -> Result<()>
 ```
 
-- `amount`: The amount of SOL (in lamports) to deposit.
-- `receiver`: An array of bytes containing the receiver's address
+The `deposit` instruction accepts SOL (in lamports) which will then be sent to a
+`receiver` on ZetaChain. Note that 1 SOL equals 1,000,000,000 lamports, so
+ensure you convert SOL amounts to lamports when specifying the `amount`
+parameter.
 
-When you call the `deposit` instruction, the specified amount of SOL is
-transferred from your account to the Solana Gateway's Program Derived Account
-(PDA).
+The `receiver` can be either an externally-owned account (EOA) or a universal
+app address on ZetaChain. Even if the receiver is a universal app contract with
+the standard `receive` function, the `deposit` instruction will not trigger a
+contract call. If you want to deposit and call a universal app, use the
+`deposit_and_call` instruction instead.
 
-Example of Depositing SOL to an EOA:
+After the deposit is processed, the receiver receives the [ZRC-20
+version](/developers/tokens/zrc20) of the deposited token—for example, ZRC-20
+SOL.
+
+## Deposit SPL Tokens
+
+To deposit SPL tokens to an EOA or a universal contract, call the
+`deposit_spl_token` instruction:
 
 ```rust
-let receiver_address: [u8; 20] = [/* receiver's ZetaChain address */];
-let amount_in_lamports: u64 = 1_000_000; // Amount in lamports (1 SOL = 1,000,000,000 lamports)
-
-gateway::deposit(
-    ctx,
-    amount_in_lamports,
-    receiver_address,
-)?;
+pub fn deposit_spl_token(ctx: Context<DepositSplToken>, amount: u64, receiver: [u8; 20]) -> Result<()>
 ```
 
-To interact with the Solana Gateway from a frontend application, you can refer
-to the [solanaDeposit function in the ZetaChain
-Toolkit](https://github.com/zeta-chain/toolkit/blob/main/packages/client/src/solanaDeposit.ts).
-This function demonstrates how to call the `deposit` instruction from the
-frontend using Anchor and the Solana Web3.js library.
+Only [supported SPL tokens](/developers/tokens/zrc20) can be deposited. The
+receiver gets the ZRC-20 version of the deposited token (e.g., ZRC-20 USDC.SOL).
+SPL tokens must be whitelisted before they can be deposited through the gateway.
 
-Depositing SOL using the Toolkit:
+The `amount` specifies the quantity of SPL tokens to deposit.
 
-```
-npx hardhat solana-deposit --amount 0.01 --recipient 0x2DCB13e7Eb5253fD5255Ce3CbCB199B48A0C7dD9
-```
+## Deposit SOL and Call a Universal App
 
-## Deposit SOL and Call Universal Apps
-
-To deposit SOL to an EOA or a universal application on ZetaChain, use the
-`deposit_and_call` instruction of the Solana Gateway program.
+To deposit SOL and call a universal app contract, use the `deposit_and_call`
+instruction:
 
 ```rust
 pub fn deposit_and_call(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20], message: Vec<u8>) -> Result<()>
 ```
 
-- `amount`: The amount of SOL (in lamports) to deposit.
-- `receiver`: An array of bytes containing a universal contract address on
-  ZetaChain.
-- `message`: A message passed to the universal contract.
+After the cross-chain transaction is processed, the `onCall` function of the
+universal app contract is executed.
 
-Depositing SOL and calling a universal contract using the Toolkit:
+The `receiver` must be the address of a universal app contract.
 
-```
-npx hardhat solana-deposit-and-call \
-  --amount 0.1 \
-  --recipient 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
-  --types '["address", "bytes", "bool"]' 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 true
-```
+When calling a universal app, the `message` is passed to `onCall`.
 
-### Recommendation on Message Formatting
+## Deposit SPL Tokens and Call a Universal App
 
-We recommend formatting the message payload using ABI encoding so that it can be
-easily decoded in a universal application on ZetaChain. ABI encoding ensures
-compatibility and standardization when transmitting data across different
-platforms.
+The `deposit_spl_token_and_call` instruction can be used to call a universal app
+contract and send SPL tokens:
 
-**Example of ABI Encoding:**
-
-```typescript
-const ethers = require("ethers");
-
-// Define the parameter types and values
-const paramTypes = ["uint256", "string"];
-const paramValues = [12345, "Hello, ZetaChain!"];
-
-// Encode the parameters
-const encodedParams = ethers.utils.defaultAbiCoder.encode(paramTypes, paramValues);
-
-// Convert to Buffer or Uint8Array as needed
-const paramsBuffer = Buffer.from(encodedParams.slice(2), "hex"); // Remove '0x' prefix
+```rust
+pub fn deposit_spl_token_and_call(ctx: Context<DepositSplToken>, amount: u64, receiver: [u8; 20], message: Vec<u8>) -> Result<()>
 ```
 
-## Additional Information
+Here, `amount` specifies the quantity of SPL tokens to deposit.
 
-- **Lamports and SOL:** 1 SOL equals 1,000,000,000 lamports. Ensure you convert
-  SOL amounts to lamports when specifying the `amount` parameter.
-- **Program Derived Account (PDA):** The PDA is a special account used by the
-  Solana Gateway program to manage deposited funds securely.
+In the current version of the protocol, only one SPL token can be deposited at a
+time.
 
-## Future Support
+## Withdraw and Call a Solana Program
 
-- **SPL Tokens:** Support for SPL tokens (Solana's native token standard) is
-  coming soon. This will allow you to deposit SPL tokens and interact with
-  universal applications on ZetaChain using these tokens.
-- **Calling Solana Programs from Universal Applications:** In the future,
-  universal applications on ZetaChain will be able to call Solana programs
-  directly, enabling more complex cross-chain interactions.
+To withdraw ZRC-20 tokens and call a Solana program from a universal app on
+ZetaChain, use the `withdrawAndCall` function of the ZetaChain Gateway. The
+program being called on Solana must implement an `on_call` function.
+
+The `on_call` function must have the following signature:
+
+```rust
+pub fn on_call(
+    ctx: Context<OnCall>,
+    amount: u64,
+    sender: [u8; 20],
+    data: Vec<u8>,
+) -> Result<()>
+```
+
+The function receives:
+
+- `amount`: The amount of tokens being withdrawn
+- `sender`: The address of the universal app on ZetaChain that initiated the
+  call
+- `data`: Additional data passed from the universal app
+
+The program can handle both SOL and SPL token withdrawals. For SPL tokens, the
+program must include the necessary token accounts and mint account in its
+context.
+
+When calling a Solana program from ZetaChain, the message payload must include
+both the program accounts and the data to be passed to the program. The payload
+is ABI-encoded as a tuple containing:
+
+1. An array of account metadata, where each account is specified as:
+
+   - `publicKey`: The Solana public key of the account
+   - `isWritable`: Whether the account can be modified by the program
+
+2. The data to be passed to the program's `on_call` function
+
+The accounts array must include all required accounts for the program's
+`on_call` function.
+
+For SOL token withdrawals, the accounts array must include:
+
+- Program PDA (writable)
+- Gateway PDA (read-only)
+- System program (read-only)
+
+For SPL token withdrawals, the accounts array must include:
+
+- Program PDA (writable)
+- Program's associated token account (writable)
+- Mint account (read-only)
+- Gateway PDA (read-only)
+- Token program (read-only)
+- System program (read-only)
+
+The data field can be any bytes that your program's `on_call` function expects
+to receive.
+
+For a complete example of how to call a Solana program from a universal app,
+including message encoding and program implementation, check out the [Solana
+example in the ZetaChain examples
+repository](https://github.com/zeta-chain/example-contracts/tree/main/examples/call/solana).
+
+## Fees
+
+A deposit fee of 2,000,000 lamports (0.002 SOL) is charged for all deposits.
 
 ## Error Handling
 
@@ -114,19 +151,21 @@ failure scenarios:
 
 - `SignerIsNotAuthority`: The signer is not authorized to perform the action.
 - `DepositPaused`: Deposits are currently paused.
+- `NonceMismatch`: The provided nonce does not match the expected nonce.
+- `TSSAuthenticationFailed`: The TSS signature verification failed.
+- `DepositToAddressMismatch`: The deposit destination address does not match.
+- `MessageHashMismatch`: The message hash verification failed.
+- `MemoLengthExceeded`: The memo length exceeds the maximum allowed size.
+- `SPLAtaAndMintAddressMismatch`: The SPL token account address does not match
+  the expected address.
+- `EmptyReceiver`: The receiver address is empty.
+- `InvalidInstructionData`: The instruction data is invalid.
 
 ## Revert Transactions
 
-The Solana Gateway supports transaction reversion in case of failures. If a
-cross-chain call fails on the ZetaChain side, the deposited SOL will be reverted
-back to the original sender on Solana.
-
-## Conclusion
-
-The Solana Gateway provides a seamless way to interact with universal
-applications on ZetaChain from Solana. By using the Gateway instruction, you can
-deposit SOL and make cross-chain contract calls to universal applications on
-ZetaChain.
+The Solana Gateway supports transaction reverting in case of failures. If a
+cross-chain call fails on the ZetaChain side, the deposited tokens will be
+reverted back to the original sender on Solana.
 
 To learn more about using the Solana Gateway in practice to deposit to and call
 universal apps, check out [the Solana tutorial](/developers/tutorials/solana).
