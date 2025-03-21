@@ -131,3 +131,128 @@ reverted back to the original sender on Solana.
 
 To learn more about using the Solana Gateway in practice to deposit to and call
 universal apps, check out [the Solana tutorial](/developers/tutorials/solana).
+
+## Withdraw and Call a Solana Program
+
+To withdraw ZRC-20 tokens and call a Solana program from a universal app on
+ZetaChain, use the `withdrawAndCall` function of the ZetaChain Gateway. The
+program being called on Solana must implement an `on_call` function.
+
+The `on_call` function must have the following signature:
+
+```rust
+pub fn on_call(
+    ctx: Context<OnCall>,
+    amount: u64,
+    sender: [u8; 20],
+    data: Vec<u8>,
+) -> Result<()>
+```
+
+The function receives:
+
+- `amount`: The amount of tokens being withdrawn
+- `sender`: The address of the universal app on ZetaChain that initiated the
+  call
+- `data`: Additional data passed from the universal app
+
+The program can handle both SOL and SPL token withdrawals. For SPL tokens, the
+program must include the necessary token accounts and mint account in its
+context.
+
+When calling a Solana program from ZetaChain, the message payload must include
+both the program accounts and the data to be passed to the program. The payload
+is ABI-encoded as a tuple containing:
+
+1. An array of account metadata, where each account is specified as:
+
+   - `publicKey`: The Solana public key of the account
+   - `isWritable`: Whether the account can be modified by the program
+
+2. The data to be passed to the program's `on_call` function
+
+The accounts array must include all required accounts for the program's
+`on_call` function.
+
+For SOL token withdrawals, the accounts array must include:
+
+- Program PDA (writable)
+- Gateway PDA (read-only)
+- System program (read-only)
+
+For SPL token withdrawals, the accounts array must include:
+
+- Program PDA (writable)
+- Program's associated token account (writable)
+- Mint account (read-only)
+- Gateway PDA (read-only)
+- Token program (read-only)
+- System program (read-only)
+
+The data field can be any bytes that your program's `on_call` function expects
+to receive.
+
+For a complete example of how to call a Solana program from a universal app,
+including message encoding and program implementation, check out the [Solana
+example in the ZetaChain examples
+repository](https://github.com/zeta-chain/example-contracts/tree/main/examples/call/solana).
+
+## Message Formatting
+
+We recommend formatting the message payload using ABI encoding so that it can be
+easily decoded in a universal application on ZetaChain. ABI encoding ensures
+compatibility and standardization when transmitting data across different
+platforms.
+
+**Example of ABI Encoding:**
+
+```typescript
+const ethers = require("ethers");
+
+// Define the parameter types and values
+const paramTypes = ["uint256", "string"];
+const paramValues = [12345, "Hello, ZetaChain!"];
+
+// Encode the parameters
+const encodedParams = ethers.utils.defaultAbiCoder.encode(paramTypes, paramValues);
+
+// Convert to Buffer or Uint8Array as needed
+const paramsBuffer = Buffer.from(encodedParams.slice(2), "hex"); // Remove '0x' prefix
+```
+
+## Additional Information
+
+- **Lamports and SOL:** 1 SOL equals 1,000,000,000 lamports. Ensure you convert
+  SOL amounts to lamports when specifying the `amount` parameter.
+- **Program Derived Account (PDA):** The PDA is a special account used by the
+  Solana Gateway program to manage deposited funds securely.
+- **SPL Token Whitelist:** SPL tokens must be whitelisted before they can be
+  deposited through the gateway.
+- **Deposit Fee:** A deposit fee of 2,000,000 lamports (0.002 SOL) is charged
+  for all deposits.
+
+## Error Handling
+
+The Solana Gateway program includes several error codes to handle different
+failure scenarios:
+
+- `SignerIsNotAuthority`: The signer is not authorized to perform the action.
+- `DepositPaused`: Deposits are currently paused.
+- `NonceMismatch`: The provided nonce does not match the expected nonce.
+- `TSSAuthenticationFailed`: The TSS signature verification failed.
+- `DepositToAddressMismatch`: The deposit destination address does not match.
+- `MessageHashMismatch`: The message hash verification failed.
+- `MemoLengthExceeded`: The memo length exceeds the maximum allowed size.
+- `SPLAtaAndMintAddressMismatch`: The SPL token account address does not match
+  the expected address.
+- `EmptyReceiver`: The receiver address is empty.
+- `InvalidInstructionData`: The instruction data is invalid.
+
+## Revert Transactions
+
+The Solana Gateway supports transaction reverting in case of failures. If a
+cross-chain call fails on the ZetaChain side, the deposited tokens will be
+reverted back to the original sender on Solana.
+
+To learn more about using the Solana Gateway in practice to deposit to and call
+universal apps, check out [the Solana tutorial](/developers/tutorials/solana).
