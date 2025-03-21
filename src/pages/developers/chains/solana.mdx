@@ -197,29 +197,6 @@ including message encoding and program implementation, check out the [Solana
 example in the ZetaChain examples
 repository](https://github.com/zeta-chain/example-contracts/tree/main/examples/call/solana).
 
-## Message Formatting
-
-We recommend formatting the message payload using ABI encoding so that it can be
-easily decoded in a universal application on ZetaChain. ABI encoding ensures
-compatibility and standardization when transmitting data across different
-platforms.
-
-**Example of ABI Encoding:**
-
-```typescript
-const ethers = require("ethers");
-
-// Define the parameter types and values
-const paramTypes = ["uint256", "string"];
-const paramValues = [12345, "Hello, ZetaChain!"];
-
-// Encode the parameters
-const encodedParams = ethers.utils.defaultAbiCoder.encode(paramTypes, paramValues);
-
-// Convert to Buffer or Uint8Array as needed
-const paramsBuffer = Buffer.from(encodedParams.slice(2), "hex"); // Remove '0x' prefix
-```
-
 ## Additional Information
 
 - **Lamports and SOL:** 1 SOL equals 1,000,000,000 lamports. Ensure you convert
