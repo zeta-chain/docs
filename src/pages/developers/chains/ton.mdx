@@ -1,0 +1,63 @@
+To interact with universal applications from TON, use the TON gateway.
+
+TON gateway supports:
+
+- Depositing TON to a universal app or an account on ZetaChain
+- Depositing TON and calling a universal app
+- Withdrawing TON from ZetaChain
+
+## Deposit TON
+
+To deposit TON to an EOA or a universal contract, send an internal message to
+the Gateway contract with the following structure:
+
+```fc
+;; Message body structure
+;; op_code: 32 bits
+;; query_id: 64 bits
+;; evm_recipient: 160 bits (20 bytes)
+```
+
+The `op_code` should be set to `101` for deposits.
+
+The `evm_recipient` specifies the address on ZetaChain that will receive the
+deposited TON. This can be either an externally-owned account (EOA) or a
+universal app address.
+
+After the deposit is processed, the receiver receives the [ZRC-20
+version](/developers/tokens/zrc20) of the deposited TON.
+
+## Deposit TON and Call a Universal App
+
+To deposit TON and call a universal app contract, send an internal message to
+the Gateway contract with the following structure:
+
+```fc
+;; Message body structure
+;; op_code: 32 bits
+;; query_id: 64 bits
+;; evm_recipient: 160 bits (20 bytes)
+;; call_data: cell (up to 2KB)
+```
+
+The `op_code` should be set to `102` for deposit and call operations.
+
+The `evm_recipient` must be the address of a universal app contract.
+
+The `call_data` cell contains the payload that will be passed to the `onCall`
+function of the universal app contract.
+
+After the cross-chain transaction is processed, the `onCall` function of the
+universal app contract is executed.
+
+## Gas Fees
+
+The Gateway contract charges gas fees for different operations:
+
+- Deposit: 10,000 gas units
+- Deposit and Call: 13,000 gas units
+- Authority operations: 20,000 gas units
+- Withdraw: 17,500 gas units
+
+These fees are deducted from the deposited or withdrawn amount to cover the cost
+of processing the transaction on ZetaChain.
