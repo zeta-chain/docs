@@ -4,9 +4,11 @@ withdraw tokens, use the ZetaChain gateway.
 The ZetaChain gateway supports:
 
 - Withdrawing ZRC-20 tokens as native gas or ERC-20 tokens to connected chains.
-- Withdrawing ZETA tokens to connected chains.
 - Withdrawing tokens and making a contract call on connected chains.
 - Calling contracts on connected chains.
+
+Note: Withdrawing ZETA tokens is currently not supported and will revert with
+`ZETANotSupported()`.
 
 ## Withdraw ZRC-20 Tokens
 
@@ -31,6 +33,8 @@ address is chain-agnostic. When withdrawing to an EVM chain, ensure you convert
 The `amount` specifies the quantity to withdraw, and `zrc20` is the ZRC-20
 address of the token being withdrawn.
 
+The `revertOptions.revertMessage` must not exceed 1024 bytes in length.
+
 You don't need to specify the destination chain since each ZRC-20 token is tied
 to the chain from which it was deposited. A ZRC-20 token can only be withdrawn
 to its originating chain. For example, to withdraw ZRC-20 USDC.ETH to the BNB
@@ -49,6 +53,9 @@ This function withdraws tokens and makes a call to a contract on the connected
 chain identified by the `zrc20` address. For instance, if ZRC-20 ETH is
 withdrawn, the call is made to a contract on Ethereum.
 
+The combined length of `message` and `revertOptions.revertMessage` must not
+exceed 1024 bytes.
+
 ## Call a Contract on a Connected Chain
 
 To call a contract on a connected chain without withdrawing tokens, use the
@@ -61,6 +68,9 @@ function call(bytes memory receiver, address zrc20, bytes calldata message, Call
 Here, `zrc20` represents the ZRC-20 token address of the gas token for the
 destination chain. This address acts as an identifier for the target chain. For
 example, to call a contract on Ethereum, use the ZRC-20 ETH token address.
+
+The combined length of `message` and `revertOptions.revertMessage` must not
+exceed 1024 bytes.
 
 ## Call Options
 
