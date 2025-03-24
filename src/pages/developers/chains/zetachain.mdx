@@ -142,7 +142,8 @@ contract is called. If call on revert is false, then a reverted cross-chain
 transaction will make a token transfer to the revert address without a contract
 call.
 
-`abortAddress`.
+`abortAddress` is an address on ZetaChain, to which tokens are transferred if
+reverting failed.
 
 `revertMessage` is a message passed to the `onRevert` function inside the revert
 context.
