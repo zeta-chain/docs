@@ -1,0 +1,98 @@
+```
+PUBLISHED=$(sui client publish --skip-dependency-verification --json) && echo $PUBLISHED
+```
+
+```
+PACKAGE=$(echo $PUBLISHED | jq -r '.objectChanges[] | select(.type == "published") | .packageId') && echo $PACKAGE
+```
+
+```
+TREASURY=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "0x2::coin::TreasuryCap<\($pkg)::token::TOKEN>") | .objectId') && echo $TREASURY
+```
+
+```
+POOL=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Pool<0x2::sui::SUI, \($pkg)::token::TOKEN>") | .objectId') && echo $POOL
+```
+
+```
+RECIPIENT=$(sui client active-address) && echo $RECIPIENT
+```
+
+```
+sui client call \
+  --package "$PACKAGE" \
+  --module token \
+  --function mint \
+  --args "$TREASURY" 1000000 "$RECIPIENT"
+```
+
+```
+TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data | select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId') && echo $TOKEN
+```
+
+```
+sui client call \
+  --package "$PACKAGE" \
+  --module cetusmock \
+  --function deposit \
+  --type-args "0x2::sui::SUI" "$PACKAGE::token::TOKEN" \
+  --args "$POOL" "$TOKEN"
+```
+
+```
+COIN=$(sui client gas --json | jq -r '.[0].gasCoinId') && echo $COIN
+```
+
+```
+ETH_ADDRESS=0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+GATEWAY_PACKAGE=0xa3ce10f68ed22d2cbbc31eaa709ee15e2e30348bfc6ff97b7d128d03b679c5c2
+GATEWAY_OBJECT=0xe925d4059435083b70bc504ce912202214edd06f693bdc3f9573a996292780c7
+```
+
+```
+sui client call \
+  --package "$GATEWAY_PACKAGE" \
+  --module gateway \
+  --function deposit \
+  --type-args 0x2::sui::SUI \
+  --args "$GATEWAY_OBJECT" "$COIN" "$ETH_ADDRESS"
+```
+
+```
+cast send 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 "approve(address,uint256)" 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 1000000000000000000000000 --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
+
+```
+CONFIG=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::GlobalConfig") | .objectId') && echo $CONFIG
+```
+
+```
+CLOCK=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Clock") | .objectId') && echo $CLOCK
+```
+
+```
+PARTNER=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Partner") | .objectId') && echo $PARTNER
+```
+
+```
+MESSAGE=$RECIPIENT && echo $MESSAGE
+```
+
+```
+TOKEN_TYPE=$(echo "$PACKAGE::token::TOKEN") && echo $TOKEN_TYPE
+```
+
+```
+PAYLOAD=$(npx ts-node sui/setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PARTNER,$CLOCK" "$MESSAGE") && echo $PAYLOAD
+```
+
+```
+cast send 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 "withdrawAndCall(bytes,uint256,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
+  "$PACKAGE" \
+  "1000000" \
+  "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891" \
+  "$PAYLOAD" \
+  "(10000,false)" \
+  "(0xB0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,true,0xC0b86991c6218b36c1d19D4a2e9Eb0cE3606eB49,0xdeadbeef,50000)" \
+  --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
