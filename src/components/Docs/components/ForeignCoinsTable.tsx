@@ -194,10 +194,8 @@ export const ForeignCoinsTable = () => {
                   <td>
                     <button
                       onClick={() => addTokenToMetaMask(coin)}
-                      className={`px-3 py-1 text-sm rounded ${
-                        isCorrectNetwork
-                          ? "bg-[#00A5C6] dark:bg-[#B0FF61] text-white dark:text-black hover:opacity-80"
-                          : "text-white cursor-not-allowed"
+                      className={`px-3 py-1 text-sm rounded bg-[#00A5C6] dark:bg-[#B0FF61] text-white dark:text-black ${
+                        isCorrectNetwork ? "hover:opacity-80" : "opacity-25 cursor-not-allowed"
                       }`}
                       disabled={!isCorrectNetwork}
                       title={
@@ -206,7 +204,7 @@ export const ForeignCoinsTable = () => {
                           : undefined
                       }
                     >
-                      Add to MetaMask
+                      Add&nbsp;Token
                     </button>
                   </td>
                 </tr>
