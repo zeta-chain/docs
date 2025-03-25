@@ -2,6 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
+// ZetaChain Network IDs
+const ZETACHAIN_MAINNET_ID = "7000";
+const ZETACHAIN_TESTNET_ID = "7001";
+
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: any }) => Promise<any>;
+      on: (event: string, handler: (params: any) => void) => void;
+      removeListener: (event: string, handler: (params: any) => void) => void;
+    };
+  }
+}
+
 type ForeignCoin = {
   symbol: string;
   coin_type: string;
@@ -34,12 +48,73 @@ const formatString = (str: string) => {
     .join(" ");
 };
 
+const addTokenToMetaMask = async (token: ForeignCoin & { chainName: string }) => {
+  if (!window.ethereum) {
+    alert("Please install an EVM wallet like MetaMask to use this feature");
+    return;
+  }
+
+  try {
+    const wasAdded = await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: token.zrc20_contract_address,
+        },
+      },
+    });
+
+    if (wasAdded) {
+      console.log("Token was added to MetaMask");
+    }
+  } catch (error) {
+    console.error("Error adding token to MetaMask:", error);
+  }
+};
+
 export const ForeignCoinsTable = () => {
   const [mainnetCoins, setMainnetCoins] = useState<(ForeignCoin & { chainName: string })[]>([]);
   const [testnetCoins, setTestnetCoins] = useState<(ForeignCoin & { chainName: string })[]>([]);
-
+  const [currentChainId, setCurrentChainId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
+
+  // Check if the current network matches the active tab
+  const isCorrectNetwork = useMemo(() => {
+    if (!currentChainId) return false;
+    if (activeTab.networkType === "mainnet") {
+      return currentChainId === ZETACHAIN_MAINNET_ID;
+    }
+    return currentChainId === ZETACHAIN_TESTNET_ID;
+  }, [currentChainId, activeTab.networkType]);
+
+  // Listen for chain changes
+  useEffect(() => {
+    const handleChainChanged = (chainId: string) => {
+      setCurrentChainId(parseInt(chainId, 16).toString());
+    };
+
+    const getCurrentChain = async () => {
+      if (window.ethereum) {
+        try {
+          const chainId = await window.ethereum.request({ method: "eth_chainId" });
+          setCurrentChainId(parseInt(chainId, 16).toString());
+        } catch (error) {
+          console.error("Error getting chain ID:", error);
+        }
+      }
+    };
+
+    getCurrentChain();
+
+    if (window.ethereum?.on) {
+      window.ethereum.on("chainChanged", handleChainChanged);
+      return () => {
+        window.ethereum?.removeListener?.("chainChanged", handleChainChanged);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -102,6 +177,7 @@ export const ForeignCoinsTable = () => {
                 <th>ZRC-20 decimals</th>
                 <th>ZRC-20 on ZetaChain</th>
                 <th>ERC-20 on Connected Chain</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -115,6 +191,24 @@ export const ForeignCoinsTable = () => {
                   <td>{coin.decimals}</td>
                   <td>{coin.zrc20_contract_address}</td>
                   <td>{coin.asset}</td>
+                  <td>
+                    <button
+                      onClick={() => addTokenToMetaMask(coin)}
+                      className={`px-3 py-1 text-sm rounded ${
+                        isCorrectNetwork
+                          ? "bg-[#00A5C6] dark:bg-[#B0FF61] text-white dark:text-black hover:opacity-80"
+                          : "text-white cursor-not-allowed"
+                      }`}
+                      disabled={!isCorrectNetwork}
+                      title={
+                        !isCorrectNetwork
+                          ? `Please switch to ZetaChain ${activeTab.networkType === "mainnet" ? "mainnet" : "testnet"}`
+                          : undefined
+                      }
+                    >
+                      Add to MetaMask
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
