@@ -45,8 +45,8 @@ COIN=$(sui client gas --json | jq -r '.[0].gasCoinId') && echo $COIN
 
 ```
 ETH_ADDRESS=0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
-GATEWAY_PACKAGE=0x277523e54387b83a6826bd6e3b91b9dbd16a058d149dd57f4ebb379ae54549ae
-GATEWAY_OBJECT=0xd0972cb4ab7bf0b35b249c6b1e1bd06ad7b860c8584adf27eb261fdf8add8fac
+GATEWAY_PACKAGE=0xa3ce10f68ed22d2cbbc31eaa709ee15e2e30348bfc6ff97b7d128d03b679c5c2
+GATEWAY_OBJECT=0xe925d4059435083b70bc504ce912202214edd06f693bdc3f9573a996292780c7
 ```
 
 ```
@@ -76,6 +76,10 @@ PARTNER=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | selec
 
 ```
 MESSAGE=$RECIPIENT && echo $MESSAGE
+```
+
+```
+TOKEN_TYPE=$(echo "$PACKAGE::token::TOKEN") && echo $TOKEN_TYPE
 ```
 
 ```
