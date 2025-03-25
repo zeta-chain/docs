@@ -177,7 +177,7 @@ export const ForeignCoinsTable = () => {
                 <th>ZRC-20 decimals</th>
                 <th>ZRC-20 on ZetaChain</th>
                 <th>ERC-20 on Connected Chain</th>
-                <th>Actions</th>
+                <th>Wallet</th>
               </tr>
             </thead>
 
@@ -204,7 +204,7 @@ export const ForeignCoinsTable = () => {
                           : undefined
                       }
                     >
-                      Add&nbsp;Token
+                      <b>＋</b>&nbsp;{coin.symbol}
                     </button>
                   </td>
                 </tr>
