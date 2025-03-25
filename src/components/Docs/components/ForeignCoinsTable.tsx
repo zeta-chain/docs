@@ -50,7 +50,7 @@ const formatString = (str: string) => {
 
 const addTokenToMetaMask = async (token: ForeignCoin & { chainName: string }) => {
   if (!window.ethereum) {
-    alert("Please install an EVM wallet like MetaMask to use this feature");
+    alert("Please install an EVM wallet like MetaMask to add tokens to your wallet");
     return;
   }
 
@@ -61,6 +61,8 @@ const addTokenToMetaMask = async (token: ForeignCoin & { chainName: string }) =>
         type: "ERC20",
         options: {
           address: token.zrc20_contract_address,
+          symbol: token.symbol,
+          decimals: token.decimals,
         },
       },
     });
@@ -172,7 +174,7 @@ export const ForeignCoinsTable = () => {
             <thead>
               <tr>
                 <th>Chain</th>
-                <th>Symbol</th>
+                <th>{isCorrectNetwork ? "Add to Wallet" : "Symbol"}</th>
                 <th>Type</th>
                 <th>ZRC-20 decimals</th>
                 <th>ZRC-20 on ZetaChain</th>
@@ -186,16 +188,11 @@ export const ForeignCoinsTable = () => {
                 // eslint-disable-next-line react/no-array-index-key
                 <tr key={index}>
                   <td>{coin.chainName}</td>
-                  <td>{coin.symbol}</td>
-                  <td>{coin.coin_type}</td>
-                  <td>{coin.decimals}</td>
-                  <td>{coin.zrc20_contract_address}</td>
-                  <td>{coin.asset}</td>
                   <td>
                     <button
                       onClick={() => addTokenToMetaMask(coin)}
-                      className={`px-3 py-1 text-sm rounded bg-[#00A5C6] dark:bg-[#B0FF61] text-white dark:text-black ${
-                        isCorrectNetwork ? "hover:opacity-80" : "opacity-25 cursor-not-allowed"
+                      className={`px-3 py-1 text-sm rounded bg-grey-200 text-grey-700 dark:bg-grey-600 text-white dark:text-grey-100 ${
+                        isCorrectNetwork ? "hover:opacity-80" : "opacity-50 cursor-not-allowed"
                       }`}
                       disabled={!isCorrectNetwork}
                       title={
@@ -204,9 +201,18 @@ export const ForeignCoinsTable = () => {
                           : undefined
                       }
                     >
-                      <b>＋</b>&nbsp;{coin.symbol}
+                      {coin.symbol}
+                      {isCorrectNetwork && (
+                        <>
+                          &nbsp;<b>＋</b>
+                        </>
+                      )}
                     </button>
                   </td>
+                  <td>{coin.coin_type}</td>
+                  <td>{coin.decimals}</td>
+                  <td>{coin.zrc20_contract_address}</td>
+                  <td>{coin.asset}</td>
                 </tr>
               ))}
             </tbody>
