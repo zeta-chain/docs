@@ -3,7 +3,6 @@ title: Privileged Actions
 ---
 
 import { AdminPolicy } from "~/components/Docs";
-
 import { Alert } from "~/components/shared";
 
 Certain privileged actions (transaction messages) are only allowed to be
@@ -25,8 +24,6 @@ ZetaChain can have any number of groups. Anyone can create a group. In this
 document we only consider policy accounts that give authorization to perform
 privileged actions.
 
-These "special" policy accounts are defined in the [params of the observer
-module](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/authority/policies).
 These policy accounts are set during genesis and as any module parameter they
 can be changed through governance. This is important, because even though the
 protocol has a notion of admins and privileged policy accounts, they are chosen
@@ -35,15 +32,9 @@ members of a group become malicious, the community can create a new group with
 new admin and members and use the parameter change governance proposal to point
 the parameter of the observer module to the new policy accounts.
 
-To learn which policy accounts can send which privileged messages, query the [zeta-chain/authority/authorizations](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/authority/authorizations) endpoint. 
-
-<Alert variant="note">
-  {" "}
-  Notice that policy accounts below are called "groupEmergency", "groupOperational", "groupAdmin". These are just names that indicate the level of 
-  permissions and are not related to the actual groups associated with policy accounts. As you can see in testnet there are three entries
-  that both point to the same policy account. This means that right now even though there are three
-  levels of permissions ("groupEmergency", "groupOperational", "groupAdmin") there is only one policy account that is authorized to perform   
-  privileged actions. {" "}
-</Alert>
+The table below shows all privileged messages grouped by their required policy
+account and module. Each message is organized under its respective module
+(crosschain, fungible, observer, etc.) and requires authorization from the
+specified policy account.
 
 <AdminPolicy />
