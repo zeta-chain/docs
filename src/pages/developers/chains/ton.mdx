@@ -34,7 +34,7 @@ To deposit TON and call a universal app contract, send an internal message to
 the Gateway contract with the following structure:
 
 ```fc
-;; Message body structure
+op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits) call_data:cell
 ;; op_code: 32 bits
 ;; query_id: 64 bits
 ;; evm_recipient: 160 bits (20 bytes)
