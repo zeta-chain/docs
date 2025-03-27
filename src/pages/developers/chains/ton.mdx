@@ -11,7 +11,8 @@ TON gateway supports:
 To deposit TON to an EOA or a universal contract, send an internal message to
 the Gateway contract with the following structure:
 
-```fc
+```func
+op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits)
 ;; Message body structure
 ;; op_code: 32 bits
 ;; query_id: 64 bits
