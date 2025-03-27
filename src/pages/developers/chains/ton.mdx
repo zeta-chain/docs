@@ -41,7 +41,7 @@ op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits) call_data:cell
 ;; call_data: cell (up to 2KB)
 ```
 
-The `op_code` should be set to `102` for deposit and call operations.
+The depositAndCall `op_code` is `102`. `query_id` is reserved for future use, leave it to `0`. Also note that call_data should be a cell encoded in ["snake data"](https://docs.ton.org/v3/guidelines/dapps/asset-processing/nft-processing/metadata-parsing#snake-data-encoding) format (supported by most TON libraries)
 
 The `evm_recipient` must be the address of a universal app contract.
 
