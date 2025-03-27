@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
 
 interface Authorization {
