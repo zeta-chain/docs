@@ -19,7 +19,7 @@ op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits)
 ;; evm_recipient: 160 bits (20 bytes)
 ```
 
-The `op_code` should be set to `101` for deposits.
+The deposit `op_code` is `101`. `query_id` is reserved for future use, leave it to `0`.
 
 The `evm_recipient` specifies the address on ZetaChain that will receive the
 deposited TON. This can be either an externally-owned account (EOA) or a
