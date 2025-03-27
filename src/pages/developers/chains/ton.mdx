@@ -22,6 +22,13 @@ The `evm_recipient` specifies the address on ZetaChain that will receive the
 deposited TON. This can be either an externally-owned account (EOA) or a
 universal app address.
 
+Here's an example of how to construct the deposit message in TypeScript:
+
+```typescript
+const opDeposit = 101;
+const body = beginCell().storeUint(opDeposit, 32).storeUint(0, 64).storeUint(zevmRecipient, 160).endCell();
+```
+
 After the deposit is processed, the receiver receives the [ZRC-20
 version](/developers/tokens/zrc20) of the deposited TON.
 
@@ -43,6 +50,19 @@ The `evm_recipient` must be the address of a universal app contract.
 
 The `call_data` cell contains the payload that will be passed to the `onCall`
 function of the universal app contract.
+
+Here's an example of how to construct the deposit-and-call message in
+TypeScript:
+
+```typescript
+const opDepositAndCall = 102;
+const body = beginCell()
+  .storeUint(opDepositAndCall, 32)
+  .storeUint(0, 64)
+  .storeUint(zevmRecipient, 160)
+  .storeRef(callDataCell) // callDataCell should be a cell containing the payload
+  .endCell();
+```
 
 After the cross-chain transaction is processed, the `onCall` function of the
 universal app contract is executed.
