@@ -13,10 +13,6 @@ the Gateway contract with the following structure:
 
 ```func
 op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits)
-;; Message body structure
-;; op_code: 32 bits
-;; query_id: 64 bits
-;; evm_recipient: 160 bits (20 bytes)
 ```
 
 The deposit `op_code` is `101`. `query_id` is reserved for future use, leave it
@@ -34,12 +30,8 @@ version](/developers/tokens/zrc20) of the deposited TON.
 To deposit TON and call a universal app contract, send an internal message to
 the Gateway contract with the following structure:
 
-```fc
+```func
 op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits) call_data:cell
-;; op_code: 32 bits
-;; query_id: 64 bits
-;; evm_recipient: 160 bits (20 bytes)
-;; call_data: cell (up to 2KB)
 ```
 
 The depositAndCall `op_code` is `102`. `query_id` is reserved for future use,
