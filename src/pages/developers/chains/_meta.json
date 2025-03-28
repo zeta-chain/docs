@@ -23,6 +23,10 @@
     "title": "Ton",
     "description": "Make calls to universal apps and deposit from TON"
   },
+  "sui": {
+    "title": "Sui",
+    "description": "Make calls to universal apps and deposit tokens from Sui"
+  },
   "bitcoin": {
     "title": "Bitcoin",
     "description": "Make calls to universal apps and deposit BTC from Bitcoin"

@@ -1,4 +1,8 @@
 {
+  "the-graph": {
+    "title": "The Graph",
+    "description": "Subgraphs, Decentralized indexing protocol"
+  },
   "alchemy": {
     "title": "Alchemy",
     "description": "Node API and Subgraphs"
