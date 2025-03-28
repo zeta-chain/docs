@@ -4,9 +4,11 @@ withdraw tokens, use the ZetaChain gateway.
 The ZetaChain gateway supports:
 
 - Withdrawing ZRC-20 tokens as native gas or ERC-20 tokens to connected chains.
-- Withdrawing ZETA tokens to connected chains.
 - Withdrawing tokens and making a contract call on connected chains.
 - Calling contracts on connected chains.
+
+Note: Withdrawing ZETA tokens is currently not supported and will revert with
+`ZETANotSupported()`.
 
 ## Withdraw ZRC-20 Tokens
 
@@ -31,7 +33,9 @@ address is chain-agnostic. When withdrawing to an EVM chain, ensure you convert
 The `amount` specifies the quantity to withdraw, and `zrc20` is the ZRC-20
 address of the token being withdrawn.
 
-You don’t need to specify the destination chain since each ZRC-20 token is tied
+The `revertOptions.revertMessage` must not exceed 1024 bytes in length.
+
+You don't need to specify the destination chain since each ZRC-20 token is tied
 to the chain from which it was deposited. A ZRC-20 token can only be withdrawn
 to its originating chain. For example, to withdraw ZRC-20 USDC.ETH to the BNB
 chain, you must first swap it to ZRC-20 USDC.BNB.
@@ -49,6 +53,9 @@ This function withdraws tokens and makes a call to a contract on the connected
 chain identified by the `zrc20` address. For instance, if ZRC-20 ETH is
 withdrawn, the call is made to a contract on Ethereum.
 
+The combined length of `message` and `revertOptions.revertMessage` must not
+exceed 1024 bytes.
+
 ## Call a Contract on a Connected Chain
 
 To call a contract on a connected chain without withdrawing tokens, use the
@@ -61,6 +68,9 @@ function call(bytes memory receiver, address zrc20, bytes calldata message, Call
 Here, `zrc20` represents the ZRC-20 token address of the gas token for the
 destination chain. This address acts as an identifier for the target chain. For
 example, to call a contract on Ethereum, use the ZRC-20 ETH token address.
+
+The combined length of `message` and `revertOptions.revertMessage` must not
+exceed 1024 bytes.
 
 ## Call Options
 
@@ -82,7 +92,7 @@ struct CallOptions {
 An arbitrary call invokes any function on a connected chain but does not retain
 the original caller's identity—within the target contract, `msg.sender` is the
 Gateway address, not the originating universal contract. This is suitable for
-scenarios like token swaps, where the caller’s identity is unnecessary.
+scenarios like token swaps, where the caller's identity is unnecessary.
 
 An authenticated call specifically targets the `onCall` function of a contract
 on the connected chain. Authentication is achieved because the `onCall` function
@@ -98,7 +108,7 @@ selector and arguments for the target contract:
 
 - **Function Selector**: The first 4 bytes of the Keccak-256 hash of the
   function signature.
-- **Arguments**: The remaining bytes, ABI-encoded according to Ethereum’s rules.
+- **Arguments**: The remaining bytes, ABI-encoded according to Ethereum's rules.
 
 For example:
 
@@ -142,8 +152,8 @@ contract is called. If call on revert is false, then a reverted cross-chain
 transaction will make a token transfer to the revert address without a contract
 call.
 
-`abortAddress` is the address to receive funds on ZetaChain if the CCTX aborts
-(this functionality is not implemented yet).
+`abortAddress` is an address on ZetaChain, to which tokens are transferred if
+reverting failed.
 
 `revertMessage` is a message passed to the `onRevert` function inside the revert
 context.
@@ -161,9 +171,9 @@ on which the revert is to be executed. If the deposit amount is insufficient,
 the CCTX will abort and `onRevert` will not be called.
 
 Gateway `call` (no asset call) from a connected chain to ZetaChain does not
-support reverts, because there are no assets to cover the revert gas costs.
-
-### Revertable Contracts
+support reverts, because there are no assets to cover the revert gas costs. If
+the execution of `onCall` (as a result of a no-asset `call`) in a universal
+contract on ZetaChain reverts, `onAbort` is triggered.
 
 Contracts implementing the `onRevert` function must conform to this interface:
 
@@ -173,6 +183,7 @@ struct RevertContext {
     uint64 amount;
     bytes revertMessage;
 }
+
 
 interface Revertable {
     function onRevert(RevertContext calldata revertContext) external;
@@ -185,3 +196,45 @@ Gateway's `deposit` or `depositAndCall`. If a gas token was deposited, the
 
 On ZetaChain `asset` is an address of a ZRC-20 withdrawn using Gateway's
 `withdraw` or `withdrawAndCall`.
+
+## Abort Transactions
+
+The `abortAddress` field in the `RevertOptions` struct specifies the address on
+ZetaChain which is called in two scenarios:
+
+```
+Connected chain → ZetaChain, onCall reverts, amount not enough for revert → ZetaChain, onAbort
+```
+
+If a cross-chain call from a connected chain to ZetaChain (incoming call) is
+reverted, but the amount of tokens supplied with the call is not enough to pay
+for a revert transaction back to the source chain. This applies to all no-asset
+calls as well as deposit and calls with insufficient amounts.
+
+```
+ZetaChain -> Connected chain, onCall reverts → ZetaChain, onRevert reverts → ZetaChain, onAbort
+```
+
+When a call from ZetaChain to a connected chain (outgoing call) is reverted, a
+cross-chain call was made from connected chain to ZetaChain, which called
+`onRevert`, and `onRevert` also reverted.
+
+Tokens are transferred to onAbort address on ZetaChain, and if this address is a
+contract it is called.
+
+Contracts implementing the `onAbort` function must conform to this interface:
+
+```solidity
+struct AbortContext {
+    bytes sender;
+    address asset;
+    uint256 amount;
+    bool outgoing;
+    uint256 chainID;
+    bytes revertMessage;
+}
+
+interface Abortable {
+    function onAbort(AbortContext calldata abortContext) external;
+}
+```
