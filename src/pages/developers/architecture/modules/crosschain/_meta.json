@@ -1,9 +1,0 @@
-{
-  "overview": {
-    "title": "Cross-Chain Module",
-    "description": "Cross-chain messaging makes the most sense for applications that generally need minimal logic or state to maintain across all chains.",
-    "readTime": "5 min",
-    "readType": "Beginner"
-  },
-  "messages": "Messages"
-}
