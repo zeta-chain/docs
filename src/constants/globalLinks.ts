@@ -18,4 +18,6 @@ export const globalLinks = {
   bugBountyLink: "/about/zetachain/bug-bounty",
   communityAmbassadorLink: "https://zealy.io/cw/zetachain/questboard",
   workWithUsLink: "https://www.zetachain.com/careers",
+  coinMarketCapLink: "https://coinmarketcap.com/currencies/zetachain/",
+  auditReportsLink: "/about/security/audit-reports",
 };
