@@ -8,5 +8,10 @@
     "title": "About ZETA Token",
     "description": "Understand more about the token underpinning ZetaChain",
     "readTime": "5 min"
+  },
+  "security": {
+    "title": "Security",
+    "description": "Security information, audit reports, and bug bounty programs for ZetaChain",
+    "readTime": "3 min"
   }
 }
