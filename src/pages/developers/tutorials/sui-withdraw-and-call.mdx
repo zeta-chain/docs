@@ -122,7 +122,7 @@ sui client call \
   --args "$POOL" "$TOKEN"
 ```
 
-## Execute Withdraw and Call
+## Prepare Withdraw and Call
 
 Now you can execute the withdraw and call operation. This will withdraw tokens
 from ZetaChain to Sui and simultaneously call a contract on Sui.
@@ -155,7 +155,7 @@ TOKEN_TYPE="$PACKAGE::token::TOKEN"
 PAYLOAD=$(npx ts-node ./setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PARTNER,$CLOCK" "$MESSAGE")
 ```
 
-# Execute the withdraw and call
+## Execute the withdraw and call
 
 ```
 cast send 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 "withdrawAndCall(bytes,uint256,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
