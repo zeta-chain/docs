@@ -5,7 +5,7 @@ import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from
 type ChainData = {
   chains: {
     chain_id: string;
-    chain_name: string;
+    name: string;
   }[];
 };
 
@@ -55,7 +55,7 @@ export const ChainConfirmations = () => {
           .filter((param) => newSupportedChainIds.has(param.chain_id) && !["7000", "7001"].includes(param.chain_id))
           .map((param) => ({
             ...param,
-            chainName: chainsData.chains.find((chain) => chain.chain_id === param.chain_id)?.chain_name || "Unknown",
+            chainName: chainsData.chains.find((chain) => chain.chain_id === param.chain_id)?.name || "Unknown",
           }));
 
         if (activeTab.networkType === "mainnet") setMainnetChainParams(filteredParams);
