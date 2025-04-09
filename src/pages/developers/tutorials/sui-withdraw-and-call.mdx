@@ -1,20 +1,13 @@
 Interacting with ZetaChain universal apps from the Sui blockchain includes the
-ability to withdraw tokens back to Sui while simultaneously executing contract
-calls. This functionality allows for seamless cross-chain operations where you
-can both withdraw assets and trigger contract logic in a single transaction.
+This tutorial demonstrates how to withdraw tokens to Sui while calling a Sui
+contract in the same transaction—enabling seamless cross-chain operations and
+powerful DeFi flows.
 
-In this tutorial, you'll:
+You’ll learn how to:
 
-- Set up a local development environment using
-  [localnet](/developers/tutorials/localnet).
-- Deploy a universal contract on ZetaChain.
-- Deploy a Sui contract capable of receiving calls from ZetaChain universal
-  apps.
-- Execute withdraw-and-call to withdraw tokens and call a contract on Sui in a
-  single transaction.
-
-By the end, you'll understand how to perform complex cross-chain operations that
-combine asset withdrawals with contract calls on Sui.
+- Set up a localnet environment with ZetaChain and Sui
+- Deploy and configure a Sui contract that responds to ZetaChain calls
+- Execute withdrawAndCall() to send tokens and trigger contract logic on Sui
 
 ## Prerequisites
 
@@ -25,6 +18,18 @@ Ensure you have installed and configured the following tools before starting:
 - [Foundry](https://getfoundry.sh/): Needed for encoding payload data using ABI.
 - [jq](https://stedolan.github.io/jq/): Required for parsing JSON output from
   Sui CLI.
+
+## Contract Overview
+
+The example contract demonstrates how to handle cross-chain interactions between
+ZetaChain and Sui. The contract implements a `connected` module that:
+
+- Receives tokens from ZetaChain through the `on_call` function
+- Performs a token swap using a mock Cetus DEX implementation
+- Transfers the swapped tokens to a specified receiver address
+
+The Sui contract uses `0x2::coin` and a custom `token::TOKEN` type to represent
+the transferred asset.
 
 ## Clone the Example Project
 
@@ -48,17 +53,6 @@ npx hardhat localnet
 
 Keep this terminal window open. You should see a table displaying the deployment
 details, including Gateway module and object IDs.
-
-## Deploying a Universal Contract
-
-Open a new terminal window to compile and deploy your Universal Contract:
-
-```bash
-npx hardhat compile --force
-npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
-```
-
-A successful deployment will output the contract address.
 
 ## Deploy a Contract on Sui
 
