@@ -71,7 +71,7 @@ PUBLISHED=$(sui client publish --skip-dependency-verification --json)
 ```
 
 ```
-PACKAGE=$(echo $PUBLISHED | jq -r '.objectChanges[] | select(.type == "published") | .packageId')
+PACKAGE=$(echo $PUBLISHED | jq -r '.objectChanges[] | select(.type == "published") | .packageId') && echo $PACKAGE
 ```
 
 This will deploy the contract and store the package ID in the `$PACKAGE`
@@ -85,42 +85,53 @@ the initial liquidity.
 Get the treasury cap:
 
 ```bash
-TREASURY=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "0x2::coin::TreasuryCap<\($pkg)::token::TOKEN>") | .objectId')
+TREASURY=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "0x2::coin::TreasuryCap<\($pkg)::token::TOKEN>") | .objectId') && echo $TREASURY
 ```
 
 Get the pool ID:
 
 ```
-POOL=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Pool<0x2::sui::SUI, \($pkg)::token::TOKEN>") | .objectId')
+POOL=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Pool<0x2::sui::SUI, \($pkg)::token::TOKEN>") | .objectId') && echo $POOL
 ```
 
 Mint tokens to your address:
 
 ```
-RECIPIENT=$(sui client active-address)
+RECIPIENT=$(sui client active-address) && echo $RECIPIENT
+``
+
+```
+
 sui client call \
-  --package "$PACKAGE" \
+ --package "$PACKAGE" \
   --module token \
   --function mint \
   --args "$TREASURY" 1000000 "$RECIPIENT"
+
 ```
 
 Get the token ID:
 
 ```
-TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data | select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId')
+
+TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data |
+select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId') && echo
+$TOKEN
+
 ```
 
 Deposit tokens into the pool:
 
 ```
+
 sui client call \
-  --package "$PACKAGE" \
+ --package "$PACKAGE" \
   --module cetusmock \
   --function deposit \
   --type-args "0x2::sui::SUI" "$PACKAGE::token::TOKEN" \
-  --args "$POOL" "$TOKEN"
-```
+ --args "$POOL" "$TOKEN"
+
+````
 
 ## Prepare Withdraw and Call
 
@@ -130,15 +141,15 @@ from ZetaChain to Sui and simultaneously call a contract on Sui.
 Get the required contract IDs:
 
 ```bash
-CONFIG=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::GlobalConfig") | .objectId')
+CONFIG=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::GlobalConfig") | .objectId') && echo $CONFIG
+````
+
+```
+CLOCK=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Clock") | .objectId') && echo $CLOCK
 ```
 
 ```
-CLOCK=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Clock") | .objectId')
-```
-
-```
-PARTNER=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Partner") | .objectId')
+PARTNER=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Partner") | .objectId') && echo $PARTNER
 ```
 
 Prepare the payload:
@@ -148,11 +159,11 @@ MESSAGE=$RECIPIENT
 ```
 
 ```
-TOKEN_TYPE="$PACKAGE::token::TOKEN"
+TOKEN_TYPE="$PACKAGE::token::TOKEN" && echo $TOKEN_TYPE
 ```
 
 ```
-PAYLOAD=$(npx ts-node ./setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PARTNER,$CLOCK" "$MESSAGE")
+PAYLOAD=$(npx ts-node ./setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PARTNER,$CLOCK" "$MESSAGE") && echo $PAYLOAD
 ```
 
 ## Execute the withdraw and call
