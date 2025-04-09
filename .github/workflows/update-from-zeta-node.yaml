@@ -45,15 +45,14 @@ jobs:
           for dir in src/pages/developers/architecture/modules/*/; do
             if [ -d "$dir" ]; then
               module_name=$(basename "$dir")
-              echo "- [${module_name^} Module](./modules/${module_name}/overview)" >> src/pages/developers/architecture/modules/index.mdx
+              echo "- [${module_name^} Module](./modules/${module_name}/messages)" >> src/pages/developers/architecture/modules/index.mdx
             fi
           done
 
       - name: Update zetacored CLI docs
         run: |
-          mkdir -p src/pages/developers/architecture/zetacored
-          rm -rf src/pages/developers/architecture/zetacored/*
-          cp -r node/docs/cli/zetacored/* src/pages/developers/architecture/zetacored/
+          mkdir -p src/pages/developers/architecture
+          cp node/docs/cli/zetacored/cli.md src/pages/developers/architecture/zetacored.md
 
       - name: Update OpenAPI specs
         run: |
