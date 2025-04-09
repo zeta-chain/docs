@@ -8,7 +8,8 @@ In this tutorial, you'll:
 - Set up a local development environment using
   [localnet](/developers/tutorials/localnet).
 - Deploy a universal contract on ZetaChain.
-- Deploy a mock Cetus pool contract on Sui.
+- Deploy a Sui contract capable of receiving calls from ZetaChain universal
+  apps.
 - Execute withdraw-and-call to withdraw tokens and call a contract on Sui in a
   single transaction.
 
@@ -59,9 +60,9 @@ npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc
 
 A successful deployment will output the contract address.
 
-## Deploy the Cetus Mock Contract
+## Deploy a Contract on Sui
 
-Navigate to the Sui contract directory and deploy the mock Cetus pool contract:
+Navigate to the Sui contract directory and deploy the contract:
 
 ```bash
 cd sui
@@ -130,7 +131,7 @@ sui client call \
 ## Execute Withdraw and Call
 
 Now you can execute the withdraw and call operation. This will withdraw tokens
-from ZetaChain to Sui and simultaneously call the Cetus pool contract.
+from ZetaChain to Sui and simultaneously call a contract on Sui.
 
 Get the required contract IDs:
 
@@ -176,8 +177,7 @@ cast send 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 "withdrawAndCall(bytes,uint
 This transaction will:
 
 1. Withdraw tokens from ZetaChain to Sui
-2. Call the Cetus pool contract with the specified parameters
-3. Execute the contract logic on Sui
+2. Call a Sui contract with the specified parameters
 
 The operation demonstrates how to perform complex cross-chain operations that
 combine asset withdrawals with contract calls, enabling sophisticated DeFi
