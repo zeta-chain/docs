@@ -98,40 +98,32 @@ Mint tokens to your address:
 
 ```
 RECIPIENT=$(sui client active-address) && echo $RECIPIENT
-``
-
 ```
 
+```
 sui client call \
  --package "$PACKAGE" \
   --module token \
   --function mint \
   --args "$TREASURY" 1000000 "$RECIPIENT"
-
 ```
 
 Get the token ID:
 
 ```
-
-TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data |
-select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId') && echo
-$TOKEN
-
+TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data | select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId') && echo $TOKEN
 ```
 
 Deposit tokens into the pool:
 
 ```
-
 sui client call \
- --package "$PACKAGE" \
+  --package "$PACKAGE" \
   --module cetusmock \
   --function deposit \
   --type-args "0x2::sui::SUI" "$PACKAGE::token::TOKEN" \
- --args "$POOL" "$TOKEN"
-
-````
+  --args "$POOL" "$TOKEN"
+```
 
 ## Prepare Withdraw and Call
 
@@ -142,7 +134,7 @@ Get the required contract IDs:
 
 ```bash
 CONFIG=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::GlobalConfig") | .objectId') && echo $CONFIG
-````
+```
 
 ```
 CLOCK=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Clock") | .objectId') && echo $CLOCK
