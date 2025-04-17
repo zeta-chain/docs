@@ -9,11 +9,6 @@ const links = [
     target: "_blank",
   },
   {
-    text: "Whitepaper",
-    href: globalLinks.whitepaperLink,
-    target: "_self",
-  },
-  {
     text: "Explorer",
     href: globalLinks.explorerUrl,
     target: "_blank",

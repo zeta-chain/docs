@@ -26,10 +26,6 @@ export const HomeHero: React.FC = () => {
               any blockchain, creating a fluid crypto ecosystem from a single platform.
             </p>
           </div>
-
-          <PrimaryLink href={globalLinks.whitepaperLink} target="_blank" icon={<IconDocument />}>
-            Read the Whitepaper
-          </PrimaryLink>
         </div>
       </div>
 
