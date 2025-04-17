@@ -41,7 +41,6 @@ module.exports = {
     "import/prefer-default-export": OFF,
     "simple-import-sort/imports": ERROR,
     "simple-import-sort/exports": ERROR,
-    "no-console": ["error", { allow: ["error"] }],
     "import/extensions": OFF,
     "@typescript-eslint/naming-convention": [
       ERROR,
