@@ -24,6 +24,11 @@
     "readTime": "60 min",
     "description": "Deposit assets and call universal apps from Sui"
   },
+  "sui-withdraw-and-call": {
+    "title": "Sui Withdraw & Call",
+    "readTime": "60 min",
+    "description": "Withdraw assets and call contracts on Sui"
+  },
   "swap": {
     "title": "Swap",
     "readTime": "30 min",
