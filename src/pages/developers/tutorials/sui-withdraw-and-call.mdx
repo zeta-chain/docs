@@ -66,6 +66,12 @@ cd sui
 sui move build --force
 ```
 
+Get some Sui tokens from the faucet:
+
+```
+sui client faucet
+```
+
 ```
 PUBLISHED=$(sui client publish --skip-dependency-verification --json)
 ```
@@ -194,13 +200,13 @@ PAYLOAD=$(npx ts-node ./setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PA
 Approve Gateway to spend ZRC-20 Sui:
 
 ```
-cast send 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 "approve(address,uint256)" 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 1000000000000000000000000 --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 "approve(address,uint256)" 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6 1000000000000000000000000 --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 Withdraw and call:
 
 ```
-cast send 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 "withdrawAndCall(bytes,uint256,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
+cast send 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6 "withdrawAndCall(bytes,uint256,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
   "$PACKAGE" \
   "1000000" \
   "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891" \
