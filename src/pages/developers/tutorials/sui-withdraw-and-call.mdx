@@ -108,9 +108,9 @@ RECIPIENT=$(sui client active-address) && echo $RECIPIENT
 
 ```
 sui client call \
- --package "$PACKAGE" \
+  --package "$PACKAGE" \
   --module token \
-  --function mint \
+  --function mint_and_transfer \
   --args "$TREASURY" 1000000 "$RECIPIENT"
 ```
 
