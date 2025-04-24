@@ -220,7 +220,7 @@ struct RevertOptions {
   address is zero, reverted tokens are transferred to the original sender of the
   call.
 - `callOnRevert`: Whether the Gateway should call `onRevert`.
-- `abortAddress`: Address to call if onCall reverts (for a no-asset call) or
+- `abortAddress`: Address to call if `onCall` reverts (for a no-asset call) or
   reverting fails (for an asset call)
 - `revertMessage`: Message passed to `onRevert` and `onAbort`.
 - `onRevertGasLimit`: Max gas allowed for `onRevert`. Determines the amount of
