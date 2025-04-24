@@ -127,7 +127,9 @@ selector in the beginning, because authenticated calls are routed to a specific
 ## Revert Transactions
 
 The `RevertOptions` struct specifies how assets are handled in case of a
-cross-chain transaction (CCTX) revert:
+cross-chain transaction (CCTX) revert.
+
+
 
 ```solidity
 struct RevertOptions {
@@ -163,6 +165,22 @@ context.
 For CCTXs from ZetaChain to a connected chain, revert execution is free, so the
 same amount that has been withdrawn will be returned back as
 `revertContext.amount` in ZRC-20 tokens.
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/RQ152Ha21syhRT8iKGXz3h/Incoming--Revert?node-id=0-1&embed-host=share"
+  allowfullscreen
+></iframe>
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/4VGffjhDTeZMP3FFxxODpI/Outgoing--Revert?node-id=0-1&embed-host=share"
+  allowfullscreen
+></iframe>
 
 For CCTXS from a connected chain to ZetaChain, however, gas fees for revert
 execution are deducted from the deposit amount. If a CCTX reverts, the protocol
