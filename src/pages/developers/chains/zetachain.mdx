@@ -126,10 +126,85 @@ selector in the beginning, because authenticated calls are routed to a specific
 
 ## Revert Transactions
 
+When a cross-chain transaction (CCTX) fails, ZetaChain uses the RevertOptions
+struct to determine how to handle the failure. The behavior depends on the
+direction of the transaction — whether it's from a connected chain to ZetaChain
+or from ZetaChain to a connected chain.
+
+### Connected Chain → ZetaChain (Incoming)
+
+This scenario happens when a contract on a connected chain sends tokens or a
+message to ZetaChain using the `depositAndCall` or `call` function on the
+Gateway.
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/RQ152Ha21syhRT8iKGXz3h/Incoming--Revert?node-id=0-1&embed-host=share"
+  allowfullscreen
+></iframe>
+
+1. A contract on a connected chain calls `depositAndCall` or `call` on the
+   Gateway.
+2. The Gateway forwards the call to a **universal contract** on ZetaChain.
+3. If the `onCall` function reverts, the protocol initiates the revert process.
+
+Revert Behavior:
+
+- If the `amount` sent with the original call is **enough to cover revert gas
+  fees**:
+
+  - ZetaChain swaps part of the amount into gas tokens (ZRC-20) for the
+    connected chain.
+  - The protocol sends the remaining tokens and revert message to the
+    `revertAddress` on the connected chain.
+  - If `callOnRevert` is `true`, the Gateway invokes the `onRevert` function.
+
+- If the `amount` is **insufficient** or zero (for example, when it's a no-asset
+  `call`) the Gateway calls `onAbort` on the `abortAddress` on ZetaChain.
+
+### ZetaChain → Connected Chain (Outgoing)
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/4VGffjhDTeZMP3FFxxODpI/Outgoing--Revert?node-id=0-1&embed-host=share"
+  allowfullscreen
+></iframe>
+
+This scenario occurs when a universal contract on ZetaChain calls
+`withdrawAndCall` or `call` on the Gateway to interact with a contract on a
+connected chain.
+
+Flow:
+
+1. A universal contract on ZetaChain initiates a call to a connected chain via
+   `withdrawAndCall` or `call`.
+2. The Gateway forwards the message and/or tokens to the target contract on the
+   connected chain.
+3. If the target contract reverts, ZetaChain initiates the revert process.
+
+Revert Behavior:
+
+- If `callOnRevert` is `true`:
+
+  - The Gateway invokes the `onRevert` function on the `revertAddress` on
+    ZetaChain.
+  - The remaining ZRC-20 tokens are passed along with the revert context.
+  - If the `onRevert` call **itself reverts**, the Gateway transfers ZRC-20
+    tokens to and calls `onAbort` on the `abortAddress` on ZetaChain.
+
+- If `callOnRevert` is `false`:
+
+  - The Gateway transfers tokens to the `revertAddress` without invoking any
+    function.
+
 The `RevertOptions` struct specifies how assets are handled in case of a
 cross-chain transaction (CCTX) revert.
 
-
+### `RevertOptions` Struct
 
 ```solidity
 struct RevertOptions {
@@ -141,59 +216,17 @@ struct RevertOptions {
 }
 ```
 
-`revertAddress` is the address of an EOA or contract, which will receive the
-tokens if a cross-chain transaction reverts. If a zero address is specified, the
-tokens will be transferred the the `msg.sender` that initiated the Gateway call.
-It's recommended to always specify the revert address to make sure tokens are
-refunded to the correct address.
+- `revertAddress`: The address that receives tokens or revert logic. If revert
+  address is zero, reverted tokens are transferred to the original sender of the
+  call.
+- `callOnRevert`: Whether the Gateway should call `onRevert`.
+- `abortAddress`: Address to call if onCall reverts (for a no-asset call) or
+  reverting fails (for an asset call)
+- `revertMessage`: Message passed to `onRevert` and `onAbort`.
+- `onRevertGasLimit`: Max gas allowed for `onRevert`. Determines the amount of
+  tokens that will be used
 
-`callOnRevert` is a flag indicating whether a reverted cross-chain transaction
-should result in a contract call on the chain on which the Gateway call was
-made. If call on revert is true, the `onRevert` function of the `revertAddress`
-contract is called. If call on revert is false, then a reverted cross-chain
-transaction will make a token transfer to the revert address without a contract
-call.
-
-`abortAddress` is an address on ZetaChain, to which tokens are transferred if
-reverting failed.
-
-`revertMessage` is a message passed to the `onRevert` function inside the revert
-context.
-
-`onRevertGasLimit` is a limit for executing the `onRevert` function.
-
-For CCTXs from ZetaChain to a connected chain, revert execution is free, so the
-same amount that has been withdrawn will be returned back as
-`revertContext.amount` in ZRC-20 tokens.
-
-<iframe
-  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
-  width="100%"
-  height="450"
-  src="https://embed.figma.com/board/RQ152Ha21syhRT8iKGXz3h/Incoming--Revert?node-id=0-1&embed-host=share"
-  allowfullscreen
-></iframe>
-
-<iframe
-  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
-  width="100%"
-  height="450"
-  src="https://embed.figma.com/board/4VGffjhDTeZMP3FFxxODpI/Outgoing--Revert?node-id=0-1&embed-host=share"
-  allowfullscreen
-></iframe>
-
-For CCTXS from a connected chain to ZetaChain, however, gas fees for revert
-execution are deducted from the deposit amount. If a CCTX reverts, the protocol
-will swap a fraction of the deposit amount into ZRC-20 gas tokens of the chain
-on which the revert is to be executed. If the deposit amount is insufficient,
-the CCTX will abort and `onRevert` will not be called.
-
-Gateway `call` (no asset call) from a connected chain to ZetaChain does not
-support reverts, because there are no assets to cover the revert gas costs. If
-the execution of `onCall` (as a result of a no-asset `call`) in a universal
-contract on ZetaChain reverts, `onAbort` is triggered.
-
-Contracts implementing the `onRevert` function must conform to this interface:
+### `onRevert`
 
 ```solidity
 struct RevertContext {
@@ -202,45 +235,16 @@ struct RevertContext {
     bytes revertMessage;
 }
 
-
 interface Revertable {
     function onRevert(RevertContext calldata revertContext) external;
 }
 ```
 
-On a connected chain `asset` is an address of an ERC-20 deposited using
-Gateway's `deposit` or `depositAndCall`. If a gas token was deposited, the
-`asset` is a zero address.
+- On a connected chain, `asset` is the ERC-20 originally deposited (or zero
+  address for gas assets).
+- On ZetaChain, `asset` is the ZRC-20 withdrawn during the original call.
 
-On ZetaChain `asset` is an address of a ZRC-20 withdrawn using Gateway's
-`withdraw` or `withdrawAndCall`.
-
-## Abort Transactions
-
-The `abortAddress` field in the `RevertOptions` struct specifies the address on
-ZetaChain which is called in two scenarios:
-
-```
-Connected chain → ZetaChain, onCall reverts, amount not enough for revert → ZetaChain, onAbort
-```
-
-If a cross-chain call from a connected chain to ZetaChain (incoming call) is
-reverted, but the amount of tokens supplied with the call is not enough to pay
-for a revert transaction back to the source chain. This applies to all no-asset
-calls as well as deposit and calls with insufficient amounts.
-
-```
-ZetaChain -> Connected chain, onCall reverts → ZetaChain, onRevert reverts → ZetaChain, onAbort
-```
-
-When a call from ZetaChain to a connected chain (outgoing call) is reverted, a
-cross-chain call was made from connected chain to ZetaChain, which called
-`onRevert`, and `onRevert` also reverted.
-
-Tokens are transferred to onAbort address on ZetaChain, and if this address is a
-contract it is called.
-
-Contracts implementing the `onAbort` function must conform to this interface:
+### `onAbort`
 
 ```solidity
 struct AbortContext {
@@ -256,3 +260,13 @@ interface Abortable {
     function onAbort(AbortContext calldata abortContext) external;
 }
 ```
+
+- Called on ZetaChain as a fallback when revert execution fails.
+- Used in both incoming and outgoing transactions.
+
+### Summary
+
+| Direction             | Trigger                                  | Revert Path                                   | Fallback if Revert Fails |
+| --------------------- | ---------------------------------------- | --------------------------------------------- | ------------------------ |
+| Connected → ZetaChain | `onCall()` in universal contract fails   | `onRevert()` on connected chain (if funded)   | `onAbort()` on ZetaChain |
+| ZetaChain → Connected | Target contract on connected chain fails | `onRevert()` on ZetaChain (if `callOnRevert`) | `onAbort()` on ZetaChain |
