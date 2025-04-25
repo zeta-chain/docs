@@ -161,7 +161,7 @@ export const ConnectedChainsList = () => {
                 <th>VM</th>
                 <th>Consensus</th>
                 <th>CCTX Gateway</th>
-                <th>Confirmations</th>
+                <th>Required Confirmations</th>
                 <th>Gateway Docs</th>
               </tr>
             </thead>
