@@ -8,8 +8,8 @@ import tw, { styled } from "twin.macro";
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
-import nextraDocsThemeConfig from "~/theme.config";
 
+import { getGitHubEditUrl } from "../../../lib/github-edit-url";
 import { IconGitHub, IconTime } from "./Icons";
 import { mainNavRoutes } from "./Layout";
 
@@ -118,18 +118,7 @@ export const Hero: React.FC = () => {
         {title && (
           <div className="mt-4 mb-2">
             <a
-              href={(() => {
-                const routePath = route;
-                let githubFilePath = routePath
-                  .replace(/^\//, "")
-                  .replace(/\[\[...(.+)\]\]/, "$1")
-                  .replace(/\[([^\]]+)\]/g, "$1")
-                  .replace(/\/index$/, "/index")
-                  .replace(/\/$/, "");
-                if (githubFilePath === "") githubFilePath = "index";
-                githubFilePath = `src/pages/${githubFilePath}.mdx`;
-                return `${nextraDocsThemeConfig.docsRepositoryBase}/edit/main/${githubFilePath}`;
-              })()}
+              href={getGitHubEditUrl(route)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 group"
