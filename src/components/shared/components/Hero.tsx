@@ -124,7 +124,7 @@ export const Hero: React.FC = () => {
                   .replace(/^\//, "")
                   .replace(/\[\[...(.+)\]\]/, "$1")
                   .replace(/\[([^\]]+)\]/g, "$1")
-                  .replace(/\/index$/, "/index")
+                  // Removed redundant replacement operation
                   .replace(/\/$/, "");
                 if (githubFilePath === "") githubFilePath = "index";
                 githubFilePath = `src/pages/${githubFilePath}.mdx`;
