@@ -9,8 +9,7 @@ import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
 import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
-import { getGitHubEditUrl } from "../../../lib/github-edit-url";
-import { IconGitHub, IconTime } from "./Icons";
+import { IconTime } from "./Icons";
 import { mainNavRoutes } from "./Layout";
 
 export const StyledHero = styled.div`
@@ -115,24 +114,6 @@ export const Hero: React.FC = () => {
         })}
       >
         <h1>{title}</h1>
-        {title && (
-          <div className="mt-4 mb-2">
-            <a
-              href={getGitHubEditUrl(route)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 group"
-              style={{ textDecoration: "none" }}
-            >
-              <span className="w-9 h-9 flex items-center justify-center rounded-full border border-[#00bc8d] bg-transparent group-hover:bg-[#00bc8d]/10 transition-colors">
-                <IconGitHub className="w-5 h-5 text-[#00bc8d]" />
-              </span>
-              <span className="text-lg font-medium" style={{ color: "#00bc8d" }}>
-                Edit this doc in GitHub
-              </span>
-            </a>
-          </div>
-        )}
 
         {description && <div className="description">{description}</div>}
 
