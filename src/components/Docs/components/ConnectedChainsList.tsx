@@ -32,6 +32,15 @@ type ChainsData = {
   chains: Chain[];
 };
 
+type ParamsData = {
+  chain_params: {
+    chain_params: {
+      chain_id: string;
+      confirmation_count: string;
+    }[];
+  };
+};
+
 const CHAINS = "/zeta-chain/observer/supportedChains";
 const COINS = "/zeta-chain/fungible/foreign_coins";
 const CHAIN_PARAMS = "/zeta-chain/observer/get_chain_params";
@@ -81,8 +90,8 @@ export const ConnectedChainsList = () => {
         setTokens(tokensResponse.foreignCoins);
 
         const confirmationMap: Record<string, string> = {};
-        if (paramsResponse?.chain_params?.chain_params) {
-          paramsResponse.chain_params.chain_params.forEach((param: any) => {
+        if ((paramsResponse as ParamsData)?.chain_params?.chain_params) {
+          (paramsResponse as ParamsData).chain_params.chain_params.forEach((param) => {
             if (param.chain_id && param.confirmation_count) {
               confirmationMap[param.chain_id] = param.confirmation_count;
             }
