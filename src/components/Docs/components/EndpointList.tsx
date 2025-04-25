@@ -37,7 +37,9 @@ export const EndpointList: React.FC = () => {
         const data = await res.json();
         const networkData = data[`zeta_${activeTab.networkType}`];
 
-        const sortedData = networkData?.api?.sort((a: any, b: any) => {
+        const filteredData = networkData?.api?.filter((endpoint: any) => !endpoint.url.includes("blastapi.io"));
+
+        const sortedData = filteredData?.sort((a: any, b: any) => {
           const providerA = extractProvider(a.url);
           const providerB = extractProvider(b.url);
           if (providerA < providerB) return -1;
