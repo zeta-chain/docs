@@ -30,6 +30,22 @@ by various chains (e.g., Bech32 for Bitcoin). This type ensures the receiver
 address is chain-agnostic. When withdrawing to an EVM chain, ensure you convert
 `address` to `bytes`.
 
+When withdrawing to non-EVM chains make sure to encode the `receiver` address to
+`bytes` **as string**, meaning you take an address as **a string of characters**
+and convert it into bytes.
+
+For example, if the receiver address on Solana is:
+
+```
+GBwCxLUt5qn12aCD4uVKMWnoXPn2DoH126p8FrFmGNUy
+```
+
+The receiver `bytes` should be:
+
+```
+0x47427743784c557435716e31326143443475564b4d576e6f58506e32446f4831323670384672466d474e5579
+```
+
 The `amount` specifies the quantity to withdraw, and `zrc20` is the ZRC-20
 address of the token being withdrawn.
 
