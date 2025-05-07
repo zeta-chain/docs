@@ -42,14 +42,11 @@ The swap contract will:
 
 ## Setting Up Your Environment
 
-To set up your environment, clone the example contracts repository and install
-the dependencies by running the following commands:
+Start by creating a project and installing the necessary dependencies:
 
-```
-git clone https://github.com/zeta-chain/example-contracts
-
-cd example-contracts/examples/swap
-
+```bash
+npx zetachain@latest new --project swap
+cd swap
 yarn
 ```
 
@@ -572,7 +569,7 @@ Start the local development environment to simulate ZetaChain's behavior by
 running:
 
 ```
-npx hardhat localnet
+yarn zetachain localnet start
 ```
 
 Compile the contract and deploy it to localnet by running:
