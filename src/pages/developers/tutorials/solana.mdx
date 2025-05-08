@@ -23,9 +23,11 @@ Ensure you have installed and configured the following before starting:
 
 ## Clone the Example Project
 
+Start by creating a project and installing the necessary dependencies:
+
 ```bash
-git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/examples/call
+npx zetachain@latest new --project call
+cd call
 yarn
 ```
 
@@ -35,7 +37,7 @@ This command brings up the local development environment with ZetaChain and
 Solana:
 
 ```bash
-npx hardhat localnet
+yarn zetachain localnet start
 ```
 
 Leave this running in one terminal window.

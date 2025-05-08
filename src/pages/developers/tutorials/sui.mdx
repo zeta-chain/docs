@@ -26,12 +26,11 @@ Ensure you have installed and configured the following tools before starting:
 
 ## Clone the Example Project
 
-Begin by cloning the example contracts repository and installing its
-dependencies:
+Start by creating a project and installing the necessary dependencies:
 
 ```bash
-git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/examples/call
+npx zetachain@latest new --project call
+cd call
 yarn
 ```
 
@@ -41,7 +40,7 @@ Start your local development environment, which sets up instances of ZetaChain
 and Sui:
 
 ```bash
-npx hardhat localnet
+yarn zetachain localnet start
 ```
 
 Keep this terminal window open. You should see a table displaying the deployment
