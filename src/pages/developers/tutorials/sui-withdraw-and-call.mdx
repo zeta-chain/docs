@@ -1,0 +1,226 @@
+Interacting with ZetaChain universal apps from the Sui blockchain includes the
+This tutorial demonstrates how to withdraw tokens to Sui while calling a Sui
+contract in the same transaction—enabling seamless cross-chain operations and
+powerful DeFi flows.
+
+You'll learn how to:
+
+- Set up a localnet environment with ZetaChain and Sui
+- Deploy and configure a Sui contract that responds to ZetaChain calls
+- Execute withdrawAndCall() to send tokens and trigger contract logic on Sui
+
+## Prerequisites
+
+Ensure you have installed and configured the following tools before starting:
+
+- [Sui CLI](https://docs.sui.io/references/cli): Required for starting a local
+  Sui node and interacting with it.
+- [Foundry](https://getfoundry.sh/): Needed for encoding payload data using ABI.
+- [jq](https://stedolan.github.io/jq/): Required for parsing JSON output from
+  Sui CLI.
+
+## Contract Overview
+
+The example contract demonstrates how to handle cross-chain interactions between
+ZetaChain and Sui. The contract implements a `connected` module that:
+
+- Receives tokens from ZetaChain through the `on_call` function
+- Performs a token swap using a mock Cetus DEX implementation
+- Transfers the swapped tokens to a specified receiver address
+
+The Sui contract uses `0x2::coin` and a custom `token::TOKEN` type to represent
+the transferred asset.
+
+## Clone the Example Project
+
+Begin by cloning the example contracts repository and installing its
+dependencies:
+
+```bash
+npx zetachain@next new --project call
+cd call
+yarn
+```
+
+## Launch Localnet
+
+Start your local development environment, which sets up instances of ZetaChain
+and Sui:
+
+```bash
+npx zetachain localnet start
+```
+
+Keep this terminal window open. You should see a table displaying the deployment
+details, including Gateway module and object IDs.
+
+## Deploy a Contract on Sui
+
+Navigate to the Sui contract directory and deploy the contract:
+
+```bash
+cd sui
+```
+
+```
+sui move build --force
+```
+
+Get some Sui tokens from the faucet:
+
+```
+sui client faucet
+```
+
+```
+PUBLISHED=$(sui client publish --skip-dependency-verification --json)
+```
+
+```
+PACKAGE=$(echo $PUBLISHED | jq -r '.objectChanges[] | select(.type == "published") | .packageId') && echo $PACKAGE
+```
+
+This will deploy the contract and store the package ID in the `$PACKAGE`
+variable.
+
+## Set Up the Pool
+
+After deployment, you'll need to set up the pool by minting tokens and creating
+the initial liquidity.
+
+Get the treasury cap:
+
+```bash
+TREASURY=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "0x2::coin::TreasuryCap<\($pkg)::token::TOKEN>") | .objectId') && echo $TREASURY
+```
+
+Get the pool ID:
+
+```
+POOL=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Pool<0x2::sui::SUI, \($pkg)::token::TOKEN>") | .objectId') && echo $POOL
+```
+
+Mint tokens to your address:
+
+```
+RECIPIENT=$(sui client active-address) && echo $RECIPIENT
+```
+
+```
+sui client call \
+  --package "$PACKAGE" \
+  --module token \
+  --function mint_and_transfer \
+  --args "$TREASURY" 1000000 "$RECIPIENT"
+```
+
+Get the token ID:
+
+```
+TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data | select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId') && echo $TOKEN
+```
+
+Deposit tokens into the pool:
+
+```
+sui client call \
+  --package "$PACKAGE" \
+  --module cetusmock \
+  --function deposit \
+  --type-args "0x2::sui::SUI" "$PACKAGE::token::TOKEN" \
+  --args "$POOL" "$TOKEN"
+```
+
+## Deposit SUI to Gateway
+
+To enable cross-chain operations, you need to deposit SUI tokens to the
+ZetaChain gateway. First, get your SUI coin ID:
+
+```
+COIN=$(sui client gas --json | jq -r '.[0].gasCoinId') && echo $COIN
+```
+
+```
+ETH_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+GATEWAY_PACKAGE=0xa3ce10f68ed22d2cbbc31eaa709ee15e2e30348bfc6ff97b7d128d03b679c5c2
+GATEWAY_OBJECT=0xe925d4059435083b70bc504ce912202214edd06f693bdc3f9573a996292780c7
+```
+
+Then, deposit SUI to the gateway using the gateway addresses from your localnet
+output:
+
+```
+sui client call \
+  --package "$GATEWAY_PACKAGE" \
+  --module gateway \
+  --function deposit \
+  --type-args 0x2::sui::SUI \
+  --args "$GATEWAY_OBJECT" "$COIN" "$ETH_ADDRESS"
+```
+
+> **Note**: Make sure to replace the `GATEWAY_PACKAGE` and `GATEWAY_OBJECT`
+> values with the ones from your localnet output. These addresses are displayed
+> in the table when you start the localnet.
+
+## Prepare Withdraw and Call
+
+Now you can execute the withdraw and call operation. This will withdraw tokens
+from ZetaChain to Sui and simultaneously call a contract on Sui.
+
+Get the required contract IDs:
+
+```bash
+CONFIG=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::GlobalConfig") | .objectId') && echo $CONFIG
+```
+
+```
+CLOCK=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Clock") | .objectId') && echo $CLOCK
+```
+
+```
+PARTNER=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Partner") | .objectId') && echo $PARTNER
+```
+
+Prepare the payload:
+
+```
+MESSAGE=$RECIPIENT
+```
+
+```
+TOKEN_TYPE="$PACKAGE::token::TOKEN" && echo $TOKEN_TYPE
+```
+
+```
+PAYLOAD=$(npx ts-node ./setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PARTNER,$CLOCK" "$MESSAGE") && echo $PAYLOAD
+```
+
+## Execute the withdraw and call
+
+Approve Gateway to spend ZRC-20 Sui:
+
+```
+cast send 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 "approve(address,uint256)" 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6 1000000000000000000000000 --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
+
+Withdraw and call:
+
+```
+cast send 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6 "withdrawAndCall(bytes,uint256,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
+  "$PACKAGE" \
+  "1000000" \
+  "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891" \
+  "$PAYLOAD" \
+  "(10000,false)" \
+  "(0xB0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,true,0xC0b86991c6218b36c1d19D4a2e9Eb0cE3606eB49,0xdeadbeef,50000)" \
+  --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
+
+This transaction will:
+
+1. Withdraw tokens from ZetaChain to Sui
+2. Call a Sui contract with the specified parameters
+
+The operation demonstrates how to perform complex cross-chain operations that
+combine asset withdrawals with contract calls, enabling sophisticated DeFi
+interactions between ZetaChain and Sui.
