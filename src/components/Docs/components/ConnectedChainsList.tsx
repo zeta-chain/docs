@@ -32,8 +32,18 @@ type ChainsData = {
   chains: Chain[];
 };
 
+type ParamsData = {
+  chain_params: {
+    chain_params: {
+      chain_id: string;
+      confirmation_count: string;
+    }[];
+  };
+};
+
 const CHAINS = "/zeta-chain/observer/supportedChains";
 const COINS = "/zeta-chain/fungible/foreign_coins";
+const CHAIN_PARAMS = "/zeta-chain/observer/get_chain_params";
 
 const formatString = (str: string) => {
   return str
@@ -48,6 +58,7 @@ export const ConnectedChainsList = () => {
   const [mainnetChains, setMainnetChains] = useState<Chain[]>([]);
   const [testnetChains, setTestnetChains] = useState<Chain[]>([]);
   const [tokens, setTokens] = useState<ForeignCoin[]>([]);
+  const [confirmations, setConfirmations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
 
@@ -58,10 +69,12 @@ export const ConnectedChainsList = () => {
       try {
         const CHAINS_URL = `${rpcByNetworkType[activeTab.networkType]}${CHAINS}`;
         const COINS_URL = `${rpcByNetworkType[activeTab.networkType]}${COINS}`;
+        const CHAIN_PARAMS_URL = `${rpcByNetworkType[activeTab.networkType]}${CHAIN_PARAMS}`;
 
-        const [chainsResponse, tokensResponse] = await Promise.all([
+        const [chainsResponse, tokensResponse, paramsResponse] = await Promise.all([
           fetch(CHAINS_URL).then((res) => res.json() as Promise<ChainsData>),
           fetch(COINS_URL).then((res) => res.json() as Promise<CoinsData>),
+          fetch(CHAIN_PARAMS_URL).then((res) => res.json()),
         ]);
 
         const formattedChains = chainsResponse.chains.map((chain) => ({
@@ -75,11 +88,22 @@ export const ConnectedChainsList = () => {
         if (activeTab.networkType === "testnet") setTestnetChains(sortedChains);
 
         setTokens(tokensResponse.foreignCoins);
+
+        const confirmationMap: Record<string, string> = {};
+        if ((paramsResponse as ParamsData)?.chain_params?.chain_params) {
+          (paramsResponse as ParamsData).chain_params.chain_params.forEach((param) => {
+            if (param.chain_id && param.confirmation_count) {
+              confirmationMap[param.chain_id] = param.confirmation_count;
+            }
+          });
+        }
+        setConfirmations(confirmationMap);
       } catch (error) {
         console.error("Error fetching data:", error);
         setMainnetChains([]);
         setTestnetChains([]);
         setTokens([]);
+        setConfirmations({});
       } finally {
         setIsLoading(false);
       }
@@ -99,13 +123,22 @@ export const ConnectedChainsList = () => {
 
   const getDocsLink = (chain: Chain) => {
     if (chain.vm === "evm" && chain.consensus === "tendermint" && chain.cctx_gateway === "zevm") {
-      return { text: "ZetaChain Gateway", url: "/docs/developers/chains/zetachain" };
+      return { text: "ZetaChain Gateway", url: "/developers/chains/zetachain" };
     }
     if (chain.vm === "evm" && chain.consensus === "ethereum") {
-      return { text: "EVM Gateway", url: "/docs/developers/chains/evm" };
+      return { text: "EVM Gateway", url: "/developers/chains/evm" };
     }
     if (chain.vm === "no_vm" && chain.consensus === "bitcoin") {
-      return { text: "Bitcoin Gateway", url: "/docs/developers/chains/bitcoin" };
+      return { text: "Bitcoin Gateway", url: "/developers/chains/bitcoin" };
+    }
+    if (chain.vm === "svm" && chain.consensus === "solana_consensus") {
+      return { text: "Solana Gateway", url: "/developers/chains/solana" };
+    }
+    if (chain.vm === "tvm" && chain.consensus === "catchain_consensus") {
+      return { text: "TON Gateway", url: "/developers/chains/ton" };
+    }
+    if (chain.vm === "mvm_sui" && chain.consensus === "sui_consensus") {
+      return { text: "Sui Gateway", url: "/developers/chains/sui" };
     }
     return null;
   };
@@ -121,27 +154,43 @@ export const ConnectedChainsList = () => {
           <table>
             <thead>
               <tr>
-                <th>Chain ID</th>
-                <th>Chain Name</th>
+                <th>ID</th>
+                <th>Name</th>
                 <th>Label</th>
                 <th>Supported Tokens</th>
-                <th>Gateway Docs</th>
                 <th>VM</th>
                 <th>Consensus</th>
                 <th>CCTX Gateway</th>
+                <th>Required Confirmations</th>
+                <th>Gateway Docs</th>
               </tr>
             </thead>
 
             <tbody>
               {chains.map((chain, index) => {
                 const docsLink = getDocsLink(chain);
+                const formattedChainName = chain.name
+                  .replace(/_/g, " ")
+                  .split(" ")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                  .join(" ")
+                  .replace(/zeta/i, "ZetaChain")
+                  .replace(/bsc/i, "BNB")
+                  .replace(/btc/i, "Bitcoin")
+                  .replace(/eth/i, "Ethereum")
+                  .replace(/mainnet/i, "")
+                  .trim();
                 return (
                   // eslint-disable-next-line react/no-array-index-key
                   <tr key={index}>
                     <td>{chain.chain_id}</td>
-                    <td>{chain.chain_name}</td>
+                    <td>{formattedChainName}</td>
                     <td>{chain.name}</td>
                     <td>{getTokensForChain(chain.chain_id) || ""}</td>
+                    <td>{formatString(chain.vm)}</td>
+                    <td>{formatString(chain.consensus)}</td>
+                    <td>{chain.cctx_gateway || ""}</td>
+                    <td>{confirmations[chain.chain_id] || ""}</td>
                     <td>
                       {docsLink ? (
                         <a
@@ -156,9 +205,6 @@ export const ConnectedChainsList = () => {
                         "N/A"
                       )}
                     </td>
-                    <td>{chain.vm}</td>
-                    <td>{chain.consensus}</td>
-                    <td>{chain.cctx_gateway}</td>
                   </tr>
                 );
               })}

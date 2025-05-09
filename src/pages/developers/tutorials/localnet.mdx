@@ -1,182 +1,95 @@
-Localnet is a powerful local development environment designed to simplify the
-creation and testing of universal applications on ZetaChain. It sets up protocol
-contracts on a single local EVM chain but simulates the behavior as if it were
-two separate chains. This allows developers to interact with protocol contracts,
-tokens, and Uniswap pools locally, mimicking a multi-chain environment. By using
-Localnet, you can build, deploy, and test your applications efficiently before
-moving to the actual testnet or mainnet.
+Localnet is ZetaChain’s **all‑in‑one local development environment** for
+building, testing, and debugging universal applications. It bootstraps a
+fully‑featured multi‑chain laboratory on your machine—spinning up nodes for
+multiple chains (EVM, Solana, Sui, TON) and pre‑deploys the core ZetaChain
+protocol contracts, ZRC‑20 tokens, and Uniswap v2 & v3 pools. Think of Localnet
+as ‘ZetaChain on localhost’ — fast, predictable, and ideal for rapid iteration.
 
-<div className="mt-8" style={{ width: "100%", height: "auto", "aspect-ratio": "16 / 8" }}>
-  <iframe
-    width="100%"
-    height="100%"
-    src="https://www.youtube.com/embed/b4EWTQ3VCZk?si=kiKncEWFZolVAo0F"
-    filename="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-  ></iframe>
-</div>
+**Why use Localnet?**
 
-# Prerequisites
+🔄 Iterate on cross‑chain logic in seconds — no more waiting for public testnets.
 
-Before you begin, ensure you have the following installed on your machine:
+🧪 Reproduce complex multi‑chain flows with one command.
 
-- [Node.js](https://nodejs.org/)
-- [Yarn](https://yarnpkg.com/)
-- [Foundry Anvil](https://book.getfoundry.sh/getting-started/installation)
+🐞 Step‑through debug every contract call at the EVM level.
 
-You can set up Localnet in one of two ways:
+🚀 Deploy to testnet/mainnet with confidence once flows are green locally.
 
-1. **Cloning the Example Contracts Repository**: This approach is ideal if you
-   want to see practical examples and have a starting point for your own
-   projects.
-2. **Cloning the Localnet Repository**: Choose this method if you prefer to
-   integrate Localnet into your existing projects or want a more customizable
-   setup.
+## ✨ Features
 
-# Option 1: Using the Example Contracts Repository
+- **One‑shot bootstrap** – `npx zetachain@latest localnet start` spins up
+  everything.
+- **Multi‑chain simulation** – EVM, Solana, Sui, and TON.
+- **Pre‑deployed contracts**
+  - ZetaChain Gateway contracts on all supported chains.
+  - ZRC‑20 tokens (`ETH`, `USDC`, ...)
+  - Uniswap v2 + v3 factories, routers, and initial liquidity pools.
+- **Configurable** – Pass arbitrary flags (block time, fork URL, ...).
 
-To get started with the example contracts, clone the repository and install the
-dependencies:
+## 🚀 Quick Start
 
-```
-git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/examples/hello
-yarn
+Install prerequisites:
+
+| Tool                | Purpose               | Install                                                                                                            |
+| ------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Node ≥ 18**       | CLI wrapper & scripts | [https://nodejs.org](https://nodejs.org)                                                                           |
+| **Foundry (Anvil)** | Local EVM             | [https://book.getfoundry.sh/getting-started/installation](https://book.getfoundry.sh/getting-started/installation) |
+
+Fire up Localnet:
+
+```bash
+npx zetachain@latest localnet start
 ```
 
-Localnet is installed from the `@zetachain/localnet` package. If you need to
-update Localnet, run:
+Within seconds you should see output similar to:
 
 ```
-yarn add --dev @zetachain/localnet
+ZETACHAIN
+┌──────────────────────────┬──────────────────────────────────────────────┐
+│ (index)                  │ Values                                       │
+├──────────────────────────┼──────────────────────────────────────────────┤
+│ gatewayZEVM              │ '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6' │
+│ uniswapFactoryInstance   │ '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' │
+│ uniswapRouterInstance    │ '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9' │
+│ ...                      │                                              │
+└──────────────────────────┴──────────────────────────────────────────────┘
 ```
 
-The examples ships with the latest version of Localnet.
+## 🧩 Deep Dive
 
-Start the Localnet by running:
+What happens under the hood?
 
-```
-npx hardhat localnet
-```
+1. **Anvil node** starts on default port.
+2. **Protocol deploy script** publishes all core contracts.
+3. **Chain simulators** for Solana/Sui/TON register with the Connector.
+4. **Tokens & pools** are minted and seeded with liquidity.
+5. Funded dev accounts are printed for convenience.
 
-This command initializes the local development environment with all necessary
-contracts and configurations.
+## 🧪 Useful Examples
 
-# Option 2: Using the Localnet Repository
+Pass custom anvil flags:
 
-If you prefer to set up Localnet independently, clone the Localnet repository:
-
-```
-git clone https://github.com/zeta-chain/localnet
-cd localnet
-```
-
-Install the necessary packages:
-
-```
-yarn
+```bash
+npx zetachain@latest localnet start \
+  --anvil "--block-time 1 --gas-limit 120000000" \
+  --port 9000
 ```
 
-Start the Localnet by running:
+Use this to simulate faster block times or test high-throughput contracts by
+increasing the gas limit and adjusting chain behavior.
 
-```
-npx hardhat localnet
-```
+Run a lean EVM-only instance of Localnet:
 
-This command starts Localnet with a block time of 1 second on port 2000.
-
-# What Localnet Does
-
-When you run Localnet, it performs the following actions:
-
-- **Starts an Anvil Node**: Launches an
-  [Anvil](https://book.getfoundry.sh/anvil/) local testnet node.
-- **Deploys Protocol Contracts**: Deploys [protocol
-  contracts](https://github.com/zeta-chain/protocol-contracts/tree/main/v2) on
-  the local testnet node. Both the [EVM gateway and ZetaChain
-  gateway](/developers/evm/gateway/) are deployed and running on the same local
-  blockchain.
-- **Simulates ZetaChain Environment**: Observes events and relays contract calls
-  between the EVM gateway and ZetaChain gateway, simulating the real-world
-  testnet environment of ZetaChain.
-- **Configures Protocol Contracts**: Sets up the protocol contracts with the
-  necessary configurations for development.
-- **Mints Example Tokens**: Mints an example ERC-20 token (USDC) and ZRC-20
-  versions of the gas token and the example ERC-20 token.
-- **Deploys Uniswap v2**: Deploys Uniswap v2 contracts to enable swapping and
-  liquidity provisioning.
-- **Creates Pools and Adds Liquidity**: Creates pools between ZETA and ZRC-20
-  tokens and adds liquidity to these pools.
-
-# Output
-
-Once the Localnet is started, you will see the standard Anvil output with a list
-of accounts and private keys, as well as the output from protocol contracts
-being deployed. After the Localnet is set up, you will see a list of protocol
-contract addresses:
-
-```
-EVM Contract Addresses
-=======================
-┌─────────────────┬──────────────────────────────────────────────┐
-│ (index)         │ Values                                       │
-├─────────────────┼──────────────────────────────────────────────┤
-│ Gateway EVM     │ '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' │
-│ ERC-20 Custody  │ '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9' │
-│ TSS             │ '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' │
-│ ZETA            │ '0x5FbDB2315678afecb367f032d93F642f64180aa3' │
-│ ERC-20 USDC.ETH │ '0x0B306BF915C4d645ff596e518fAf3F9669b97016' │
-└─────────────────┴──────────────────────────────────────────────┘
-
-ZetaChain Contract Addresses
-=============================
-┌───────────────────┬──────────────────────────────────────────────┐
-│ (index)           │ Values                                       │
-├───────────────────┼──────────────────────────────────────────────┤
-│ Gateway ZetaChain │ '0x9A676e781A523b5d0C0e43731313A708CB607508' │
-│ ZETA              │ '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318' │
-│ Fungible Module   │ '0x735b14BB79463307AAcBED86DAf3322B1e6226aB' │
-│ System Contract   │ '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0' │
-│ Uniswap Router    │ '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e' │
-│ ZRC-20 USDC.ETH   │ '0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c' │
-│ ZRC-20 ETH.ETH    │ '0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe' │
-└───────────────────┴──────────────────────────────────────────────┘
+```bash
+npx zetachain@latest localnet start --skip sui solana ton
 ```
 
-These addresses correspond to the contracts deployed on your local blockchain.
-You can interact with them using your preferred development tools. Note that
-while these addresses remain persistent between restarts, they may vary on
-different instances of localnet. For the latest list of addresses, please refer
-to the table displayed in the terminal window where localnet is running.
+Use this when your app doesn't need Solana, Sui, or TON—startup is faster and
+resource usage is lower.
 
-# Available Parameters
+## 🛠️ Open Source
 
-Localnet supports the following parameters:
-
-- `--anvil`: Additional arguments to pass to Anvil (default: `""`).
-- `--exit-on-error`: Exit with an error if a revert is not handled.
-- `--force-kill`: Force kill any process on the port without prompting.
-- `--port`: Port to run Anvil on (default: `8545`).
-- `--stop-after-init`: Stop the Localnet after successful initialization.
-
-For an up-to-date list of arguments, run:
-
-```
-npx hardhat localnet --help
-```
-
-**Example:**
-
-```
-npx hardhat localnet --anvil "--block-time 1" --port 2000
-```
-
-# Conclusion
-
-With Localnet set up, you're ready to develop and test your universal
-applications locally with ZetaChain's protocol contracts, tokens, and Uniswap
-pools fully configured. This environment enables rapid development and
-debugging, ensuring that your applications are robust and ready for deployment
-on the testnet or mainnet.
+Localnet is [open-source and available on
+GitHub](https://github.com/zeta-chain/localnet). Clone or contribute to explore
+how it works under the hood, customize behaviors, or extend it for your
+development needs.

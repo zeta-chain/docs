@@ -86,23 +86,21 @@ incentives to ensure economic safety
 ## TSS
 
 Threshold Signature Scheme. To avoid any single point of failure, ZetaChain uses
-state-of-the-art multi-party threshold signature scheme (TSS) (see
-[whitepaper](https://zetachain.com/whitepaper.pdf) for more details). To the
-outside world, the ZetaChain validators collectively possess a single
-ECDSA/EdDSA private key, public key, and address, and the signature signed by
-ZetaChain can be verified efficiently and natively by standard ECDSA/EdDSA
-verification procedure by the connected blockchains. Internally, the private key
-is generated without a dealer, and the private key is distributed in all the
-validators. At no time is a single entity or a minority of validators able to
-piece together the private key and sign messages on behalf of the whole network.
-The key generation and signing procedures are done by Multi-Party Computation
-(MPC) which reveal no secret of any participating node. Because ZetaChain can
-hold a TSS key and address, ZetaChain can support smart contracts that can
-manage native vaults/pools on connected chains including Bitcoin. This
-effectively adds smart contract capabilities to the Bitcoin network, and
-potentially other non-smart contract blockchains. The TSS employed by ZetaChain
-gives the performance and convenience of hot wallet with cold wallet level
-security.
+state-of-the-art multi-party threshold signature scheme (TSS). To the outside
+world, the ZetaChain validators collectively possess a single ECDSA/EdDSA
+private key, public key, and address, and the signature signed by ZetaChain can
+be verified efficiently and natively by standard ECDSA/EdDSA verification
+procedure by the connected blockchains. Internally, the private key is generated
+without a dealer, and the private key is distributed in all the validators. At
+no time is a single entity or a minority of validators able to piece together
+the private key and sign messages on behalf of the whole network. The key
+generation and signing procedures are done by Multi-Party Computation (MPC)
+which reveal no secret of any participating node. Because ZetaChain can hold a
+TSS key and address, ZetaChain can support smart contracts that can manage
+native vaults/pools on connected chains including Bitcoin. This effectively adds
+smart contract capabilities to the Bitcoin network, and potentially other
+non-smart contract blockchains. The TSS employed by ZetaChain gives the
+performance and convenience of hot wallet with cold wallet level security.
 
 ## ZRC-20
 

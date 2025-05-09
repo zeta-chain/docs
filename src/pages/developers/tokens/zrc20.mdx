@@ -2,7 +2,7 @@
 title: ZRC-20 on ZetaChain
 ---
 
-import { ChainConfirmations, ForeignCoinsTable } from "~/components/Docs";
+import { ForeignCoinsTable } from "~/components/Docs";
 
 ZRC-20 is a token standard integrated into ZetaChain's omnichain smart contract
 platform. With ZRC-20, developers can build dApps that orchestrate native assets
@@ -60,14 +60,8 @@ fungible token (like an ERC-20).
 When depositing to or withdrawing from ZetaChain, the protocol requires a
 certain number of confirmations on the connected chain before the transaction is
 considered final. The number of confirmations required is different for each
-chain. You can check the number of confirmations in the table below:
-
-<ChainConfirmations />
-
-These values are stored in the state of ZetaChain and are used by ZetaClient
-(the program that observer-signer validators run) as recommended values of
-confirmations. In some cases ZetaClient can use a higher number of
-confirmations, for example, when the value transfer exceeds a specified amount.
+chain. You can check the number of confirmations in the [connected chains
+table](/developers/chains/list).
 
 ## Liquidity Cap
 

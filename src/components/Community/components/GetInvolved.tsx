@@ -13,34 +13,7 @@ export const GetInvolved = () => {
         colorClass="bg-[#9AEA4A]"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
-        <div className="flex flex-col gap-[30px] py-10 px-6 rounded-lg border border-grey-200 dark:border-grey-600">
-          <div className="flex justify-center">
-            <Image
-              src={`${basePath}/img/pages/tech-ambassador-program.svg`}
-              alt="Tech Ambassador Program"
-              width={384}
-              height={246}
-              className="w-full !rounded-none !mt-0 max-w-[300px] sm:max-w-[384px] lg:max-w-full lg:w-auto lg:h-[240px]"
-            />
-          </div>
-
-          <div>
-            <h3 className="text-xl font-medium text-black dark:text-white">Tech Ambassador Program</h3>
-            <p className="text-base text-grey-400 dark:text-grey-300">Apply to become a Tech Ambassador</p>
-          </div>
-
-          <p className="text-base text-grey-400 dark:text-grey-300 flex-grow">
-            The Tech Leads program is designed to scale and improve ZetaChain devX. It is flexible and based on your
-            unique strengths and interests. Help monitor and support the Discord and contribute articles, code, and
-            tutorials or help run live events.
-          </p>
-
-          <PrimaryLink href={globalLinks.techAmbassadorProgramLink} target="_blank" icon={<IconClaim />}>
-            Apply Now
-          </PrimaryLink>
-        </div>
-
+      <div className="grid grid-cols-1 gap-5 lg:gap-8">
         <div className="flex flex-col gap-[30px] py-10 px-6 rounded-lg border border-grey-200 dark:border-grey-600">
           <div className="flex justify-center">
             <Image
@@ -48,7 +21,7 @@ export const GetInvolved = () => {
               alt="Community Ambassador"
               width={424}
               height={156}
-              className="w-full !rounded-none !mt-0 max-w-[380px] sm:max-w-[424px] lg:max-w-full lg:w-auto lg:h-[240px]"
+              className="w-full !rounded-none !mt-0 max-w-[380px] sm:max-w-[424px] lg:max-w-full lg:w-auto"
             />
           </div>
 

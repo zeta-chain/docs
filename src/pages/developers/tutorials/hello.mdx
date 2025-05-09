@@ -17,12 +17,11 @@ By the end of this tutorial, you will have learned how to:
 
 ## Set Up Your Environment
 
-Start by cloning the example contracts repository and installing the necessary
-dependencies:
+Start by creating a project and installing the necessary dependencies:
 
 ```bash
-git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/examples/hello
+npx zetachain@latest new --project hello
+cd hello
 yarn
 ```
 
@@ -97,7 +96,7 @@ which simulates the behavior of Gateways deployed on multiple EVM blockchains.
 Start localnet:
 
 ```
-npx hardhat localnet
+yarn zetachain localnet start
 ```
 
 ```

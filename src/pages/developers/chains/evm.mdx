@@ -121,10 +121,10 @@ universal contract and passes the `payload` as the `message` parameter.
 
 The `call` function doesn't support revert handling. If
 `revertOptions.callOnRevert` is set to `true`, the transaction will fail. This
-is because executing a contract call on revert requires tokens to cover gas
-fees on ZetaChain, and the `call` function doesn't transfer any assets. If you
-need to handle reverts, use `depositAndCall` instead and ensure sufficient
-tokens are deposited to cover potential gas fees.
+is because executing a contract call on revert requires tokens to cover gas fees
+on ZetaChain, and the `call` function doesn't transfer any assets. If you need
+to handle reverts, use `depositAndCall` instead and ensure sufficient tokens are
+deposited to cover potential gas fees.
 
 ## Revert Transactions
 

@@ -1,0 +1,68 @@
+To interact with universal applications from TON, use the TON gateway.
+
+TON gateway supports:
+
+- Depositing TON to a universal app or an account on ZetaChain
+- Depositing TON and calling a universal app
+- Withdrawing TON from ZetaChain
+
+## Deposit TON
+
+To deposit TON to an EOA or a universal contract, send an internal message to
+the Gateway contract with the following structure:
+
+```func
+op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits)
+```
+
+The deposit `op_code` is `101`. `query_id` is reserved for future use, leave it
+to `0`.
+
+The `evm_recipient` specifies the address on ZetaChain that will receive the
+deposited TON. This can be either an externally-owned account (EOA) or a
+universal app address.
+
+Here's an example of how to construct the deposit message in TypeScript:
+
+```typescript
+const opDeposit = 101;
+const body = beginCell().storeUint(opDeposit, 32).storeUint(0, 64).storeUint(zevmRecipient, 160).endCell();
+```
+
+After the deposit is processed, the receiver receives the [ZRC-20
+version](/developers/tokens/zrc20) of the deposited TON.
+
+## Deposit TON and Call a Universal App
+
+To deposit TON and call a universal app contract, send an internal message to
+the Gateway contract with the following structure:
+
+```func
+op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits) call_data:cell
+```
+
+The depositAndCall `op_code` is `102`. `query_id` is reserved for future use,
+leave it to `0`. Also note that call_data should be a cell encoded in ["snake
+data"](https://docs.ton.org/v3/guidelines/dapps/asset-processing/nft-processing/metadata-parsing#snake-data-encoding)
+format (supported by most TON libraries)
+
+The `evm_recipient` must be the address of a universal app contract.
+
+The `call_data` cell contains the payload that will be passed to the `onCall`
+function of the universal app contract.
+
+Here's an example of how to construct the deposit-and-call message in
+TypeScript:
+
+```typescript
+const opDepositAndCall = 102;
+const body = beginCell()
+  .storeUint(opDepositAndCall, 32)
+  .storeUint(0, 64)
+  .storeUint(zevmRecipient, 160)
+  .storeRef(callDataCell) // callDataCell should be a cell containing the payload
+  .endCell();
+```
+
+After the cross-chain transaction is processed, the `onCall` function of the
+universal app contract is executed.

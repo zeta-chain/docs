@@ -32,10 +32,6 @@ export const WhatIsZetaChain: React.FC = () => {
               <p className="text-sm mb-0.5 text-grey-400 dark:text-grey-300">
                 Get a closer look at ZetaChain's background and architecture
               </p>
-
-              <PrimaryLink href={globalLinks.whitepaperLink} target="_blank" className="text-sm">
-                Read the Whitepaper
-              </PrimaryLink>
             </div>
           </div>
         </div>

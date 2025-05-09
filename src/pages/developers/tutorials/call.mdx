@@ -27,12 +27,11 @@ Before you begin, make sure you've completed the following tutorials:
 
 ## Set Up Your Environment
 
-Start by cloning the example contracts repository and installing the necessary
-dependencies:
+Start by creating a project and installing the necessary dependencies:
 
 ```bash
-git clone https://github.com/zeta-chain/example-contracts
-cd example-contracts/examples/call
+npx zetachain@latest new --project call
+cd call
 yarn
 ```
 
@@ -409,7 +408,7 @@ developing and testing ZetaChain contracts locally.
 To start localnet, open a terminal window and run:
 
 ```bash
-npx hardhat localnet
+yarn zetachain localnet start
 ```
 
 This command initializes a local blockchain environment that simulates the
