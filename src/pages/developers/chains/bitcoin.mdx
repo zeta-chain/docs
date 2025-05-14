@@ -1,6 +1,6 @@
 Interacting with universal contracts on ZetaChain from Bitcoin happens through
 the Bitcoin Gateway, a threshold signature scheme (TSS) address. The private key
-to this address is distributed among ZetaChain’s validator set using MPC.
+to this address is distributed among ZetaChain's validator set using MPC.
 
 The Bitcoin Gateway supports the following operations:
 
@@ -29,10 +29,28 @@ must use commit-and-reveal transactions.
 
 - Create an inscription with just the 20-byte recipient address.
 
+📌 **Example:**
+
+- [Commit
+  TX](https://mempool.space/signet/tx/eaaabfe041c0784d31a5bb8db3ff255b31ae5bd4a81f918a73e39ab3d4f3cd8c)
+- [Reveal
+  TX](https://mempool.space/signet/tx/b1934876ab53b211fc1e3168bd0b4e2df6a5d9f3bd1be6c77a88666a7c9e926e)
+- [Cross-chain
+  TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/b1934876ab53b211fc1e3168bd0b4e2df6a5d9f3bd1be6c77a88666a7c9e926e)
+
 ### Call
 
 - Create an inscription with the 20-byte contract address followed by the call
   payload.
+
+📌 **Example:**
+
+- [Commit
+  TX](https://mempool.space/signet/tx/6c92cb80f093176b865c1431770e43c9264074d797acabbfee244f96751aac61)
+- [Reveal
+  TX](https://mempool.space/signet/tx/cdb52721e9787c94cda196304d9f699cc89d661c9946bac32f7bdfcf17e08eaa)
+- [Cross-chain
+  TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/cdb52721e9787c94cda196304d9f699cc89d661c9946bac32f7bdfcf17e08eaa)
 
 ### Deposit and Call
 
@@ -40,6 +58,15 @@ must use commit-and-reveal transactions.
   inscription payload.
 - The revealed inscription will trigger `onCall` and transfer the associated BTC
   value.
+
+📌 **Example:**
+
+- [Commit
+  TX](https://mempool.space/signet/tx/ec1d9078affd6ce20b0b57a2cdd853b9224a2a9fae9ddf759082d7a944dddab4)
+- [Reveal
+  TX](https://mempool.space/signet/tx/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
+- [Cross-chain
+  TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
 
 ## OP_RETURN
 
@@ -57,8 +84,11 @@ with:
 
    - `[DATA] = 0x` + 20-byte recipient address on ZetaChain (Ethereum-style).
 
-📌 **Example:** [View deposit tx on
-testnet](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f?expand)
+📌 **Example:**
+
+- [Transaction](testnet](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f)
+- [Cross-chain
+  TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f)
 
 ### Call
 
