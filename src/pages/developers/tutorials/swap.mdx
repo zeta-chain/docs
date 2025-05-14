@@ -513,30 +513,30 @@ npx hardhat deploy \
 ## Swap from Base Sepolia to Polygon Amoy
 
 ```
-npx hardhat evm-deposit-and-call \
+ npx hardhat evm-deposit-and-call \
   --receiver 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
   --amount 0.001 \
   --network base_sepolia \
-  --gas-price 20000 \
+  --gas-price 10000000000 \
   --gateway-evm 0x0c487a766110c85d301d96e33579c5b317fa4995 \
-  --types '["address", "bytes"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+  --types '["address", "bytes", "bool"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 true
 ```
 
 Transaction on Base:
 
-https://sepolia.basescan.org/tx/0xe873b59c2c2398236279aa04fff2134bd3391e8879ae6b99cabd00c97021ae38
+https://sepolia.basescan.org/tx/0xd6fea6e27fd0be9589e064deeee58810ed0dab0e7d3ea651e4af893af7ffbfba
 
 Incoming transaction from Base to ZetaChain:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xe873b59c2c2398236279aa04fff2134bd3391e8879ae6b99cabd00c97021ae38
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xd6fea6e27fd0be9589e064deeee58810ed0dab0e7d3ea651e4af893af7ffbfba
 
 Outgoing transaction from ZetaChain to Polygon:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xb8e9120290a1a36cfbd0cbdacadab4746d1b47830952bd588330456c62701058
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x5a5f49a8b1361224457fdbf88e548204221e47d9923c24af84476f8e68d93841
 
 Transaction on Polygon:
 
-https://amoy.polygonscan.com/tx/0x5a83fe0321c13f386d0953052a0335f06095455fcf1470b8e8fe9c3119adbb40
+https://amoy.polygonscan.com/tx/0xab2941227d17bda1c46af58b6f430a5b3e635dfd22fce1ff0c3bfdecc35847fb
 
 ## Swap from Solana SOL to Base Sepolia ETH
 
