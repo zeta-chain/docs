@@ -73,11 +73,11 @@ Compact-encoded fields (depending on format).
 
 Fields are encoded differently based on the encoding format.
 
-| Format                    | Value  |
-| ------------------------- | ------ |
-| `EncodingFmtABI`          | `0x01` |
-| `EncodingFmtCompactShort` | `0x02` |
-| `EncodingFmtCompactLong`  | `0x03` |
+| Format                    | Value    |
+| ------------------------- | -------- |
+| `EncodingFmtABI`          | `0b0000` |
+| `EncodingFmtCompactShort` | `0b0001` |
+| `EncodingFmtCompactLong`  | `0b0010` |
 
 Compact encoding is space-efficient and can be useful when optimizing
 transaction size. Use `CompactShort` when all dynamic fields (payload and revert
@@ -128,12 +128,12 @@ Each field is encoded in a more concise form:
 
 **🔁 Operation Types (OpCode)**
 
-| Operation        | Code (`OpCode`) | Description                                                          |
-| ---------------- | --------------- | -------------------------------------------------------------------- |
-| `Deposit`        | `0x00`          | Only receiver, no payload. Optional revert address                   |
-| `DepositAndCall` | `0x01`          | Transfers BTC and invokes onCall() with payload. Revert **required** |
-| `Call`           | `0x02`          | Sends no BTC, invokes onCall() with payload. Revert optional         |
-| `Invalid`        | `0x03`          | Reserved                                                             |
+| Operation        | Code     | Description                                                          |
+| ---------------- | -------- | -------------------------------------------------------------------- |
+| `Deposit`        | `0b0010` | Only receiver, no payload. Optional revert address                   |
+| `DepositAndCall` | `0b0000` | Transfers BTC and invokes onCall() with payload. Revert **required** |
+| `Call`           | `0b0001` | Sends no BTC, invokes onCall() with payload. Revert optional         |
+| `Invalid`        | `0b0011` | Reserved                                                             |
 
 ## Inscription: Deposit
 
