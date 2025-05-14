@@ -10,12 +10,25 @@ The Bitcoin Gateway supports the following operations:
 
 There are two ways to interact with the Bitcoin Gateway:
 
-| Method       | Max Payload  | Cost          | Revert Address | Best For                             |
-| ------------ | ------------ | ------------- | -------------- | ------------------------------------ |
-| Inscriptions | >520 bytes   | Higher (2 tx) | Customizable   | ABI-encoded calls and large payloads |
-| OP_RETURN    | \~60 bytes\* | Lower (1 tx)  | Matches sender | Simple deposits and small payloads   |
+| Method       | Max Payload  | Cost          | Revert Address | Best For                                   |
+| ------------ | ------------ | ------------- | -------------- | ------------------------------------------ |
+| Inscriptions | 400 KB\*     | Higher (2 tx) | Customizable   | Structured cross-chain calls, custom logic |
+| OP_RETURN    | 60 bytes\*\* | Lower (1 tx)  | Matches sender | Simple deposits and small data payloads    |
 
-\* Not counting the required 20 bytes for the universal contract address.
+\* Limited only by Bitcoin's transaction and witness size limits. Typical
+payloads range from 1–30 KB; larger payloads may not relay through standard
+nodes.
+
+\*\* Not counting the required 20 bytes for the universal contract address.
+
+> 📝 **Recommended Usage**
+>
+> For most call and deposit and call operations, use inscriptions with ABI
+> encoding. This supports structured data, complex contract interactions, and
+> custom revert behavior.
+>
+> For simple deposit operations, especially to EOAs, you can use OP_RETURN,
+> which is lower cost and easier to construct.
 
 ## Inscription Overview ⚡️
 
@@ -34,10 +47,11 @@ Commit and Reveal Each interaction consists of two Bitcoin transactions:
 **✉️ Envelope Format (Witness Script)**
 
 ```
-[OP_PUSHBYTES_32 <32-byte pubkey>] OP_CHECKSIG
+OP_DATA_32 <32 byte of public key> OP_CHECKSIG
 OP_FALSE
 OP_IF
-  <payload> (1 or more pushes)
+    OP_PUSH 0x...
+    OP_PUSH 0x...
 OP_ENDIF
 ```
 
@@ -46,14 +60,14 @@ OP_ENDIF
 The inscription data consists of: a 4-byte ZetaChain header and ABI- or
 Compact-encoded fields (depending on format).
 
-Header:
+**Header**
 
-| Byte     | Description                                                                                     |
-| -------- | ----------------------------------------------------------------------------------------------- |
-| `0x5a`   | Fixed identifier for ZetaChain inscription                                                      |
-| Byte `1` | Encoding format (`0x00` = ABI, etc.)                                                            |
-| Byte `2` | Operation code in upper nibble (e.g., 0x10 for Call = 0x02 << 4)                                |
-| Byte `3` | Flags bitmask. Indicates which fields are set. Common value: 0x07 (receiver + payload + revert) |
+| Byte Index | Description                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------------------- |
+| 0          | Fixed identifier: `0x5a` (ASCII `'Z'`) for ZetaChain inscriptions                                  |
+| 1          | Encoding format (lower nibble). Example: `0x00` = ABI, `0x01` = CompactShort, `0x02` = CompactLong |
+| 2          | Operation code (upper nibble). Example: `0x10` for Call = `0x02 << 4`                              |
+| 3          | Flags bitmask. Indicates which fields are set. Common value: `0x07` (receiver + payload + revert)  |
 
 **Fields**
 
@@ -64,6 +78,11 @@ Fields are encoded differently based on the encoding format.
 | `EncodingFmtABI`          | `0x01` |
 | `EncodingFmtCompactShort` | `0x02` |
 | `EncodingFmtCompactLong`  | `0x03` |
+
+Compact encoding is space-efficient and can be useful when optimizing
+transaction size. Use `CompactShort` when all dynamic fields (payload and revert
+address) are under 255 bytes. Use `CompactLong` when any field may exceed that
+threshold.
 
 **ABI encoding**
 
@@ -107,15 +126,14 @@ Each field is encoded in a more concise form:
 | Payload  | [len:1 or 2] + bytes         |
 | Revert   | [len:1 or 2] + address bytes |
 
-📦 Used when minimizing size matters, or ABI encoding is overkill.
-
-🔁 Operation Types (OpCode)
+**🔁 Operation Types (OpCode)**
 
 | Operation        | Code (`OpCode`) | Description                                                          |
 | ---------------- | --------------- | -------------------------------------------------------------------- |
 | `Deposit`        | `0x00`          | Only receiver, no payload. Optional revert address                   |
-| `Call`           | `0x02`          | Sends no BTC, invokes onCall() with payload. Revert optional         |
 | `DepositAndCall` | `0x01`          | Transfers BTC and invokes onCall() with payload. Revert **required** |
+| `Call`           | `0x02`          | Sends no BTC, invokes onCall() with payload. Revert optional         |
+| `Invalid`        | `0x03`          | Reserved                                                             |
 
 ## Inscription: Deposit
 
