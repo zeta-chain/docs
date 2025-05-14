@@ -17,7 +17,7 @@ There are two ways to interact with the Bitcoin Gateway:
 
 \* Not counting the required 20 bytes for the universal contract address.
 
-## Inscriptions
+## Inscription Overview ⚡️
 
 Inscriptions enable rich interaction between Bitcoin and ZetaChain by embedding
 structured metadata into Bitcoin transactions using a commit-reveal flow. This
@@ -43,21 +43,27 @@ OP_ENDIF
 
 **🧩 Payload Format**
 
-The inscription data consists of: a 4-byte ZetaChain header and BI- or
+The inscription data consists of: a 4-byte ZetaChain header and ABI- or
 Compact-encoded fields (depending on format).
 
 Header:
 
-| Byte     | Description                                |
-| -------- | ------------------------------------------ |
-| `0x5a`   | Fixed identifier for ZetaChain inscription |
-| Byte `1` | Encoding format (`0x00` = ABI, etc.)       |
-| Byte `2` | Operation code (`0x10` = Call, etc.)       |
-| Byte `3` | Constant: `0x07` (reserved flags)          |
+| Byte     | Description                                                                                     |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| `0x5a`   | Fixed identifier for ZetaChain inscription                                                      |
+| Byte `1` | Encoding format (`0x00` = ABI, etc.)                                                            |
+| Byte `2` | Operation code in upper nibble (e.g., 0x10 for Call = 0x02 << 4)                                |
+| Byte `3` | Flags bitmask. Indicates which fields are set. Common value: 0x07 (receiver + payload + revert) |
 
 **Fields**
 
 Fields are encoded differently based on the encoding format.
+
+| Format                    | Value  |
+| ------------------------- | ------ |
+| `EncodingFmtABI`          | `0x01` |
+| `EncodingFmtCompactShort` | `0x02` |
+| `EncodingFmtCompactLong`  | `0x03` |
 
 **ABI encoding**
 
@@ -70,13 +76,16 @@ before embedding them in the inscription.
   universal contract.
 - Payload: Optional encoded data (e.g., an ABI-encoded function call) for use in
   the contract’s onCall handler.
-- Revert address: A Bitcoin address to which funds will be returned if the
+- Revert address (optional): A Bitcoin address to return funds if the
   cross-chain call fails.
 
 | Field    | Value                                        |
 | -------- | -------------------------------------------- |
 | Header   | 4 bytes                                      |
 | ABI data | abi.encode(receiver, payload, revertAddress) |
+
+Note: the ABI-encoded data must exclude the 4-byte function selector. Only the
+packed argument values should be included in the payload.
 
 **Compact encoding**
 
@@ -108,7 +117,7 @@ Each field is encoded in a more concise form:
 | `Call`           | `0x02`          | Sends no BTC, invokes onCall() with payload. Revert optional         |
 | `DepositAndCall` | `0x01`          | Transfers BTC and invokes onCall() with payload. Revert **required** |
 
-### Deposit
+## Inscription: Deposit
 
 - No call data is included.
 - BTC is deposited to the ZRC-20 equivalent on ZetaChain.
@@ -123,7 +132,7 @@ Each field is encoded in a more concise form:
 - [Cross-chain
   TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/b1934876ab53b211fc1e3168bd0b4e2df6a5d9f3bd1be6c77a88666a7c9e926e)
 
-### Call
+## Inscription: Call
 
 - The payload includes:
   - Contract address
@@ -140,7 +149,7 @@ Each field is encoded in a more concise form:
 - [Cross-chain
   TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/cdb52721e9787c94cda196304d9f699cc89d661c9946bac32f7bdfcf17e08eaa)
 
-### Deposit and Call
+## Inscriptions: Deposit and Call
 
 - Combines the previous two:
   - BTC is transferred and
@@ -157,7 +166,7 @@ Each field is encoded in a more concise form:
 - [Cross-chain
   TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
 
-## ✅ When to Use Inscriptions
+## When to Use Inscriptions
 
 Use inscriptions when:
 
@@ -166,21 +175,31 @@ Use inscriptions when:
 - You want to specify a custom revert address for fail-safety
 - You’re triggering logic, not just transferring BTC
 
-## OP_RETURN
+## Memo (OP_RETURN) Overview 💾
 
 This method involves sending a standard Bitcoin transaction with an `OP_RETURN`
 output that encodes the recipient (universal contract or EOA) and an optional
 short message.
 
-### Deposit
+To initiate a cross-chain transaction from Bitcoin, the transaction must have at
+least two outputs:
 
-To deposit BTC into a **ZetaChain account**, construct a Bitcoin transaction
-with:
+1. **First output**: BTC amount sent to the Bitcoin Gateway (TSS) address.
+2. **Second output**: `OP_RETURN PUSH_x [DATA]`
 
-1. **First output**: BTC amount sent to the TSS Bitcoin address.
-2. **Second output**: `OP_RETURN PUSH_x [DATA]`, where:
+> ⚠️ If the transaction does not include both required outputs in the correct
+> order, ZetaChain will not initiate the cross-chain transaction. The BTC will
+> still be sent to the Gateway address, but no smart contract call or token
+> minting will occur.
 
-   - `[DATA] = 0x` + 20-byte recipient address on ZetaChain (Ethereum-style).
+## Memo: Deposit
+
+To deposit BTC as ZRC-20 BTC to an EOA or a universal contract receiver on
+ZetaChain:
+
+```
+[DATA] = [EOA or contract address (20 bytes)]
+```
 
 📌 **Example:**
 
@@ -188,20 +207,26 @@ with:
 - [Cross-chain
   TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f)
 
-### Call
+## Memo: Call
 
 To call a universal contract on ZetaChain:
 
-- `[DATA] = [contract address (20 bytes)] + [call payload (max 60 bytes)]`
+```
+[DATA] = [contract address (20 bytes)] + [call payload (max 60 bytes)]
+```
 
 This will execute the `onCall` method on the target contract.
 
-⚠️ Keep payloads concise. Larger data should use inscriptions instead.
+> ⚠️ If your payload is larger than 60 bytes consider using inscriptions
+> instead.
 
-### Deposit and Call
+## Memo: Deposit and Call
 
-Use the same format as a call, but ensure the BTC sent is used as part of the
-operation.
+To deposit BTC and call a universal contract on ZetaChain:
+
+```
+[DATA] = [contract address (20 bytes)] + [call payload (max 60 bytes)]
+```
 
 ## Fees
 
