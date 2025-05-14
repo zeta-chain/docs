@@ -19,15 +19,100 @@ There are two ways to interact with the Bitcoin Gateway:
 
 ## Inscriptions
 
-Inscriptions offer greater flexibility at the cost of complexity and fees. You
-must use commit-and-reveal transactions.
+Inscriptions enable rich interaction between Bitcoin and ZetaChain by embedding
+structured metadata into Bitcoin transactions using a commit-reveal flow. This
+method encodes ABI data and optional Bitcoin revert logic into the Bitcoin
+blockchain.
 
-> 💡 Use inscriptions when your `onCall` payload exceeds 60 bytes, requires ABI
-> encoding, or needs a custom revert address.
+Commit and Reveal Each interaction consists of two Bitcoin transactions:
+
+- Commit: Encodes the payload as a Taproot-inscribed output. It commits to the
+  data but doesn't reveal it yet.
+- Reveal: Broadcasts the actual data that was committed to, including logic for
+  contract interaction on ZetaChain.
+
+**✉️ Envelope Format (Witness Script)**
+
+```
+[OP_PUSHBYTES_32 <32-byte pubkey>] OP_CHECKSIG
+OP_FALSE
+OP_IF
+  <payload> (1 or more pushes)
+OP_ENDIF
+```
+
+**🧩 Payload Format**
+
+The inscription data consists of: a 4-byte ZetaChain header and BI- or
+Compact-encoded fields (depending on format).
+
+Header:
+
+| Byte     | Description                                |
+| -------- | ------------------------------------------ |
+| `0x5a`   | Fixed identifier for ZetaChain inscription |
+| Byte `1` | Encoding format (`0x00` = ABI, etc.)       |
+| Byte `2` | Operation code (`0x10` = Call, etc.)       |
+| Byte `3` | Constant: `0x07` (reserved flags)          |
+
+**Fields**
+
+Fields are encoded differently based on the encoding format.
+
+**ABI encoding**
+
+For calls involving structured input, ZetaChain uses Ethereum-style ABI
+encoding. This allows full compatibility with Solidity contracts. You can pass
+complex types like address, bytes, uint256[], etc., and encode them client-side
+before embedding them in the inscription.
+
+- Receiver address: A 20-byte Ethereum-style address of the ZetaChain account or
+  universal contract.
+- Payload: Optional encoded data (e.g., an ABI-encoded function call) for use in
+  the contract’s onCall handler.
+- Revert address: A Bitcoin address to which funds will be returned if the
+  cross-chain call fails.
+
+| Field    | Value                                        |
+| -------- | -------------------------------------------- |
+| Header   | 4 bytes                                      |
+| ABI data | abi.encode(receiver, payload, revertAddress) |
+
+**Compact encoding**
+
+Each field is encoded in a more concise form:
+
+```
+[receiver (20 bytes)] + [len][payload bytes] + [len][revert address bytes]
+```
+
+- Receiver is raw 20 bytes
+- Payload and Revert Address are length-prefixed:
+  - CompactShort: 1-byte length prefix (max 255 bytes)
+  - CompactLong: 2-byte length prefix (max 65535 bytes)
+
+| Field    | Value                        |
+| -------- | ---------------------------- |
+| Header   | 4 bytes                      |
+| Receiver | 20 bytes                     |
+| Payload  | [len:1 or 2] + bytes         |
+| Revert   | [len:1 or 2] + address bytes |
+
+📦 Used when minimizing size matters, or ABI encoding is overkill.
+
+🔁 Operation Types (OpCode)
+
+| Operation        | Code (`OpCode`) | Description                                                          |
+| ---------------- | --------------- | -------------------------------------------------------------------- |
+| `Deposit`        | `0x00`          | Only receiver, no payload. Optional revert address                   |
+| `Call`           | `0x02`          | Sends no BTC, invokes onCall() with payload. Revert optional         |
+| `DepositAndCall` | `0x01`          | Transfers BTC and invokes onCall() with payload. Revert **required** |
 
 ### Deposit
 
-- Create an inscription with just the 20-byte recipient address.
+- No call data is included.
+- BTC is deposited to the ZRC-20 equivalent on ZetaChain.
+- Useful when transferring BTC as ZRC-20 BTC to an EOA on ZetaChain
 
 📌 **Example:**
 
@@ -40,8 +125,11 @@ must use commit-and-reveal transactions.
 
 ### Call
 
-- Create an inscription with the 20-byte contract address followed by the call
-  payload.
+- The payload includes:
+  - Contract address
+  - Call data
+- No BTC is transferred to the contract — it's a logic-only interaction.
+- Ideal for triggering universal contract execution that does not require BTC
 
 📌 **Example:**
 
@@ -54,10 +142,11 @@ must use commit-and-reveal transactions.
 
 ### Deposit and Call
 
-- Include both the contract address and the ABI-encoded call data in the
-  inscription payload.
-- The revealed inscription will trigger `onCall` and transfer the associated BTC
-  value.
+- Combines the previous two:
+  - BTC is transferred and
+  - A contract function is invoked with encoded parameters.
+- Enables rich interactions like "send BTC and trigger a swap", "deposit and
+  mint", or any other cross-chain composable logic.
 
 📌 **Example:**
 
@@ -67,6 +156,15 @@ must use commit-and-reveal transactions.
   TX](https://mempool.space/signet/tx/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
 - [Cross-chain
   TX](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
+
+## ✅ When to Use Inscriptions
+
+Use inscriptions when:
+
+- Your payload exceeds 60 bytes (which OP_RETURN can’t handle)
+- You need to encode structured ABI arguments
+- You want to specify a custom revert address for fail-safety
+- You’re triggering logic, not just transferring BTC
 
 ## OP_RETURN
 
@@ -107,13 +205,14 @@ operation.
 
 ## Fees
 
-Unlike EVM chains, **Bitcoin transactions incur UTXO spend fees**. To manage
-this:
+Unlike EVM-based chains, each deposited Bitcoin output incurs a fee when it is
+spent. To address this, both the depositor and the withdrawer share the cost of
+the spend. This fee is charged in advance as a deposit fee.
 
-- ZetaChain charges a **deposit fee** in advance, calculated as:
+The Bitcoin deposit fee is calculated with the following formula:
 
 ```text
-depositFee = (txFee / txVsize) * 68 * 2
+depositFee = (txFee / txVsize) * 68 vB * 2
 ```
 
 Where:
