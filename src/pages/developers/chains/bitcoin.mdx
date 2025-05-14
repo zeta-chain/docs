@@ -1,105 +1,92 @@
----
-title: Call Universal Apps from Bitcoin
----
+Interacting with universal contracts on ZetaChain from Bitcoin happens through
+the Bitcoin Gateway, a threshold signature scheme (TSS) address. The private key
+to this address is distributed among ZetaChain’s validator set using MPC.
 
-import { Alert } from "~/components/shared";
+The Bitcoin Gateway supports the following operations:
 
-On Bitcoin the gateway is implemented as an TSS MPC account. The private key
-securing the account is split into fragments and distributed among ZetaChain
-observer-signer validators.
+- Deposit: Send BTC to a ZetaChain account or contract.
+- Call: Trigger a smart contract on ZetaChain using a BTC transaction.
+- Deposit and Call: Deposit BTC and immediately invoke a contract.
 
-Bitcoin gateway supports:
+There are two ways to interact with the Bitcoin Gateway:
 
-- depositing BTC to a universal app or an account on ZetaChain
-- depositing BTC and calling a universal app
+| Method       | Max Payload  | Cost          | Revert Address | Best For                             |
+| ------------ | ------------ | ------------- | -------------- | ------------------------------------ |
+| Inscriptions | >520 bytes   | Higher (2 tx) | Customizable   | ABI-encoded calls and large payloads |
+| OP_RETURN    | \~60 bytes\* | Lower (1 tx)  | Matches sender | Simple deposits and small payloads   |
 
-## Overview
+\* Not counting the required 20 bytes for the universal contract address.
 
-To deposit BTC into ZetaChain's Universal EVM (and optionally call a smart
-contract), the Bitcoin transaction must conform to this specifications:
+## Inscriptions
 
-1. The Bitcoin transaction must have at least 2 outputs.
-2. The first output must be addressed to the TSS Bitcoin address.
-3. The second output must be a memo output, i.e. `OP_RETURN PUSH_x [DATA]`. This
-   output must be less than 80 bytes.
-4. The memo `[DATA]` is an array of bytes that encodes the recipient address of
-   this deposit into ZRC-20 or the smart contract on ZetaChain's EVM that will
-   be invoked by this transaction.
-5. If the purpose of this Bitcoin transaction is to only deposit BTC into the
-   BTC ZRC-20 on ZetaChain's EVM, then the `[DATA]` should be exactly 20 bytes
-   long, consists of an Ethereum-style address.
-6. If the purpose of this Bitcoin transaction is to deposit BTC and also use the
-   deposited amount to call a smart contract on ZetaChain's EVM, then the
-   `[DATA]` field must consists of a smart contract address, and a binary
-   message that will be forwarded to the said smart contract:
+Inscriptions offer greater flexibility at the cost of complexity and fees. You
+must use commit-and-reveal transactions.
 
-   ```
-   [DATA] = [ZetaChain's EVM contract address (20B)] - [arbitrary binary message]
-   ```
+> 💡 Use inscriptions when your `onCall` payload exceeds 60 bytes, requires ABI
+> encoding, or needs a custom revert address.
 
-## Example 1: Deposit BTC into an account on ZetaChain's EVM
+### Deposit
 
-[Here's](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f?expand)
-an example Bitcoin transaction on Bitcoin Testnet that deposits 0.0005 tBTC
-(50000 sats) into the address (0x)6da30bfa65e85a16b05bce3846339ed2bc746316.
+- Create an inscription with just the 20-byte recipient address.
 
-Note the three outputs:
+### Call
 
-1. sending the intended amount (50000sats) to the current TSS Bitcoin address
-   tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur.
-2. the memo output, encoding the recipient address on ZetaChain's EVM
-   (0x)6a146da30bfa65e85a16b05bce3846339ed2bc746316.
-3. change sent back to the user.
+- Create an inscription with the 20-byte contract address followed by the call
+  payload.
 
-If you're using ZetaChain's Hardhat [smart contract
-template](https://github.com/zeta-chain/template), you can use the `send-btc`
-task to transfer BTC:
+### Deposit and Call
 
-```
-npx hardhat send-btc --recipient tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur --amount 0.0005 --memo 6a146da30bfa65e85a16b05bce3846339ed2bc746316
-```
+- Include both the contract address and the ABI-encoded call data in the
+  inscription payload.
+- The revealed inscription will trigger `onCall` and transfer the associated BTC
+  value.
 
-Where `recipient` is the TSS Bitcoin address, `amount` is the amount of tBTC to
-transfer, and `memo` is the recipient address on ZetaChain's EVM.
+## OP_RETURN
 
-## Example 2: Deposit BTC and call a smart contract on ZetaChain's EVM
+This method involves sending a standard Bitcoin transaction with an `OP_RETURN`
+output that encodes the recipient (universal contract or EOA) and an optional
+short message.
 
-<Alert variant="tip">
-  {" "}
-  In order to test with Bitcoin, you will need to use a wallet that allows setting an `OP_RETURN` and memos in a binary format.
-  Please see our wallet suggestions [here](/reference/apps/wallets).{" "}
-</Alert>
+### Deposit
 
-If invalid information is sent (i. e. invalid address), the assets may be lost
-and not recoverable.
+To deposit BTC into a **ZetaChain account**, construct a Bitcoin transaction
+with:
 
-In summary, a ZetaChain's EVM BTC transaction would look like this:
+1. **First output**: BTC amount sent to the TSS Bitcoin address.
+2. **Second output**: `OP_RETURN PUSH_x [DATA]`, where:
 
-1. A user sends 1 BTC on Bitcoin network to the Bitcoin [TSS
-   address](/reference/network/contracts) , adding a memo (via `OP_RETURN`) in
-   the tx saying (colloquially) “deposit to 0x1337”.
-2. Upon receiving this tx, the ZetaCore state machine calls the deposit (0x1337,
-   1e8) to mint and credit 0x1337 with 1 zBTC minus fees.
-3. If 0x1337 is an Externally Owned Account (EOA), that's it. If it’s a
-   contract, ZetaCore will call the `onCall` function sending the message that
-   was specified in the `OP_RETURN` memo.
+   - `[DATA] = 0x` + 20-byte recipient address on ZetaChain (Ethereum-style).
 
-The TSS address holds the BTC, where ownerships are tracked inside this BTC
-ZRC-20 contract.
+📌 **Example:** [View deposit tx on
+testnet](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f?expand)
 
-## Deposit Fee
+### Call
 
-Unlike EVM-based chains, each deposited Bitcoin output incurs a fee when it is
-spent. To address this, both the depositor and the withdrawer share the cost of
-the spend. This fee is charged in advance as a deposit fee.
+To call a universal contract on ZetaChain:
 
-The Bitcoin deposit fee is calculated with the following formula:
+- `[DATA] = [contract address (20 bytes)] + [call payload (max 60 bytes)]`
 
-```
-depositFee == (txFee / txVsize) * 68vB * 2
+This will execute the `onCall` method on the target contract.
+
+⚠️ Keep payloads concise. Larger data should use inscriptions instead.
+
+### Deposit and Call
+
+Use the same format as a call, but ensure the BTC sent is used as part of the
+operation.
+
+## Fees
+
+Unlike EVM chains, **Bitcoin transactions incur UTXO spend fees**. To manage
+this:
+
+- ZetaChain charges a **deposit fee** in advance, calculated as:
+
+```text
+depositFee = (txFee / txVsize) * 68 * 2
 ```
 
-- `txFee` is the deposit transaction's fee. This can be calculated by formula:
-  `totalInputValue - totalOutputValue`
-- `txVsize` is the deposit transaction's size in vByte. This can be retrieved
-  from RPC `GetRawTransaction` (ZetaChain's implementation).
+Where:
+
+- `txFee = totalInputValue - totalOutputValue`
+- `txVsize` is the virtual size of the Bitcoin transaction.
