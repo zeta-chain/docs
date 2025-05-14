@@ -47,7 +47,7 @@ Commit and Reveal Each interaction consists of two Bitcoin transactions:
 **✉️ Envelope Format (Witness Script)**
 
 ```
-OP_DATA_32 <32 byte of public key> OP_CHECKSIG
+OP_PUSHBYTES_32 <32-byte public key> OP_CHECKSIG
 OP_FALSE
 OP_IF
     OP_PUSH 0x...
