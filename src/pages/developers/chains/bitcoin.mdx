@@ -152,9 +152,9 @@ Each field is encoded in a more concise form:
 
 ## Inscription: Call
 
-- The payload includes:
-  - Contract address
-  - Call data
+- The encoded data includes:
+  - Contract address (as receiver)
+  - Payload
 - No BTC is transferred to the contract — it's a logic-only interaction.
 - Ideal for triggering universal contract execution that does not require BTC
 
@@ -212,8 +212,7 @@ least two outputs:
 
 ## Memo: Deposit
 
-To deposit BTC as ZRC-20 BTC to an EOA or a universal contract receiver on
-ZetaChain:
+To deposit BTC as ZRC-20 BTC to an EOA or a universal contract on ZetaChain:
 
 ```
 [DATA] = [EOA or contract address (20 bytes)]
