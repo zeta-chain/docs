@@ -1,11 +1,11 @@
 
 
 # Contents
-- [interfaces](/contracts/zevm/interfaces)
-- [legacy](/contracts/zevm/legacy)
-- [GatewayZEVM](GatewayZEVM.sol/contract.GatewayZEVM.md)
-- [SystemContractErrors](SystemContract.sol/interface.SystemContractErrors.md)
-- [SystemContract](SystemContract.sol/contract.SystemContract.md)
-- [WETH9](WZETA.sol/contract.WETH9.md)
-- [ZRC20Errors](ZRC20.sol/interface.ZRC20Errors.md)
-- [ZRC20](ZRC20.sol/contract.ZRC20.md)
+- [interfaces](/src/pages/developers/architecture/protocol/contracts/zevm/interfaces)
+- [legacy](/src/pages/developers/architecture/protocol/contracts/zevm/legacy)
+- [GatewayZEVM](GatewayZEVM.sol/contract.GatewayZEVM.mdx)
+- [SystemContractErrors](SystemContract.sol/interface.SystemContractErrors.mdx)
+- [SystemContract](SystemContract.sol/contract.SystemContract.mdx)
+- [WETH9](WZETA.sol/contract.WETH9.mdx)
+- [ZRC20Errors](ZRC20.sol/interface.ZRC20Errors.mdx)
+- [ZRC20](ZRC20.sol/contract.ZRC20.mdx)

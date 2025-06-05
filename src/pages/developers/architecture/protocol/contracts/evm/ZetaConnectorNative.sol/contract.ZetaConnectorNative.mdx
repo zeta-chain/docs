@@ -1,22 +1,12 @@
-# ZetaConnectorNonNative
-[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/evm/ZetaConnectorNonNative.sol)
+# ZetaConnectorNative
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/v2/contracts/evm/ZetaConnectorNative.sol)
 
 **Inherits:**
-[ZetaConnectorBase](/contracts/evm/ZetaConnectorBase.sol/abstract.ZetaConnectorBase.md)
+[ZetaConnectorBase](/src/pages/developers/architecture/protocol/contracts/evm/ZetaConnectorBase.sol/abstract.ZetaConnectorBase.mdx)
 
-Implementation of ZetaConnectorBase for non-native token handling.
+Implementation of ZetaConnectorBase for native token handling.
 
-*This contract mints and burns Zeta tokens and interacts with the Gateway contract.*
-
-
-## State Variables
-### maxSupply
-Max supply for minting.
-
-
-```solidity
-uint256 public maxSupply;
-```
+*This contract directly transfers Zeta tokens and interacts with the Gateway contract.*
 
 
 ## Functions
@@ -35,23 +25,6 @@ function initialize(
     initializer;
 ```
 
-### setMaxSupply
-
-Set max supply for minting.
-
-*This function can only be called by the TSS address.*
-
-
-```solidity
-function setMaxSupply(uint256 maxSupply_) external onlyRole(TSS_ROLE) whenNotPaused;
-```
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`maxSupply_`|`uint256`|New max supply.|
-
-
 ### withdraw
 
 Withdraw tokens to a specified address.
@@ -63,7 +36,7 @@ Withdraw tokens to a specified address.
 function withdraw(
     address to,
     uint256 amount,
-    bytes32 internalSendHash
+    bytes32
 )
     external
     override
@@ -77,14 +50,14 @@ function withdraw(
 |----|----|-----------|
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
-|`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
+|`<none>`|`bytes32`||
 
 
 ### withdrawAndCall
 
 Withdraw tokens and call a contract through Gateway.
 
-*This function can only be called by the TSS address, and mints if supply is not reached.*
+*This function can only be called by the TSS address.*
 
 
 ```solidity
@@ -93,7 +66,7 @@ function withdrawAndCall(
     address to,
     uint256 amount,
     bytes calldata data,
-    bytes32 internalSendHash
+    bytes32
 )
     external
     override
@@ -109,14 +82,14 @@ function withdrawAndCall(
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 |`data`|`bytes`|The calldata to pass to the contract call.|
-|`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
+|`<none>`|`bytes32`||
 
 
 ### withdrawAndRevert
 
 Withdraw tokens and call a contract with a revert callback through Gateway.
 
-*This function can only be called by the TSS address, and mints if supply is not reached.*
+*This function can only be called by the TSS address.*
 
 
 ```solidity
@@ -124,7 +97,7 @@ function withdrawAndRevert(
     address to,
     uint256 amount,
     bytes calldata data,
-    bytes32 internalSendHash,
+    bytes32,
     RevertContext calldata revertContext
 )
     external
@@ -140,13 +113,13 @@ function withdrawAndRevert(
 |`to`|`address`|The address to withdraw tokens to.|
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 |`data`|`bytes`|The calldata to pass to the contract call.|
-|`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
+|`<none>`|`bytes32`||
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
 ### receiveTokens
 
-Handle received tokens and burn them.
+Handle received tokens.
 
 
 ```solidity
@@ -158,35 +131,4 @@ function receiveTokens(uint256 amount) external override whenNotPaused;
 |----|----|-----------|
 |`amount`|`uint256`|The amount of tokens received.|
 
-
-### _mintTo
-
-*mints to provided account and checks if totalSupply will be exceeded*
-
-
-```solidity
-function _mintTo(address to, uint256 amount, bytes32 internalSendHash) private;
-```
-
-## Events
-### MaxSupplyUpdated
-Event triggered when max supply is updated.
-
-
-```solidity
-event MaxSupplyUpdated(uint256 maxSupply);
-```
-
-**Parameters**
-
-|Name|Type|Description|
-|----|----|-----------|
-|`maxSupply`|`uint256`|New max supply.|
-
-## Errors
-### ExceedsMaxSupply
-
-```solidity
-error ExceedsMaxSupply();
-```
 
