@@ -7,7 +7,6 @@ import React from "react";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
-import { useAppAnalytics } from "~/hooks/useAppAnalytics";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
 import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
 import { useHydrateTheme } from "~/lib/theme/useHydrateTheme";
@@ -63,8 +62,6 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
-
-  useAppAnalytics(router);
 
   const appDispatch = useAppDispatch();
   const { theme } = useHydrateTheme({ appDispatch });
