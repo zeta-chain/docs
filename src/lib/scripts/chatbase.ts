@@ -1,3 +1,9 @@
+declare global {
+  interface Window {
+    chatbase: (...args: any[]) => void;
+  }
+}
+
 export const chatbaseScript = `
   (function(){
     if(!window.chatbase||window.chatbase("getState")!=="initialized"){
