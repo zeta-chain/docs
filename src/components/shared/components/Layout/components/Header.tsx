@@ -12,10 +12,25 @@ export const Header: React.FC<{
   toggleDrawerOpen: () => void;
   setIsLeftDrawerOpen: (isOpen: boolean) => void;
 }> = ({ isLeftDrawerOpen, toggleDrawerOpen, setIsLeftDrawerOpen }) => {
+  const openChatbase = () => {
+    if (window.chatbase) {
+      window.chatbase("open");
+    }
+  };
+
   return (
     <>
       <ClientOnlyPortal selector=".nextra-search">
-        <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-grey-400 dark:text-grey-300" />
+        <div className="flex items-center gap-2">
+          <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-grey-400 dark:text-grey-300" />
+          <button
+            onClick={openChatbase}
+            className="absolute text-sm right-4 top-1/2 -translate-y-1/2 p-2 text-grey-400 hover:text-grey-600 dark:text-grey-300 dark:hover:text-grey-100 transition-colors"
+            aria-label="Open chat"
+          >
+            Ask AI
+          </button>
+        </div>
       </ClientOnlyPortal>
 
       <Toolbar className="sm:hidden fixed z-[100] flex items-stretch w-full p-0 bg-grey-50 dark:bg-grey-900">
