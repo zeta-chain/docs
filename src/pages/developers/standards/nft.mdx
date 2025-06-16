@@ -12,7 +12,7 @@ upgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeab
 proxy patterns, allowing developers to extend and upgrade NFT logic safely over
 time.
 
-## Getting Started
+## Create a New Universal NFT
 
 Create a new Universal NFT project:
 
@@ -33,9 +33,26 @@ Compile Contracts:
 npx hardhat compile --force
 ```
 
-## Demo on Testnet
+## Upgrade an Existing ERC-721 Project
 
-### Deploy
+You can upgrade your existing ERC-721 project to become a Universal NFT by
+installing the official standard contracts package:
+
+```bash
+yarn add @zetachain/standard-contracts
+```
+
+Then, update your contract using the [example
+implementation](https://github.com/zeta-chain/example-contracts/tree/main/examples/nft/contracts)
+as a reference, see the commented lines that include Universal NFT-specific
+logic for ZetaChain integration.
+
+This allows your NFT to support cross-chain minting, transfers, and persistent
+token IDs across ZetaChain and connected EVM chains.
+
+## Deploy on Testnet
+
+Deploy contracts on ZetaChain, Base and Ethereum.
 
 ```
 ZETACHAIN_NFT=$(npx hardhat nft:deploy \
@@ -63,6 +80,10 @@ ETHEREUM_NFT=$(npx hardhat nft:deploy \
 
 ### Connect Contracts
 
+After deployment, link the contracts so they can trust each other for
+cross-chain communication. Use `setConnected` on ZetaChain to register Connected
+contracts by their ZRC-20 gas token (used to identify the chain):
+
 ```
 npx hardhat nft:set-connected \
   --contract $ZETACHAIN_NFT \
@@ -80,6 +101,9 @@ npx hardhat nft:set-connected \
   --network zeta_testnet
 ```
 
+Then, on each connected chain, use `setUniversal` to point back to the Universal
+contract on ZetaChain:
+
 ```
 npx hardhat nft:set-universal \
   --contract $BASE_NFT \
@@ -93,6 +117,9 @@ npx hardhat nft:set-universal \
   --universal $ZETACHAIN_NFT \
   --network sepolia_testnet
 ```
+
+This ensures only authorized contracts can send and receive NFT transfers across
+chains.
 
 ### Mint on ZetaChain
 
@@ -111,8 +138,8 @@ https://zetachain-testnet.blockscout.com/tx/0xc9f8e3a8b3e1f1e2511fae649d510f0ce4
 Transfer the token from ZetaChain to Base. Gas amount (specified in ZETA) is an
 estimate. Unused tokens are refunded to the user.
 
-User ZRC-20 Base ETH as the destination address to specify the chain to which
-the NFT will be transferred.
+Use ZRC-20 Base ETH as the destination address to specify the chain to which the
+NFT will be transferred.
 
 ```
 npx hardhat nft:transfer \
@@ -139,6 +166,9 @@ https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inb
 https://sepolia.basescan.org/tx/0xb56e0fccb95d40e79d6078dbdf2b4e47454e4c6da1dd7a9afb6082e1bd9f1a78
 
 ### Transfer from Base to Ethereum
+
+Let’s move the NFT again — this time from Base to Ethereum. You’ll reference the
+same token ID, which remains unchanged.
 
 ```
 npx hardhat nft:transfer \
