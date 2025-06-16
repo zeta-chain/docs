@@ -1,4 +1,4 @@
-The Universal NFT and Token standards enable non-fungible tokens (ERC-721 NFT)
+The Universal NFT and Token standards enable non-fungible tokens (ERC-721 NFTs)
 and fungible tokens (ERC-20) to be minted on any chain and seamlessly
 transferred between connected chains.
 
@@ -12,49 +12,48 @@ on the destination chain, where a corresponding asset is minted.
 Both Universal NFT and Universal Token projects consist of two contracts:
 **Universal** and **Connected**.
 
-Universal contract is deployed on ZetaChain. The contract is used to:
+The Universal contract is deployed on ZetaChain. It is used to:
 
 - Mint assets on ZetaChain
 - Transfer assets from ZetaChain to a connected chain
-- Handle incoming asset transfers from connected chain to ZetaChain
+- Handle incoming asset transfers from a connected chain to ZetaChain
 - Handle asset transfers between connected chains
 
-Connected contract is deployed on one or more connected EVM chains. The contract
-is used to:
+The Connected contract is deployed on one or more connected EVM chains. It is
+used to:
 
-- Mint an asset on a connected chain
-- Transfer asset to another connected chain or ZetaChain
-- Handling incoming asset transfers from ZetaChain or another connected chain
+- Mint assets on a connected chain
+- Transfer assets to another connected chain or ZetaChain
+- Handle incoming asset transfers from ZetaChain or another connected chain
 
 A Universal contract deployment on ZetaChain is required, while Connected
 contracts can be deployed as needed to enable asset transfers for specific
 chains.
 
-A universal asset can be minted on any chain: ZetaChain or any connected EVM
+A universal asset can be minted on any chain — ZetaChain or any connected EVM
 chain.
 
-For Universal NFTs, when an asset is minted, it gets assigned a persistent ID
-that is unique across all chains. When an asset is transferred between chains,
-the ID remains the same.
+For Universal NFTs, when an asset is minted, it receives a persistent ID that is
+unique across all chains. This ID remains unchanged when the asset is
+transferred between chains.
 
-An asset can be transferred from ZetaChain to a connected chain, from a
-connected chain to ZetaChain and between connected chains. ZetaChain acts as a
-hub for cross-chain transactions, so all transfers go through ZetaChain. For
-example, when you transfer an asset from Ethereum to BNB, two cross-chain
-transactions are initiated: Ethereum → ZetaChain → BNB. This doesn't impact the
-transfer time or costs, but makes it easier to connect any number of chains as
-the number of connections grows linearly.
+Assets can be transferred from ZetaChain to a connected chain, from a connected
+chain to ZetaChain, and between connected chains. ZetaChain acts as a hub for
+cross-chain transactions, so all transfers are routed through it. For example,
+when transferring an asset from Ethereum to BNB, two cross-chain transactions
+are initiated: Ethereum → ZetaChain → BNB. This does not affect transfer time or
+cost, but it allows the system to scale linearly as more chains are added.
 
-Cross-chain asset transfers are capable of handling reverts. If the transfer
-fails on the destination chain, an asset will be returned to the original sender
-on the source chain.
+Cross-chain asset transfers support reverts. If the transfer fails on the
+destination chain, the asset is returned to the original sender on the source
+chain.
 
-Asset contracts only accept cross-chain calls from trusted asset contracts. Each
-contract on a connected chain stores a universal contract address — an address
-of the Universal contract on ZetaChain. The Universal contract stores a list of
-connected contracts on connected chains. This ensures that only the contracts
-from the same asset collection can participate in the cross-chain transfer.
+Asset contracts only accept cross-chain calls from trusted contracts. Each
+contract on a connected chain stores the address of the Universal contract on
+ZetaChain. The Universal contract, in turn, stores the addresses of the
+connected contracts on other chains. This ensures that only contracts from the
+same asset collection can participate in cross-chain transfers.
 
-Here's a the flow using Universal NFT as an example:
+Here’s the flow using a Universal NFT as an example:
 
 ![https://excalidraw.com/#json=dQJisu_uJ0N8T6IPi2m0E,PJU63ktFfbi1WsfAXsompA](/img/docs/tutorials-nft.png)
