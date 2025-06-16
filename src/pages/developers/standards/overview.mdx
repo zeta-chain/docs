@@ -57,3 +57,52 @@ same asset collection can participate in cross-chain transfers.
 Here’s the flow using a Universal NFT as an example:
 
 ![https://excalidraw.com/#json=dQJisu_uJ0N8T6IPi2m0E,PJU63ktFfbi1WsfAXsompA](/img/docs/tutorials-nft.png)
+
+## Deployment
+
+1. Deploy the **Universal** contract on ZetaChain. This is a required step, as
+   ZetaChain acts as the hub for all cross-chain transfers, even between
+   connected EVM chains.
+2. Deploy a **Connected** contract on a supported EVM chain (e.g., Ethereum,
+   Base, Polygon, BNB).
+3. On a universal contract on ZetaChain, run `setConnected(zrc20, connectedAddress)`, where:
+   - `zrc20` is the [ZRC-20 contract](/developers/tokens/zrc20) of the gas token
+     for the target EVM chain. This acts as a chain identifier.
+   - `connectedAddress` is the address of the **Connected** contract on the EVM
+     chain (from step 2).
+4. On the connected EVM chain, run
+   `ConnectedAsset.setUniversal(universalAddress)`, where `universalAddress` is
+   the address of the **Universal** contract on ZetaChain (from step 1).
+
+You now have trusted asset contracts deployed and linked on ZetaChain and a
+connected EVM chain.
+
+To enable transfers to additional EVM chains, repeat steps 2 and 3 for each new
+chain.
+
+> `setConnected` and `setUniversal` are required to establish a secure trust
+> relationship between the asset contracts. Each contract verifies that
+> cross-chain calls originate from a trusted counterpart.
+
+## Gas Fees
+
+- **EVM → ZetaChain:** No cross-chain fee is charged.
+- **ZetaChain → EVM:** A cross-chain fee is paid in **ZETA**, based on the
+  ZRC-20 withdraw fee for the destination chain. ZETA is automatically swapped
+  to the destination chain's gas token ZRC-20 to cover execution.
+- **EVM → EVM:** A cross-chain fee is paid in the **gas token of the source
+  chain**. For example, if transferring an asset from Ethereum to BNB, the fee
+  is paid in ETH. ZetaChain uses ZRC-20 ETH to cover the execution and swaps it
+  for ZRC-20 BNB to call the destination chain.
+
+## Revert Handling
+
+If a cross-chain transfer fails on the destination chain (e.g., due to
+out-of-gas, contract rejection, or network error), the asset is **reverted to
+the original sender**.
+
+When a transfer between two connected EVM chains fails, the asset is reverted to
+the **original sender on ZetaChain**, rather than the original source chain.
+This avoids costly return operations to the EVM chain where the transfer
+started. The sender can then initiate a new transfer to the same or another
+chain.
