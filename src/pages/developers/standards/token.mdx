@@ -1,206 +1,199 @@
-The Universal Token standard enables ERC-20 fungible tokens to be minted on any
-chain and seamlessly transferred between connected chains.
+Universal Tokens are fully interoperable ERC-20 tokens that can be minted and
+transferred across any connected chain without wrapping or bridging. Each token
+retains its supply and metadata across chains, enabling true chain-agnostic
+fungibility and seamless use in multichain DeFi, payments, and governance
+systems.
 
-When transferring tokens between chains, a token is burned on the source chain.
-The token's amount is sent in a message to the token contract on the destination
-chain, where a corresponding token is minted.
+Universal Tokens on ZetaChain are built on the standard [OpenZeppelin
+ERC-20](https://docs.openzeppelin.com/contracts/5.x/api/token/erc20)
+implementation and use [UUPS
+upgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeable)
+proxy patterns, allowing developers to extend and upgrade token logic safely
+over time.
 
-The Universal Token standard works the same way as [Universal
-NFT](/developers/standards/nft).
+## Create a New Universal Token
 
-## Installing from NPM
+Create a new Universal Token project:
 
 ```
-yarn add @zetachain/standard-contracts@v1.0.0-rc2
+npx zetachain@next new --project token
 ```
 
-## Starting from Scratch
+Install dependencies:
 
-Contract on ZetaChain:
-
-```solidity filename="contracts/ZetaChainUniversalToken.sol
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-
-import "@zetachain/standard-contracts/contracts/token/contracts/zetachain/UniversalToken.sol";
-
-contract ZetaChainUniversalToken is UniversalToken {}
+```
+cd token
+yarn
 ```
 
-Contract on an EVM chain:
+Compile Contracts:
 
-```solidity filename="contracts/EVMUniversalToken.sol
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-
-import "@zetachain/standard-contracts/contracts/token/contracts/evm/UniversalToken.sol";
-
-contract EVMUniversalToken is UniversalToken {}
+```
+npx hardhat compile --force
 ```
 
-`UniversalToken` is an upgradeable contract that uses [OpenZeppelin
-UUPSUpgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeable).
-Instead of a `constructor` it uses the `initialize` function.
+## Upgrade an Existing ERC-20 Project
 
-## Starting from an OpenZeppelin Template
+You can upgrade your existing ERC-20 project to become a Universal Token by
+installing the official standard contracts package:
 
-If you already have an ERC-20 contract you want make universal or you prefer to
-start from an OpenZeppelin template, you can import Universal Token
-functionality with just a few lines of code:
-
-```solidity filename="contracts/ZetaChainUniversalToken.sol
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
-
-import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
-import {SwapHelperLib} from "@zetachain/toolkit/contracts/SwapHelperLib.sol";
-import {ERC20BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {ERC20BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import {ERC20PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PausableUpgradeable.sol";
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
-// Import the Universal Token core contract
-import "@zetachain/standard-contracts/contracts/token/contracts/zetachain/UniversalTokenCore.sol";
-
-contract UniversalToken is
-    Initializable,
-    ERC20Upgradeable,
-    ERC20BurnableUpgradeable,
-    ERC20PausableUpgradeable,
-    OwnableUpgradeable,
-    UUPSUpgradeable,
-    UniversalTokenCore // Inherit the Universal Token core contract
-{
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(
-        address initialOwner,
-        string memory name,
-        string memory symbol,
-        address payable gatewayAddress, // Include EVM gateway address
-        uint256 gas, // Set gas limit for universal Token transfers
-        address uniswapRouterAddress // Uniswap v2 router address for gas token swaps
-    ) public initializer {
-        __ERC20_init(name, symbol);
-        __ERC20Burnable_init();
-        __Ownable_init(initialOwner);
-        __UUPSUpgradeable_init();
-        __UniversalTokenCore_init(gatewayAddress, gas, uniswapRouterAddress); // Initialize the Universal Token core contract
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
-
-    // The following functions are overrides required by Solidity.
-
-    function _update(
-        address from,
-        address to,
-        uint256 value
-    ) internal override(ERC20Upgradeable, ERC20PausableUpgradeable) {
-        super._update(from, to, value);
-    }
-
-    receive() external payable {}
-}
+```bash
+yarn add @zetachain/standard-contracts
 ```
 
-```solidity filename="contracts/EVMUniversalToken.sol
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+Then, update your contract using the [example
+implementation](https://github.com/zeta-chain/example-contracts/tree/main/examples/token/contracts)
+as a reference—see the commented lines that include Universal Token-specific
+logic for ZetaChain integration.
 
-import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {ERC20BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import {ERC20PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PausableUpgradeable.sol";
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+This allows your token to support cross-chain minting, transfers, and persistent
+supply tracking across ZetaChain and connected EVM chains.
 
-// Import the Universal Token core contract
-import "@zetachain/standard-contracts/contracts/token/contracts/evm/UniversalTokenCore.sol";
+## Deploy on Testnet
 
-contract UniversalToken is
-    Initializable,
-    ERC20Upgradeable,
-    ERC20BurnableUpgradeable,
-    ERC20PausableUpgradeable,
-    OwnableUpgradeable,
-    UUPSUpgradeable,
-    UniversalTokenCore // Inherit the Universal Token core contract
-{
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
+Deploy contracts on ZetaChain, Base and Ethereum.
 
-    function initialize(
-        address initialOwner,
-        string memory name,
-        string memory symbol,
-        address payable gatewayAddress, // Include EVM gateway address
-        uint256 gas // Set gas limit for universal Token transfers
-    ) public initializer {
-        __ERC20_init(name, symbol);
-        __ERC20Burnable_init();
-        __ERC20Pausable_init();
-        __Ownable_init(initialOwner);
-        __UUPSUpgradeable_init();
-        __UniversalTokenCore_init(gatewayAddress, address(this), gas); // Initialize the Universal Token core contract
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
-
-    // The following functions are overrides required by Solidity.
-
-    function _update(
-        address from,
-        address to,
-        uint256 value
-    ) internal override(ERC20Upgradeable, ERC20PausableUpgradeable) {
-        super._update(from, to, value);
-    }
-
-    receive() external payable {}
-}
+```
+ZETACHAIN_TOKEN=$(npx hardhat token:deploy \
+  --network zeta_testnet \
+  --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+  --name ZetaChainUniversalToken \
+  --json | jq -r .contractAddress) && echo $ZETACHAIN_TOKEN
 ```
 
-## Learn More
+```
+BASE_TOKEN=$(npx hardhat token:deploy \
+  --network base_sepolia \
+  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+  --name EVMUniversalToken \
+  --json | jq -r .contractAddress) && echo $BASE_TOKEN
+```
 
-For details on deployment, gas fees and revert handling, refer to the [Universal
-NFT page](/developers/standards/nft#deployment).
+```
+ETHEREUM_TOKEN=$(npx hardhat token:deploy \
+  --network sepolia_testnet \
+  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+  --name EVMUniversalToken \
+  --json | jq -r .contractAddress) && echo $ETHEREUM_TOKEN
+```
+
+### Connect Contracts
+
+After deployment, link the contracts so they can trust each other for
+cross-chain communication. Use `setConnected` on ZetaChain to register Connected
+contracts by their ZRC-20 gas token (used to identify the chain):
+
+```
+npx hardhat token:set-connected \
+  --contract $ZETACHAIN_TOKEN \
+  --connected $BASE_TOKEN \
+  --zrc20 $BASE_ZRC20 \
+  --network zeta_testnet \
+  --json
+```
+
+```
+npx hardhat token:set-connected \
+  --contract $ZETACHAIN_TOKEN \
+  --connected $ETHEREUM_TOKEN \
+  --zrc20 $ETHEREUM_ZRC20 \
+  --network zeta_testnet
+```
+
+Then, on each connected chain, use `setUniversal` to point back to the Universal
+contract on ZetaChain:
+
+```
+npx hardhat token:set-universal \
+  --contract $BASE_TOKEN \
+  --universal $ZETACHAIN_TOKEN \
+  --network base_sepolia
+```
+
+```
+npx hardhat token:set-universal \
+  --contract $ETHEREUM_TOKEN \
+  --universal $ZETACHAIN_TOKEN \
+  --network sepolia_testnet
+```
+
+This ensures only authorized contracts can send and receive token transfers
+across chains.
+
+### Mint on ZetaChain
+
+```
+npx hardhat token:mint \
+  --contract $ZETACHAIN_TOKEN \
+  --amount 10
+  --network zeta_testnet
+```
+
+https://zetachain-testnet.blockscout.com/tx/0xc9f8e3a8b3e1f1e2511fae649d510f0ce483dd1b3c481c8b01f066a0ca342458
+
+### Transfer from ZetaChain to Base
+
+Transfer the token from ZetaChain to Base. Gas amount (specified in ZETA) is an
+estimate. Unused tokens are refunded to the user.
+
+Use ZRC-20 Base ETH as the destination address to specify the chain to which the
+tokens will be transferred.
+
+```
+npx hardhat token:transfer \
+  --from $ZETACHAIN_TOKEN \
+  --to $BASE_ZRC20 \
+  --amount 10 \
+  --network zeta_testnet \
+  --gas-amount 5
+```
+
+```
+🚀 Successfully transferred token.
+📜 Contract address: 0x22a4E73909bAB067B05185879Cd7FAF335f41920
+👤 Amount: 10
+🔗 Transaction hash: 0xe8b682b0501532154b49a852853bcdc22f843e23068c88c319699975ecef6cc2
+⛽ Gas used: 500000
+```
+
+Outgoing cross-chain transaction from ZetaChain to Base:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xe8b682b0501532154b49a852853bcdc22f843e23068c88c319699975ecef6cc2
+
+https://sepolia.basescan.org/tx/0xd48bb35c371570e7c3769d4ebd75f157ac4ddd4f081aedac1e9d4b6a452460db
+
+### Transfer from Base to Ethereum
+
+Let’s move the token again — this time from Base to Ethereum.
+
+```
+npx hardhat token:transfer \
+  --from $BASE_TOKEN \
+  --network base_sepolia \
+  --to $ETHEREUM_ZRC20 \
+  --amount 10 \
+  --gas-amount 0.005
+```
+
+```
+🚀 Successfully transferred token to the contract.
+📜 Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
+🖼 Token Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
+🆔 Token ID: 269200511667900488584833727349313006688770271102
+🔗 Transaction hash: 0x27c3ca27da7576e8b00ceb588c9aa5e5622dcf03273d22c58660268149c445a4
+⛽ Gas used: 118428
+```
+
+Incoming cross-chain transaction from Base to ZetaChain:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xdb7b9a8ab3b7c59e0877f403a8ece258ffff2539ebbe4c19d2089f6657855374
+
+Outgoing cross-chain transaction from ZetaChain to Ethereum:
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x686f3b46bde24ca54394a9f782a4517b42e4032a5be3ec7b715d13b6be1481f4
+
+https://sepolia.etherscan.io/tx/0x14348a0acce19ae3e2bc52d1b7be71d6612a5454a0bfcda48323ace5a84781c8
+
+## Source Code
+
+https://github.com/zeta-chain/standard-contracts/tree/main/contracts/token

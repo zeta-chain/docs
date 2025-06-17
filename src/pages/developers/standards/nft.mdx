@@ -1,640 +1,202 @@
-import { Alert } from "~/components/shared";
+Universal NFTs are fully interoperable ERC-721 tokens that can be minted and
+transferred across any connected chain without wrapping or bridging. Each NFT
+has a persistent token ID that remains the same on every chain, and metadata is
+preserved during cross-chain transfers. This enables true chain-agnostic
+ownership and interaction for use cases like cross-chain games, marketplaces,
+and identity.
 
-The Universal NFT standard enables non-fungible tokens (ERC-721 NFT) to be
-minted on any chain and seamlessly transferred between connected chains.
+Universal NFTs on ZetaChain are built on the standard [OpenZeppelin
+ERC-721](https://docs.openzeppelin.com/contracts/5.x/api/token/erc721)
+implementation and use [UUPS
+upgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeable)
+proxy patterns, allowing developers to extend and upgrade NFT logic safely over
+time.
 
-When transferring tokens between chains, a token is burned on the source chain.
-The token's metadata and information are sent in a message to the token contract
-on the destination chain, where a corresponding token is minted.
+## Create a New Universal NFT
 
-The project consists of two ERC-721 contracts: **Universal** and **Connected**.
-
-Universal contract is deployed on ZetaChain. The contract is used to:
-
-- Mint NFTs on ZetaChain
-- Transfer NFTs from ZetaChain to a connected chain
-- Handle incoming NFT transfers from connected chain to ZetaChain
-- Handle NFT transfers between connected chains
-
-Connected contract is deployed on one or more connected EVM chains. The contract is
-used to:
-
-- Mint an NFT on a connected chain
-- Transfer NFT to another connected chain or ZetaChain
-- Handling incoming NFT transfers from ZetaChain or another connected chain
-
-A Universal contract deployment on ZetaChain is required, while Connected
-contracts can be deployed as needed to enable token transfers for specific
-chains.
-
-A universal NFT can be minted on any chain: ZetaChain or any connected EVM
-chain. When an NFT is minted, it gets assigned a persistent token ID that is
-unique across all chains. When an NFT is transferred between chains, the token
-ID remains the same.
-
-An NFT can be transferred from ZetaChain to a connected chain, from a connected
-chain to ZetaChain and between connected chains. ZetaChain acts as a hub for
-cross-chain transactions, so all transfers go through ZetaChain. For example,
-when you transfer an NFT from Ethereum to BNB, two cross-chain transactions are
-initiated: Ethereum → ZetaChain → BNB. This doesn't impact the transfer time or
-costs, but makes it easier to connect any number of chains as the number of
-connections grows linearly.
-
-Cross-chain NFT transfers are capable of handling reverts. If the transfer fails
-on the destination chain, an NFT will be returned to the original sender on the
-source chain.
-
-NFT contracts only accept cross-chain calls from trusted NFT contracts. Each
-contract on a connected chain stores a universal contract address — an address
-of the Universal contract on ZetaChain. The Universal contract stores a list of
-connected contracts on connected chains. This ensures that only the contracts
-from the same NFT collection can participate in the cross-chain transfer.
-
-![https://excalidraw.com/#json=dQJisu_uJ0N8T6IPi2m0E,PJU63ktFfbi1WsfAXsompA](/img/docs/tutorials-nft.png)
-
-## Using ThirdWeb
-
-[Thirdweb](https://thirdweb.com/) is a web3 development platform that enables
-developers to deploy and interact with smart contracts across EVM-compatible
-blockchains.
-
-- [Universal NFT on
-  ZetaChain](https://thirdweb.com/0xe7508B5026f032b37663718192bA63a40954F2c0/ZetaChainUniversalNFT)
-- [Universal NFT on
-  EVM](https://thirdweb.com/0xe7508B5026f032b37663718192bA63a40954F2c0/EVMUniversalNFT)
-
-## Installing from NPM
+Create a new Universal NFT project:
 
 ```
-yarn add @zetachain/standard-contracts@v1.0.0-rc2
+npx zetachain@next new --project nft
 ```
 
-## Starting from Scratch
-
-Contract on ZetaChain:
-
-```solidity filename="contracts/ZetaChainUniversalNFT.sol
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
-
-import "@zetachain/standard-contracts/contracts/nft/contracts/zetachain/UniversalNFT.sol";
-
-contract ZetaChainUniversalNFT is UniversalNFT {}
-```
-
-Contract on an EVM chain:
-
-```solidity filename="contracts/EVMUniversalNFT.sol
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
-
-import "@zetachain/standard-contracts/contracts/nft/contracts/evm/UniversalNFT.sol";
-
-contract EVMUniversalNFT is UniversalNFT {}
-```
-
-`UniversalNFT` is an upgradeable contract that uses [OpenZeppelin
-UUPSUpgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeable).
-Instead of a `constructor` it uses the `initialize` function.
-
-## Starting from an OpenZeppelin Template
-
-If you already have an ERC-721 contract you want make universal or you prefer to
-start from an OpenZeppelin template, you can import Universal NFT functionality
-with just a few lines of code:
-
-```solidity filename="contracts/ZetaChainUniversalNFT.sol
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
-
-import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import {ERC721BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
-import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import {ERC721PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
-import {ERC721URIStorageUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
-// Import UniversalNFTCore for universal NFT functionality
-import "@zetachain/standard-contracts/contracts/nft/contracts/zetachain/UniversalNFTCore.sol";
-
-contract UniversalNFT is
-    Initializable, // Allows upgradeable contract initialization
-    ERC721Upgradeable, // Base ERC721 implementation
-    ERC721URIStorageUpgradeable, // Enables metadata URI storage
-    ERC721EnumerableUpgradeable, // Provides enumerable token support
-    ERC721PausableUpgradeable, // Allows pausing token operations
-    OwnableUpgradeable, // Restricts access to owner-only functions
-    ERC721BurnableUpgradeable, // Adds burnable functionality
-    UUPSUpgradeable, // Supports upgradeable proxy pattern
-    UniversalNFTCore // Custom core for additional logic
-{
-    uint256 private _nextTokenId; // Track next token ID for minting
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(
-        address initialOwner,
-        string memory name,
-        string memory symbol,
-        address payable gatewayAddress, // Include EVM gateway address
-        uint256 gas, // Set gas limit for universal NFT calls
-        address uniswapRouterAddress // Uniswap v2 router address for gas token swaps
-    ) public initializer {
-        __ERC721_init(name, symbol);
-        __ERC721Enumerable_init();
-        __ERC721URIStorage_init();
-        __ERC721Pausable_init();
-        __Ownable_init(initialOwner);
-        __ERC721Burnable_init();
-        __UUPSUpgradeable_init();
-        __UniversalNFTCore_init(gatewayAddress, gas, uniswapRouterAddress); // Initialize universal NFT core
-    }
-
-    function safeMint(
-        address to,
-        string memory uri
-    ) public onlyOwner whenNotPaused {
-        // Generate globally unique token ID, feel free to supply your own logic
-        uint256 hash = uint256(
-            keccak256(
-                abi.encodePacked(address(this), block.number, _nextTokenId++)
-            )
-        );
-
-        uint256 tokenId = hash & 0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-    }
-
-    // The following functions are overrides required by Solidity.
-
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    )
-        internal
-        override(
-            ERC721Upgradeable,
-            ERC721EnumerableUpgradeable,
-            ERC721PausableUpgradeable
-        )
-        returns (address)
-    {
-        return super._update(to, tokenId, auth);
-    }
-
-    function _increaseBalance(
-        address account,
-        uint128 value
-    ) internal override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
-        super._increaseBalance(account, value);
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    )
-        public
-        view
-        override(
-            ERC721Upgradeable,
-            ERC721URIStorageUpgradeable,
-            UniversalNFTCore // Include UniversalNFTCore for URI overrides
-        )
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        override(
-            ERC721Upgradeable,
-            ERC721EnumerableUpgradeable,
-            ERC721URIStorageUpgradeable,
-            UniversalNFTCore // Include UniversalNFTCore for interface overrides
-        )
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
-    receive() external payable {} // Receive ZETA to pay for gas
-}
-```
-
-```solidity filename="contracts/EVMUniversalNFT.sol
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
-
-import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import {ERC721BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
-import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import {ERC721PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
-import {ERC721URIStorageUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
-// Import UniversalNFTCore for universal NFT functionality
-import "@zetachain/standard-contracts/contracts/nft/contracts/evm/UniversalNFTCore.sol";
-
-contract UniversalNFT is
-    Initializable,
-    ERC721Upgradeable,
-    ERC721EnumerableUpgradeable,
-    ERC721URIStorageUpgradeable,
-    ERC721PausableUpgradeable,
-    OwnableUpgradeable,
-    ERC721BurnableUpgradeable,
-    UUPSUpgradeable,
-    UniversalNFTCore // Add UniversalNFTCore for universal features
-{
-    uint256 private _nextTokenId; // Track next token ID for minting
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(
-        address initialOwner,
-        string memory name,
-        string memory symbol,
-        address payable gatewayAddress, // Include EVM gateway address
-        uint256 gas // Set gas limit for universal NFT calls
-    ) public initializer {
-        __ERC721_init(name, symbol);
-        __ERC721Enumerable_init();
-        __ERC721URIStorage_init();
-        __ERC721Pausable_init();
-        __Ownable_init(initialOwner);
-        __ERC721Burnable_init();
-        __UUPSUpgradeable_init();
-        __UniversalNFTCore_init(gatewayAddress, address(this), gas); // Initialize universal NFT core
-    }
-
-    function safeMint(
-        address to,
-        string memory uri
-    ) public onlyOwner whenNotPaused {
-        // Generate globally unique token ID, feel free to supply your own logic
-        uint256 hash = uint256(
-            keccak256(
-                abi.encodePacked(address(this), block.number, _nextTokenId++)
-            )
-        );
-
-        uint256 tokenId = hash & 0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
-
-    // The following functions are overrides required by Solidity.
-
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    )
-        internal
-        override(
-            ERC721Upgradeable,
-            ERC721EnumerableUpgradeable,
-            ERC721PausableUpgradeable
-        )
-        returns (address)
-    {
-        return super._update(to, tokenId, auth);
-    }
-
-    function _increaseBalance(
-        address account,
-        uint128 value
-    ) internal override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
-        super._increaseBalance(account, value);
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    )
-        public
-        view
-        override(
-            ERC721Upgradeable,
-            ERC721URIStorageUpgradeable,
-            UniversalNFTCore // Include UniversalNFTCore for URI overrides
-        )
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        override(
-            ERC721Upgradeable,
-            ERC721EnumerableUpgradeable,
-            ERC721URIStorageUpgradeable,
-            UniversalNFTCore // Include UniversalNFTCore for interface overrides
-        )
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-}
-```
-
-## Deployment
-
-1. Deploy Universal NFT on ZetaChain. This is a required step, because a
-   contract on ZetaChain handles all cross-chain token transfers, even between
-   EVM chains.
-2. Deploy Universal NFT on a connected EVM chain (for example, Ethereum, Base,
-   Polygon or BNB)
-3. Run `ZetaChainUniversalNFT.setConnected(zrc20, contractAddress)`, where zrc20
-   is the [ZRC-20 contract](/developers/tokens/zrc20) of the gas token of a
-   connected EVM chain, this acts as an identifier for a chain, and
-   `contractAddress` is the address of a Universal NFT on a connected EVM chain
-   (see step 2).
-4. Run `EVMUniversalNFT.setUniversal(contractAddress)`, where `contractAddress`
-   is an address of a Universal NFT on ZetaChain (see step 1).
-
-You now have two NFT contracts on ZetaChain and on an EVM chain connected. To
-add deploy an NFT contract on another EVM chain, repeat steps 2 and 3.
-
-`setConnected` and `setUniversal` steps are required to establish a trusted
-connection between Universal NFT contracts on different chains. When accepting a
-cross-chain transfer a contract first checks that the transfer is coming from a
-trusted contract. On ZetaChain setting connected contract addresses helps the
-contract to route cross-chain transfers.
-
-## Gas Fees
-
-EVM → ZetaChain: no cross-chain fee is applied.
-
-ZetaChain → EVM: a cross-chain fee is paid in ZETA. The amount depends on the
-ZRC-20 withdraw fee for the destination chain. ZETA is swapped for the
-destination chain's gas token ZRC-20.
-
-EVM → EVM: a cross-chain fee is paid in the gas token of the source chain. The
-amount depends on the ZRC-20 withdraw fee for the destination chain. For
-example, if an NFT is transferred from Ethereum to BNB chain, the cross-chain
-fee is paid in ETH. On ZetaChain ZRC-20 ETH is swapped for ZRC-20 BNB, which is
-used to cover a call to the BNB chain.
-
-## Revert Handling
-
-EVM → EVM: if a transfer between two EVM chains reverts, the NFT will be
-transferred to **the original sender on ZetaChain**. This is prevent potential
-high gas fees associated with returning the NFT back to chain from which it was
-transferred in the first place. After the revert, the original sender can
-transfer the NFT from ZetaChain to any other chain.
-
-## Demo on Testnet
-
-### Deploy
+Install dependencies:
 
 ```
-npx hardhat nft:deploy \
+cd nft
+yarn
+```
+
+Compile Contracts:
+
+```
+npx hardhat compile --force
+```
+
+## Upgrade an Existing ERC-721 Project
+
+You can upgrade your existing ERC-721 project to become a Universal NFT by
+installing the official standard contracts package:
+
+```bash
+yarn add @zetachain/standard-contracts
+```
+
+Then, update your contract using the [example
+implementation](https://github.com/zeta-chain/example-contracts/tree/main/examples/nft/contracts)
+as a reference, see the commented lines that include Universal NFT-specific
+logic for ZetaChain integration.
+
+This allows your NFT to support cross-chain minting, transfers, and persistent
+token IDs across ZetaChain and connected EVM chains.
+
+## Deploy on Testnet
+
+Deploy contracts on ZetaChain, Base and Ethereum.
+
+```
+ZETACHAIN_NFT=$(npx hardhat nft:deploy \
   --network zeta_testnet \
   --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
   --name ZetaChainUniversalNFT \
-  --json
-```
-
-```json
-{
-  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "deployer": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
-  "network": "zeta_testnet"
-}
+  --json | jq -r .contractAddress) && echo $ZETACHAIN_NFT
 ```
 
 ```
-npx hardhat nft:deploy \
+BASE_NFT=$(npx hardhat nft:deploy \
   --network base_sepolia \
   --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
   --name EVMUniversalNFT \
-  --json
-```
-
-```json
-{
-  "contractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
-  "deployer": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
-  "network": "base_sepolia"
-}
+  --json | jq -r .contractAddress) && echo $BASE_NFT
 ```
 
 ```
-npx hardhat nft:deploy \
+ETHEREUM_NFT=$(npx hardhat nft:deploy \
   --network sepolia_testnet \
   --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
   --name EVMUniversalNFT \
-  --json
-```
-
-```json
-{
-  "contractAddress": "0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4",
-  "deployer": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
-  "network": "sepolia_testnet"
-}
+  --json | jq -r .contractAddress) && echo $ETHEREUM_NFT
 ```
 
 ### Connect Contracts
 
+After deployment, link the contracts so they can trust each other for
+cross-chain communication. Use `setConnected` on ZetaChain to register Connected
+contracts by their ZRC-20 gas token (used to identify the chain):
+
 ```
 npx hardhat nft:set-connected \
-  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
-  --connected 0xd74e5D85828F4928AB22cd58f015F4245C0808C1 \
-  --zrc20 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
+  --contract $ZETACHAIN_NFT \
+  --connected $BASE_NFT \
+  --zrc20 $BASE_ZRC20 \
   --network zeta_testnet \
   --json
 ```
 
-```json
-{
-  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "zrc20": "0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD",
-  "connectedContractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
-  "transactionHash": "0xa666b88e05c2fe807075eb9eaff72a223e262b71493cbfe1d01ad580affa5039"
-}
-```
-
 ```
 npx hardhat nft:set-connected \
-  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
-  --connected 0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4 \
-  --zrc20 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
-  --network zeta_testnet \
-  --json
+  --contract $ZETACHAIN_NFT \
+  --connected $ETHEREUM_NFT \
+  --zrc20 $ETHEREUM_ZRC20 \
+  --network zeta_testnet
 ```
 
-```json
-{
-  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "zrc20": "0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0",
-  "connectedContractAddress": "0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4",
-  "transactionHash": "0x39249ebc1a888cb73aad4393fb68a900d0ce3a23c84aafd5d9126651696ace2a"
-}
+Then, on each connected chain, use `setUniversal` to point back to the Universal
+contract on ZetaChain:
+
+```
+npx hardhat nft:set-universal \
+  --contract $BASE_NFT \
+  --universal $ZETACHAIN_NFT \
+  --network base_sepolia
 ```
 
 ```
 npx hardhat nft:set-universal \
-  --contract 0xd74e5D85828F4928AB22cd58f015F4245C0808C1 \
-  --universal 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
-  --network base_sepolia \
-  --json
+  --contract $ETHEREUM_NFT \
+  --universal $ZETACHAIN_NFT \
+  --network sepolia_testnet
 ```
 
-```json
-{
-  "contractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
-  "universalContract": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "transactionHash": "0xe16f57df5521ca5cb54738e053cbd86b2ac104780e92c7c570b0984a47bf2cf4"
-}
-```
-
-```
-npx hardhat nft:set-universal \
-  --contract 0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4 \
-  --universal 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
-  --network sepolia_testnet \
-  --json
-```
-
-```json
-{
-  "contractAddress": "0x32Cc62EB140BF41F4899Eb16B07537e64e48b6f4",
-  "universalContract": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "transactionHash": "0x500b244feb0aaccb4fce2e451b988b1affaf5bf3a670392492a42f292012cc88"
-}
-```
+This ensures only authorized contracts can send and receive NFT transfers across
+chains.
 
 ### Mint on ZetaChain
 
 ```
-npx hardhat nft:mint \
-  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+NFT1=$(npx hardhat nft:mint \
+  --contract $ZETACHAIN_NFT \
   --token-uri https://example.org \
   --network zeta_testnet \
-  --json
+  --json | jq -r .tokenId) && echo $NFT1
 ```
 
-```json
-{
-  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "mintTransactionHash": "0x9afec4281397af879f9b22146125a748c84d0a489d3cdaf6434908616cf41024",
-  "recipient": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
-  "tokenURI": "https://example.org",
-  "tokenId": "1133890395085443587238793966499147269485704287551"
-}
-```
-
-https://zetachain-testnet.blockscout.com/tx/0x9afec4281397af879f9b22146125a748c84d0a489d3cdaf6434908616cf41024
+https://zetachain-testnet.blockscout.com/tx/0xc9f8e3a8b3e1f1e2511fae649d510f0ce483dd1b3c481c8b01f066a0ca342458
 
 ### Transfer from ZetaChain to Base
 
 Transfer the token from ZetaChain to Base. Gas amount (specified in ZETA) is an
 estimate. Unused tokens are refunded to the user.
 
-User ZRC-20 Base ETH as the destination address to specify the chain to which
-the NFT will be transferred.
+Use ZRC-20 Base ETH as the destination address to specify the chain to which the
+NFT will be transferred.
 
 ```
 npx hardhat nft:transfer \
-  --contract 0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8 \
+  --contract $ZETACHAIN_NFT \
+  --destination $BASE_ZRC20 \
+  --token-id $NFT1 \
   --network zeta_testnet \
-  --receiver 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 \
-  --destination 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
-  --token-id 1133890395085443587238793966499147269485704287551 \
   --gas-amount 5
 ```
 
-```json
-{
-  "contractAddress": "0x536a1F02F944Fa673E4Aa693a717Fd8F69D4c1f8",
-  "transferTransactionHash": "0x85592700ffadaa9afe2475af03e597d2d15a2edaa8d7aa73b76c022bfd18483f",
-  "sender": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
-  "tokenId": "1133890395085443587238793966499147269485704287551"
-}
+```
+🚀 Successfully transferred NFT to the contract.
+📜 Contract address: 0xb2c095a2e05B5C886041a53b6f3d62736fC2C1Bc
+🖼 NFT Contract address: 0xb2c095a2e05B5C886041a53b6f3d62736fC2C1Bc
+🆔 Token ID: 269200511667900488584833727349313006688770271102
+🔗 Transaction hash: 0x219370f4200c934dd647a1ea27099c25061de2fb25bb13194ec7bd328cdb624e
+⛽ Gas used: 500000
 ```
 
 Outgoing cross-chain transaction from ZetaChain to Base:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x85592700ffadaa9afe2475af03e597d2d15a2edaa8d7aa73b76c022bfd18483f
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x219370f4200c934dd647a1ea27099c25061de2fb25bb13194ec7bd328cdb624e
 
-https://sepolia.basescan.org/tx/0xa2c78ea6cc559e89c49ae6c552fd790600c8660247e31210eda42e069aea54c8
+https://sepolia.basescan.org/tx/0xb56e0fccb95d40e79d6078dbdf2b4e47454e4c6da1dd7a9afb6082e1bd9f1a78
 
 ### Transfer from Base to Ethereum
 
+Let’s move the NFT again — this time from Base to Ethereum. You’ll reference the
+same token ID, which remains unchanged.
+
 ```
 npx hardhat nft:transfer \
-  --contract 0xd74e5D85828F4928AB22cd58f015F4245C0808C1 \
+  --contract $BASE_NFT \
   --network base_sepolia \
-  --receiver 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 \
-  --destination 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
-  --token-id 1133890395085443587238793966499147269485704287551 \
+  --destination $ETHEREUM_ZRC20 \
+  --token-id $NFT1 \
   --gas-amount 0.005
 ```
 
-```json
-{
-  "contractAddress": "0xd74e5D85828F4928AB22cd58f015F4245C0808C1",
-  "transferTransactionHash": "0x87b2119ad69e03fb7d9839d013f826c2281a1c7d0ce12ca4aaaa33875454e8a7",
-  "sender": "0x4955a3F38ff86ae92A914445099caa8eA2B9bA32",
-  "tokenId": "1133890395085443587238793966499147269485704287551"
-}
+```
+🚀 Successfully transferred NFT to the contract.
+📜 Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
+🖼 NFT Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
+🆔 Token ID: 269200511667900488584833727349313006688770271102
+🔗 Transaction hash: 0x27c3ca27da7576e8b00ceb588c9aa5e5622dcf03273d22c58660268149c445a4
+⛽ Gas used: 118428
 ```
 
 Incoming cross-chain transaction from Base to ZetaChain:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x87b2119ad69e03fb7d9839d013f826c2281a1c7d0ce12ca4aaaa33875454e8a7
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x27c3ca27da7576e8b00ceb588c9aa5e5622dcf03273d22c58660268149c445a4
 
 Outgoing cross-chain transaction from ZetaChain to Ethereum:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x47a0a03411631a6c758948ec22a215f561fcf326bbbbeda2720ca1e5b35f9ee2
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x5cfb1c21201025482909f2bc390e0ada032e2c37d0f8e1861a7e248083c8d015
 
-https://sepolia.etherscan.io/tx/0x9a0e46f5e1f917d482abf2d471c23afeef55098177089cfeb2b4e199ef6cdba8
+https://sepolia.etherscan.io/tx/0x171034238d6cfb51c2a8a8e1a023034523d579643d23d9bcbd98c70ad76b1eb9
 
 ## Source Code
 

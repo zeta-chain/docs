@@ -1,0 +1,108 @@
+The Universal NFT and Token standards enable non-fungible tokens (ERC-721 NFTs)
+and fungible tokens (ERC-20) to be minted on any chain and seamlessly
+transferred between connected chains.
+
+For simplicity, we'll refer to both Universal NFTs and Universal Tokens as
+"assets" throughout this document.
+
+When transferring assets between chains, an asset is burned on the source chain.
+The asset's metadata and information are sent in a message to the asset contract
+on the destination chain, where a corresponding asset is minted.
+
+Both Universal NFT and Universal Token projects consist of two contracts:
+**Universal** and **Connected**.
+
+The Universal contract is deployed on ZetaChain. It is used to:
+
+- Mint assets on ZetaChain
+- Transfer assets from ZetaChain to a connected chain
+- Handle incoming asset transfers from a connected chain to ZetaChain
+- Handle asset transfers between connected chains
+
+The Connected contract is deployed on one or more connected EVM chains. It is
+used to:
+
+- Mint assets on a connected chain
+- Transfer assets to another connected chain or ZetaChain
+- Handle incoming asset transfers from ZetaChain or another connected chain
+
+A Universal contract deployment on ZetaChain is required, while Connected
+contracts can be deployed as needed to enable asset transfers for specific
+chains.
+
+A universal asset can be minted on any chain — ZetaChain or any connected EVM
+chain.
+
+For Universal NFTs, when an asset is minted, it receives a persistent ID that is
+unique across all chains. This ID remains unchanged when the asset is
+transferred between chains.
+
+Assets can be transferred from ZetaChain to a connected chain, from a connected
+chain to ZetaChain, and between connected chains. ZetaChain acts as a hub for
+cross-chain transactions, so all transfers are routed through it. For example,
+when transferring an asset from Ethereum to BNB, two cross-chain transactions
+are initiated: Ethereum → ZetaChain → BNB. This does not affect transfer time or
+cost, but it allows the system to scale linearly as more chains are added.
+
+Cross-chain asset transfers support reverts. If the transfer fails on the
+destination chain, the asset is returned to the original sender on the source
+chain.
+
+Asset contracts only accept cross-chain calls from trusted contracts. Each
+contract on a connected chain stores the address of the Universal contract on
+ZetaChain. The Universal contract, in turn, stores the addresses of the
+connected contracts on other chains. This ensures that only contracts from the
+same asset collection can participate in cross-chain transfers.
+
+Here’s the flow using a Universal NFT as an example:
+
+![https://excalidraw.com/#json=dQJisu_uJ0N8T6IPi2m0E,PJU63ktFfbi1WsfAXsompA](/img/docs/tutorials-nft.png)
+
+## Deployment
+
+1. Deploy the **Universal** contract on ZetaChain. This is a required step, as
+   ZetaChain acts as the hub for all cross-chain transfers, even between
+   connected EVM chains.
+2. Deploy a **Connected** contract on a supported EVM chain (e.g., Ethereum,
+   Base, Polygon, BNB).
+3. On a universal contract on ZetaChain, run `setConnected(zrc20, connectedAddress)`, where:
+   - `zrc20` is the [ZRC-20 contract](/developers/tokens/zrc20) of the gas token
+     for the target EVM chain. This acts as a chain identifier.
+   - `connectedAddress` is the address of the **Connected** contract on the EVM
+     chain (from step 2).
+4. On the connected EVM chain, run
+   `ConnectedAsset.setUniversal(universalAddress)`, where `universalAddress` is
+   the address of the **Universal** contract on ZetaChain (from step 1).
+
+You now have trusted asset contracts deployed and linked on ZetaChain and a
+connected EVM chain.
+
+To enable transfers to additional EVM chains, repeat steps 2 and 3 for each new
+chain.
+
+> `setConnected` and `setUniversal` are required to establish a secure trust
+> relationship between the asset contracts. Each contract verifies that
+> cross-chain calls originate from a trusted counterpart.
+
+## Gas Fees
+
+- **EVM → ZetaChain:** No cross-chain fee is charged.
+- **ZetaChain → EVM:** A cross-chain fee is paid in **ZETA**, based on the
+  ZRC-20 withdraw fee for the destination chain. ZETA is automatically swapped
+  to the destination chain's gas token ZRC-20 to cover execution.
+- **EVM → EVM:** A cross-chain fee is paid in the **gas token of the source
+  chain**. For example, if transferring an asset from Ethereum to BNB, the fee
+  is paid in ETH. ZetaChain uses ZRC-20 ETH to cover the execution and swaps it
+  for ZRC-20 BNB to call the destination chain.
+
+## Revert Handling
+
+If a cross-chain transfer fails on the destination chain (e.g., due to
+out-of-gas, contract rejection, or network error), the asset is **reverted to
+the original sender**.
+
+When a transfer between two connected EVM chains fails, the asset is reverted to
+the **original sender on ZetaChain**, rather than the original source chain.
+This avoids costly return operations to the EVM chain where the transfer
+started. The sender can then initiate a new transfer to the same or another
+chain.
