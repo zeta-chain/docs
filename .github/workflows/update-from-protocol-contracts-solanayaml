@@ -1,4 +1,4 @@
-name: Update protocol-contract-ton docs
+name: Update protocol-contract-solana docs
 
 on:
   schedule:
@@ -13,18 +13,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Checkout zeta-chain/protocol-contracts-ton repository
+      - name: Checkout zeta-chain/protocol-contracts-solana repository
         uses: actions/checkout@v2
         with:
-          repository: zeta-chain/protocol-contracts-ton
-          path: protocol-contracts-ton
+          repository: zeta-chain/protocol-contracts-solana
+          path: protocol-contracts-solana
 
       - name: Update docs
         run: |
           mkdir -p src/pages/developers/protocol/
-          rm -f src/pages/developers/protocol/ton.mdx
-          cp protocol-contracts-ton/docs/index.md src/pages/developers/protocol/ton.mdx
-          rm -rf protocol-contracts-ton
+          rm -f src/pages/developers/protocol/solana.mdx
+          cp protocol-contracts-solana/docs/index.md src/pages/developers/protocol/solana.mdx
+          rm -rf protocol-contracts-solana
 
       - name: Check for changes
         id: check-changes
@@ -35,11 +35,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: "docs: update protocol-contract-ton docs"
+          title: "docs: update protocol-contract-solana docs"
           body: |
-            This PR contains updates to the protocol-contract-ton docs.
+            This PR contains updates to the protocol-contract-solana docs.
           commit-message: |
-            "docs: update protocol-contract-ton docs"
+            "docs: update protocol-contract-solana docs"
           base: main
-          branch: docs/updates-from-protocol-contracts-ton
+          branch: docs/updates-from-protocol-contracts-solana
         if: steps.check-changes.outputs.changed == 'true'
