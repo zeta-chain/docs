@@ -128,8 +128,27 @@ pub struct RevertOptions {
 
 - If `revert_options` is omitted, the default behavior in case of revert is to
   transfer the tokens back to the sender.
-- To fully protect assets against loss of funds, we recommend always
-  specifying `abort_address`.
+- To fully protect assets against loss of funds, we recommend always specifying
+  `abort_address`.
+
+### Implementing `on_revert`
+
+If a call to a universal contract on ZetaChain reverts, and the protocol is able
+to execute a revert transaction back to Solana, the Gateway invokes the
+`on_revert` function in your Solana program. This lets your app unwind state,
+emit telemetry, or reimburse the user after a failed cross-chain call.
+
+```rust
+pub fn on_revert(
+    ctx: Context<OnRevert>,
+    amount: u64,      // Asset quantity originally deposited (lamports or SPL)
+    sender: Pubkey,   // Universal app address on ZetaChain that triggered the revert
+    data: Vec<u8>,    // Arbitrary bytes supplied via `revert_message`
+) -> Result<()>
+```
+
+Implement this function to make your universal app resilient and transparent in
+the face of cross-chain failures.
 
 ## Withdraw and Call a Solana Program
 
@@ -216,12 +235,3 @@ failure scenarios:
   the expected address.
 - `EmptyReceiver`: The receiver address is empty.
 - `InvalidInstructionData`: The instruction data is invalid.
-
-## Revert Transactions
-
-The Solana Gateway supports transaction reverting in case of failures. If a
-cross-chain call fails on the ZetaChain side, the deposited tokens will be
-reverted back to the original sender on Solana.
-
-To learn more about using the Solana Gateway in practice to deposit to and call
-universal apps, check out [the Solana tutorial](/developers/tutorials/solana).
