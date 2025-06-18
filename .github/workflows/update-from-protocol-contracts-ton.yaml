@@ -1,4 +1,4 @@
-name: Update protocol-contract docs
+name: Update protocol-contract-ton docs
 
 on:
   schedule:
@@ -13,18 +13,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Checkout zeta-chain/protocol-contracts repository
+      - name: Checkout zeta-chain/protocol-contracts-ton repository
         uses: actions/checkout@v2
         with:
-          repository: zeta-chain/protocol-contracts
-          path: protocol-contracts
+          repository: zeta-chain/protocol-contracts-ton
+          path: protocol-contracts-ton
 
       - name: Update docs
         run: |
           mkdir -p src/pages/developers/protocol/
-          rm -f src/pages/developers/protocol/evm.mdx
-          cp protocol-contracts/docs/index.md src/pages/developers/protocol/evm.mdx
-          rm -rf protocol-contracts
+          rm -f src/pages/developers/protocol/ton.mdx
+          cp protocol-contracts-ton/docs/index.md src/pages/developers/protocol/ton.mdx
+          rm -rf protocol-contracts-ton
 
       - name: Check for changes
         id: check-changes
