@@ -35,6 +35,10 @@
     "title": "Working with Tokens",
     "description": "Overview of the different types of tokens available on ZetaChain and connected blockchains, and how to work with them."
   },
+  "protocol": {
+    "title": "Protocol Contracts",
+    "description": "Documentation for the protocol contracts on ZetaChain and connected chains."
+  },
   "architecture": {
     "title": "Architecture",
     "description": "Take an in-depth look into the inner workings and technical architecture of the ZetaChain protocol."
