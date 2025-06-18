@@ -142,7 +142,7 @@ emit telemetry, or reimburse the user after a failed cross-chain call.
 pub fn on_revert(
     ctx: Context<OnRevert>,
     amount: u64,      // Asset quantity originally deposited (lamports or SPL)
-    sender: Pubkey,   // Universal app address on ZetaChain that triggered the revert
+    sender: Pubkey,   // The account that triggered the deposit/call from Solana
     data: Vec<u8>,    // Arbitrary bytes supplied via `revert_message`
 ) -> Result<()>
 ```
