@@ -22,8 +22,8 @@ jobs:
       - name: Update docs
         run: |
           mkdir -p src/pages/developers/protocol/
-          rm -f src/pages/developers/protocol/ton.mdx
-          cp protocol-contracts-ton/docs/gateway.md src/pages/developers/protocol/ton.mdx
+          rm -f src/pages/developers/protocol/ton.md
+          cp protocol-contracts-ton/docs/gateway.md src/pages/developers/protocol/ton.md
           rm -rf protocol-contracts-ton
 
       - name: Check for changes

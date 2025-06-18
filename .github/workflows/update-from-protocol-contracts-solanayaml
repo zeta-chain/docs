@@ -22,8 +22,8 @@ jobs:
       - name: Update docs
         run: |
           mkdir -p src/pages/developers/protocol/
-          rm -f src/pages/developers/protocol/solana.mdx
-          cp protocol-contracts-solana/docs/gateway.md src/pages/developers/protocol/solana.mdx
+          rm -f src/pages/developers/protocol/solana.md
+          cp protocol-contracts-solana/docs/gateway.md src/pages/developers/protocol/solana.md
           rm -rf protocol-contracts-solana
 
       - name: Check for changes
