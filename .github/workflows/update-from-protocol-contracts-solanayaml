@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir -p src/pages/developers/protocol/
           rm -f src/pages/developers/protocol/solana.mdx
-          cp protocol-contracts-solana/docs/index.md src/pages/developers/protocol/solana.mdx
+          cp protocol-contracts-solana/docs/gateway.md src/pages/developers/protocol/solana.mdx
           rm -rf protocol-contracts-solana
 
       - name: Check for changes

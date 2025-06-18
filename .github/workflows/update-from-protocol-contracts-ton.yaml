@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir -p src/pages/developers/protocol/
           rm -f src/pages/developers/protocol/ton.mdx
-          cp protocol-contracts-ton/docs/index.md src/pages/developers/protocol/ton.mdx
+          cp protocol-contracts-ton/docs/gateway.md src/pages/developers/protocol/ton.mdx
           rm -rf protocol-contracts-ton
 
       - name: Check for changes
