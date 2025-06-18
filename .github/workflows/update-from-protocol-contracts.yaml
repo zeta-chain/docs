@@ -21,9 +21,9 @@ jobs:
 
       - name: Update docs
         run: |
-          mkdir -p src/pages/developers/architecture/protocol
-          rm -rf src/pages/developers/architecture/protocol/*
-          cp -r protocol-contracts/v2/docs/src/* src/pages/developers/architecture/protocol/
+          mkdir -p src/pages/developers/protocol/
+          rm -f src/pages/developers/protocol/evm.mdx
+          cp protocol-contracts/docs/index.md src/pages/developers/protocol/evm.mdx
           rm -rf protocol-contracts
 
       - name: Check for changes
