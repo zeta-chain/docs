@@ -29,7 +29,7 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          git add src/pages/developers/architecture/protocol
+          git add src/pages/developers/protocol
           git diff --cached --exit-code || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
