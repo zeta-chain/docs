@@ -1,9 +1,10 @@
 import clsx from "clsx";
 import Link, { LinkProps as NextLinkProps } from "next/link";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { useMixpanel } from "~/hooks/useMixpanel";
 import { useAppDispatch } from "~/lib/app.store";
 import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
@@ -53,6 +54,39 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
     [directoriesByRoute, linkProps.href]
   );
 
+  const mixpanel = useMixpanel();
+
+  const handleClick = useCallback(() => {
+    if (withScrollToTop) {
+      const scrollPositionFromBottom = document.documentElement.scrollHeight - window.scrollY;
+
+      dispatch(setScrollPositionFromBottom(scrollPositionFromBottom));
+      dispatch(setShouldScrollToPageTop(true));
+    }
+
+    mixpanel.trackLinkClick(title, typeof linkProps.href === "string" ? linkProps.href : "", "internal", {
+      link_section: topTitle || "navigation",
+      read_time: readTime,
+      read_type: readType,
+      variant,
+      is_main_page: isMainPage,
+      item_index: itemIndex,
+      with_scroll_to_top: withScrollToTop,
+    });
+  }, [
+    dispatch,
+    withScrollToTop,
+    mixpanel,
+    title,
+    topTitle,
+    readTime,
+    readType,
+    variant,
+    isMainPage,
+    itemIndex,
+    linkProps.href,
+  ]);
+
   return (
     <Link
       {...linkProps}
@@ -67,14 +101,7 @@ export const NavigationCardLink: React.FC<NavigationCardLinkProps> = ({
         },
         className
       )}
-      onClick={() => {
-        if (withScrollToTop) {
-          const scrollPositionFromBottom = document.documentElement.scrollHeight - window.scrollY;
-
-          dispatch(setScrollPositionFromBottom(scrollPositionFromBottom));
-          dispatch(setShouldScrollToPageTop(true));
-        }
-      }}
+      onClick={handleClick}
     >
       <div className={clsx({ "flex-grow": variant === "default" })}>
         {icon || <DeterministicIconArticle index={articleIndex} />}

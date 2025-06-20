@@ -21,6 +21,7 @@ const environment = createEnv({
 
     // Analytics
     NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
+    NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().optional(),
   },
 
   /*
@@ -40,6 +41,7 @@ const environment = createEnv({
 
     // Analytics
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+    NEXT_PUBLIC_MIXPANEL_TOKEN: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
 
     VERCEL_ENV: process.env.VERCEL_ENV,
     NODE_ENV: process.env.NODE_ENV,
