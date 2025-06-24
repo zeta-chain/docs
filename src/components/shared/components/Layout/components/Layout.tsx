@@ -31,7 +31,7 @@ export const StyledUnorderedList = styled.ul`
   }
 `;
 
-const LayoutContainer = styled.div<{ isMainPage: boolean }>`
+const LayoutContainer = styled.div<{ isMainPage: boolean; isHomePage: boolean }>`
   ${tw`overflow-x-clip bg-grey-50 dark:bg-grey-900 relative`};
 
   /* Base styles for rendered tables */
@@ -121,6 +121,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
     ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] max-w-none`};
 
     ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-[120px]`)};
+    ${({ isHomePage }) => isHomePage && tw`!px-0`};
   }
 
   /* Hide Nextra docs theme components */
@@ -196,6 +197,7 @@ type LayoutProps = {
 export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
   const { route } = useRouter();
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isHomePage = useMemo(() => route === "/", [route]);
 
   useScrollToPageTop();
 
@@ -203,7 +205,7 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
   useEffect(() => setIsMounted(true), []);
 
   return (
-    <LayoutContainer className={className} isMainPage={isMainPage}>
+    <LayoutContainer className={className} isMainPage={isMainPage} isHomePage={isHomePage}>
       {!isMounted && <div className="absolute inset-0 z-[999999999] w-screen h-screen initial-overlay" />}
       <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>

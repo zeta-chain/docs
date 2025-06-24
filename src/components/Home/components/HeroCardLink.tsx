@@ -1,10 +1,11 @@
 import clsx from "clsx";
+import Link from "next/link";
 
 import { HeroCardLink as HeroCardLinkProps } from "../Home.constants";
 
 export const HeroCardLink: React.FC<HeroCardLinkProps> = ({ href, svg, title, description }) => {
   return (
-    <a
+    <Link
       href={href}
       className={clsx(
         "w-full md:max-w-[296px] flex flex-row gap-4 items-center border border-grey-200 dark:border-grey-600 rounded-lg p-6",
@@ -20,6 +21,6 @@ export const HeroCardLink: React.FC<HeroCardLinkProps> = ({ href, svg, title, de
 
         <p className="text-[16px] leading-[130%] font-normal text-grey-400 dark:text-grey-300">{description}</p>
       </div>
-    </a>
+    </Link>
   );
 };
