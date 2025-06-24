@@ -1,44 +1,25 @@
-import Image from "next/image";
+import { HERO_CARD_LINKS } from "../Home.constants";
+import { HeroCardLink } from "./HeroCardLink";
 
-import { globalLinks } from "~/constants";
-import { basePath } from "~/lib/app.constants";
-
-import { IconDocument, PrimaryLink, StyledHero } from "../../shared";
-
-/**
- * @description Special variant of the Hero component for the Home page
- */
 export const HomeHero: React.FC = () => {
   return (
-    <StyledHero>
-      <div className="order-2 lg:order-1 flex flex-col justify-center gap-8 sm:gap-10 col-span-10 lg:col-span-7 xl:lg:col-span-6">
-        <h1>ZetaChain Documentation</h1>
+    <div className="flex flex-col justify-center mt-6 md:mt-0">
+      <h1 className="text-[48px] md:text-[72px] leading-[110%] md:leading-[100%] font-medium tracking-[-0.96px] md:tracking-[-1.44px] text-grey-900 dark:text-grey-50 text-center mb-6">
+        Build a <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline">universal app</span>{" "}
+        <br className="hidden md:block" /> in minutes
+      </h1>
 
-        <div className="description flex flex-col gap-8 sm:gap-10">
-          <div className="grid grid-cols-10 gap-5 md:gap-8 text-base leading-[160%] font-normal text-grey-400 dark:text-grey-300">
-            <p className="col-span-10 md:col-span-5">
-              ZetaChain is the first Universal Blockchain with native access to Bitcoin, Ethereum, Solana, and more,
-              offering seamless UX and unified liquidity to the next billions of users.
-            </p>
+      <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300 text-center max-w-[688px] mx-auto mb-14 md:mb-[72px]">
+        Start building an app that works natively across blockchains – even{" "}
+        <span className="text-[#FA5628] font-semibold">Bitcoin</span> – with native tokens on the only decentralized,
+        smart contract platform built for universal interoperability.
+      </p>
 
-            <p className="col-span-10 md:col-span-5">
-              With its Universal EVM, ZetaChain empowers developers to build Universal Apps that operate natively across
-              any blockchain, creating a fluid crypto ecosystem from a single platform.
-            </p>
-          </div>
-        </div>
+      <div className="flex flex-col md:flex-row md:justify-center gap-4 md:gap-6 border-b border-grey-200 dark:border-grey-600 pb-16 md:pb-20">
+        {HERO_CARD_LINKS.map((link) => (
+          <HeroCardLink key={link.href} {...link} />
+        ))}
       </div>
-
-      <div className="order-1 lg:order-2 col-span-10 lg:col-span-3 xl:col-span-4 flex lg:justify-center">
-        <Image
-          src={`${basePath}/img/pages/zetachain-documentation.svg`}
-          alt="ZetaChain Documentation"
-          width={448}
-          height={520}
-          className="w-auto lg:w-full !rounded-none !mt-0 max-h-[150px] sm:max-h-[200px] lg:max-h-[unset] lg:max-w-[448px]"
-          priority
-        />
-      </div>
-    </StyledHero>
+    </div>
   );
 };
