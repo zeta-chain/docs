@@ -2,11 +2,13 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import { ThemeProvider } from "@mui/material/styles";
 import { compose } from "@reduxjs/toolkit";
 import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
 import Script from "next/script";
 import React from "react";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { environment } from "~/env.cjs";
+import mixpanelService from "~/lib/analytics/mixpanel";
 import { useAppDispatch, wrapper } from "~/lib/app.store";
 import { createEmotionCache } from "~/lib/helpers/createEmotionCache";
 import { useHydrateTheme } from "~/lib/theme/useHydrateTheme";
@@ -22,6 +24,27 @@ export const getIsTextTarget = (target: any) => target?.nodeName && textTargetTa
 const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: EmotionCache }) => {
   const { emotionCache = clientSideEmotionCache, router } = rest;
 
+  // Initialize Mixpanel
+  React.useEffect(() => {
+    if (environment.NEXT_PUBLIC_MIXPANEL_TOKEN) {
+      mixpanelService.init();
+    }
+  }, []);
+
+  // Track route changes
+  React.useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      if (environment.NEXT_PUBLIC_MIXPANEL_TOKEN) {
+        mixpanelService.trackPageView();
+      }
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router]);
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       const isTextTarget = getIsTextTarget(e.target as HTMLInputElement);
@@ -31,6 +54,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "b": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
+            mixpanelService.trackKeyboardShortcut("Shift+B", "Navigate to Developers");
             router.push("/developers");
           }
           break;
@@ -38,6 +62,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "h": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
+            mixpanelService.trackKeyboardShortcut("Shift+H", "Navigate to Home");
             router.push("/");
           }
           break;
@@ -45,6 +70,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "n": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
+            mixpanelService.trackKeyboardShortcut("Shift+N", "Navigate to Nodes");
             router.push("/nodes");
           }
           break;
@@ -52,6 +78,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
         case "u": {
           if (e.shiftKey && !isTextTarget) {
             e.preventDefault();
+            mixpanelService.trackKeyboardShortcut("Shift+U", "Navigate to Users");
             router.push("/users");
           }
           break;
@@ -61,7 +88,7 @@ const App = ({ Component, pageProps, ...rest }: AppProps & { emotionCache: Emoti
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [router]);
 
   const appDispatch = useAppDispatch();
   const { theme } = useHydrateTheme({ appDispatch });
