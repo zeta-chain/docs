@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Skeleton } from "@mui/material";
+import { useMemo, useState } from "react";
 
 import { VideoCard as VideoCardProps, VIDEOS_CARDS } from "../Home.constants";
 import { ClockSvg } from "./svg/ClockSvg";
@@ -16,7 +17,27 @@ const getYouTubeThumbnail = (videoId: string, quality: "maxresdefault" | "hqdefa
 
 const VideoCard: React.FC<VideoCardProps> = ({ href, title, description, readTime, readType }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const videoId = getYouTubeVideoId(href);
+
+  const videoDescription = useMemo(
+    () => (
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col gap-2">
+          <h3 className="text-[20px] leading-[130%] font-medium text-grey-900 dark:text-grey-50">{title}</h3>
+          <p className="text-[16px] leading-[130%] font-normal text-grey-400 dark:text-grey-300">{description}</p>
+        </div>
+        <div className="flex justify-between items-center md:flex-col gap-2 md:items-end md:justify-start shrink-0">
+          <span className="text-[14px] leading-[135%] font-medium text-grey-900 dark:text-grey-50">{readType}</span>
+          <div className="flex items-center gap-1 shrink-0">
+            <ClockSvg />
+            <span className="text-[14px] leading-[135%] font-normal text-grey-900 dark:text-grey-50">{readTime}</span>
+          </div>
+        </div>
+      </div>
+    ),
+    [title, description, readType, readTime]
+  );
 
   if (!videoId) {
     // Fallback to iframe if not a valid YouTube URL
@@ -34,19 +55,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ href, title, description, readTim
           />
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[20px] leading-[130%] font-medium text-grey-900 dark:text-grey-50">{title}</h3>
-            <p className="text-[16px] leading-[130%] font-normal text-grey-400 dark:text-grey-300">{description}</p>
-          </div>
-          <div className="flex justify-between items-center md:flex-col gap-2 md:items-end md:justify-start shrink-0">
-            <span className="text-[14px] leading-[135%] font-medium text-grey-900 dark:text-grey-50">{readType}</span>
-            <div className="flex items-center gap-1 shrink-0">
-              <ClockSvg />
-              <span className="text-[14px] leading-[135%] font-normal text-grey-900 dark:text-grey-50">{readTime}</span>
-            </div>
-          </div>
-        </div>
+        {videoDescription}
       </div>
     );
   }
@@ -75,8 +84,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ href, title, description, readTim
 
             {/* Play button overlay */}
             <button
-              onClick={() => setIsPlaying(true)}
-              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-[0.35] hover:bg-opacity-40 transition-all duration-200 group"
+              onClick={() => {
+                setIsLoading(true);
+                setIsPlaying(true);
+              }}
+              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-[0.35] hover:bg-opacity-40 hover:dark:bg-opacity-30 transition-all duration-200 group"
               aria-label={`Play ${title}`}
             >
               <div className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center">
@@ -90,31 +102,34 @@ const VideoCard: React.FC<VideoCardProps> = ({ href, title, description, readTim
             </button>
           </>
         ) : (
-          <iframe
-            className="w-full h-full"
-            width="100%"
-            height="100%"
-            src={`${href}?controls=1&modestbranding=1&rel=0&autoplay=1`}
-            title={title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <>
+            {/* Loading skeleton */}
+            {isLoading && (
+              <div className="absolute inset-0 z-10">
+                <Skeleton
+                  variant="rectangular"
+                  width="100%"
+                  height="100%"
+                  className="rounded-lg bg-grey-200 dark:bg-grey-600"
+                />
+              </div>
+            )}
+            {/* Iframe */}
+            <iframe
+              className="w-full h-full"
+              width="100%"
+              height="100%"
+              src={`${href}?controls=1&modestbranding=1&rel=0&autoplay=1`}
+              title={title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              onLoad={() => setIsLoading(false)}
+            />
+          </>
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-[20px] leading-[130%] font-medium text-grey-900 dark:text-grey-50">{title}</h3>
-          <p className="text-[16px] leading-[130%] font-normal text-grey-400 dark:text-grey-300">{description}</p>
-        </div>
-        <div className="flex justify-between items-center md:flex-col gap-2 md:items-end md:justify-start shrink-0">
-          <span className="text-[14px] leading-[135%] font-medium text-grey-900 dark:text-grey-50">{readType}</span>
-          <div className="flex items-center gap-1 shrink-0">
-            <ClockSvg />
-            <span className="text-[14px] leading-[135%] font-normal text-grey-900 dark:text-grey-50">{readTime}</span>
-          </div>
-        </div>
-      </div>
+      {videoDescription}
     </div>
   );
 };
