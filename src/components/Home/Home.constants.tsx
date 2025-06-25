@@ -10,13 +10,13 @@ export type HeroCardLink = {
 
 export const HERO_CARD_LINKS: HeroCardLink[] = [
   {
-    href: "/",
+    href: "/developers/frontend/universalkit/",
     svg: <BuildWithTheCliSvg />,
     title: "Build with the CLI",
     description: "Scaffold your first app",
   },
   {
-    href: "/",
+    href: "/users/cli/setup/",
     svg: <BuildWithUiSvg />,
     title: "Build with a UI",
     description: "Start with UniversalKit",
@@ -34,6 +34,8 @@ export type BuildAnythingCard = {
   readType: string;
 };
 
+export const EXPLORER_TUTORIALS_LINK = "/developers/tutorials/intro/";
+
 export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
   {
     href: "/",
@@ -47,7 +49,7 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     readType: "Advanced",
   },
   {
-    href: "/",
+    href: "/developers/standards/nft/",
     svg: <NftSvg />,
     svgBackgroundColor: "#00A87D",
     topTitle: "Universal",
@@ -58,7 +60,7 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     readType: "Beginner",
   },
   {
-    href: "/",
+    href: "/developers/standards/token/",
     svg: <FungibleTokenSvg />,
     svgBackgroundColor: "#006579",
     topTitle: "Universal",
@@ -69,7 +71,7 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     readType: "Intermediate",
   },
   {
-    href: "/",
+    href: "/developers/frontend/universalkit/",
     svg: <FrontEndSvg />,
     svgBackgroundColor: "#A03595",
     topTitle: "Universal",

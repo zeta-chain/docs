@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { BUILD_ANYTHING_CARDS } from "../Home.constants";
+import { BUILD_ANYTHING_CARDS, EXPLORER_TUTORIALS_LINK } from "../Home.constants";
 import { BuildAnythingCard } from "./BuildAnythingCard";
 import { DocsSvg, ShortDividerSvg } from "./svg/BuildAnythingSvgs";
 
@@ -19,7 +19,7 @@ export const BuildAnything = () => {
 
           <div className="flex flex-col items-center gap-[30px]">
             <Link
-              href="/"
+              href={EXPLORER_TUTORIALS_LINK}
               className="inline-flex items-center gap-1 text-[16px] leading-[130%] font-normal text-[#00A5C6] dark:text-[#B0FF61] text-center"
             >
               <DocsSvg />
