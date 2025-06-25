@@ -5,7 +5,7 @@ export const HomeHero: React.FC = () => {
   return (
     <div className="flex flex-col justify-center mt-6 md:mt-0 px-5 md:px-[72px]">
       <h1 className="text-[48px] md:text-[72px] leading-[110%] md:leading-[100%] font-medium tracking-[-0.96px] md:tracking-[-1.44px] text-grey-900 dark:text-grey-50 text-center mb-6">
-        Build a <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline">universal app</span>{" "}
+        Build a <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline-block">universal app</span>{" "}
         <br className="hidden md:block" /> in minutes
       </h1>
 
