@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Link from "next/link";
 
 import { BuildAnythingCard as BuildAnythingCardProps } from "../Home.constants";
-import { ClockSvg } from "./svg/BuildAnythingSvgs";
+import { ClockSvg } from "./svg/ClockSvg";
 
 export const BuildAnythingCard: React.FC<BuildAnythingCardProps> = ({
   href,
@@ -38,10 +38,10 @@ export const BuildAnythingCard: React.FC<BuildAnythingCardProps> = ({
       </p>
 
       <div className="flex items-center justify-between gap-2">
-        <p className="flex gap-1 items-center text-[14px] leading-[135%] font-normal text-grey-900 dark:text-grey-50">
+        <div className="flex items-center gap-1">
           <ClockSvg />
-          {readTime}
-        </p>
+          <span className="text-[14px] leading-[135%] font-normal text-grey-900 dark:text-grey-50">{readTime}</span>
+        </div>
         <p className="text-[14px] leading-[135%] font-normal text-grey-900 dark:text-grey-50">{readType}</p>
       </div>
     </Link>

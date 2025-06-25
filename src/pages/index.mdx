@@ -6,10 +6,21 @@ description: ZetaChain is the only decentralized blockchain and smart contract p
 import { NextSeo } from "next-seo";
 import { defaultTitle, defaultDescription } from "~/config/next-seo.config";
 
-import { BuildAnything, GetStarted, HomeHero, HomeNavigationSections } from "~/components/Home";
+import {
+  BuildAnything,
+  GetStarted,
+  HomeHero,
+  HomeNavigationSections,
+  DividerSvg,
+  ShortDividerSvg,
+  VideosSection,
+} from "~/components/Home";
 import { GetSupport } from "~/components/Support";
 
 <NextSeo title={defaultTitle} description={defaultDescription} />
 
 <HomeHero />
 <BuildAnything />
+<ShortDividerSvg />
+<VideosSection />
+<DividerSvg />

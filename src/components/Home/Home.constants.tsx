@@ -82,3 +82,29 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     readType: "Beginner",
   },
 ];
+
+export type VideoCard = {
+  href: string;
+  title: string;
+  description: string;
+  readTime: string;
+  readType: string;
+};
+
+export const VIDEOS_CARDS: VideoCard[] = [
+  {
+    href: "https://www.youtube.com/embed/4zJ1fo49X8M",
+    title: "Overview of example universal apps",
+    description: "Taking a look at a simple Hello app, cross-chain call example, universal swap and a universal NFT.",
+    readTime: "40 min",
+    readType: "Intermediate",
+  },
+  {
+    href: "https://www.youtube.com/embed/0OKmu6fGyQ0",
+    title: "Dev office hours: explore our updated CLI",
+    description:
+      "Follow along as we walk through our newly updated CLI and demonstrate building a simple app, quickly.",
+    readTime: "60 min",
+    readType: "Beginner",
+  },
+];

@@ -1,16 +1,3 @@
-export const DocsSvg = () => {
-  return (
-    <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M7.5 3.75012C6.80964 3.75012 6.25 4.30977 6.25 5.00012V19.0001C6.25 19.6905 6.80964 20.2501 7.5 20.2501H17.5C18.1904 20.2501 18.75 19.6905 18.75 19.0001V9.31078L13.1893 3.75012H7.5ZM4.75 5.00012C4.75 3.48134 5.98122 2.25012 7.5 2.25012H13.5C13.6989 2.25012 13.8897 2.32914 14.0303 2.46979L20.0303 8.46979C20.171 8.61044 20.25 8.80121 20.25 9.00012V19.0001C20.25 20.5189 19.0188 21.7501 17.5 21.7501H7.5C5.98122 21.7501 4.75 20.5189 4.75 19.0001V5.00012ZM8.75 11.2501H16.25V12.7501H8.75V11.2501ZM8.75 15.2501H16.25V16.7501H8.75V15.2501Z"
-        className="w-6 h-6 fill-[#696E75] dark:fill-[#A9ACB0]"
-      />
-    </svg>
-  );
-};
-
 export const DexSvg = () => {
   return (
     <svg width="220" height="200" viewBox="0 0 220 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -137,60 +124,5 @@ export const FrontEndSvg = () => {
         fill="#00A87D"
       />
     </svg>
-  );
-};
-
-export const ClockSvg = () => {
-  return (
-    <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M8 3C4.96243 3 2.5 5.46243 2.5 8.5C2.5 11.5376 4.96243 14 8 14C11.0376 14 13.5 11.5376 13.5 8.5C13.5 5.46243 11.0376 3 8 3ZM1.5 8.5C1.5 4.91015 4.41015 2 8 2C11.5899 2 14.5 4.91015 14.5 8.5C14.5 12.0899 11.5899 15 8 15C4.41015 15 1.5 12.0899 1.5 8.5ZM8.5 5.33333V8.29289L10.7071 10.5L10 11.2071L7.64645 8.85355C7.55268 8.75979 7.5 8.63261 7.5 8.5V5.33333H8.5Z"
-        fill="#A9ACB0"
-      />
-    </svg>
-  );
-};
-
-export const ShortDividerSvg = () => {
-  return (
-    <div className="w-full flex justify-center items-center">
-      <svg
-        width="400"
-        height="10"
-        viewBox="0 0 400 10"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="hidden md:block"
-      >
-        <path d="M0 5H400" stroke="url(#paint0_linear_3469_8658)" stroke-width="2" />
-        <defs>
-          <linearGradient id="paint0_linear_3469_8658" x1="0" y1="5.5" x2="400" y2="5.5" gradientUnits="userSpaceOnUse">
-            <stop stop-color="white" />
-            <stop offset="0.5" stop-color="#E5E8EC" />
-            <stop offset="1" stop-color="white" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      <svg
-        width="350"
-        height="10"
-        viewBox="0 0 350 10"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="block md:hidden"
-      >
-        <path d="M0 5H350" stroke="url(#paint0_linear_3473_2796)" stroke-width="2" />
-        <defs>
-          <linearGradient id="paint0_linear_3473_2796" x1="0" y1="5.5" x2="350" y2="5.5" gradientUnits="userSpaceOnUse">
-            <stop stop-color="white" />
-            <stop offset="0.5" stop-color="#E5E8EC" />
-            <stop offset="1" stop-color="white" />
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
   );
 };
