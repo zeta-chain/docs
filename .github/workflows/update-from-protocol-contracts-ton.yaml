@@ -39,11 +39,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: "docs: update protocol-contract-ton docs"
+          title: "docs(ton): update protocol contracts"
           body: |
-            This PR contains updates to the protocol-contract-ton docs.
+            This PR syncs the docs with protocol-contracts-ton
           commit-message: |
-            "docs: update protocol-contract-ton docs"
+            "docs(ton): update protocol contracts"
           base: main
           branch: docs/updates-from-protocol-contracts-ton
         if: steps.check-changes.outputs.changed == 'true'
