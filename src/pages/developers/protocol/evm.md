@@ -1001,18 +1001,17 @@ function deposit(address zrc20, uint256 amount, address target) external onlyPro
 
 ### deposit
 
-Deposit ZETA tokens.
+Deposit native ZETA.
 
 
 ```solidity
-function deposit(uint256 amount, address target) external nonReentrant onlyProtocol whenNotPaused;
+function deposit(address target) external payable nonReentrant onlyProtocol whenNotPaused;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`amount`|`uint256`|The amount of ZETA tokens to transfer.|
-|`target`|`address`|The target address to receive the tokens.|
+|`target`|`address`|The target address to receive the ZETA.|
 
 
 ### execute
@@ -1075,17 +1074,17 @@ function depositAndCall(
 
 ### depositAndCall
 
-Deposit ZETA and call a user-specified contract on ZEVM.
+Deposit native ZETA and call a user-specified contract on ZEVM.
 
 
 ```solidity
 function depositAndCall(
     MessageContext calldata context,
-    uint256 amount,
     address target,
     bytes calldata message
 )
     external
+    payable
     nonReentrant
     onlyProtocol
     whenNotPaused;
@@ -1095,7 +1094,6 @@ function depositAndCall(
 |Name|Type|Description|
 |----|----|-----------|
 |`context`|`MessageContext`|The context of the cross-chain call.|
-|`amount`|`uint256`|The amount of tokens to transfer.|
 |`target`|`address`|The target contract to call.|
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
@@ -1152,16 +1150,16 @@ function depositAndRevert(
 
 ### depositAndRevert
 
-Deposit ZETA and revert a user-specified contract on ZEVM.
+Deposit native ZETA and revert a user-specified contract on ZEVM.
 
 
 ```solidity
 function depositAndRevert(
-    uint256 amount,
     address target,
     RevertContext calldata revertContext
 )
     external
+    payable
     nonReentrant
     onlyProtocol
     whenNotPaused;
@@ -1170,7 +1168,6 @@ function depositAndRevert(
 
 |Name|Type|Description|
 |----|----|-----------|
-|`amount`|`uint256`|The amount of tokens to revert.|
 |`target`|`address`|The target contract to call.|
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
@@ -5541,7 +5538,7 @@ Called when a revertable call is made.
 
 
 ```solidity
-function onRevert(RevertContext calldata revertContext) external;
+function onRevert(RevertContext calldata revertContext) external payable;
 ```
 **Parameters**
 
@@ -6209,6 +6206,21 @@ function deposit(address zrc20, uint256 amount, address target) external;
 |`target`|`address`|The target address to receive the deposited tokens.|
 
 
+### deposit
+
+Deposit native ZETA.
+
+
+```solidity
+function deposit(address target) external payable;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`target`|`address`|The target address to receive the ZETA.|
+
+
 ### execute
 
 Execute a user-specified contract on ZEVM.
@@ -6263,24 +6275,17 @@ function depositAndCall(
 
 ### depositAndCall
 
-Deposit ZETA and call a user-specified contract on ZEVM.
+Deposit native ZETA and call a user-specified contract on ZEVM.
 
 
 ```solidity
-function depositAndCall(
-    MessageContext calldata context,
-    uint256 amount,
-    address target,
-    bytes calldata message
-)
-    external;
+function depositAndCall(MessageContext calldata context, address target, bytes calldata message) external payable;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`context`|`MessageContext`|The context of the cross-chain call.|
-|`amount`|`uint256`|The amount of tokens to transfer.|
 |`target`|`address`|The target contract to call.|
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
@@ -7049,7 +7054,16 @@ constructor();
 
 ### onCall
 
-Function to handle cross-chain calls
+Function to handle cross-chain calls with native ZETA transfers
+
+
+```solidity
+function onCall(MessageContext calldata context, bytes calldata message) external payable virtual;
+```
+
+### onCall
+
+Function to handle cross-chain calls with ZRC20 token transfers
 
 
 ```solidity
