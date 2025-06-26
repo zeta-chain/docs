@@ -146,8 +146,7 @@ pub fn increment_nonce(ctx: Context<''_, ''_, ''_, ''_, IncrementNonce<''_>>, am
 
 #### Function `execute`
 
-Withdraws amount to destination program pda, and calls on_call on destination
-program
+Withdraws amount to destination program pda, and calls on_call on destination program
 
 Arguments:
 
@@ -166,8 +165,7 @@ pub fn execute(ctx: Context<''_, ''_, ''_, ''_, Execute<''_>>, amount: u64, send
 
 #### Function `execute_revert`
 
-Withdraws amount to destination program pda, and calls on_revert on destination
-program
+Withdraws amount to destination program pda, and calls on_revert on destination program
 
 
 Arguments:
@@ -187,8 +185,7 @@ pub fn execute_revert(ctx: Context<''_, ''_, ''_, ''_, Execute<''_>>, amount: u6
 
 #### Function `execute_spl_token`
 
-Withdraws amount of SPL tokens to destination program pda, and calls on_call on
-destination program
+Withdraws amount of SPL tokens to destination program pda, and calls on_call on destination program
 
 Arguments:
 
@@ -208,8 +205,7 @@ pub fn execute_spl_token(ctx: Context<''_, ''_, ''_, ''_, ExecuteSPLToken<''_>>,
 
 #### Function `execute_spl_token_revert`
 
-Withdraws SPL token amount to destination program pda, and calls on_revert on
-destination program
+Withdraws SPL token amount to destination program pda, and calls on_revert on destination program
 
 
 Arguments:
@@ -426,11 +422,12 @@ pub fn withdraw_spl_token(ctx: Context<''_, ''_, ''_, ''_, WithdrawSPLToken<''_>
 
 ## Module `instruction`
 
-An Anchor generated module containing the program's set of instructions, where
-each method handler in the `#[program]` mod is associated with a struct defining
-the input arguments to the method. These should be used directly, when one wants
-to serialize Anchor instruction data, for example, when speciying instructions
-on a client.
+An Anchor generated module containing the program's set of
+instructions, where each method handler in the `#[program]` mod is
+associated with a struct defining the input arguments to the
+method. These should be used directly, when one wants to serialize
+Anchor instruction data, for example, when speciying
+instructions on a client.
 
 ```rust
 pub mod instruction { /* ... */ }
@@ -2209,9 +2206,9 @@ pub struct WithdrawSplToken {
 
 ## Module `accounts`
 
-An Anchor generated module, providing a set of structs mirroring the structs
-deriving `Accounts`, where each field is a `Pubkey`. This is useful for
-specifying accounts for a client.
+An Anchor generated module, providing a set of structs
+mirroring the structs deriving `Accounts`, where each field is
+a `Pubkey`. This is useful for specifying accounts for a client.
 
 ```rust
 pub mod accounts { /* ... */ }
@@ -2349,34 +2346,35 @@ pub unsafe extern "C" fn entrypoint(input: *mut u8) -> u64 { /* ... */ }
 
 ### Function `entry`
 
-The Anchor codegen exposes a programming model where a user defines a set of
-methods inside of a `#[program]` module in a way similar to writing RPC request
-handlers. The macro then generates a bunch of code wrapping these user defined
-methods into something that can be executed on Solana.
+The Anchor codegen exposes a programming model where a user defines
+a set of methods inside of a `#[program]` module in a way similar
+to writing RPC request handlers. The macro then generates a bunch of
+code wrapping these user defined methods into something that can be
+executed on Solana.
 
 These methods fall into one category for now.
 
 Global methods - regular methods inside of the `#[program]`.
 
-Care must be taken by the codegen to prevent collisions between methods in these
-different namespaces. For this reason, Anchor uses a variant of sighash to
-perform method dispatch, rather than something like a simple enum variant
-discriminator.
+Care must be taken by the codegen to prevent collisions between
+methods in these different namespaces. For this reason, Anchor uses
+a variant of sighash to perform method dispatch, rather than
+something like a simple enum variant discriminator.
 
 The execution flow of the generated code can be roughly outlined:
 
 * Start program via the entrypoint.
-* Check whether the declared program id matches the input program id. If it's
-  not, return an error.
-* Find and invoke the method based on whether the instruction data starts with
-  the method's discriminator.
-* Run the method handler wrapper. This wraps the code the user actually wrote,
-  deserializing the accounts, constructing the context, invoking the user's
-  code, and finally running the exit routine, which typically persists account
-  changes.
+* Check whether the declared program id matches the input program
+  id. If it's not, return an error.
+* Find and invoke the method based on whether the instruction data
+  starts with the method's discriminator.
+* Run the method handler wrapper. This wraps the code the user
+  actually wrote, deserializing the accounts, constructing the
+  context, invoking the user's code, and finally running the exit
+  routine, which typically persists account changes.
 
-The `entry` function here, defines the standard entry to a Solana program, where
-execution begins.
+The `entry` function here, defines the standard entry to a Solana
+program, where execution begins.
 
 ```rust
 pub fn entry<''info>(program_id: &Pubkey, accounts: &''info [AccountInfo<''info>], data: &[u8]) -> anchor_lang::solana_program::entrypoint::ProgramResult { /* ... */ }
