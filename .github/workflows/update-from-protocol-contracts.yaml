@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Checkout zeta-chain/protocol-contracts repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: zeta-chain/protocol-contracts
           path: protocol-contracts
