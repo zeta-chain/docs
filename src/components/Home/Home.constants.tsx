@@ -1,14 +1,15 @@
 import { DexSvg, FrontEndSvg, FungibleTokenSvg, NftSvg } from "./components/svg/BuildAnythingSvgs";
 import { BuildWithTheCliSvg, BuildWithUiSvg } from "./components/svg/HomeHeroSvgs";
+import { CliSvg, LocalnetSvg, ToolkitSvg, UniversalKitSvg } from "./components/svg/ShipFasterSvgs";
 
-export type HeroCardLink = {
+export type NarrowCardLink = {
   href: string;
   svg: React.ReactNode;
   title: string;
   description: string;
 };
 
-export const HERO_CARD_LINKS: HeroCardLink[] = [
+export const HERO_CARD_LINKS: NarrowCardLink[] = [
   {
     href: "/developers/frontend/universalkit/",
     svg: <BuildWithTheCliSvg />,
@@ -38,7 +39,7 @@ export const EXPLORER_TUTORIALS_LINK = "/developers/tutorials/intro/";
 
 export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
   {
-    href: "/",
+    href: "/developers/",
     svg: <DexSvg />,
     svgBackgroundColor: "#B0FF61",
     topTitle: "Universal",
@@ -106,5 +107,32 @@ export const VIDEOS_CARDS: VideoCard[] = [
       "Follow along as we walk through our newly updated CLI and demonstrate building a simple app, quickly.",
     readTime: "60 min",
     readType: "Beginner",
+  },
+];
+
+export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
+  {
+    href: "/users/cli/setup/",
+    svg: <CliSvg />,
+    title: "CLI",
+    description: "Scaffolding & more",
+  },
+  {
+    href: "/developers/frontend/universalkit/",
+    svg: <UniversalKitSvg />,
+    title: "UniversalKit",
+    description: "Ready-to-build",
+  },
+  {
+    href: "/reference/",
+    svg: <ToolkitSvg />,
+    title: "Toolkit",
+    description: "Robust tools",
+  },
+  {
+    href: "/developers/tutorials/localnet/",
+    svg: <LocalnetSvg />,
+    title: "Localnet",
+    description: "Instant testing",
   },
 ];

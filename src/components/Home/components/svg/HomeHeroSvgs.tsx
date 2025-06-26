@@ -1,6 +1,13 @@
 export const BuildWithTheCliSvg = () => {
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-12 h-12 shrink-0"
+    >
       <rect width="48.0001" height="48" rx="6" fill="#006579" />
       <rect x="8" y="7.99951" width="31.9999" height="31.9999" rx="4.92306" fill="#00BC8D" />
       <path
@@ -15,7 +22,14 @@ export const BuildWithTheCliSvg = () => {
 
 export const BuildWithUiSvg = () => {
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-12 h-12 shrink-0"
+    >
       <rect width="48" height="48" rx="6" fill="#9AEA4A" />
       <path
         d="M30.0328 7.99951H10.6229C10.0435 7.99951 9.57373 8.46925 9.57373 9.04869V38.9503C9.57373 39.5298 10.0435 39.9995 10.6229 39.9995H37.3771C37.9566 39.9995 38.4263 39.5298 38.4263 38.9503V16.5328L30.0328 7.99951Z"

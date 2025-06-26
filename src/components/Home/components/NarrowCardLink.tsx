@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import Link from "next/link";
 
-import { HeroCardLink as HeroCardLinkProps } from "../Home.constants";
+import { NarrowCardLink as NarrowCardLinkProps } from "../Home.constants";
 
-export const HeroCardLink: React.FC<HeroCardLinkProps> = ({ href, svg, title, description }) => {
+export const NarrowCardLink: React.FC<NarrowCardLinkProps> = ({ href, svg, title, description }) => {
   return (
     <Link
       href={href}

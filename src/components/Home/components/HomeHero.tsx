@@ -1,5 +1,5 @@
 import { HERO_CARD_LINKS } from "../Home.constants";
-import { HeroCardLink } from "./HeroCardLink";
+import { NarrowCardLink } from "./NarrowCardLink";
 
 export const HomeHero: React.FC = () => {
   return (
@@ -17,7 +17,7 @@ export const HomeHero: React.FC = () => {
 
       <div className="flex flex-col md:flex-row md:justify-center gap-4 md:gap-6 border-b border-grey-200 dark:border-grey-600 pb-16 md:pb-20">
         {HERO_CARD_LINKS.map((link) => (
-          <HeroCardLink key={link.href} {...link} />
+          <NarrowCardLink key={link.href} {...link} />
         ))}
       </div>
     </div>

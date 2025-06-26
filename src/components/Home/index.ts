@@ -3,6 +3,7 @@ export * from "./components/BuildForNow";
 export * from "./components/GetStarted";
 export * from "./components/HomeHero";
 export * from "./components/HomeNavigationSections";
+export * from "./components/ShipFaster";
 export * from "./components/svg/DividerSvgs";
 export * from "./components/VideosSection";
 export * from "./components/WorkWithUs";
