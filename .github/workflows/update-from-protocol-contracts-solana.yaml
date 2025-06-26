@@ -39,7 +39,7 @@ jobs:
           body: |
             This PR syncs the docs with protocol-contracts-solana
           commit-message: |
-            "docs: update protocol-contract-solana docs"
+            "docs(solana): update protocol contracts"
           base: main
           branch: docs/updates-from-protocol-contracts-solana
         if: steps.check-changes.outputs.changed == 'true'
