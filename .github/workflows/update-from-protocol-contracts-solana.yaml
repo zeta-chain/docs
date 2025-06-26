@@ -37,7 +37,7 @@ jobs:
         with:
           title: "docs(solana): update protocol contracts"
           body: |
-            This PR contains updates to the protocol-contract-solana docs.
+            This PR syncs the docs with protocol-contracts-solana
           commit-message: |
             "docs: update protocol-contract-solana docs"
           base: main
