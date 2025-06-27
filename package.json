@@ -4,7 +4,7 @@
   "license": "MIT",
   "author": "zetachain",
   "scripts": {
-    "build": "NODE_OPTIONS=--max-old-space-size=6144 yarn clean && next build",
+    "build": "NODE_OPTIONS=--max-old-space-size=6144 yarn clean && yarn graphql-codegen && next build",
     "postbuild": "next-sitemap",
     "dev": "yarn graphql-codegen && concurrently \"next dev -p 3001\" \"yarn graphql-codegen:watch\"",
     "lint:fix": "npx eslint --ext .js,.jsx,.ts,.tsx --fix ./src",
