@@ -1,5 +1,6 @@
 export * from "./components/BuildAnything";
 export * from "./components/BuildForNow";
+export * from "./components/Ecosystem";
 export * from "./components/GetStarted";
 export * from "./components/HomeHero";
 export * from "./components/HomeNavigationSections";
