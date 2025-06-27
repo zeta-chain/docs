@@ -1,6 +1,12 @@
+import { EcosystemProject } from "../../../generated/contentful.graphql.types";
+import { FeaturedApps } from "./FeaturedApps";
 import { DocsSvg } from "./svg/DocsSvg";
 
-export const Ecosystem = () => {
+type EcosystemProps = {
+  featuredEcosystemApps: EcosystemProject[];
+};
+
+export const Ecosystem: React.FC<EcosystemProps> = ({ featuredEcosystemApps }) => {
   return (
     <div className="pt-16 md:pt-20">
       <div className="flex flex-col px-5 md:px-[72px]">
@@ -26,6 +32,8 @@ export const Ecosystem = () => {
           <div className="w-8 h-[3px] rounded-full bg-[#FF5AF1] mx-auto" />
         </div>
       </div>
+
+      <FeaturedApps featuredEcosystemApps={featuredEcosystemApps} />
     </div>
   );
 };
