@@ -12,14 +12,14 @@ export const DexSvg = () => {
       />
       <rect x="89.4009" y="79.1958" width="41.6006" height="41.6006" rx="20.8003" fill="white" />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M113.658 110.506H107.443C106.849 110.506 106.367 110.027 106.367 109.436L106.367 103.255H108.519V106.853L118.177 97.2475L119.698 98.7608L110.041 108.366H113.658V110.506Z"
         fill="#00A87D"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M113.168 96.8854V90.7043C113.168 90.1134 112.686 89.6343 112.092 89.6343L105.877 89.6343V91.7744L109.495 91.7744L99.8367 101.379L101.358 102.893L111.016 93.2877V96.8854H113.168Z"
         fill="#00A87D"
       />
@@ -97,8 +97,8 @@ export const FrontEndSvg = () => {
       <rect x="58" y="42.0908" width="104" height="28.3636" rx="4.45714" fill="#00A5C6" />
       <ellipse cx="74.3429" cy="56.2726" rx="7.42857" ry="7.42857" fill="#B0FF61" />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M141.324 53.7588L145.657 58.0921L149.991 53.7588L150.647 54.4154L145.985 59.077C145.804 59.2583 145.51 59.2583 145.329 59.077L140.667 54.4154L141.324 53.7588Z"
         fill="white"
       />
