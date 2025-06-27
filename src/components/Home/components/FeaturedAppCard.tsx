@@ -7,7 +7,7 @@ import { isUniversalApp, parseEcosystemAppCardBorder, parseEcosystemAppLogoBorde
 
 const DEFAULT_APP_BACKGROUND_URL = "/img/ecosystem/default-ecosystem-app-bg.png";
 const DEFAULT_APP_LOGO_URL = "/img/ecosystem/default-ecosystem-app-logo.png";
-const DEFAULT_TEXT_COLOR = "#FFF";
+const DEFAULT_TEXT_COLOR = "#FFFFFF";
 
 type FeaturedAppCardProps = {
   app: EcosystemProject;
