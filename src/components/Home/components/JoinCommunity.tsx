@@ -1,4 +1,5 @@
 import { Skeleton } from "@mui/material";
+import clsx from "clsx";
 import Link from "next/link";
 
 import { globalLinks } from "../../../constants";
@@ -33,7 +34,9 @@ export const JoinCommunity: React.FC<JoinCommunityProps> = ({ ecosystemEvents, i
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4 md:gap-14 px-5 md:px-[72px]">
-        <div className="basis-full md:basis-1/2">
+        <div
+          className={clsx("basis-full md:basis-1/2", { hidden: !ecosystemEvents.length && !isLoadingEcosystemEvents })}
+        >
           {isLoadingEcosystemEvents ? (
             <div className="flex lg:max-w-[568px] h-fit select-none items-center justify-center">
               <Skeleton variant="rectangular" height={464} className="w-full h-[464px] rounded-lg" />
@@ -43,7 +46,12 @@ export const JoinCommunity: React.FC<JoinCommunityProps> = ({ ecosystemEvents, i
           )}
         </div>
 
-        <div className="flex flex-col gap-4 basis-full md:basis-1/2">
+        <div
+          className={clsx("flex flex-col gap-4 basis-full", {
+            "md:basis-1/2": ecosystemEvents.length || isLoadingEcosystemEvents,
+            "lg:flex-row": !ecosystemEvents.length && !isLoadingEcosystemEvents,
+          })}
+        >
           <div className="flex flex-col items-center md:flex-row gap-6 p-6 rounded-lg border border-grey-200 dark:border-grey-600 min-h-[224px]">
             <div className="basis-full lg:basis-1/3 xl:basis-1/2">
               <DeveloperCommunitySvg />
