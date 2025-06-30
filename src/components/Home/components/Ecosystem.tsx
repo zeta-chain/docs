@@ -4,9 +4,10 @@ import { DocsSvg } from "./svg/DocsSvg";
 
 type EcosystemProps = {
   featuredEcosystemApps: EcosystemProject[];
+  isLoadingFeaturedEcosystemApps: boolean;
 };
 
-export const Ecosystem: React.FC<EcosystemProps> = ({ featuredEcosystemApps }) => {
+export const Ecosystem: React.FC<EcosystemProps> = ({ featuredEcosystemApps, isLoadingFeaturedEcosystemApps }) => {
   return (
     <div className="pt-16 md:pt-20">
       <div className="flex flex-col px-5 md:px-[72px]">
@@ -33,7 +34,10 @@ export const Ecosystem: React.FC<EcosystemProps> = ({ featuredEcosystemApps }) =
         </div>
       </div>
 
-      <FeaturedApps featuredEcosystemApps={featuredEcosystemApps} />
+      <FeaturedApps
+        featuredEcosystemApps={featuredEcosystemApps}
+        isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
+      />
     </div>
   );
 };

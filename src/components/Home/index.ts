@@ -4,6 +4,7 @@ export * from "./components/Ecosystem";
 export * from "./components/GetStarted";
 export * from "./components/HomeHero";
 export * from "./components/HomeNavigationSections";
+export * from "./components/HomePage";
 export * from "./components/ShipFaster";
 export * from "./components/svg/DividerSvgs";
 export * from "./components/VideosSection";

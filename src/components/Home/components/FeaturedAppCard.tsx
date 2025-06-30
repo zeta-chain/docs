@@ -22,7 +22,7 @@ export const FeaturedAppCard: React.FC<FeaturedAppCardProps> = ({ app, className
       rel="noopener noreferrer"
       className={clsx(
         "flex flex-col justify-end items-center rounded-lg relative shrink-0 px-6 pb-10 overflow-hidden",
-        "w-[232px] h-[321px]",
+        "w-[208px] h-[288px]",
         "shadow-none hover:shadow-light transition-all duration-200",
         parseEcosystemAppCardBorder(app.featuredCardBorder),
         className
@@ -32,10 +32,10 @@ export const FeaturedAppCard: React.FC<FeaturedAppCardProps> = ({ app, className
         <Image
           src={app.featuredCardBackgroundImage?.url || DEFAULT_APP_BACKGROUND_URL}
           alt={app.name || "Title"}
-          width={232}
-          height={321}
-          className="w-[232px] h-[321px] object-cover object-center"
-          sizes="232px"
+          width={208}
+          height={288}
+          className="w-[208px] h-[288px] object-cover object-center !m-0"
+          sizes="208px"
         />
       </div>
 
@@ -52,7 +52,7 @@ export const FeaturedAppCard: React.FC<FeaturedAppCardProps> = ({ app, className
             alt={app.name || "Title"}
             width={56}
             height={56}
-            className={clsx("w-14 h-14 rounded-lg", parseEcosystemAppLogoBorder(app.featuredCardLogoBorder))}
+            className={clsx("w-14 h-14 rounded-lg !m-0", parseEcosystemAppLogoBorder(app.featuredCardLogoBorder))}
             sizes="56px"
           />
         </div>
