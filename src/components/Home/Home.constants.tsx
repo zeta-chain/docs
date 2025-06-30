@@ -11,13 +11,13 @@ export type NarrowCardLink = {
 
 export const HERO_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "/developers/frontend/universalkit/",
+    href: "/users/cli/setup/",
     svg: <BuildWithTheCliSvg />,
     title: "Build with the CLI",
     description: "Scaffold your first app",
   },
   {
-    href: "/users/cli/setup/",
+    href: "/developers/frontend/universalkit/",
     svg: <BuildWithUiSvg />,
     title: "Build with a UI",
     description: "Start with UniversalKit",
