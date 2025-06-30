@@ -1,3 +1,4 @@
+import { Skeleton } from "@mui/material";
 import Link from "next/link";
 
 import { globalLinks } from "../../../constants";
@@ -33,7 +34,13 @@ export const JoinCommunity: React.FC<JoinCommunityProps> = ({ ecosystemEvents, i
 
       <div className="flex flex-col lg:flex-row gap-4 md:gap-14 px-5 md:px-[72px]">
         <div className="basis-full md:basis-1/2">
-          <EcosystemCarousel className="w-full md:pb-0 mx-auto" ecosystemEvents={ecosystemEvents} />
+          {isLoadingEcosystemEvents ? (
+            <div className="flex lg:max-w-[568px] h-fit select-none items-center justify-center">
+              <Skeleton variant="rectangular" height={464} className="w-full h-[464px] rounded-lg" />
+            </div>
+          ) : (
+            <EcosystemCarousel className="w-full md:pb-0 mx-auto" ecosystemEvents={ecosystemEvents} />
+          )}
         </div>
 
         <div className="flex flex-col gap-4 basis-full md:basis-1/2">

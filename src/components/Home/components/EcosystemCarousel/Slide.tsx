@@ -42,7 +42,7 @@ export const Slide: React.FC<{
             {slide.logo && (
               <Image
                 fetchPriority="high"
-                className="mb-[32px] pointer-events-none !m-0 !mb-8 !rounded-none"
+                className="pointer-events-none !m-0 !mb-8 !rounded-none"
                 src={slide.logo.url!}
                 width={slide.logo.width!}
                 height={slide.logo.height!}
