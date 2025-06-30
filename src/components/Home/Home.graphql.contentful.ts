@@ -34,3 +34,43 @@ export const GetFeaturedEcosystemApps = gql`
     }
   }
 `;
+
+export const GetEcosystemEventsCollection = gql`
+  query GetEcosystemEventsCollection {
+    ecosystemEventsCollection {
+      total
+      items {
+        title
+        date
+        startTime
+        endTime
+        location
+        description
+        logo {
+          url
+          width
+          height
+        }
+        backgroundColor
+        textColor
+        backgroundImage {
+          url
+          width
+          height
+        }
+        mobileBackgroundImage {
+          url
+          width
+          height
+        }
+        linkLabel
+        link
+        pillColor
+        order
+        sys {
+          id
+        }
+      }
+    }
+  }
+`;

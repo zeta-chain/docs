@@ -1,39 +1,20 @@
 import { NextSeo } from "next-seo";
-import useSWR from "swr";
 
-import {
-  EcosystemProject,
-  GetFeaturedEcosystemAppsDocument,
-  GetFeaturedEcosystemAppsQuery,
-} from "../../../generated/contentful.graphql.types";
-import { contentfulFetcher, contentfulFetcherOptions } from "../Home.utils";
+import { useHomePageContent } from "../hooks/useHomePageContent";
 import { BuildAnything } from "./BuildAnything";
 import { BuildForNow } from "./BuildForNow";
 import { Ecosystem } from "./Ecosystem";
 import { HomeHero } from "./HomeHero";
+import { JoinCommunity } from "./JoinCommunity";
 import { ShipFaster } from "./ShipFaster";
 import { DividerSvg, ShortDividerSvg } from "./svg/DividerSvgs";
 import { VideosSection } from "./VideosSection";
 
-type HomePageProps = {
-  featuredEcosystemApps?: EcosystemProject[];
-};
+type HomePageProps = {};
 
 export const HomePage: React.FC<HomePageProps> = () => {
-  // Fetch data using SWR
-  const {
-    data: featuredEcosystemAppsData,
-    error: featuredEcosystemAppsError,
-    isLoading: isLoadingFeaturedEcosystemApps,
-  } = useSWR<GetFeaturedEcosystemAppsQuery, Error>(
-    GetFeaturedEcosystemAppsDocument,
-    contentfulFetcher,
-    contentfulFetcherOptions
-  );
-
-  const featuredEcosystemApps = featuredEcosystemAppsError
-    ? []
-    : ((featuredEcosystemAppsData?.ecosystemProjectCollection?.items || []) as unknown as EcosystemProject[]);
+  const { featuredEcosystemApps, isLoadingFeaturedEcosystemApps, ecosystemEvents, isLoadingEcosystemEvents } =
+    useHomePageContent();
 
   return (
     <>
@@ -51,17 +32,19 @@ export const HomePage: React.FC<HomePageProps> = () => {
       <BuildForNow />
       <DividerSvg />
       <ShipFaster />
-      <DividerSvg />
 
       {featuredEcosystemApps.length > 0 && !isLoadingFeaturedEcosystemApps && (
         <>
+          <DividerSvg />
           <Ecosystem
             featuredEcosystemApps={featuredEcosystemApps}
             isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
           />
-          <DividerSvg />
         </>
       )}
+
+      <DividerSvg />
+      <JoinCommunity ecosystemEvents={ecosystemEvents} isLoadingEcosystemEvents={isLoadingEcosystemEvents} />
     </>
   );
 };
