@@ -1,10 +1,13 @@
 import { useMediaQuery } from "@mui/material";
 import chroma from "chroma-js";
 import clsx from "clsx";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import React from "react";
 
 import { EcosystemEvents } from "~/generated/contentful.graphql.types";
+
+import { getRevealProps } from "../../../../lib/helpers/animations";
 
 /**
  * Returns the text color that should be used for the card based on the base color
@@ -38,7 +41,11 @@ export const Slide: React.FC<{
     >
       <div className="flex z-10 flex-col md:flex-row relative items-end md:gap-14 rounded-lg">
         <div className="flex w-full pt-8 md:pt-10 px-6 md:px-10 flex-col flex-shrink-0 justify-between items-start self-stretch">
-          <div>
+          <motion.div
+            {...getRevealProps({
+              delay: 0,
+            })}
+          >
             {slide.logo && (
               <Image
                 fetchPriority="high"
@@ -49,15 +56,23 @@ export const Slide: React.FC<{
                 alt={slide.title!}
               />
             )}
-            <div className="flex flex-col items-start self-stretch">
+            <motion.div
+              {...getRevealProps({
+                delay: 0.1,
+              })}
+              className="flex flex-col items-start self-stretch"
+            >
               <div className="title max-w-[400px] text-[32px] md:text-[36px] font-medium leading-[110%] tracking-[-0.64px] md:tracking-[-0.72px] mb-[7px] md:mb-2">
                 {slide.title}
               </div>
-            </div>
+            </motion.div>
 
             <div className="flex gap-2 whitespace-nowrap flex-wrap w-full">
               {/* Date & time */}
-              <div
+              <motion.div
+                {...getRevealProps({
+                  delay: 0.15,
+                })}
                 style={{
                   background: pillBgColor,
                   color: pillTextColor,
@@ -91,10 +106,13 @@ export const Slide: React.FC<{
                 {slide.startTime && <span>{slide.startTime}</span>}
                 {slide.startTime && slide.endTime && <span>-</span>}
                 {slide.endTime && <span>{slide.endTime}</span>}
-              </div>
+              </motion.div>
 
               {/* Location */}
-              <div
+              <motion.div
+                {...getRevealProps({
+                  delay: 0.2,
+                })}
                 style={{
                   background: pillBgColor,
                   color: pillTextColor,
@@ -118,13 +136,21 @@ export const Slide: React.FC<{
                 </svg>
 
                 <span>{slide.location}</span>
-              </div>
+              </motion.div>
             </div>
 
-            <div className="self-stretch text-[14px] leading-[135%] max-w-[280px] my-[24px]">{slide.description}</div>
+            <motion.div
+              {...getRevealProps({
+                delay: 0.25,
+              })}
+              className="self-stretch text-[14px] leading-[135%] max-w-[280px] my-[24px]"
+            >
+              {slide.description}
+            </motion.div>
 
             {slide.link && (
-              <a
+              <motion.a
+                {...getRevealProps({ delay: 0.3 })}
                 href={slide.link!}
                 target="_blank"
                 rel="noreferrer"
@@ -134,14 +160,17 @@ export const Slide: React.FC<{
                 }}
               >
                 {slide.linkLabel}
-              </a>
+              </motion.a>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
 
-      <div
+      <motion.div
         key={image?.url}
+        {...getRevealProps({
+          delay: 0.35,
+        })}
         className={clsx("flex pt-[27.7px]", {
           "absolute bottom-0": isDesktopView,
           "relative items-end": !isDesktopView,
@@ -158,7 +187,7 @@ export const Slide: React.FC<{
             layout="responsive"
           />
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
