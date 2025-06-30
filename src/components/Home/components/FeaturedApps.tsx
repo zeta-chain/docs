@@ -17,7 +17,11 @@ export const FeaturedApps: React.FC<FeaturedAppsProps> = ({
 }) => {
   return (
     <div className="mx-auto max-w-[1312px]">
-      <div className="flex gap-8 py-10 md:pt-16 md:pb-20 px-6 md:px-[72px] overflow-x-scroll no-scrollbar">
+      <div
+        className={clsx("flex gap-8 py-10 md:pt-16 md:pb-20 px-6 md:px-[72px] overflow-x-scroll no-scrollbar", {
+          "!pt-0": !featuredEcosystemApps.length && !isLoadingFeaturedEcosystemApps,
+        })}
+      >
         {isLoadingFeaturedEcosystemApps
           ? range(5).map((index) => (
               <div

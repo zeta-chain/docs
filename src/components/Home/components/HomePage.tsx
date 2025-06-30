@@ -32,17 +32,11 @@ export const HomePage: React.FC<HomePageProps> = () => {
       <BuildForNow />
       <DividerSvg />
       <ShipFaster />
-
-      {featuredEcosystemApps.length > 0 && !isLoadingFeaturedEcosystemApps && (
-        <>
-          <DividerSvg />
-          <Ecosystem
-            featuredEcosystemApps={featuredEcosystemApps}
-            isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
-          />
-        </>
-      )}
-
+      <DividerSvg />
+      <Ecosystem
+        featuredEcosystemApps={featuredEcosystemApps}
+        isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
+      />
       <DividerSvg />
       <JoinCommunity ecosystemEvents={ecosystemEvents} isLoadingEcosystemEvents={isLoadingEcosystemEvents} />
     </>
