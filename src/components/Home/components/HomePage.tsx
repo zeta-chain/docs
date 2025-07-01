@@ -47,20 +47,28 @@ export const HomePage: React.FC<HomePageProps> = () => {
       <DividerSvg />
       <ShipFaster />
 
-      <DividerSvg />
-      <Ecosystem
-        featuredEcosystemApps={featuredEcosystemApps}
-        isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
-      />
+      {(isLoadingFeaturedEcosystemApps || featuredEcosystemApps.length > 0) && (
+        <>
+          <DividerSvg />
+          <Ecosystem
+            featuredEcosystemApps={featuredEcosystemApps}
+            isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
+          />
+        </>
+      )}
 
       <DividerSvg />
       <JoinCommunity ecosystemEvents={ecosystemEvents} isLoadingEcosystemEvents={isLoadingEcosystemEvents} />
 
-      <ShortDividerSvg />
-      <EngineeringBlog
-        engineeringBlogPosts={engineeringBlogPosts}
-        isLoadingEngineeringBlogPosts={isLoadingEngineeringBlogPosts}
-      />
+      {(isLoadingEngineeringBlogPosts || engineeringBlogPosts.length > 0) && (
+        <>
+          <ShortDividerSvg />
+          <EngineeringBlog
+            engineeringBlogPosts={engineeringBlogPosts}
+            isLoadingEngineeringBlogPosts={isLoadingEngineeringBlogPosts}
+          />
+        </>
+      )}
     </>
   );
 };
