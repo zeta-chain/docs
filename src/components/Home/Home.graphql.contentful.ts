@@ -74,3 +74,26 @@ export const GetEcosystemEventsCollection = gql`
     }
   }
 `;
+
+export const GetEngineeringBlogPosts = gql`
+  query GetEngineeringBlogPosts {
+    docsEngineeringBlogCollection {
+      items {
+        blogPostsCollection {
+          items {
+            sys {
+              id
+              firstPublishedAt
+            }
+            title
+            slug
+            image {
+              url
+            }
+            description
+          }
+        }
+      }
+    }
+  }
+`;

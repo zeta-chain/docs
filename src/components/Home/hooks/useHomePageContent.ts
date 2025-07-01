@@ -1,9 +1,12 @@
 import useSWR from "swr";
 
 import {
+  BlogPost,
   EcosystemEvents,
   GetEcosystemEventsCollectionDocument,
   GetEcosystemEventsCollectionQuery,
+  GetEngineeringBlogPostsDocument,
+  GetEngineeringBlogPostsQuery,
   GetFeaturedEcosystemAppsQuery,
 } from "../../../generated/contentful.graphql.types";
 import { GetFeaturedEcosystemAppsDocument } from "../../../generated/contentful.graphql.types";
@@ -39,11 +42,29 @@ export const useHomePageContent = () => {
     ? []
     : ((ecosystemEventsData?.ecosystemEventsCollection?.items || []) as unknown as EcosystemEvents[]);
 
+  const {
+    data: engineeringBlogPostsData,
+    error: engineeringBlogPostsError,
+    isLoading: isLoadingEngineeringBlogPosts,
+  } = useSWR<GetEngineeringBlogPostsQuery, Error>(
+    GetEngineeringBlogPostsDocument,
+    contentfulFetcher,
+    contentfulFetcherOptions
+  );
+
+  const engineeringBlogPosts = engineeringBlogPostsError
+    ? []
+    : ((engineeringBlogPostsData?.docsEngineeringBlogCollection?.items?.[0]?.blogPostsCollection?.items ||
+        []) as unknown as BlogPost[]);
+
   return {
     featuredEcosystemApps,
     isLoadingFeaturedEcosystemApps,
 
     ecosystemEvents,
     isLoadingEcosystemEvents,
+
+    engineeringBlogPosts,
+    isLoadingEngineeringBlogPosts,
   };
 };

@@ -16,7 +16,7 @@ type JoinCommunityProps = {
 
 export const JoinCommunity: React.FC<JoinCommunityProps> = ({ ecosystemEvents, isLoadingEcosystemEvents }) => {
   return (
-    <div className="py-16 md:py-20 max-w-[1312px] mx-auto">
+    <div className="pt-16 pb-14 md:pt-20 max-w-[1312px] mx-auto">
       <div className="flex flex-col px-5 md:px-[72px] mb-14 md:mb-16">
         <div>
           <h2 className="text-[32px] md:text-[36px] leading-[110%] tracking-[-0.64px] md:tracking-[-0.72px] font-medium text-grey-900 dark:text-grey-50 mb-2 text-center">
