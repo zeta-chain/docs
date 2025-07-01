@@ -26,22 +26,18 @@ function corsMiddleware(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
-export interface ZetaContentfulApiResponse {
-  data: any;
-}
+const contentfulClient = new GraphQLClient(CONTENTFUL_CONFIG.contentfulGraphqlUrl, {
+  headers: { Authorization: `Bearer ${CONTENTFUL_CONFIG.contentfulAccessToken}` },
+});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await corsMiddleware(req, res);
     const { query, variables } = req.body;
 
-    const contentfulClient = new GraphQLClient(CONTENTFUL_CONFIG.contentfulGraphqlUrl, {
-      headers: { Authorization: `Bearer ${CONTENTFUL_CONFIG.contentfulAccessToken}` },
-    });
-
     const data = await contentfulClient.request(query, variables);
 
-    res.status(200).json({ data } as ZetaContentfulApiResponse);
+    res.status(200).json({ data });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
