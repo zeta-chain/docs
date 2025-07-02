@@ -11,6 +11,17 @@ export const CONTENTFUL_CONFIG = {
   contentfulRedisUrl: process.env.REDIS_URL || "",
 };
 
+export const validateContentfulConfig = () => {
+  if (!CONTENTFUL_CONFIG.contentfulGraphqlUrl) {
+    throw new Error("CONTENTFUL_GRAPHQL_URL environment variable is required");
+  }
+  if (!CONTENTFUL_CONFIG.contentfulAccessToken) {
+    throw new Error("CONTENTFUL_ACCESS_TOKEN environment variable is required");
+  }
+};
+
+validateContentfulConfig();
+
 const eslintDisablePlugin = {
   add: {
     content: "/* eslint-disable */",
