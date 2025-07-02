@@ -11,6 +11,7 @@ import {
 } from "../../../generated/contentful.graphql.types";
 import { GetFeaturedEcosystemAppsDocument } from "../../../generated/contentful.graphql.types";
 import { EcosystemProject } from "../../../generated/contentful.graphql.types";
+import { CONTENTFUL_CACHE_KEYS } from "../../../lib/cache-keys";
 import { contentfulFetcher, contentfulFetcherOptions } from "../Home.utils";
 
 export const useHomePageContent = () => {
@@ -19,8 +20,8 @@ export const useHomePageContent = () => {
     error: featuredEcosystemAppsError,
     isLoading: isLoadingFeaturedEcosystemApps,
   } = useSWR<GetFeaturedEcosystemAppsQuery, Error>(
-    GetFeaturedEcosystemAppsDocument,
-    contentfulFetcher,
+    [GetFeaturedEcosystemAppsDocument, CONTENTFUL_CACHE_KEYS.FEATURED_ECOSYSTEM_APPS],
+    ([query, cacheKey]: [string, string]) => contentfulFetcher(query, cacheKey),
     contentfulFetcherOptions
   );
 
@@ -33,8 +34,8 @@ export const useHomePageContent = () => {
     error: ecosystemEventsError,
     isLoading: isLoadingEcosystemEvents,
   } = useSWR<GetEcosystemEventsCollectionQuery, Error>(
-    GetEcosystemEventsCollectionDocument,
-    contentfulFetcher,
+    [GetEcosystemEventsCollectionDocument, CONTENTFUL_CACHE_KEYS.ECOSYSTEM_EVENTS],
+    ([query, cacheKey]: [string, string]) => contentfulFetcher(query, cacheKey),
     contentfulFetcherOptions
   );
 
@@ -47,8 +48,8 @@ export const useHomePageContent = () => {
     error: engineeringBlogPostsError,
     isLoading: isLoadingEngineeringBlogPosts,
   } = useSWR<GetEngineeringBlogPostsQuery, Error>(
-    GetEngineeringBlogPostsDocument,
-    contentfulFetcher,
+    [GetEngineeringBlogPostsDocument, CONTENTFUL_CACHE_KEYS.ENGINEERING_BLOG_POSTS],
+    ([query, cacheKey]: [string, string]) => contentfulFetcher(query, cacheKey),
     contentfulFetcherOptions
   );
 

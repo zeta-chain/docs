@@ -1,11 +1,11 @@
 // SWR fetcher function
-export const contentfulFetcher = async (query: string) => {
+export const contentfulFetcher = async (query: string, cacheKey?: string) => {
   const response = await fetch("/api/contentful", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, cacheKey }),
   });
 
   if (!response.ok) {
