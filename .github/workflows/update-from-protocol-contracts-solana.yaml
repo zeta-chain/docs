@@ -1,4 +1,4 @@
-name: Update protocol-contract docs
+name: Update protocol-contract-solana docs
 
 on:
   schedule:
@@ -17,18 +17,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout zeta-chain/protocol-contracts repository
+      - name: Checkout zeta-chain/protocol-contracts-solana repository
         uses: actions/checkout@v4
         with:
-          repository: zeta-chain/protocol-contracts
-          path: protocol-contracts
+          repository: zeta-chain/protocol-contracts-solana
+          path: protocol-contracts-solana
 
       - name: Update docs
         run: |
           mkdir -p src/pages/developers/protocol/
-          rm -f src/pages/developers/protocol/evm.md
-          cp protocol-contracts/docs/index.md src/pages/developers/protocol/evm.md
-          rm -rf protocol-contracts
+          rm -f src/pages/developers/protocol/solana.md
+          cp protocol-contracts-solana/docs/gateway.md src/pages/developers/protocol/solana.md
+          rm -rf protocol-contracts-solana
 
       - name: Check for changes
         id: check-changes
@@ -39,11 +39,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: "docs(evm): update protocol contracts"
+          title: "docs(solana): update protocol contracts"
           body: |
-            This PR syncs the docs with protocol-contracts
+            This PR syncs the docs with protocol-contracts-solana
           commit-message: |
-            "docs(evm): update protocol contracts"
+            "docs(solana): update protocol contracts"
           base: main
-          branch: docs/updates-from-protocol-contracts
+          branch: docs/updates-from-protocol-contracts-solana
         if: steps.check-changes.outputs.changed == 'true'
