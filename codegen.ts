@@ -6,14 +6,14 @@ import { join } from "path";
 require("dotenv").config({ path: join(__dirname, ".env") });
 
 export const CONTENTFUL_CONFIG = {
-  contentfulGraphqlUrl: process.env.CONTENTFUL_GRAPHQL_URL || "",
+  contentfulGraphqlUrl: process.env.NEXT_PUBLIC_CONTENTFUL_GRAPHQL_URL || "",
   contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN || "",
   contentfulRedisUrl: process.env.CONTENTFUL_REDIS_URL || "",
 };
 
 export const validateContentfulConfig = () => {
   if (!CONTENTFUL_CONFIG.contentfulGraphqlUrl) {
-    throw new Error("CONTENTFUL_GRAPHQL_URL environment variable is required");
+    throw new Error("NEXT_PUBLIC_CONTENTFUL_GRAPHQL_URL environment variable is required");
   }
   if (!CONTENTFUL_CONFIG.contentfulAccessToken) {
     throw new Error("CONTENTFUL_ACCESS_TOKEN environment variable is required");
