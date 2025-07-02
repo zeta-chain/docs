@@ -8,7 +8,7 @@ require("dotenv").config({ path: join(__dirname, ".env") });
 export const CONTENTFUL_CONFIG = {
   contentfulGraphqlUrl: process.env.NEXT_PUBLIC_CONTENTFUL_GRAPHQL_URL || "",
   contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN || "",
-  contentfulRedisUrl: process.env.CONTENTFUL_REDIS_URL || "",
+  contentfulRedisUrl: process.env.REDIS_URL || "",
 };
 
 export const validateContentfulConfig = () => {
