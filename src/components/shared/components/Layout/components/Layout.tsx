@@ -31,7 +31,7 @@ export const StyledUnorderedList = styled.ul`
   }
 `;
 
-const LayoutContainer = styled.div<{ isMainPage: boolean }>`
+const LayoutContainer = styled.div<{ isMainPage: boolean; isHomePage: boolean }>`
   ${tw`overflow-x-clip bg-grey-50 dark:bg-grey-900 relative`};
 
   /* Base styles for rendered tables */
@@ -69,15 +69,15 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
     }
 
     nav {
-      ${tw`justify-between px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] h-auto max-w-none`};
+      ${tw`justify-end px-5 py-5 sm:py-8 md:px-[72px] h-auto max-w-none`};
 
       /* Custom styles for Nextra Search component */
       .nextra-search {
         ${tw`block w-full sm:w-[250px] transition-opacity`};
 
         input {
-          ${tw`bg-[transparent] border border-grey-200 dark:border-grey-600 rounded-full px-4 py-2 transition-none
-               focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300 text-sm pl-10`};
+          ${tw`border border-grey-100 dark:border-grey-700 bg-grey-100 dark:bg-grey-700 rounded-full px-4 py-2 transition-none
+               focus:ring-0 focus:outline-none placeholder:text-grey-400 dark:placeholder-grey-300 text-[14px] leading-[130%] pl-10 pr-[102px]`};
         }
 
         .nx-text-primary-600 {
@@ -89,7 +89,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
         }
 
         ul.nextra-scrollbar {
-          ${tw`left-0 max-w-[calc(100vw-32px)] sm:max-w-[min(calc(100vw-248px), 500px)]`};
+          ${tw`-right-[96px] lg:right-0 max-w-[calc(100vw-32px)] sm:max-w-[min(calc(100vw-248px), 500px)]`};
 
           li.nx-text-primary-600 {
             ${tw`bg-grey-100 dark:bg-grey-700`};
@@ -121,6 +121,7 @@ const LayoutContainer = styled.div<{ isMainPage: boolean }>`
     ${tw`px-4 py-5 sm:py-8 sm:px-6 md:px-[72px] max-w-none`};
 
     ${({ isMainPage }) => (isMainPage ? tw`md:pt-24` : tw`md:pt-[120px]`)};
+    ${({ isHomePage }) => isHomePage && tw`!px-0`};
   }
 
   /* Hide Nextra docs theme components */
@@ -196,6 +197,7 @@ type LayoutProps = {
 export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
   const { route } = useRouter();
   const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isHomePage = useMemo(() => route === "/", [route]);
 
   useScrollToPageTop();
 
@@ -203,7 +205,7 @@ export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, ch
   useEffect(() => setIsMounted(true), []);
 
   return (
-    <LayoutContainer className={className} isMainPage={isMainPage}>
+    <LayoutContainer className={className} isMainPage={isMainPage} isHomePage={isHomePage}>
       {!isMounted && <div className="absolute inset-0 z-[999999999] w-screen h-screen initial-overlay" />}
       <NavigationLayout isMainPage={isMainPage}>{children}</NavigationLayout>
     </LayoutContainer>

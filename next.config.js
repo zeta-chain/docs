@@ -34,6 +34,25 @@ const baseNextConfig = {
    * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
    */
   productionBrowserSourceMaps: false,
+
+  images: {
+    dangerouslyAllowSVG: false,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.ctfassets.net", // contentful images
+        port: "",
+        pathname: "/jmvpciyouqsr/**", // production space id
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3001",
+        pathname: "/**",
+      },
+    ],
+  },
+
   headers: async () => nextHeadersConfig,
   webpack(config) {
     // eslint-disable-next-line no-param-reassign

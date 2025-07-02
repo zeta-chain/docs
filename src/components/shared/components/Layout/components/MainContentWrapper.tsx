@@ -1,5 +1,6 @@
+import clsx from "clsx";
 import { useRouter } from "next/router";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import { useSetDirectoriesState } from "~/hooks/useSetDirectoriesState";
 
@@ -18,12 +19,14 @@ export const MainContentWrapper: React.FC<MainContentWrapperProps> = ({ children
   useSetDirectoriesState();
   const { route } = useRouter();
 
+  const isHomePage = useMemo(() => route === "/", [route]);
+
   return (
     <>
       <PrevNextNavigationWrapper>
         <Hero />
         <TableOfContentsWrapper>{children}</TableOfContentsWrapper>
-        <div className="mt-16 mb-8">
+        <div className={clsx("mt-16 mb-8", isHomePage && "hidden")}>
           <a
             href={getGitHubEditUrl(route)}
             target="_blank"
