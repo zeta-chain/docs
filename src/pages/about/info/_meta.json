@@ -1,4 +1,10 @@
 {
+  "bounty": {
+    "title": "Bug Bounty Program",
+    "description": "Contribute to ZetaChain by finding and reporting bugs.",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
   "glossary": {
     "title": "Glossary",
     "description": "Common terms used with ZetaChain.",

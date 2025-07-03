@@ -1,4 +1,12 @@
 {
+  "index": {
+    "title": "Services & Providers",
+    "description": "Oracles, subgraphs, data providers, account abstraction and more"
+  },
+  "wallets": {
+    "title": "Wallets",
+    "description": "Supported EVM, Bitcoin and Cosmos wallets"
+  },
   "the-graph": {
     "title": "The Graph",
     "description": "Subgraphs, Decentralized indexing protocol"
