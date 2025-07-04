@@ -28,7 +28,7 @@ contract call. If you want to deposit and call a universal app, use the
 `depositAndCall` function instead.
 
 After the deposit is processed, the receiver receives the [ZRC-20
-version](/developers/tokens/zrc20) of the deposited token—for example, ZRC-20
+version](/developers/evm/zrc20) of the deposited token—for example, ZRC-20
 ETH.
 
 ## Deposit ERC-20 Tokens
@@ -40,7 +40,7 @@ and universal apps on ZetaChain:
 deposit(address receiver, uint256 amount, address asset, RevertOptions calldata revertOptions) external;
 ```
 
-Only [supported ERC-20 assets](/developers/tokens/zrc20) can be deposited. The
+Only [supported ERC-20 assets](/developers/evm/zrc20) can be deposited. The
 receiver gets the ZRC-20 version of the deposited token (e.g., ZRC-20 USDC.ETH).
 
 The `amount` specifies the quantity, and `asset` is the token address of the

@@ -14,6 +14,11 @@
     "readTime": "30 min",
     "description": "Learn the fundamentals of message passing and cross-chain contract calls"
   },
+  "swap": {
+    "title": "Swap",
+    "readTime": "30 min",
+    "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
+  },
   "solana": {
     "title": "Solana",
     "readTime": "60 min",
@@ -28,20 +33,5 @@
     "title": "Sui Withdraw & Call",
     "readTime": "60 min",
     "description": "Withdraw assets and call contracts on Sui"
-  },
-  "swap": {
-    "title": "Swap",
-    "readTime": "30 min",
-    "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
-  },
-  "localnet": {
-    "title": "Localnet Setup",
-    "readTime": "30 min",
-    "description": "Build and interact with your universal app in a local dev environment"
-  },
-  "testnet": {
-    "title": "Testnet Setup",
-    "readTime": "10 min",
-    "description": "Setup your account, request test tokens from the faucet"
   }
 }

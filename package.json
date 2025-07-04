@@ -14,7 +14,8 @@
     "clean": "rimraf .next out",
     "tsc:watch": "tsc --watch",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "graphql-codegen": "echo placeholder"
   },
   "dependencies": {
     "@emotion/cache": "11.11.0",

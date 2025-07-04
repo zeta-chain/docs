@@ -15,6 +15,18 @@
     "title": "Cross-Chain Transactions",
     "description": "Cross-Chain Transactions"
   },
+  "zeta": {
+    "title": "ZETA",
+    "description": "ZETA is the native staking, gas and governance token of ZetaChain"
+  },
+  "zrc20": {
+    "title": "ZRC-20",
+    "description": "Native gas and supported ERC-20 tokens from connected chains are represented as ZRC-20 on ZetaChain"
+  },
+  "erc20": {
+    "title": "ERC-20",
+    "description": "ZetaChain's universal EVM supports standard ERC-20 tokens"
+  },
   "addresses": {
     "title": "Account Addresses",
     "description": "Learn about types of account address, how to use and convert between them"

@@ -20,7 +20,7 @@
     "description": "Setting up and using Leap Wallet with ZetaChain"
   },
   "cli": {
-    "title": "ZetaChain's CLI",
+    "title": "Node CLI",
     "description": "Interact with ZetaChain from a terminal using a command-line interface"
   }
 }
