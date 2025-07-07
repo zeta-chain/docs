@@ -20,27 +20,6 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{
           secrets.VERCEL_TOKEN }}
-      - name: Debug what files exist
-        run: |
-          echo "Files in root directory:"
-          ls -la
-          echo "Files in .vercel directory:"
-          ls -la .vercel/ || echo "No .vercel directory"
-      - name: Pull Environment Variables to .env
-        run: vercel env pull --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Debug environment variables (safe)
-        run: |
-          echo "Checking for .env files..."
-          if [ -f .env ]; then
-            echo ".env exists with $(wc -l < .env) lines"
-            echo "Has CONTENTFUL_GRAPHQL_URL: $(grep -q '^CONTENTFUL_GRAPHQL_URL=' .env && echo 'YES' || echo 'NO')"
-            echo "Has CONTENTFUL_ACCESS_TOKEN: $(grep -q '^CONTENTFUL_ACCESS_TOKEN=' .env && echo 'YES' || echo 'NO')"
-          else
-            echo ".env does not exist"
-          fi
-          if [ -f .vercel/.env.production.local ]; then
-            echo ".vercel/.env.production.local exists with $(wc -l < .vercel/.env.production.local) lines"
-          fi
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Project Artifacts to Vercel
