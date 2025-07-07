@@ -1672,49 +1672,69 @@ export const FadeLeftSvg = () => {
   return (
     <>
       <svg
-        width="80"
-        height="32"
-        viewBox="0 0 80 32"
+        width="224"
+        height="80"
+        viewBox="0 0 224 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="block dark:hidden w-20 h-8 md:w-[224px] md:h-20 absolute left-0 top-0 z-[1]"
+        className="hidden dark:hidden md:block md:dark:hidden w-[224px] h-20 absolute left-0 top-0 z-[1] pointer-events-none"
       >
-        <rect width="80" height="32" fill="url(#paint0_linear_3473_2839)" />
+        <rect width="224" height="80" fill="url(#paint0_linear_3473_2839)" />
         <defs>
-          <linearGradient
-            id="paint0_linear_3473_2839"
-            x1="80"
-            y1="15"
-            x2="7.32986e-07"
-            y2="15"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="white" stopOpacity="0" />
-            <stop offset="0.725982" stopColor="white" />
+          <linearGradient id="paint0_linear_3473_2839" x1="0" y1="40" x2="224" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stopColor="white" />
+            <stop offset="0.725982" stopColor="white" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
 
       <svg
-        width="80"
-        height="32"
-        viewBox="0 0 80 32"
+        width="224"
+        height="80"
+        viewBox="0 0 224 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="hidden dark:block w-20 h-8 md:w-[224px] md:h-20 absolute left-0 top-0 z-[1]"
+        className="hidden dark:hidden md:hidden md:dark:block w-[224px] h-20 absolute left-0 top-0 z-[1] pointer-events-none"
       >
-        <rect width="80" height="32" fill="url(#paint0_linear_3473_4188)" />
+        <rect width="224" height="80" fill="url(#paint0_linear_3473_4188)" />
         <defs>
-          <linearGradient
-            id="paint0_linear_3473_4188"
-            x1="80"
-            y1="15"
-            x2="7.32986e-07"
-            y2="15"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopOpacity="0" />
-            <stop offset="0.725982" />
+          <linearGradient id="paint0_linear_3473_4188" x1="0" y1="40" x2="224" y2="40" gradientUnits="userSpaceOnUse">
+            <stop />
+            <stop offset="0.725982" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <svg
+        width="100"
+        height="32"
+        viewBox="0 0 100 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="block dark:hidden md:hidden md:dark:hidden absolute left-0 top-0 z-[1]"
+      >
+        <rect width="100" height="32" fill="url(#paint0_linear_3473_2840)" />
+        <defs>
+          <linearGradient id="paint0_linear_3473_2840" x1="0" y1="16" x2="100" y2="16" gradientUnits="userSpaceOnUse">
+            <stop stopColor="white" />
+            <stop offset="0.725982" stopColor="white" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <svg
+        width="100"
+        height="32"
+        viewBox="0 0 100 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="hidden dark:block md:hidden md:dark:hidden absolute left-0 top-0 z-[1]"
+      >
+        <rect width="100" height="32" fill="url(#paint0_linear_3473_4189)" />
+        <defs>
+          <linearGradient id="paint0_linear_3473_4189" x1="0" y1="16" x2="100" y2="16" gradientUnits="userSpaceOnUse">
+            <stop />
+            <stop offset="0.725982" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
@@ -1731,18 +1751,11 @@ export const FadeRightSvg = () => {
         viewBox="0 0 224 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="hidden dark:hidden md:block md:dark:hidden w-[224px] h-20 absolute right-0 top-0 z-[1]"
+        className="hidden dark:hidden md:block md:dark:hidden w-[224px] h-20 absolute right-0 top-0 z-[1] pointer-events-none"
       >
-        <rect y="0.00390625" width="224" height="80" fill="url(#paint0_linear_3469_8712)" />
+        <rect width="224" height="80" fill="url(#paint0_linear_3469_8712)" />
         <defs>
-          <linearGradient
-            id="paint0_linear_3469_8712"
-            x1="224"
-            y1="37.5021"
-            x2="2.05236e-06"
-            y2="37.5021"
-            gradientUnits="userSpaceOnUse"
-          >
+          <linearGradient id="paint0_linear_3469_8712" x1="224" y1="40" x2="0" y2="40" gradientUnits="userSpaceOnUse">
             <stop offset="0.3" stopColor="white" />
             <stop offset="1" stopColor="white" stopOpacity="0" />
           </linearGradient>
@@ -1755,18 +1768,11 @@ export const FadeRightSvg = () => {
         viewBox="0 0 224 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="hidden dark:hidden md:hidden md:dark:block w-[224px] h-20 absolute right-0 top-0 z-[1]"
+        className="hidden dark:hidden md:hidden md:dark:block w-[224px] h-20 absolute right-0 top-0 z-[1] pointer-events-none"
       >
-        <rect y="0.00390625" width="224" height="79.9961" fill="url(#paint0_linear_3469_10131)" />
+        <rect width="224" height="80" fill="url(#paint0_linear_3469_10131)" />
         <defs>
-          <linearGradient
-            id="paint0_linear_3469_10131"
-            x1="224"
-            y1="37.5021"
-            x2="2.05236e-06"
-            y2="37.5021"
-            gradientUnits="userSpaceOnUse"
-          >
+          <linearGradient id="paint0_linear_3469_10131" x1="224" y1="40" x2="0" y2="40" gradientUnits="userSpaceOnUse">
             <stop offset="0.3" />
             <stop offset="1" stopOpacity="0" />
           </linearGradient>
@@ -1774,48 +1780,48 @@ export const FadeRightSvg = () => {
       </svg>
 
       <svg
-        width="100"
+        width="120"
         height="32"
-        viewBox="0 0 100 32"
+        viewBox="0 0 120 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="block dark:hidden md:hidden md:dark:hidden absolute right-0 top-0 z-[1]"
+        className="block dark:hidden md:hidden md:dark:hidden absolute right-0 top-0 z-[1] pointer-events-none"
       >
-        <rect width="100" height="32" fill="url(#paint0_linear_3473_2840)" />
+        <rect width="120" height="32" fill="url(#paint0_linear_right_mobile_light)" />
         <defs>
           <linearGradient
-            id="paint0_linear_3473_2840"
-            x1="100"
-            y1="15"
-            x2="9.16233e-07"
-            y2="15"
+            id="paint0_linear_right_mobile_light"
+            x1="120"
+            y1="16"
+            x2="0"
+            y2="16"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0.23" stopColor="white" />
+            <stop offset="0.25" stopColor="white" />
             <stop offset="1" stopColor="white" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
 
       <svg
-        width="100"
+        width="120"
         height="32"
-        viewBox="0 0 100 32"
+        viewBox="0 0 120 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="hidden dark:block md:hidden md:dark:hidden absolute right-0 top-0 z-[1]"
+        className="hidden dark:block md:hidden md:dark:hidden absolute right-0 top-0 z-[1] pointer-events-none"
       >
-        <rect width="100" height="32" fill="url(#paint0_linear_3473_4189)" />
+        <rect width="120" height="32" fill="url(#paint0_linear_right_mobile_dark)" />
         <defs>
           <linearGradient
-            id="paint0_linear_3473_4189"
-            x1="100"
-            y1="15"
-            x2="9.16233e-07"
-            y2="15"
+            id="paint0_linear_right_mobile_dark"
+            x1="120"
+            y1="16"
+            x2="0"
+            y2="16"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0.23" />
+            <stop offset="0.25" />
             <stop offset="1" stopOpacity="0" />
           </linearGradient>
         </defs>

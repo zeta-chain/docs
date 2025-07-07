@@ -1,3 +1,4 @@
+import { ChainSvgLinkWrapper } from "./ChainSvgLinkWrapper";
 import {
   ArbitrumSvg,
   AvalancheSvg,
@@ -45,16 +46,32 @@ export const BuildForNow = () => {
           </div>
         </div>
 
-        <div className="order-1 md:order-3 md:mt-[78px] w-full flex justify-center gap-2 md:gap-4 lg:gap-6 relative max-w-[350px] md:max-w-[928px] mx-auto px-[15px] md:px-10 mb-10 md:mb-0">
+        <div className="order-1 md:order-3 md:mt-[78px] w-full flex justify-center gap-2 md:gap-4 lg:gap-6 relative max-w-[350px] md:max-w-[928px] mx-auto px-[15px] md:px-10 mb-10 md:mb-0 overflow-x-hidden">
           <FadeLeftSvg />
-          <AvalancheSvg />
-          <SolanaSvg />
-          <BaseSvg />
-          <BitcoinSvg />
-          <EthereumSvg />
-          <SuiSvg />
-          <PolygonSvg />
-          <ArbitrumSvg />
+          <ChainSvgLinkWrapper chainPage="evm">
+            <AvalancheSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="evm">
+            <BaseSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="solana">
+            <SolanaSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="bitcoin">
+            <BitcoinSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="evm">
+            <EthereumSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="sui">
+            <SuiSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="evm">
+            <PolygonSvg />
+          </ChainSvgLinkWrapper>
+          <ChainSvgLinkWrapper chainPage="evm">
+            <ArbitrumSvg />
+          </ChainSvgLinkWrapper>
           <FadeRightSvg />
         </div>
       </div>
