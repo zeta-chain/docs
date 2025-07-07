@@ -11,7 +11,7 @@ export type NarrowCardLink = {
 
 export const HERO_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "/users/cli/setup/",
+    href: "https://github.com/zeta-chain/cli",
     svg: <BuildWithTheCliSvg />,
     title: "Build with the CLI",
     description: "Scaffold your first app",
@@ -112,7 +112,7 @@ export const VIDEOS_CARDS: VideoCard[] = [
 
 export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "/users/cli/setup/",
+    href: "https://github.com/zeta-chain/cli",
     svg: <CliSvg />,
     title: "CLI",
     description: "Scaffolding & more",
@@ -124,7 +124,7 @@ export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
     description: "Ready-to-build",
   },
   {
-    href: "/reference/",
+    href: "https://github.com/zeta-chain/toolkit",
     svg: <ToolkitSvg />,
     title: "Toolkit",
     description: "Robust tools",
