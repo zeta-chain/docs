@@ -33,6 +33,8 @@ jobs:
 
       - name: Build project
         run: EXPORT=true yarn build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ""
 
       - name: Check for broken links
         run: yarn check-links

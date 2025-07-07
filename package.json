@@ -10,7 +10,7 @@
     "lint:fix": "npx eslint --ext .js,.jsx,.ts,.tsx --fix ./src",
     "lint": "npx eslint --ext .js,.jsx,.ts,.tsx ./src",
     "start": "next start",
-    "check-links": "EXPORT=true yarn build && mkdir -p out/docs && mv out/{developers,about,users,nodes,reference,start,support,community,_next,img} out/docs/ && cp out/index.html out/docs/ && npx linkinator ./out --recurse --verbosity error --skip '^https' --skip '/developers/architecture/protocol' --skip '/developers/frontend/toolkit'",
+    "check-links": "EXPORT=true yarn build && npx linkinator ./out --recurse --verbosity error --skip '^https' --skip '/developers/architecture/protocol' --skip '/developers/frontend/toolkit'",
     "clean": "rimraf .next out",
     "tsc:watch": "tsc --watch",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
