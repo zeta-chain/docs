@@ -31,7 +31,7 @@ export const Slide: React.FC<{
 
   return (
     <div
-      key={slide.sys.id + Math.random()}
+      key={slide.sys.id}
       className={clsx("w-full relative border border-grey-200 dark:border-grey-700 xl:pb-0 rounded-lg", {
         hidden: !isActive,
         block: isActive,
