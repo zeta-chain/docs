@@ -7,6 +7,8 @@ export const EngineeringBlogSvg = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="w-[160px] h-[80px] md:w-[176px] md:h-[88px]"
+      aria-label="Engineering blog illustration"
+      role="img"
     >
       <rect x="73.6" y="5.33887" width="64" height="74.6667" fill="#00A5C6" />
       <path
