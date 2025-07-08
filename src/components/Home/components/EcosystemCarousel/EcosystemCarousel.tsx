@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import clsx from "clsx";
 import { sortBy } from "lodash-es";
 import React, { useMemo, useState } from "react";
@@ -52,6 +51,7 @@ export const EcosystemCarousel: React.FC<{
                 <button
                   type="button"
                   onClick={prev}
+                  aria-label="Previous slide"
                   className="transform -translate-x-1/2 bg-white dark:bg-grey-600 text-black dark:text-white h-14 w-14 p-5 rounded-[100px] justify-center items-center inline-flex"
                   style={{
                     boxShadow: "0px 18px 28px 0px rgba(9, 30, 66, 0.10), 0px 0px 1px 0px rgba(9, 30, 66, 0.20)",
@@ -63,6 +63,7 @@ export const EcosystemCarousel: React.FC<{
                 <button
                   type="button"
                   onClick={next}
+                  aria-label="Next slide"
                   className="transform translate-x-1/2 bg-white dark:bg-grey-600 text-black dark:text-white h-14 w-14 p-5 rounded-[100px] justify-center items-center inline-flex"
                   style={{
                     boxShadow: "0px 18px 28px 0px rgba(9, 30, 66, 0.10), 0px 0px 1px 0px rgba(9, 30, 66, 0.20)",
