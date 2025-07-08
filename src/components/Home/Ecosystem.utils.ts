@@ -21,4 +21,4 @@ export const parseEcosystemAppLogoBorder = (ecosystemAppLogoBorder?: string | nu
 export const UNIVERSAL_SUB_CATEGORY_ID = "32XHQgC9Od1J60bNN72g8W";
 
 export const isUniversalApp = (app: EcosystemProject) =>
-  app.categoryCollection?.items?.some((category) => category?.sys?.id === UNIVERSAL_SUB_CATEGORY_ID);
+  app?.categoryCollection?.items?.some((category) => category?.sys?.id === UNIVERSAL_SUB_CATEGORY_ID) ?? false;
