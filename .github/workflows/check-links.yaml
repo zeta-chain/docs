@@ -31,11 +31,10 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: vercel env pull .env.test --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Create minimal environment file
-        run: grep -E "^CONTENTFUL_" .env.test > .env
-
       - name: Build project
         run: EXPORT=true yarn build
 
       - name: Check for broken links
+        env:
+          NEXT_PUBLIC_BASE_PATH: "" # empty string = behaves as if unset
         run: yarn check-links
