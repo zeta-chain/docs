@@ -7,6 +7,8 @@ export const DeveloperCommunitySvg = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="w-[160px] h-[80px] md:w-full md:h-full"
+      role="img"
+      aria-label="Developer Community"
     >
       <path d="M43.1062 13.6113H116.439V79.9999H43.1062V13.6113Z" fill="#00D5FF" />
       <rect x="47.5505" y="21.0273" width="3.33332" height="3.33332" rx="0.619655" fill="#006579" />
