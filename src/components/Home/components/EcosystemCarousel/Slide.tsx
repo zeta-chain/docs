@@ -50,10 +50,10 @@ export const Slide: React.FC<{
               <Image
                 fetchPriority="high"
                 className="pointer-events-none !m-0 !mb-8 !rounded-none"
-                src={slide.logo.url!}
-                width={slide.logo.width!}
-                height={slide.logo.height!}
-                alt={slide.title!}
+                src={slide.logo?.url || ""}
+                width={slide.logo?.width || 100}
+                height={slide.logo?.height || 100}
+                alt={slide.title || "Slide logo"}
               />
             )}
             <motion.div
@@ -179,11 +179,11 @@ export const Slide: React.FC<{
       >
         {image && (
           <Image
-            src={image.url!}
+            src={image?.url || ""}
             className="group-hover:scale-[105%] transition-transform duration-500 ease-in-out !m-0"
-            width={image.width!}
-            height={image.height!}
-            alt=""
+            width={image?.width || 568}
+            height={image?.height || 319}
+            alt={slide?.title || "Slide image"}
             layout="responsive"
           />
         )}
