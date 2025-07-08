@@ -24,11 +24,13 @@ export const SlideItemsIndicator: React.FC<{
       {new Array(slidesNumber).fill(null).map((_, index) => (
         <button
           type="button"
-          key={index}
+          key={`slide-indicator-${index}`}
           className={clsx("h-2 rounded-full", {
             "bg-grey-200 dark:bg-grey-600": active !== index + 1,
             "!bg-green-200": active === index + 1,
           })}
+          aria-label={`Go to slide ${index + 1}`}
+          aria-current={active === index + 1 ? "true" : "false"}
           onClick={() => setActive(index + 1)}
         />
       ))}
