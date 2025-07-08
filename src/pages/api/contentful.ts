@@ -53,10 +53,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { query, variables, cacheKey } = req.body;
 
-    if (!query || typeof query !== "string") {
-      return res.status(400).json({ error: "Query is required and must be a string" });
-    }
-
     if (!redis) {
       console.warn("No Redis URL provided, skipping cache");
     }
