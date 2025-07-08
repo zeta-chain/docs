@@ -29,7 +29,7 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: vercel env pull .env.test --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel env pull .env --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build project
         run: EXPORT=true yarn build
