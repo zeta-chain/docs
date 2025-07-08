@@ -27,7 +27,7 @@ contract call. If you want to deposit and call a universal app, use the
 `deposit_and_call` instruction instead.
 
 After the deposit is processed, the receiver receives the [ZRC-20
-version](/developers/tokens/zrc20) of the deposited token—for example, ZRC-20
+version](/developers/evm/zrc20) of the deposited token—for example, ZRC-20
 SOL.
 
 ## Deposit SPL Tokens
@@ -39,7 +39,7 @@ To deposit SPL tokens to an EOA or a universal contract, call the
 pub fn deposit_spl_token(ctx: Context<DepositSplToken>, amount: u64, receiver: [u8; 20], revert_options: Option<RevertOptions>) -> Result<()>
 ```
 
-Only [supported SPL tokens](/developers/tokens/zrc20) can be deposited. The
+Only [supported SPL tokens](/developers/evm/zrc20) can be deposited. The
 receiver gets the ZRC-20 version of the deposited token (e.g., ZRC-20 USDC.SOL).
 SPL tokens must be whitelisted before they can be deposited through the gateway.
 

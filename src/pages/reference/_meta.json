@@ -4,12 +4,33 @@
     "description": "Useful articles to help you get up and running, work with the network, APIs or simply learn key terms."
   },
   "network": {
-    "title": "Network & APIs",
-    "description": "The basics of working with our APIs, RPC Endpoints and the network"
+    "title": "RPC & Contracts",
+    "description": "RPC/API endpoints and protocol contract addresses"
   },
-  "apps": "Apps & Services",
-  "learn": {
-    "title": "Learn",
-    "description": "Common terms, questions and answers for ZetaChain"
+  "localnet": {
+    "title": "Localnet",
+    "readTime": "30 min",
+    "description": "Build and interact with your universal app in a local dev environment"
+  },
+  "toolkit": {
+    "title": "Toolkit",
+    "readTime": "30 min",
+    "description": "TypeScript SDK for building universal apps"
+  },
+  "universalkit": {
+    "title": "UniversalKit",
+    "description": "A set of ready to use React components that lets you build user interfaces for universal apps on ZetaChain",
+    "readType": "Beginner",
+    "readTime": "30 min"
+  },
+  "faucet": {
+    "title": "Faucet",
+    "description": "A guide to get Testnet ZETA through the Faucet",
+    "readTime": "5 min",
+    "readType": "Beginner"
+  },
+  "tools": {
+    "title": "More Tools",
+    "description": "More useful tools and resources"
   }
 }

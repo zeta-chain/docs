@@ -12,7 +12,7 @@
     "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
   },
   "standards": {
-    "title": "Contract Standards",
+    "title": "Universal Assets",
     "description": "Learn about the different contract standards available on ZetaChain and how to use them."
   },
   "chains": {
@@ -22,18 +22,6 @@
   "tutorials": {
     "title": "Tutorials",
     "description": "Step-by-step guides to help you master building on ZetaChain."
-  },
-  "frontend": {
-    "title": "Frontend Tutorials",
-    "description": "Build powerful universal web applications with ZetaChain."
-  },
-  "services": {
-    "title": "Apps & Services",
-    "description": "Discover useful developer-focused applications and services to enhance your development process on ZetaChain."
-  },
-  "tokens": {
-    "title": "Working with Tokens",
-    "description": "Overview of the different types of tokens available on ZetaChain and connected blockchains, and how to work with them."
   },
   "protocol": {
     "title": "Protocol Contracts",
