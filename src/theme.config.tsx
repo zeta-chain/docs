@@ -5,6 +5,7 @@ import {
   Code,
   Heading,
   HeadingLink,
+  IconGitHub,
   MainContentWrapper,
   Pre,
   StyledOrderedList,
@@ -25,7 +26,19 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
 
   // Add Theme toggle button to the navbar
   navbar: {
-    extraContent: <ThemeToggle className="hidden sm:flex" />,
+    extraContent: (
+      <>
+        <ThemeToggle className="hidden sm:flex" />
+        <a
+          href="https://github.com/zeta-chain"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 flex items-center justify-center"
+        >
+          <IconGitHub className="w-[28px] h-[28px] text-black dark:text-white" />
+        </a>
+      </>
+    ),
   },
 
   // Add extra components to all rendered pages
@@ -94,7 +107,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
 
   // Edit search component in the navbar
   search: {
-    placeholder: "Search the docs",
+    placeholder: "Search",
   },
 
   // Edit sidebar component
