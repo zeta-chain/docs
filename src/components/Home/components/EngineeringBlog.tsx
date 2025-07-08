@@ -18,6 +18,9 @@ export const EngineeringBlog: React.FC<EngineeringBlogProps> = ({
   engineeringBlogPosts,
   isLoadingEngineeringBlogPosts,
 }) => {
+  const ENGINEERING_BLOG_URL = "https://www.zetachain.com/blog/category/1YDEn2XPs3rpPas31UgBcJ/page/1";
+  const BLOG_POST_BASE_URL = "https://www.zetachain.com/blog";
+
   return (
     <div className="pt-14 mx-auto max-w-[1312px] flex flex-col xl:flex-row xl:gap-8">
       <div className="flex flex-col px-5 md:px-[72px] xl:pr-0 xl:pl-[72px] xl:w-[328px] justify-end">
@@ -37,7 +40,7 @@ export const EngineeringBlog: React.FC<EngineeringBlogProps> = ({
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://www.zetachain.com/blog/category/1YDEn2XPs3rpPas31UgBcJ/page/1"
+            href={ENGINEERING_BLOG_URL}
             className="inline-flex items-center gap-1 text-[16px] leading-[130%] font-normal text-[#00A5C6] dark:text-[#B0FF61] text-center"
           >
             <DocsSvg />
@@ -56,7 +59,7 @@ export const EngineeringBlog: React.FC<EngineeringBlogProps> = ({
           engineeringBlogPosts.map((post, index) => (
             <Link
               key={post?.slug || index}
-              href={post?.slug ? `https://www.zetachain.com/blog/${post.slug}` : ""}
+              href={post?.slug ? `${BLOG_POST_BASE_URL}/${post.slug}` : ""}
               target="_blank"
               className="w-full max-w-[272px] group relative flex-shrink-0"
             >
