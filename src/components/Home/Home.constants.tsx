@@ -17,7 +17,7 @@ export const HERO_CARD_LINKS: NarrowCardLink[] = [
     description: "Scaffold your first app",
   },
   {
-    href: "/developers/frontend/universalkit/",
+    href: "/reference/universalkit/",
     svg: <BuildWithUiSvg />,
     title: "Build with a UI",
     description: "Start with UniversalKit",
@@ -72,7 +72,7 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     readType: "Intermediate",
   },
   {
-    href: "/developers/frontend/universalkit/",
+    href: "/reference/universalkit/",
     svg: <FrontEndSvg />,
     svgBackgroundColor: "#A03595",
     topTitle: "Universal",
@@ -118,7 +118,7 @@ export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
     description: "Scaffolding & more",
   },
   {
-    href: "/developers/frontend/universalkit/",
+    href: "/reference/universalkit/",
     svg: <UniversalKitSvg />,
     title: "UniversalKit",
     description: "Ready-to-build",
@@ -130,7 +130,7 @@ export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
     description: "Robust tools",
   },
   {
-    href: "/developers/tutorials/localnet/",
+    href: "/reference/localnet/",
     svg: <LocalnetSvg />,
     title: "Localnet",
     description: "Instant testing",
