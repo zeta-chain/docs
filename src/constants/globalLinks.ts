@@ -15,7 +15,7 @@ export const globalLinks = {
   redditLink: "https://www.reddit.com/r/zetablockchain",
   supportEmailLink: "mailto:support@zetachain.com",
   publicIssueTracker: "https://github.com/zeta-chain/issues",
-  bugBountyLink: "/about/zetachain/bug-bounty",
+  bugBountyLink: "/about/info/bug-bounty",
   communityAmbassadorLink: "https://zealy.io/cw/zetachain/questboard",
   workWithUsLink: "https://www.zetachain.com/careers",
 };
