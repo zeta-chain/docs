@@ -11,7 +11,7 @@ export type NarrowCardLink = {
 
 export const HERO_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "https://github.com/zeta-chain/cli",
+    href: "/developers/tutorials/hello/",
     svg: <BuildWithTheCliSvg />,
     title: "Build with the CLI",
     description: "Scaffold your first app",
