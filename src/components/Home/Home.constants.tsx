@@ -39,7 +39,7 @@ export const EXPLORER_TUTORIALS_LINK = "/developers/tutorials/intro/";
 
 export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
   {
-    href: "/developers/",
+    href: "/developers/tutorials/swap/",
     svg: <DexSvg />,
     svgBackgroundColor: "#B0FF61",
     topTitle: "Universal",
