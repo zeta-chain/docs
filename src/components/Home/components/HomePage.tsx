@@ -11,9 +11,7 @@ import { ShipFaster } from "./ShipFaster";
 import { DividerSvg, ShortDividerSvg } from "./svg/DividerSvgs";
 import { VideosSection } from "./VideosSection";
 
-type HomePageProps = {};
-
-export const HomePage: React.FC<HomePageProps> = () => {
+export const HomePage: React.FC = () => {
   const {
     featuredEcosystemApps,
     isLoadingFeaturedEcosystemApps,
