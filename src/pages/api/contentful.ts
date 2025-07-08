@@ -41,7 +41,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await corsMiddleware(req, res);
 
+    // Validate request method
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    // Validate request body
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
     const { query, variables, cacheKey } = req.body;
+
+    if (!query || typeof query !== "string") {
+      return res.status(400).json({ error: "Query is required and must be a string" });
+    }
 
     if (!redis) {
       console.warn("No Redis URL provided, skipping cache");
