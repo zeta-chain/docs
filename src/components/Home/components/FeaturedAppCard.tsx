@@ -15,19 +15,8 @@ type FeaturedAppCardProps = {
 };
 
 export const FeaturedAppCard: React.FC<FeaturedAppCardProps> = ({ app, className }) => {
-  return (
-    <a
-      href={app.link || ""}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={clsx(
-        "flex flex-col justify-end items-center rounded-lg relative shrink-0 px-6 pb-10 overflow-hidden",
-        "w-[208px] h-[288px]",
-        "shadow-none hover:shadow-light transition-all duration-200",
-        parseEcosystemAppCardBorder(app.featuredCardBorder),
-        className
-      )}
-    >
+  const cardContent = (
+    <>
       <div className="absolute inset-0 h-full">
         <Image
           src={app.featuredCardBackgroundImage?.url || DEFAULT_APP_BACKGROUND_URL}
@@ -71,6 +60,29 @@ export const FeaturedAppCard: React.FC<FeaturedAppCardProps> = ({ app, className
           {app.description}
         </p>
       </div>
-    </a>
+    </>
   );
+
+  const baseClassName = clsx(
+    "flex flex-col justify-end items-center rounded-lg relative shrink-0 px-6 pb-10 overflow-hidden",
+    "w-[208px] h-[288px]",
+    "shadow-none transition-all duration-200",
+    parseEcosystemAppCardBorder(app.featuredCardBorder),
+    className
+  );
+
+  if (app.link) {
+    return (
+      <a
+        href={app.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={clsx(baseClassName, "hover:shadow-light")}
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  return <div className={baseClassName}>{cardContent}</div>;
 };
