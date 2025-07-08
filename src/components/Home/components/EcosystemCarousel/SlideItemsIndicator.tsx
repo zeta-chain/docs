@@ -1,6 +1,3 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import clsx from "clsx";
 
 export const SlideItemsIndicator: React.FC<{
