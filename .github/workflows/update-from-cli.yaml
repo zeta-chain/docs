@@ -1,5 +1,9 @@
 name: Update CLI docs
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   schedule:
     - cron: "0 0 * * *" # scheduled to run every day at midnight
