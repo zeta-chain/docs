@@ -21,15 +21,15 @@ jobs:
 
       - name: Update docs
         run: |
-          mkdir -p src/pages/developers/frontend/toolkit
-          rm -rf src/pages/developers/frontend/toolkit/*
-          cp -r toolkit/docs/* src/pages/developers/frontend/toolkit/
+          mkdir -p src/pages/reference/
+          rm src/pages/reference/toolkit.mdx
+          cp -r toolkit/docs/index.md src/pages/reference/toolkit.mdx
           rm -rf toolkit
 
       - name: Check for changes
         id: check-changes
         run: |
-          git add src/pages/developers/frontend/toolkit
+          git add src/pages/reference/
           git diff --cached --exit-code || echo "::set-output name=changed::true"
 
       - name: Create Pull Request
