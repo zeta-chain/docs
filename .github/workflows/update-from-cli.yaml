@@ -26,7 +26,7 @@ jobs:
       - name: Update docs
         run: |
           mkdir -p src/pages/reference/
-          rm src/pages/reference/cli.mdx
+          rm -f src/pages/reference/cli.mdx
           cp -r cli/docs/index.md src/pages/reference/cli.mdx
           rm -rf cli
 
