@@ -1,4 +1,8 @@
-name: Update Toolkit docs
+name: Update CLI docs
+
+permissions:
+  contents: write
+  pull-requests: write
 
 on:
   schedule:
@@ -16,15 +20,15 @@ jobs:
       - name: Checkout protocol-contracts repository
         uses: actions/checkout@v2
         with:
-          repository: zeta-chain/toolkit
-          path: toolkit
+          repository: zeta-chain/cli
+          path: cli
 
       - name: Update docs
         run: |
           mkdir -p src/pages/reference/
-          rm -f src/pages/reference/toolkit.mdx
-          cp -r toolkit/docs/index.md src/pages/reference/toolkit.mdx
-          rm -rf toolkit
+          rm -f src/pages/reference/cli.mdx
+          cp -r cli/docs/index.md src/pages/reference/cli.mdx
+          rm -rf cli
 
       - name: Check for changes
         id: check-changes
@@ -35,12 +39,12 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: "docs: update toolkit docs"
+          title: "docs: update CLI docs"
           body: |
-            This PR contains updates to toolkit
-            from the `zeta-chain/toolkit` repository.
+            This PR contains updates to CLI docs
+            from the `zeta-chain/cli` repository.
           commit-message: |
-            "docs: update toolkit from zeta-chain/toolkit"
+            "docs: update CLI docs from zeta-chain/cli"
           base: main
-          branch: docs/updates-from-zeta-chain-toolkit
+          branch: docs/updates-from-zeta-chain-cli
         if: steps.check-changes.outputs.changed == 'true'
