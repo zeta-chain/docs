@@ -42,5 +42,5 @@ jobs:
           commit-message: |
             "docs: update toolkit from zeta-chain/toolkit"
           base: main
-          branch: docs/updates-from-zeta-chain-node
+          branch: docs/updates-from-zeta-chain-toolkit
         if: steps.check-changes.outputs.changed == 'true'

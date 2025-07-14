@@ -46,5 +46,5 @@ jobs:
           commit-message: |
             "docs: update CLI docs from zeta-chain/cli"
           base: main
-          branch: docs/updates-from-zeta-chain-node
+          branch: docs/updates-from-zeta-chain-cli
         if: steps.check-changes.outputs.changed == 'true'
