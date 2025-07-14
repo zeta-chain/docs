@@ -22,7 +22,7 @@ jobs:
       - name: Update docs
         run: |
           mkdir -p src/pages/reference/
-          rm src/pages/reference/toolkit.mdx
+          rm -f src/pages/reference/toolkit.mdx
           cp -r toolkit/docs/index.md src/pages/reference/toolkit.mdx
           rm -rf toolkit
 
