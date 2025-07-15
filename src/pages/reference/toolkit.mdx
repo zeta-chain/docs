@@ -56,6 +56,16 @@ await zetachainCall(
 All Toolkit capabilities are also exposed through [`zetachain`
 CLI](https://github.com/zeta-chain/cli).
 
+## 🧑‍💻 Documentation
+
+Full API reference, architecture guides, and recipes live in the [docs
+site](docs/index.md).
+
+## 🤝 Contributing
+
+Issues and PRs are welcome! Please read the [contributing
+guide](CONTRIBUTING.md) before getting started.
+
 ## Functions
 
 ### evmCall()
@@ -65,15 +75,14 @@ CLI](https://github.com/zeta-chain/cli).
 Makes a cross-chain call from an EVM chain to a universal contract on ZetaChain.
 
 This function allows you to call a contract function on a destination EVM chain
-without transferring any tokens. It's useful for executing contract logic across
-different chains.
+without transferring any tokens. It's useful for executing contract logic
+across different chains.
 
 #### Parameters
 
 ##### params
 
-The call parameters including receiver address, function types/values, and
-revert options
+The call parameters including receiver address, function types/values, and revert options
 
 ###### receiver
 
@@ -81,9 +90,7 @@ revert options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -127,8 +134,7 @@ Configuration options including signer and optional gateway address
 
 ###### txOptions?
 
-\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \|
-`number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
+\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \| `number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
 
 ###### txOptions.gasLimit?
 
@@ -148,25 +154,23 @@ Configuration options including signer and optional gateway address
 
 Promise that resolves to the transaction receipt
 
----
+***
 
 ### evmDeposit()
 
-> **evmDeposit**(`params`, `options`):
-> `Promise`\<`ContractTransactionResponse`\>
+> **evmDeposit**(`params`, `options`): `Promise`\<`ContractTransactionResponse`\>
 
 Deposits tokens from an EVM chain to ZetaChain.
 
-This function allows you to transfer tokens from an EVM chain to ZetaChain. It
-supports both native tokens (ETH, BNB, AVAX, etc.) and ERC20 tokens. For ERC20
-tokens, it automatically handles token approval before deposit.
+This function allows you to transfer tokens from an EVM chain to ZetaChain.
+It supports both native tokens (ETH, BNB, AVAX, etc.) and ERC20 tokens.
+For ERC20 tokens, it automatically handles token approval before deposit.
 
 #### Parameters
 
 ##### params
 
-The deposit parameters including amount, receiver, token address, and revert
-options
+The deposit parameters including amount, receiver, token address, and revert options
 
 ###### amount
 
@@ -178,9 +182,7 @@ options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -220,8 +222,7 @@ Configuration options including signer and optional gateway address
 
 ###### txOptions?
 
-\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \|
-`number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
+\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \| `number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
 
 ###### txOptions.gasLimit?
 
@@ -241,27 +242,24 @@ Configuration options including signer and optional gateway address
 
 Promise that resolves to the transaction receipt
 
----
+***
 
 ### evmDepositAndCall()
 
-> **evmDepositAndCall**(`params`, `options`):
-> `Promise`\<`ContractTransactionResponse`\>
+> **evmDepositAndCall**(`params`, `options`): `Promise`\<`ContractTransactionResponse`\>
 
-Deposits tokens and makes a cross-chain call from an EVM chain to a universal
-contract on ZetaChain.
+Deposits tokens and makes a cross-chain call from an EVM chain to a universal contract on ZetaChain.
 
-This function combines token deposit with a contract call in a single
-transaction. It allows you to transfer tokens from an EVM chain to ZetaChain and
-immediately execute a function call on the universal contract. Supports both
-native tokens and ERC20 tokens.
+This function combines token deposit with a contract call in a single transaction.
+It allows you to transfer tokens from an EVM chain to ZetaChain and immediately
+execute a function call on the universal contract. Supports both native tokens
+and ERC20 tokens.
 
 #### Parameters
 
 ##### params
 
-The deposit and call parameters including amount, receiver, token address,
-function types/values, and revert options
+The deposit and call parameters including amount, receiver, token address, function types/values, and revert options
 
 ###### amount
 
@@ -273,9 +271,7 @@ function types/values, and revert options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -323,8 +319,7 @@ Configuration options including signer and optional gateway address
 
 ###### txOptions?
 
-\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \|
-`number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
+\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \| `number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
 
 ###### txOptions.gasLimit?
 
@@ -344,7 +339,7 @@ Configuration options including signer and optional gateway address
 
 Promise that resolves to the transaction receipt
 
----
+***
 
 ### solanaCall()
 
@@ -353,15 +348,14 @@ Promise that resolves to the transaction receipt
 Makes a cross-chain call from Solana to a universal contract on ZetaChain.
 
 This function allows you to call a contract function on a universal contract
-from Solana without transferring any tokens. It's useful for executing contract
-logic across different chains.
+from Solana without transferring any tokens. It's useful for executing
+contract logic across different chains.
 
 #### Parameters
 
 ##### params
 
-The call parameters including receiver address, function types/values, and
-revert options
+The call parameters including receiver address, function types/values, and revert options
 
 ###### receiver
 
@@ -369,9 +363,7 @@ revert options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -419,7 +411,7 @@ Configuration options including chain ID and signer keypair
 
 Promise that resolves to the transaction signature
 
----
+***
 
 ### solanaDeposit()
 
@@ -427,16 +419,15 @@ Promise that resolves to the transaction signature
 
 Deposits tokens from Solana to ZetaChain.
 
-This function allows you to transfer tokens from Solana to ZetaChain. It
-supports both native SOL and SPL tokens. For SPL tokens, it automatically
+This function allows you to transfer tokens from Solana to ZetaChain.
+It supports both native SOL and SPL tokens. For SPL tokens, it automatically
 handles token account creation and token transfer.
 
 #### Parameters
 
 ##### params
 
-The deposit parameters including amount, receiver, token mint address, and
-revert options
+The deposit parameters including amount, receiver, token mint address, and revert options
 
 ###### amount
 
@@ -448,9 +439,7 @@ revert options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -494,26 +483,24 @@ Configuration options including chain ID and signer keypair
 
 Promise that resolves to the transaction signature
 
----
+***
 
 ### solanaDepositAndCall()
 
 > **solanaDepositAndCall**(`params`, `options`): `Promise`\<`string`\>
 
-Deposits tokens and makes a cross-chain call from Solana to a universal contract
-on ZetaChain.
+Deposits tokens and makes a cross-chain call from Solana to a universal contract on ZetaChain.
 
-This function combines token deposit with a contract call in a single
-transaction. It allows you to transfer tokens from Solana to ZetaChain and
-immediately execute a function call on the universal contract. Supports both
-native SOL and SPL tokens.
+This function combines token deposit with a contract call in a single transaction.
+It allows you to transfer tokens from Solana to ZetaChain and immediately
+execute a function call on the universal contract. Supports both native SOL
+and SPL tokens.
 
 #### Parameters
 
 ##### params
 
-The deposit and call parameters including amount, receiver, token mint address,
-function types/values, and revert options
+The deposit and call parameters including amount, receiver, token mint address, function types/values, and revert options
 
 ###### amount
 
@@ -525,9 +512,7 @@ function types/values, and revert options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -579,7 +564,7 @@ Configuration options including chain ID and signer keypair
 
 Promise that resolves to the transaction signature
 
----
+***
 
 ### suiDeposit()
 
@@ -587,9 +572,9 @@ Promise that resolves to the transaction signature
 
 Deposits tokens from Sui to ZetaChain.
 
-This function allows you to transfer tokens from Sui to ZetaChain. It supports
-both native SUI and other coin types. The function automatically handles coin
-splitting and transaction construction.
+This function allows you to transfer tokens from Sui to ZetaChain.
+It supports both native SUI and other coin types. The function automatically
+handles coin splitting and transaction construction.
 
 #### Parameters
 
@@ -611,8 +596,7 @@ The deposit parameters including amount, receiver, and optional coin type
 
 ##### options
 
-Configuration options including chain ID, gas limit, gateway settings, and
-signer
+Configuration options including chain ID, gas limit, gateway settings, and signer
 
 ###### chainId
 
@@ -640,26 +624,24 @@ signer
 
 Promise that resolves when the transaction is executed
 
----
+***
 
 ### suiDepositAndCall()
 
 > **suiDepositAndCall**(`params`, `options`): `Promise`\<`void`\>
 
-Deposits tokens and makes a cross-chain call from Sui to a universal contract on
-ZetaChain.
+Deposits tokens and makes a cross-chain call from Sui to a universal contract on ZetaChain.
 
-This function combines token deposit with a contract call in a single
-transaction. It allows you to transfer tokens from Sui to ZetaChain and
-immediately execute a function call on the universal contract. Supports both
-native SUI and other coin types.
+This function combines token deposit with a contract call in a single transaction.
+It allows you to transfer tokens from Sui to ZetaChain and immediately
+execute a function call on the universal contract. Supports both native SUI
+and other coin types.
 
 #### Parameters
 
 ##### params
 
-The deposit and call parameters including amount, receiver, coin type, function
-types/values
+The deposit and call parameters including amount, receiver, coin type, function types/values
 
 ###### amount
 
@@ -683,8 +665,7 @@ types/values
 
 ##### options
 
-Configuration options including chain ID, gas limit, gateway settings, and
-signer
+Configuration options including chain ID, gas limit, gateway settings, and signer
 
 ###### chainId
 
@@ -712,7 +693,7 @@ signer
 
 Promise that resolves when the transaction is executed
 
----
+***
 
 ### tonDeposit()
 
@@ -720,8 +701,8 @@ Promise that resolves when the transaction is executed
 
 Deposits tokens from TON to ZetaChain.
 
-This function allows you to transfer TON tokens from TON blockchain to
-ZetaChain. It automatically handles wallet connection and transaction signing.
+This function allows you to transfer TON tokens from TON blockchain to ZetaChain.
+It automatically handles wallet connection and transaction signing.
 
 #### Parameters
 
@@ -775,21 +756,19 @@ Configuration options including chain ID, RPC endpoint, wallet, and API key
 
 Promise that resolves when the transaction is sent
 
----
+***
 
 ### tonDepositAndCall()
 
 > **tonDepositAndCall**(`params`, `options`): `Promise`\<`void`\>
 
-Deposits tokens and makes a cross-chain call from TON to a universal contract on
-ZetaChain.
+Deposits tokens and makes a cross-chain call from TON to a universal contract on ZetaChain.
 
-This function combines token deposit with a contract call in a single
-transaction. It allows you to transfer TON tokens from TON blockchain to
-ZetaChain and immediately execute a function call on the universal contract.
+This function combines token deposit with a contract call in a single transaction.
+It allows you to transfer TON tokens from TON blockchain to ZetaChain and immediately
+execute a function call on the universal contract.
 
 You can provide either:
-
 - `data`: Raw data string for non-EVM chains
 - `types` and `values`: For EVM chains, to encode function parameters
 
@@ -857,31 +836,27 @@ Configuration options including chain ID, RPC endpoint, wallet, and API key
 
 Promise that resolves when the transaction is sent
 
----
+***
 
 ### zetachainCall()
 
-> **zetachainCall**(`params`, `options`): `Promise`\<\{ `gasFee`: `bigint`;
-> `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
+> **zetachainCall**(`params`, `options`): `Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
 
 Makes a cross-chain call from ZetaChain to another chain
 
-This function allows you to call a contract on a destination chain from a
-universal contract on ZetaChain without transferring any tokens. It
-automatically handles gas fee calculation and approval using the specified ZRC20
-token.
+This function allows you to call a contract on a destination chain
+from a universal contract on ZetaChain without transferring any tokens.
+It automatically handles gas fee calculation and approval using the specified ZRC20 token.
 
 #### Parameters
 
 ##### params
 
-The call parameters including receiver address, call data, gas options, and
-ZRC20 token
+The call parameters including receiver address, call data, gas options, and ZRC20 token
 
 ###### callOptions
 
-\{ `gasLimit`: `string` \| `number` \| `bigint`; `isArbitraryCall`: `boolean`;
-\} = `callOptionsSchema`
+\{ `gasLimit`: `string` \| `number` \| `bigint`; `isArbitraryCall`: `boolean`; \} = `callOptionsSchema`
 
 ###### callOptions.gasLimit
 
@@ -905,9 +880,7 @@ ZRC20 token
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -955,8 +928,7 @@ Configuration options including signer and optional gateway address
 
 ###### txOptions?
 
-\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \|
-`number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
+\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \| `number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
 
 ###### txOptions.gasLimit?
 
@@ -972,32 +944,27 @@ Configuration options including signer and optional gateway address
 
 #### Returns
 
-`Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`:
-`ContractTransactionResponse`; \}\>
+`Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
 
-Promise that resolves to an object containing gas fee, gas ZRC20 address, and
-transaction receipt
+Promise that resolves to an object containing gas fee, gas ZRC20 address, and transaction receipt
 
----
+***
 
 ### zetachainWithdraw()
 
-> **zetachainWithdraw**(`params`, `options`): `Promise`\<\{ `gasFee`: `bigint`;
-> `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
+> **zetachainWithdraw**(`params`, `options`): `Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
 
 Withdraws tokens from ZetaChain to a destination chain
 
-This function allows you to transfer ZRC20 tokens from ZetaChain to a
-destination chain. It automatically handles gas fee calculation and approval. If
-the withdrawal token is the same as the gas token, it combines the approvals
-into a single transaction.
+This function allows you to transfer ZRC20 tokens from ZetaChain to a destination chain.
+It automatically handles gas fee calculation and approval. If the withdrawal token
+is the same as the gas token, it combines the approvals into a single transaction.
 
 #### Parameters
 
 ##### params
 
-The withdrawal parameters including amount, receiver address, ZRC20 token, and
-revert options
+The withdrawal parameters including amount, receiver address, ZRC20 token, and revert options
 
 ###### amount
 
@@ -1009,9 +976,7 @@ revert options
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -1051,8 +1016,7 @@ Configuration options including signer and optional gateway address
 
 ###### txOptions?
 
-\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \|
-`number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
+\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \| `number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
 
 ###### txOptions.gasLimit?
 
@@ -1068,33 +1032,28 @@ Configuration options including signer and optional gateway address
 
 #### Returns
 
-`Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`:
-`ContractTransactionResponse`; \}\>
+`Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
 
-Promise that resolves to an object containing gas fee, gas ZRC20 address, and
-transaction receipt
+Promise that resolves to an object containing gas fee, gas ZRC20 address, and transaction receipt
 
----
+***
 
 ### zetachainWithdrawAndCall()
 
-> **zetachainWithdrawAndCall**(`params`, `options`): `Promise`\<\{ `gasFee`:
-> `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
+> **zetachainWithdrawAndCall**(`params`, `options`): `Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
 
-Withdraws tokens and makes a cross-chain call from ZetaChain to a destination
-chain
+Withdraws tokens and makes a cross-chain call from ZetaChain to a destination chain
 
-This function combines token withdrawal with a contract call in a single
-transaction. It allows you to transfer ZRC20 tokens from ZetaChain to a
-destination chain and immediately execute a function call on that chain. It
-automatically handles gas fee calculation and approval.
+This function combines token withdrawal with a contract call in a single transaction.
+It allows you to transfer ZRC20 tokens from ZetaChain to a destination chain and
+immediately execute a function call on that chain. It automatically handles gas
+fee calculation and approval.
 
 #### Parameters
 
 ##### params
 
-The withdrawal and call parameters including amount, receiver address, call
-data, gas options, and ZRC20 token
+The withdrawal and call parameters including amount, receiver address, call data, gas options, and ZRC20 token
 
 ###### amount
 
@@ -1102,8 +1061,7 @@ data, gas options, and ZRC20 token
 
 ###### callOptions
 
-\{ `gasLimit`: `string` \| `number` \| `bigint`; `isArbitraryCall`: `boolean`;
-\} = `callOptionsSchema`
+\{ `gasLimit`: `string` \| `number` \| `bigint`; `isArbitraryCall`: `boolean`; \} = `callOptionsSchema`
 
 ###### callOptions.gasLimit
 
@@ -1127,9 +1085,7 @@ data, gas options, and ZRC20 token
 
 ###### revertOptions
 
-\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`:
-`string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`:
-`string`; \} = `revertOptionsSchema`
+\{ `abortAddress?`: `string`; `callOnRevert`: `boolean`; `onRevertGasLimit?`: `string` \| `number` \| `bigint`; `revertAddress?`: `string`; `revertMessage`: `string`; \} = `revertOptionsSchema`
 
 ###### revertOptions.abortAddress?
 
@@ -1177,8 +1133,7 @@ Configuration options including signer and optional gateway address
 
 ###### txOptions?
 
-\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \|
-`number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
+\{ `gasLimit?`: `string` \| `number` \| `bigint`; `gasPrice?`: `string` \| `number` \| `bigint`; `value?`: `string` \| `number` \| `bigint`; \} = `...`
 
 ###### txOptions.gasLimit?
 
@@ -1194,8 +1149,6 @@ Configuration options including signer and optional gateway address
 
 #### Returns
 
-`Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`:
-`ContractTransactionResponse`; \}\>
+`Promise`\<\{ `gasFee`: `bigint`; `gasZRC20`: `string`; `tx`: `ContractTransactionResponse`; \}\>
 
-Promise that resolves to an object containing gas fee, gas ZRC20 address, and
-transaction receipt
+Promise that resolves to an object containing gas fee, gas ZRC20 address, and transaction receipt
