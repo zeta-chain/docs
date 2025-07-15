@@ -108,7 +108,7 @@ To deploy a universal contract, you need the Gateway address from Localnet. You
 can either copy it from the output or fetch it programmatically:
 
 ```
-GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json)
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
 ```
 
 Deploy the universal contract and provide the Gateway address in the
@@ -118,7 +118,7 @@ constructor:
 UNIVERSAL=$(npx hardhat deploy --network localhost --gateway "$GATEWAY_ZETACHAIN" --json | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
-## Make a Call to the Universal App
+### Make a Call to the Universal App
 
 To call the universal app deployed on ZetaChain from a connected chain, send a
 transaction to the Gateway contract on the connected EVM chain.
@@ -144,7 +144,7 @@ the universal contract deployed on ZetaChain.
 ```
 npx zetachain evm call \
   --rpc http://localhost:8545 \
-  --gateway $GATEWAY_ZETACHAIN \
+  --gateway $GATEWAY_EVM \
   --receiver $UNIVERSAL \
   --private-key $PRIVATE_KEY \
   --types string \
@@ -181,15 +181,15 @@ npx zetachain evm call \
 ```
 
 ```
-Transaction hash: 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
+Transaction hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
 ```
 
-https://sepolia.basescan.org/tx/0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
+https://sepolia.basescan.org/tx/0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
 
 Track the status of the cross-chain transaction:
 
 ```
-npx zetachain query cctx --hash 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
+npx zetachain query cctx --hash 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
 ```
 
 ```
