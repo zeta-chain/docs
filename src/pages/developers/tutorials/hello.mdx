@@ -96,7 +96,7 @@ simulates the behavior of Gateways deployed on multiple EVM blockchains. Start
 localnet:
 
 ```
-yarn zetachain localnet start
+npx zetachain localnet start
 ```
 
 ```
@@ -137,7 +137,7 @@ Execute the `call` method on the EVM Gateway to make a call to a universal
 contract on ZetaChain:
 
 ```
-yarn zetachain evm call \
+npx zetachain evm call \
   --rpc http://localhost:8545 \
   --gateway $GATEWAY_ZETACHAIN \
   --receiver $UNIVERSAL \
@@ -168,7 +168,7 @@ cross-chain call to the universal app on ZetaChain. Make sure to use Gateway
 address on Base Sepolia.
 
 ```
-yarn zetachain evm call \
+npx zetachain evm call \
   --chain-id 84532 \
   --receiver $UNIVERSAL \
   --private-key $PRIVATE_KEY \
@@ -185,7 +185,7 @@ https://sepolia.basescan.org/tx/0xba4d93687265b8a373d61f3a386283590eaf9f6834d872
 Track the progress of a cross-chain transaction:
 
 ```
-yarn zetachain query cctx --hash 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
+npx zetachain query cctx --hash 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
 ```
 
 ```
