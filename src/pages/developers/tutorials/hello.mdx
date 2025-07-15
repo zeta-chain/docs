@@ -1,11 +1,11 @@
-In this tutorial you will create a simple universal app deployed on ZetaChain,
-which emits when called from a connected chain.
+In this tutorial, you will create a simple Universal App on ZetaChain. This app
+will emit an event when it receives a cross-chain call from a connected chain.
 
-By the end of this tutorial, you will have learned how to:
+By the end of this tutorial, you will understand how to:
 
-- Build a simple universal app
-- Deploy the universal app on localnet
-- Use the Gateway on a connected chain to call a universal app
+- Build a basic Universal App
+- Deploy it on ZetaChain Localnet
+- Use a Gateway on a connected chain to call your Universal App
 
 <iframe
   style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
@@ -17,7 +17,7 @@ By the end of this tutorial, you will have learned how to:
 
 ## Set Up Your Environment
 
-Start by creating a project and installing the necessary dependencies:
+Start by creating a new project and installing dependencies:
 
 ```bash
 npx zetachain@latest new --project hello
@@ -27,7 +27,7 @@ yarn
 
 ## Universal Contract
 
-A universal app is a contract that inherits from `UniversalContract` interface.
+A Universal App is a contract that implements the `UniversalContract` interface.
 
 ```solidity filename="contracts/Universal.sol"
 // SPDX-License-Identifier: MIT
@@ -62,56 +62,57 @@ contract Universal is UniversalContract {
 }
 ```
 
-The constructor accepts the ZetaChain's Gateway address and saves it into a
-state variable. Gateway is used to make outgoing contract calls and token
+The constructor takes ZetaChain’s Gateway address and stores it in a state
+variable. The Gateway is used for making outbound contract calls and token
 withdrawals.
 
-A universal contract must implement the `onCall` function. `onCall` is a
-function that gets triggered when the contract receives a call from a connected
-chain through the Gateway. This function processes the incoming data, which
-includes:
+A universal contract must implement the `onCall` function. This function is
+triggered when the contract receives a call from a connected chain via the
+Gateway. The function processes incoming data, which includes:
 
 - `context`: A `MessageContext` struct containing:
-  - `chainID`: The integer ID of the connected chain from which the cross-chain
-    call originated.
-  - `sender`: The address (EOA or contract) that initiated the gateway call on
-    the connected chain.
-  - `origin`: deprecated.
-- `zrc20`: The address of the ZRC-20 token representing the asset from the
-  source chain.
-- `amount`: The number of tokens transferred.
-- `message`: The encoded data payload.
+  - `chainID`: The chain ID of the connected chain that initiated the
+    cross-chain call.
+  - `sender`: The address (EOA or contract) that called the Gateway on the
+    connected chain.
+  - `origin`: Deprecated.
+- `zrc20`: The address of the ZRC-20 token representing assets from the source
+  chain.
+- `amount`: The amount of tokens transferred.
+- `message`: The encoded payload data.
 
-In this example, `onCall` simply decodes the message into a variable and emits
-an event.
+In this example, `onCall` decodes the message into a string and emits an event.
 
 `onCall` should only be called by the Gateway to ensure that it is only called
 as a response to a call on a connected chain and that you can trust the values
 of the function parameters.
 
-## Options 1: Deploy on Localnet
+## Option 1: Deploy on Localnet
 
-[Localnet](/reference/localnet) is a local development environment, which
-simulates the behavior of Gateways deployed on multiple EVM blockchains. Start
-localnet:
+[Localnet](/reference/localnet) is a local development environment that
+simulates multiple connected EVM chains with Gateways.
+
+Start Localnet:
 
 ```
 npx zetachain localnet start
 ```
 
+Compile your contracts:
+
 ```
 npx hardhat compile --force
 ```
 
-To deploy a universal contract, you need the ZetaChain Gateway address. You can
-find it in the Localnet output or fetch it programmatically.
+To deploy a universal contract, you need the Gateway address from Localnet. You
+can either copy it from the output or fetch it programmatically:
 
 ```
 GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json)
 ```
 
-Deploy the universal contract and pass ZetaChain's Gateway address to the
-constructor.
+Deploy the universal contract and provide the Gateway address in the
+constructor:
 
 ```
 UNIVERSAL=$(npx hardhat deploy --network localhost --gateway "$GATEWAY_ZETACHAIN" --json | jq -r .contractAddress) && echo $UNIVERSAL
@@ -119,22 +120,26 @@ UNIVERSAL=$(npx hardhat deploy --network localhost --gateway "$GATEWAY_ZETACHAIN
 
 ## Make a Call to the Universal App
 
-To call the universal app deployed on ZetaChain from a connected chain, make a
-call to the Gateway contract on a connected EVM chain. You can find it in the
-Localnet output or fetch it programmatically.
+To call the universal app deployed on ZetaChain from a connected chain, send a
+transaction to the Gateway contract on the connected EVM chain.
+
+Fetch the Gateway address for the connected chain:
 
 ```
 GATEWAY_EVM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json)
 ```
 
-You also need an account with tokens:
+Alternatively, you can copy the Gateway address directly from the table printed
+in the Localnet terminal output when Localnet starts.
+
+Fetch a private key with pre-funded tokens on the connected chain:
 
 ```
 PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json)
 ```
 
-Execute the `call` method on the EVM Gateway to make a call to a universal
-contract on ZetaChain:
+Execute the `call` method on the connected chain’s Gateway to send a message to
+the universal contract deployed on ZetaChain.
 
 ```
 npx zetachain evm call \
@@ -146,26 +151,25 @@ npx zetachain evm call \
   --values hello
 ```
 
-After the transaction is processed you will see an `[ZetaChain]: Event from onCall` message in the terminal where Localnet is running.
+Once the transaction is processed, you’ll see an `[ZetaChain]: Event from onCall` log in the Localnet terminal.
 
 ## Option 2: Deploy on Testnet
 
-Set the private key in `.env` file:
+Set your private key in the `.env` file:
 
 ```
 PRIVATE_KEY=...
 ```
 
-Deploy the contract to ZetaChain's testnet using the Gateway address from
-[`Contract Addresses page`](/reference/network/contracts/).
+Deploy the contract to ZetaChain’s testnet using the Gateway address from the
+[Contract Addresses page](/reference/network/contracts/):
 
 ```
 UNIVERSAL=$(npx hardhat deploy --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --json | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
-Make a transaction to the Gateway on the Base Sepolia testnet to make a
-cross-chain call to the universal app on ZetaChain. Make sure to use Gateway
-address on Base Sepolia.
+Make a transaction to the Gateway on Base Sepolia (or another connected testnet)
+to call the universal app on ZetaChain.
 
 ```
 npx zetachain evm call \
@@ -182,7 +186,7 @@ Transaction hash: 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c
 
 https://sepolia.basescan.org/tx/0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
 
-Track the progress of a cross-chain transaction:
+Track the status of the cross-chain transaction:
 
 ```
 npx zetachain query cctx --hash 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
