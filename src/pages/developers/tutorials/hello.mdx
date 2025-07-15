@@ -91,9 +91,9 @@ of the function parameters.
 
 ## Options 1: Deploy on Localnet
 
-[Localnet](/reference/localnet) is a local development environment,
-which simulates the behavior of Gateways deployed on multiple EVM blockchains.
-Start localnet:
+[Localnet](/reference/localnet) is a local development environment, which
+simulates the behavior of Gateways deployed on multiple EVM blockchains. Start
+localnet:
 
 ```
 yarn zetachain localnet start
@@ -103,56 +103,64 @@ yarn zetachain localnet start
 npx hardhat compile --force
 ```
 
+To deploy a universal contract, you need the ZetaChain Gateway address. You can
+find it in the Localnet output or fetch it programmatically.
+
+```
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json)
+```
+
 Deploy the universal contract and pass ZetaChain's Gateway address to the
-constructor. You can find the Gateway address in the output of Localnet.
+constructor.
 
 ```
-npx hardhat deploy --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
-```
-
-```
-🚀 Successfully deployed "Universal" contract on localhost.
-📜 Contract address: 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
+UNIVERSAL=$(npx hardhat deploy --network localhost --gateway "$GATEWAY_ZETACHAIN" --json | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 ## Make a Call to the Universal App
 
 To call the universal app deployed on ZetaChain from a connected chain, make a
-call to the Gateway contract on a connected EVM chain using the `evm-call` task:
+call to the Gateway contract on a connected EVM chain. You can find it in the
+Localnet output or fetch it programmatically.
 
 ```
-npx hardhat evm-call \
-  --network localhost \
-  --gateway-evm 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0 \
-  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
-  --types '["string"]' alice
+GATEWAY_EVM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json)
 ```
 
-Pass the EVM Gateway Address from the Localnet's table of addresses and the
-universal contract address as the receiver. A universal app expects to receive a
-single string in the message, so pass the appropriate type and value to the
-command.
+You also need an account with tokens:
+
+```
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json)
+```
+
+Execute the `call` method on the EVM Gateway to make a call to a universal
+contract on ZetaChain:
+
+```
+yarn zetachain evm call \
+  --rpc http://localhost:8545 \
+  --gateway $GATEWAY_ZETACHAIN \
+  --receiver $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --types string \
+  --values hello
+```
 
 After the transaction is processed you will see an `[ZetaChain]: Event from onCall` message in the terminal where Localnet is running.
 
 ## Option 2: Deploy on Testnet
 
-Before proceeding, you might want to check out the [Testnet
-Setup](/nodes/start-here/setup) guide to learn how to set up an account
-and request testnet tokens.
+Set the private key in `.env` file:
+
+```
+PRIVATE_KEY=...
+```
 
 Deploy the contract to ZetaChain's testnet using the Gateway address from
 [`Contract Addresses page`](/reference/network/contracts/).
 
 ```
-npx hardhat deploy --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7
-```
-
-```
-🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
-
-🚀 Successfully deployed "Universal" contract on zeta_testnet.
-📜 Contract address: 0x11998e1A5D2e770753263376ceE78B14c9617f16
+UNIVERSAL=$(npx hardhat deploy --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --json | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 Make a transaction to the Gateway on the Base Sepolia testnet to make a
@@ -160,19 +168,32 @@ cross-chain call to the universal app on ZetaChain. Make sure to use Gateway
 address on Base Sepolia.
 
 ```
-npx hardhat evm-call \
-  --network base_sepolia \
-  --gateway-evm 0x0c487a766110c85d301d96e33579c5b317fa4995 \
-  --receiver 0x11998e1A5D2e770753263376ceE78B14c9617f16 \
-  --types '["string"]' alice
+yarn zetachain evm call \
+  --chain-id 84532 \
+  --receiver $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --types string \
+  --values hello
 ```
 
 ```
-Transaction hash: 0x3fbed0a3dc48eda00212aff6e930940d84b142f7da316b9186f0c68edd0793b2
+Transaction hash: 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
 ```
 
-https://sepolia.basescan.org/tx/0x3fbed0a3dc48eda00212aff6e930940d84b142f7da316b9186f0c68edd0793b2
+https://sepolia.basescan.org/tx/0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
 
-You can track the progress of a cross-chain transaction using ZetaChain's API:
+Track the progress of a cross-chain transaction:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x3fbed0a3dc48eda00212aff6e930940d84b142f7da316b9186f0c68edd0793b2
+```
+yarn zetachain query cctx --hash 0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978
+```
+
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0x22ccde616f77f9de50ab86502f6431f6da08537b8edfe6fcfaaded1d5de3327c
+Tx Hash:  0xba4d93687265b8a373d61f3a386283590eaf9f6834d8723a59eec459c78c6978 (on chain 84532)
+Tx Hash:  0x308baafcc3c6d20e65ddbdc8bece0a9f4412986def91dcb473d0c1f56205824f (on chain 7001)
+Sender:   0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+Receiver: 0xE519Fcc78D59bB080668DEbF5e59cC162D445895
+Message:  0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000
+```
