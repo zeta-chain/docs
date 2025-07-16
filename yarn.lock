@@ -9064,7 +9064,7 @@ graphql-ws@^6.0.3:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-6.0.5.tgz#24adcf444602df83477b9e07cd4b57f411ada024"
   integrity sha512-HzYw057ch0hx2gZjkbgk1pur4kAtgljlWRP+Gccudqm3BRrTpExjWCQ9OHdIsq47Y6lHL++1lTvuQHhgRRcevw==
 
-graphql@*, graphql@^16.11.0:
+graphql@*:
   version "16.11.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.11.0.tgz#96d17f66370678027fdf59b2d4c20b4efaa8a633"
   integrity sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==
