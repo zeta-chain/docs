@@ -21,33 +21,9 @@ jobs:
 
       - name: Update module docs
         run: |
-          mkdir -p src/pages/developers/architecture/modules
-          rm -rf src/pages/developers/architecture/modules/*
-          cp -r node/docs/spec/* src/pages/developers/architecture/modules/
-
-      - name: Create modules index file
-        run: |
-          # Create the frontmatter and header
-          cat > src/pages/developers/architecture/modules/index.mdx << 'EOF'
-          ---
-          title: Modules Overview
-          description: Overview of ZetaChain modules
-          ---
-
-          # Modules Overview
-
-          This section provides documentation for the various modules that make up the ZetaChain protocol.
-
-          ## Available Modules
-          EOF
-
-          # Append the list of modules
-          for dir in src/pages/developers/architecture/modules/*/; do
-            if [ -d "$dir" ]; then
-              module_name=$(basename "$dir")
-              echo "- [${module_name^} Module](./modules/${module_name}/messages)" >> src/pages/developers/architecture/modules/index.mdx
-            fi
-          done
+          mkdir -p src/pages/developers/architecture/
+          rm -f src/pages/developers/architecture/modules.mdx
+          cp -r node/docs/spec/generated.md src/pages/developers/architecture/modules.mdx
 
       - name: Update zetacored CLI docs
         run: |
@@ -65,7 +41,7 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          git add src/pages/developers/architecture/modules
+          git add src/pages/developers/architecture/
           git add public/data/openapi.swagger.yaml
           git diff --cached --exit-code || echo "::set-output name=changed::true"
 
