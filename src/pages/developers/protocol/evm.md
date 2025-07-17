@@ -555,12 +555,12 @@ address public constant PROTOCOL_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6
 ```
 
 
-### REGISTRY
-The constant address of the registry contract on ZetaChain
+### PAUSER_ROLE
+New role identifier for pauser role.
 
 
 ```solidity
-address public constant REGISTRY = 0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394;
+bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 ```
 
 
@@ -573,12 +573,12 @@ address public zetaToken;
 ```
 
 
-### PAUSER_ROLE
-New role identifier for pauser role.
+### registry
+The address of the registry contract on ZetaChain
 
 
 ```solidity
-bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+address public registry;
 ```
 
 
@@ -654,6 +654,21 @@ Unpause contract.
 ```solidity
 function unpause() external onlyRole(PAUSER_ROLE);
 ```
+
+### setRegistryAddress
+
+Set registry address, callable only by DEFAULT_ADMIN_ROLE.
+
+
+```solidity
+function setRegistryAddress(address _registry) external onlyRole(DEFAULT_ADMIN_ROLE);
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`_registry`|`address`|The address of the registry contract.|
+
 
 ### _safeTransferFrom
 
