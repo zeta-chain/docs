@@ -15,15 +15,44 @@ By the end of this tutorial, you will understand how to:
   allowfullscreen
 ></iframe>
 
+## Prerequisites
+
+Before embarking on your ZetaChain development journey, ensure your system is
+equipped with the following essential tools:
+
+- [Node.js](https://nodejs.org/en) (v18 or later recommended): A JavaScript
+  runtime environment crucial for managing project dependencies and executing
+  commands.
+- [Yarn](https://yarnpkg.com/) (or npm): A package manager used to install,
+  update, and manage project libraries and dependencies. You can choose either
+  Yarn or npm based on your preference.
+- [Git](https://git-scm.com/): A distributed version control system for tracking
+  changes in source code during software development. It's essential for
+  managing your project and collaborating with others.
+- [jq](https://jqlang.org/) (for shell scripts): A lightweight and flexible
+  command-line JSON processor. It's particularly useful for parsing and
+  manipulating JSON data within shell scripts, which will be helpful for
+  extracting specific information from localnet output.
+
 ## Set Up Your Environment
 
-Start by creating a new project and installing dependencies:
+To kickstart your ZetaChain project, begin by initializing a new project using
+the ZetaChain CLI (command-line interface). This will set up the foundational
+project structure.
 
 ```bash
 npx zetachain@latest new --project hello
 cd hello
 yarn
 ```
+
+First, `npx zetachain@latest new --project hello` uses `npx` to execute the
+latest version of the `zetachain` package, creating a new project directory
+named `hello`. Then, `cd hello` navigates you into the newly created project
+directory. Finally, `yarn` (or `npm install` if you prefer npm) installs all the
+necessary project dependencies as defined in the `package.json` file. This
+ensures that all required libraries and tools are available for your development
+environment.
 
 ## Universal Contract
 
@@ -89,23 +118,75 @@ of the function parameters.
 
 ## Option 1: Deploy on Localnet
 
-[Localnet](/reference/localnet) is a local development environment that
-simulates multiple connected EVM chains with Gateways.
+This section guides you through the process of deploying and interacting with a
+Universal Contract on ZetaChain [Localnet](/reference/localnet). Working with a
+Localnet provides a safe and isolated environment for testing and development
+without incurring real network fees or affecting live deployments.
 
-Start Localnet:
+> For optimal workflow, it is highly recommended to use a split terminal or two
+> separate terminal windows. This allows you to keep the localnet running
+> continuously in one terminal while executing commands and interacting with
+> your project in the other, streamlining your development process.
+
+The first step is to launch your local ZetaChain network. This will simulate a
+complete ZetaChain environment on your machine.
+
+- Open a new terminal window dedicated to running the Localnet.
+- In this terminal, execute the following command:
 
 ```
 npx zetachain localnet start
 ```
 
-Compile your contracts:
+This command will initiate the local ZetaChain network. It may take a moment for
+all components to spin up. You'll know the localnet is ready when you see a
+formatted table printed in the terminal. This table will display crucial
+contract addresses for different chains, including ZETACHAIN, ETHEREUM, and BNB.
+These addresses are essential for interacting with your local network.
+
+> **Do not close this terminal!** It is imperative that the localnet remains
+> running throughout the subsequent steps. Closing this terminal will shut down
+> your local network, and you'll need to restart it to continue.
+
+Once Localnet is active, the next step is to compile your smart contracts. This
+process translates your human-readable Solidity code into bytecode that the
+Ethereum Virtual Machine (EVM) can understand and execute.
+
+- Open a second terminal window (or split your existing terminal) dedicated to
+  your project commands.
+- Navigate to your project directory (if you're not already there).
+- Run the following command:
 
 ```
 npx hardhat compile --force
 ```
 
-To deploy a universal contract, you need the Gateway address from Localnet. You
-can either copy it from the output or fetch it programmatically:
+The `npx hardhat compile` command instructs Hardhat to compile all Solidity
+smart contracts within your project. The `--force` flag ensures that all
+contracts are recompiled, even if Hardhat believes they haven't changed. This is
+good practice to ensure you're working with the latest compiled versions.
+Successful compilation will generate bytecode for your contracts.
+
+To deploy and interact with contracts on the ZetaChain localnet, you'll need the
+address of the ZetaChain Gateway contract. This contract acts as the entry point
+for cross-chain interactions on ZetaChain.
+
+- While your localnet is still running in its dedicated terminal, carefully
+  examine its output.
+- Copy the Gateway contract address from the localnet terminal output. Look for
+  the row labeled `gateway` under the `ZETACHAIN` section. It will typically
+  appear in a format similar to this:
+
+```
+| gateway │ '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6' |
+```
+
+Copy only the hexadecimal address (e.g.,
+`0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6`). Do not include the single quotes
+or any other surrounding text.
+
+Alternatively, run the following command to get the Gateway address
+programmatically:
 
 ```
 GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
@@ -155,11 +236,53 @@ Once the transaction is processed, you’ll see an `[ZetaChain]: Event from onCa
 
 ## Option 2: Deploy on Testnet
 
-Set your private key in the `.env` file:
+### Wallet & Environment Setup
+
+To interact with and deploy smart contracts on ZetaChain, you'll need an
+EVM-compatible private key and a secure way to manage it within your project
+environment.
+
+An EVM-compatible private key is fundamental for signing transactions, which are
+necessary for deploying and interacting with smart contracts on the ZetaChain
+EVM. You have a couple of reliable options for generating this key:
+
+- Using MetaMask: MetaMask is a popular browser extension that serves as a
+  cryptocurrency wallet and a gateway to decentralized applications. You can
+  create a new wallet in MetaMask, and it will generate a private key for you.
+  Be sure to back up your seed phrase securely.
+- Using Node.js Command: For a quick and direct generation via the command line,
+  you can use the following Node.js command:
 
 ```
-PRIVATE_KEY=...
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
+
+This command utilizes Node.js's built-in `crypto` module to generate 32 random
+bytes, which are then converted into a 64-character hexadecimal string. This
+string is your private key. It is critically important to keep this private key
+absolutely secure and confidential. Never share it, commit it to version
+control, or expose it in any public forum. Loss or compromise of your private
+key means loss of control over your assets and contracts.
+
+To safeguard your private key and prevent it from being accidentally committed
+to version control (like Git), it's best practice to store it in a `.env` file.
+This file is typically excluded from source control using a `.gitignore` file.
+
+In the root directory of your newly initialized project, create a file named
+`.env` if it doesn't already exist. Then, add your private key to this file in
+the following format:
+
+```
+PRIVATE_KEY=your_private_key_here
+```
+
+Crucially, replace `your_private_key_here` with the 64-character hexadecimal
+string you generated in the previous step. Ensure that you do not include any
+quotes or spaces around the private key value. The `.env` file allows your
+application to access environment variables without hardcoding sensitive
+information directly into your codebase.
+
+### Deploy the Contract on ZetaChain
 
 Deploy the contract to ZetaChain’s testnet using the Gateway address from the
 [Contract Addresses page](/reference/network/contracts/):
@@ -168,8 +291,19 @@ Deploy the contract to ZetaChain’s testnet using the Gateway address from the
 UNIVERSAL=$(npx hardhat deploy --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --json | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
-Make a transaction to the Gateway on Base Sepolia (or another connected testnet)
-to call the universal app on ZetaChain.
+### Call a Universal Contract from Base
+
+This section details the process of initiating a cross-chain transaction from a
+connected testnet, specifically Base Sepolia, to interact with a universal
+application deployed on ZetaChain. The process involves two primary steps:
+making the initial transaction and then tracking its cross-chain status.
+
+To call the universal app on ZetaChain, a transaction must be sent to the
+Gateway on Base Sepolia. This is achieved using the `npx zetachain evm call`
+command, which facilitates the execution of an EVM (Ethereum Virtual Machine)
+transaction.
+
+The command structure is as follows:
 
 ```
 npx zetachain evm call \
@@ -180,24 +314,78 @@ npx zetachain evm call \
   --values hello
 ```
 
+Explanation of Parameters:
+
+- `--chain-id 84532`: This specifies the chain ID of Base Sepolia, the source
+  network for the transaction.
+- `--receiver $UNIVERSAL`: This parameter designates the address of the
+  universal contract on ZetaChain that the transaction intends to interact with.
+  The `$UNIVERSAL` variable should be replaced with the actual contract address.
+- `--private-key $PRIVATE_KEY`: This is the private key associated with the
+  sending wallet on Base Sepolia. It is crucial for signing the transaction. The
+  `$PRIVATE_KEY` variable must be replaced with the actual private key.
+- `--types string`: This indicates the data type of the value being sent. In
+  this case, it's a string.
+- `--values hello`: This is the actual value being passed to the universal
+  application. Here, the string "hello" is sent as a message to the universal
+  contract on ZetaChain.
+
+Upon successful execution of this command, a transaction hash is generated,
+confirming the initiation of the transaction on Base Sepolia.
+
 ```
 Transaction hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
 ```
 
+You can verify the transaction on the Base Sepolia block explorer:
+
 https://sepolia.basescan.org/tx/0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
 
-Track the status of the cross-chain transaction:
+### Tracking the Cross-Chain Transaction Status
+
+After the transaction is initiated on Base Sepolia, ZetaChain's protocol
+facilitates its cross-chain transfer and execution on the destination chain
+(ZetaChain). To monitor the status of this cross-chain transaction, the `npx zetachain query cctx` command is used, providing real-time updates on the
+transaction's journey.
+
+The command for tracking is:
 
 ```
 npx zetachain query cctx --hash 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
 ```
 
+- `--hash 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc`:
+  This refers to the transaction hash obtained from the initial transaction on
+  Base Sepolia.
+
+Example Output and Interpretation:
+
 ```
 84532 → 7001 ✅ OutboundMined
-CCTX:     0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3b
+CCTX:     0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3bTx
 Tx Hash:  0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc (on chain 84532)
 Tx Hash:  0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc (on chain 7001)
 Sender:   0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 Receiver: 0xFeb4F33d424D6685104624d985095dacab567151
 Message:  0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000
 ```
+
+Key Information from the Output:
+
+- `84532 → 7001`: This clearly indicates the cross-chain flow, from Base Sepolia
+  (chain ID 84532) to ZetaChain (chain ID 7001). The ✅ symbol signifies a
+  successful outbound mining of the cross-chain transaction.
+- `OutboundMinedCCTX: 0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3b`: This is
+  the hash of the Cross-Chain Transaction (CCTX) on ZetaChain, representing the
+  internal identifier for this specific cross-chain operation.
+- `Tx Hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc (on chain 84532)`: This confirms the original transaction hash on the source
+  chain (Base Sepolia).
+- `Tx Hash: 0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc (on chain 7001)`: This is the transaction hash of the execution on ZetaChain,
+  indicating that the universal application has been successfully called on the
+  destination chain.
+- `Sender: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32`: The address of the
+  sender on the originating chain.
+- `Receiver: 0xFeb4F33d424D6685104624d985095dacab567151`: The address of the
+  receiver contract on ZetaChain, which is the universal application in this
+  context.
+- `Message: 0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000`
