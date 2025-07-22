@@ -56,10 +56,6 @@ await zetachainCall(
 All Toolkit capabilities are also exposed through [`zetachain`
 CLI](https://github.com/zeta-chain/cli).
 
-## 🧑‍💻 Documentation
-
-Full API reference is in [docs/index.md](https://github.com/zeta-chain/toolkit/blob/main/docs/index.md).
-
 ## Functions
 
 ### evmCall()
