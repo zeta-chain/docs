@@ -10,5 +10,9 @@
   "ton": {
     "title": "TON",
     "description": "TON protocol contracts"
+  },
+  "sui": {
+    "title": "Sui",
+    "description": "Sui protocol contracts"
   }
 }
