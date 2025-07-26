@@ -875,6 +875,36 @@ function withdraw(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
+### withdraw
+
+Withdraw ZRC20 tokens to an external chain with custom gas limit.
+
+*Use this function for simple gas ZRC20 withdrawals to the receivers that are
+either smart contract accounts or smart contracts with custom receive/fallback implementations.*
+
+
+```solidity
+function withdraw(
+    bytes memory receiver,
+    uint256 amount,
+    address zrc20,
+    uint256 gasLimit,
+    RevertOptions calldata revertOptions
+)
+    external
+    whenNotPaused;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`receiver`|`bytes`|The receiver address on the external chain.|
+|`amount`|`uint256`|The amount of tokens to withdraw.|
+|`zrc20`|`address`|The address of the ZRC20 token.|
+|`gasLimit`|`uint256`|The custom gas limit for the withdrawal (must be >= MIN_GAS_LIMIT).|
+|`revertOptions`|`RevertOptions`|Revert options.|
+
+
 ### withdrawAndCall
 
 Withdraw ZRC20 tokens and call a smart contract on an external chain.
