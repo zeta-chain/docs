@@ -44,15 +44,22 @@ project structure.
 npx zetachain@latest new --project hello
 cd hello
 yarn
+foundry soldeer update
 ```
 
 First, `npx zetachain@latest new --project hello` uses `npx` to execute the
 latest version of the `zetachain` package, creating a new project directory
-named `hello`. Then, `cd hello` navigates you into the newly created project
-directory. Finally, `yarn` (or `npm install` if you prefer npm) installs all the
-necessary project dependencies as defined in the `package.json` file. This
-ensures that all required libraries and tools are available for your development
-environment.
+named `hello`.
+
+Then, `cd hello` navigates you into the newly created project directory.
+
+Next, `yarn` (or `npm install` if you prefer npm) installs all the necessary
+project dependencies as defined in the `package.json` file. This ensures that
+all required libraries and tools are available for your development environment.
+
+Finally, `foundry soldeer update` synchronizes and updates your Solidity
+dependencies managed by Foundry’s Soldeer, ensuring that your contracts are
+built against the latest compatible versions of external libraries.
 
 ## Universal Contract
 
@@ -158,13 +165,11 @@ Ethereum Virtual Machine (EVM) can understand and execute.
 - Run the following command:
 
 ```
-npx hardhat compile --force
+forge build
 ```
 
-The `npx hardhat compile` command instructs Hardhat to compile all Solidity
-smart contracts within your project. The `--force` flag ensures that all
-contracts are recompiled, even if Hardhat believes they haven't changed. This is
-good practice to ensure you're working with the latest compiled versions.
+The `forge build` command tells Foundry to compile all Solidity smart contracts
+within your project, ensuring you're working with the latest compiled versions.
 Successful compilation will generate bytecode for your contracts.
 
 To deploy and interact with contracts on the ZetaChain localnet, you'll need the
@@ -192,11 +197,23 @@ programmatically:
 GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
 ```
 
+Fetch a private key with pre-funded tokens on the connected chain:
+
+```
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+```
+
 Deploy the universal contract and provide the Gateway address in the
 constructor:
 
 ```
-UNIVERSAL=$(npx hardhat deploy --network localhost --gateway "$GATEWAY_ZETACHAIN" --json | jq -r .contractAddress) && echo $UNIVERSAL
+UNIVERSAL=$(forge create Universal \
+  --rpc-url http://localhost:8545 \
+  --private-key $PRIVATE_KEY \
+  --evm-version paris \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
 ```
 
 ### Make a Call to the Universal App
@@ -207,17 +224,11 @@ transaction to the Gateway contract on the connected EVM chain.
 Fetch the Gateway address for the connected chain:
 
 ```
-GATEWAY_EVM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json)
+GATEWAY_EVM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_EVM
 ```
 
 Alternatively, you can copy the Gateway address directly from the table printed
 in the Localnet terminal output when Localnet starts.
-
-Fetch a private key with pre-funded tokens on the connected chain:
-
-```
-PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json)
-```
 
 Execute the `call` method on the connected chain’s Gateway to send a message to
 the universal contract deployed on ZetaChain.
@@ -250,37 +261,17 @@ EVM. You have a couple of reliable options for generating this key:
   cryptocurrency wallet and a gateway to decentralized applications. You can
   create a new wallet in MetaMask, and it will generate a private key for you.
   Be sure to back up your seed phrase securely.
-- Using Node.js Command: For a quick and direct generation via the command line,
-  you can use the following Node.js command:
+- Using cast CLI: For a quick and direct generation via the command line, you
+  can use the following command:
 
 ```
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+PRIVATE_KEY=$(cast wallet new --json | jq -r '.[0].private_key') && echo $PRIVATE_KEY
 ```
 
-This command utilizes Node.js's built-in `crypto` module to generate 32 random
-bytes, which are then converted into a 64-character hexadecimal string. This
-string is your private key. It is critically important to keep this private key
-absolutely secure and confidential. Never share it, commit it to version
-control, or expose it in any public forum. Loss or compromise of your private
-key means loss of control over your assets and contracts.
-
-To safeguard your private key and prevent it from being accidentally committed
-to version control (like Git), it's best practice to store it in a `.env` file.
-This file is typically excluded from source control using a `.gitignore` file.
-
-In the root directory of your newly initialized project, create a file named
-`.env` if it doesn't already exist. Then, add your private key to this file in
-the following format:
-
-```
-PRIVATE_KEY=your_private_key_here
-```
-
-Crucially, replace `your_private_key_here` with the 64-character hexadecimal
-string you generated in the previous step. Ensure that you do not include any
-quotes or spaces around the private key value. The `.env` file allows your
-application to access environment variables without hardcoding sensitive
-information directly into your codebase.
+This command leverages Foundry’s `cast` utility to generate a new EVM wallet.
+The `--json` flag outputs the wallet details in JSON format, and the `jq` query
+extracts the `private_key` field, printing it as a 64-character hexadecimal
+string.
 
 ### Deploy the Contract on ZetaChain
 
@@ -288,7 +279,13 @@ Deploy the contract to ZetaChain’s testnet using the Gateway address from the
 [Contract Addresses page](/reference/network/contracts/):
 
 ```
-UNIVERSAL=$(npx hardhat deploy --network zeta_testnet --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 --json | jq -r .contractAddress) && echo $UNIVERSAL
+UNIVERSAL=$(forge create Universal \
+  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
+  --private-key $PRIVATE_KEY \
+  --evm-version paris \
+  --broadcast \
+  --json \
+  --constructor-args 0x6c533f7fe93fae114d0954697069df33c9b74fd7 | jq -r .deployedTo)
 ```
 
 ### Call a Universal Contract from Base
