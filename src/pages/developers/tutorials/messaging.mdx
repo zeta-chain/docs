@@ -6,30 +6,38 @@ to keep all contract logic on connected EVM chains. Messages are automatically
 routed between them through ZetaChain, without requiring any contracts to be
 deployed on ZetaChain itself.
 
+> Why use this pattern? Unlike universal apps deployed directly on ZetaChain,
+> here all business logic stays on the connected EVM chains you already know.
+> ZetaChain merely transports the payload—no contract code is deployed on
+> ZetaChain itself.
+
 By the end of this tutorial, you will:
 
-* Deploy a messaging contract to two EVM testnets (Base and Ethereum Sepolia)
-* Link them for cross-chain communication
-* Send a message and token value from one to the other
-* Track the cross-chain transaction from source to destination
+- Deploy a messaging contract to two EVM testnets (Base and Ethereum Sepolia)
+- Link them for cross-chain communication
+- Send a message and token value from one to the other
+- Track the cross-chain transaction from source to destination
 
 ## Prerequisites
 
 Make sure you have the following installed:
 
-* [Node.js](https://nodejs.org/en) v18+
-* [Yarn](https://yarnpkg.com/)
-* [Foundry](https://getfoundry.sh/)
-* [jq](https://jqlang.org/) for parsing JSON in shell scripts
-* A funded private key for both Base Sepolia (84532) and Ethereum Sepolia
+- [Node.js](https://nodejs.org/en) v18+
+- [Yarn](https://yarnpkg.com/)
+- [Foundry](https://getfoundry.sh/)
+- [jq](https://jqlang.org/) for parsing JSON in shell scripts
+- A funded private key for both Base Sepolia (84532) and Ethereum Sepolia
   (11155111)
 
-
 ## Create a Project
+
+Create a new project using the `messaging` template:
 
 ```
 npx zetachain new --project messaging
 ```
+
+Install TypeSCcipt and Foundry dependencies:
 
 ```
 cd messaging
@@ -37,13 +45,173 @@ yarn
 forge soldeer update
 ```
 
+Compile contracts:
+
 ```
 forge build
 ```
 
+Save your private key in an environment variable so shell scripts can read it:
+
 ```
 PRIVATE_KEY=...
 ```
+
+## Messaging Contract
+
+To enable cross-chain messaging, your contract must inherit from ZetaChain’s
+Messaging base contract and implement a few required functions.
+
+Import the `Messaging.sol` contract from the ZetaChain standard contracts
+package:
+
+```solidity
+import "@zetachain/standard-contracts/contracts/messaging/contracts/Messaging.sol";
+```
+
+Inherit from `Messaging` in your contract:
+
+```solidity
+contract Example is Messaging { ... }
+```
+
+Initialize the contract with the required parameters in the constructor:
+
+```solidity
+constructor(
+    address payable _gateway,
+    address owner,
+    address _router
+) Messaging(_gateway, owner, _router) {}
+```
+
+The Messa`ging base contract provides built-in access to Gateway and Router, and
+ensures your contract is correctly wired into ZetaChain’s cross-chain messaging
+system.
+
+You must implement three core internal functions for handling message delivery
+and fallback:
+
+#### onMessageReceive
+
+This is called automatically on the destination chain when a cross-chain message
+arrives successfully.
+
+```solidity
+function onMessageReceive(
+    bytes memory data,
+    bytes memory sender,
+    uint256 amount,
+    bytes memory asset
+) internal override {
+    //...
+}
+```
+
+Use this function to decode the message and execute logic like updating state,
+triggering downstream calls, or transferring the received token value.
+
+### onMessageRevert
+
+This is triggered if the destination contract’s onMessageReceive fails (e.g.,
+due to invalid calldata or logic errors).
+
+```solidity
+function onMessageRevert(
+    bytes memory data,
+    bytes memory sender,
+    uint256 amount,
+    bytes memory asset
+) internal override {
+    //...
+}
+```
+
+### onRevert
+
+This is called when a message fails during routing before reaching the
+destination chain. It executes on the source chain.
+
+```solidity
+function onRevert(RevertContext calldata context)
+    external
+    payable
+    override
+    onlyGateway
+{
+    if (context.sender != router) revert Unauthorized();
+    //...
+}
+```
+
+You can use this to refund the user, trigger compensation logic, or emit a
+notification.
+
+### Sending a Message
+
+To initiate a cross-chain message, your contract must call the `depositAndCall`
+function on the EVM Gateway. This function is what hands off your message and
+optional token value to ZetaChain’s messaging layer for routing.
+
+Depending on whether you're sending native gas (like ETH) or ERC-20 tokens,
+you’ll use one of the following two forms of `depositAndCall`.
+
+If you want to send a message with ETH as the value:
+
+```solidity
+gateway.depositAndCall{value: msg.value}(
+    router,
+    message,
+    revertOptions
+);
+```
+
+If you're sending supported ERC-20 tokens:
+
+```solidity
+gateway.depositAndCall(
+    router,
+    amount,
+    asset,
+    message,
+    revertOptions
+);
+```
+
+`asset` is the ERC-20 token address being sent (must be supported by ZetaChain).
+
+### What’s Inside the Message Payload?
+
+The `message` argument is a single `bytes` field. It is ABI-encoded and must
+follow a structure that the Universal Router on ZetaChain understands.
+
+```solidity
+abi.encode(
+    receiver,       // bytes: destination contract address on the target chain
+    targetToken,    // address: ZRC-20 address of the token to transfer to the destination contract
+    data,           // bytes: message payload (e.g., ABI-encoded "hello")
+    gasLimit,       // uint256: gas to forward for execution on the target chain
+    revertOptions   // struct: defines what to do on failure
+)
+```
+
+If you're sending the string `"hello"` to a contract on Ethereum Sepolia, you
+might encode:
+
+```solidity
+bytes memory data = abi.encode("hello");
+bytes memory message = abi.encode(
+    abi.encodePacked(receiver),  // Destination contract address (as bytes)
+    targetToken,                 // Token to transfer on destination chain
+    data,                        // ABI-encoded message
+    300_000,                     // Gas limit
+    revertOptions                // Struct specifying fallback behavior
+);
+```
+
+This message is then passed to `depositAndCall()` and routed through ZetaChain
+to the destination chain, where it is decoded and passed into the destination
+contract’s `onMessageReceive()`.
 
 ## Deploy Messaging Contracts
 
@@ -61,8 +229,22 @@ MESSAGING_ETHEREUM=$(./commands/index.ts deploy --rpc https://sepolia.drpc.org -
 
 ## Connect Two Contracts
 
-Establish a trusted connection between deployed contracts:
+Before two contracts can communicate across chains, they need to explicitly
+trust each other. This prevents malicious contracts from spoofing cross-chain
+messages. In this step, you’ll establish a bidirectional link between the two
+deployed messaging contracts.
 
+Each contract needs to know:
+
+- The address of the counterpart contract on the remote chain
+- The chain ID of that remote chain
+
+This is done using the `setConnected()` function in the messaging contract.
+ZetaChain’s cross-chain infrastructure will only deliver messages to a contract
+if it has registered the sender as trusted.
+
+⚠️ If you skip this step or set the wrong address/chain ID, messages will be
+rejected on the destination chain.
 
 ```
 ./commands/index.ts connect \
@@ -73,7 +255,6 @@ Establish a trusted connection between deployed contracts:
   --private-key $PRIVATE_KEY
 ```
 
-
 ```
 ./commands/index.ts connect \
   --contract $MESSAGING_ETHEREUM \
@@ -83,7 +264,15 @@ Establish a trusted connection between deployed contracts:
   --private-key $PRIVATE_KEY
 ```
 
+Once both directions are linked, the contracts can send and receive messages.
+
 ## Send a Cross-Chain Message
+
+Now that your contracts are deployed and connected, you can send a message from
+one to the other.
+
+This example sends the string "hello" from the contract on Base Sepolia to the
+contract on Ethereum Sepolia,
 
 ```
 ./commands/index.ts message \
@@ -96,6 +285,40 @@ Establish a trusted connection between deployed contracts:
   --target-token 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
   --amount 0.005
 ```
+
+| Flag                                    | Description                                                                                                                                             |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--rpc https://sepolia.base.org`        | The RPC endpoint for the **source chain** (Base Sepolia). This is where the transaction will be sent.                                                   |
+| `--private-key $PRIVATE_KEY`            | The account that signs and funds the transaction on the source chain. It must hold the token being sent.                                                |
+| `--contract $MESSAGING_BASE`            | Address of the messaging contract deployed on the source chain. This contract initiates the cross-chain call.                                           |
+| `--target-contract $MESSAGING_ETHEREUM` | The address of the contract on the **destination chain**. This is the final recipient of the message.                                                   |
+| `--types string`                        | The ABI type of the message you’re sending. This can be a single type (like `string`) or a tuple (e.g., `string,uint256`).                              |
+| `--values hello`                        | The actual value to encode and send across chains—in this case, just the string `"hello"`.                                                              |
+| `--target-token 0x...`                  | The ZRC20 token address on ZetaChain that represents the destination chain’s token. This tells ZetaChain what asset to transfer to the target contract. |
+| `--amount 0.005`                        | The total amount of tokens sent. A portion of this covers gas fees on the destination chain; the remainder is transferred to the destination contract.  |
+
+### How Amount is Handled
+
+When you send a cross-chain message using `--amount`, you're not just
+transferring tokens—you’re also prepaying for gas on the destination chain.
+Here's what happens behind the scenes:
+
+1. You **supply tokens** on the source chain (e.g., Base ETH). This can be
+   native gas (like ETH) or any supported ERC-20.
+2. You specify a **target token** via `--target-token`, which points to the
+   ZRC-20 representing the token you want to deliver on the destination chain
+   (e.g., Ethereum ETH).
+3. On ZetaChain:
+
+   - A **portion of the supplied amount** is automatically swapped into the
+     ZRC-20 version of the **gas token** for the destination chain (Ethereum ETH
+     in this example). This is used to cover the **execution cost** of the
+     message on the destination chain.
+   - The **remaining amount** is swapped into the **target token** (which might
+     be the same token) and forwarded to the destination contract.
+
+This makes the system fully automated: you don’t need to hold or acquire the
+destination chain’s native token to interact with it.
 
 ```json
 {
