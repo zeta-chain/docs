@@ -1,3 +1,32 @@
+This tutorial shows how to send cross-chain messages between contracts on two
+EVM chains using ZetaChain’s messaging infrastructure.
+
+Unlike universal apps deployed directly on ZetaChain, this approach allows you
+to keep all contract logic on connected EVM chains. Messages are automatically
+routed between them through ZetaChain, without requiring any contracts to be
+deployed on ZetaChain itself.
+
+By the end of this tutorial, you will:
+
+* Deploy a messaging contract to two EVM testnets (Base and Ethereum Sepolia)
+* Link them for cross-chain communication
+* Send a message and token value from one to the other
+* Track the cross-chain transaction from source to destination
+
+## Prerequisites
+
+Make sure you have the following installed:
+
+* [Node.js](https://nodejs.org/en) v18+
+* [Yarn](https://yarnpkg.com/)
+* [Foundry](https://getfoundry.sh/)
+* [jq](https://jqlang.org/) for parsing JSON in shell scripts
+* A funded private key for both Base Sepolia (84532) and Ethereum Sepolia
+  (11155111)
+
+
+## Create a Project
+
 ```
 npx zetachain new --project messaging
 ```
@@ -16,13 +45,24 @@ forge build
 PRIVATE_KEY=...
 ```
 
+## Deploy Messaging Contracts
+
+Deploy to Base Sepolia:
+
 ```
 MESSAGING_BASE=$(./commands/index.ts deploy --rpc https://sepolia.base.org --private-key $PRIVATE_KEY | jq -r .contractAddress)
 ```
 
+Deploy to Ethereum Sepolia:
+
 ```
 MESSAGING_ETHEREUM=$(./commands/index.ts deploy --rpc https://sepolia.drpc.org --private-key $PRIVATE_KEY | jq -r .contractAddress)
 ```
+
+## Connect Two Contracts
+
+Establish a trusted connection between deployed contracts:
+
 
 ```
 ./commands/index.ts connect \
@@ -43,6 +83,8 @@ MESSAGING_ETHEREUM=$(./commands/index.ts deploy --rpc https://sepolia.drpc.org -
   --private-key $PRIVATE_KEY
 ```
 
+## Send a Cross-Chain Message
+
 ```
 ./commands/index.ts message \
   --rpc https://sepolia.base.org \
@@ -55,9 +97,20 @@ MESSAGING_ETHEREUM=$(./commands/index.ts deploy --rpc https://sepolia.drpc.org -
   --amount 0.005
 ```
 
+```json
+{
+  "contractAddress": "0xee2E8dfefd723e879CAa30A1DaD94046Fa3D24D4",
+  "targetContract": "0x7c9BbA0630c9452F726bc15D0a73cdF769438efE",
+  "targetToken": "0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0",
+  "message": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000",
+  "transactionHash": "0x939e230dd504efdf1fce31202a5980b4d0376430ddf535d080666256353c02c3",
+  "amount": "0.005"
+}
 ```
-{"contractAddress":"0xee2E8dfefd723e879CAa30A1DaD94046Fa3D24D4","targetContract":"0x7c9BbA0630c9452F726bc15D0a73cdF769438efE","targetToken":"0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0","message":"0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000","transactionHash":"0x939e230dd504efdf1fce31202a5980b4d0376430ddf535d080666256353c02c3","amount":"0.005"}
-```
+
+## Track the Cross-Chain Transaction
+
+Use the transaction hash from the previous step to query its cross-chain status:
 
 ```
 zetachain q cctx --hash 0x939e230dd504efdf1fce31202a5980b4d0376430ddf535d080666256353c02c3
@@ -82,5 +135,10 @@ Receiver: 0x7c9BbA0630c9452F726bc15D0a73cdF769438efE
 Message:  00000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000001400000000000000000000000000000000000000000000000000009ad718280b1cf00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000014a34000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014ee2e8dfefd723e879caa30a1dad94046fa3d24d40000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 Amount:   1074034700777807 Gas tokens
 ```
+
+This confirms that the message has successfully moved from Base Sepolia through
+ZetaChain to Ethereum Sepolia.
+
+You can verify the destination chain transaction on Etherscan:
 
 https://sepolia.etherscan.io/tx/0xf30e4414087e8b5c81e257e8a97ac9105dde37cbbd6bb33a1691c4a30585507e
