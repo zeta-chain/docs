@@ -8,7 +8,7 @@ deployed on ZetaChain itself.
 
 > Why use this pattern? Unlike universal apps deployed directly on ZetaChain,
 > here all business logic stays on the connected EVM chains you already know.
-> ZetaChain merely transports the payload—no contract code is deployed on
+> ZetaChain merely transports the payload, no contract code is deployed on
 > ZetaChain itself.
 
 By the end of this tutorial, you will:
@@ -60,7 +60,7 @@ PRIVATE_KEY=...
 ## Messaging Contract
 
 To enable cross-chain messaging, your contract must inherit from ZetaChain’s
-Messaging base contract and implement a few required functions.
+`Messaging` base contract and implement a few required functions.
 
 Import the `Messaging.sol` contract from the ZetaChain standard contracts
 package:
@@ -213,6 +213,40 @@ This message is then passed to `depositAndCall()` and routed through ZetaChain
 to the destination chain, where it is decoded and passed into the destination
 contract’s `onMessageReceive()`.
 
+### What Is the Universal Router?
+
+When you send a cross-chain message via `gateway.depositAndCall(...)`, the
+actual logic that handles routing and execution on ZetaChain is implemented
+inside a contract called the **Universal Router**.
+
+This contract runs on ZetaChain and acts as the **entry point for all
+cross-chain messaging logic**. It is responsible for:
+
+- **Parsing the message payload** sent from the source chain
+- **Swapping tokens** (if necessary) into:
+
+  - The destination chain's **gas token** to cover execution fees
+  - The destination contract's **target token** to be delivered
+
+- **Forwarding the message** and token to the destination contract
+- **Handling fallback logic** in case the destination call fails
+
+All contracts that use the Messaging base contract share the same Universal
+Router. This shared router simplifies development, ensuring consistent behavior
+across all messaging-based apps.
+
+The Universal Router ensures that your contract only needs to focus on sending
+an encoded payload, everything else, from gas handling to token transfer to
+delivery mechanics, is managed for you.
+
+You don’t need to interact with the Universal Router directly. Just encode your
+message, call the Gateway, and ZetaChain will handle the rest.
+
+> 🔧 Advanced: If you need more control, for example, to customize how tokens
+> are swapped, route to different contracts, or handle messages differently, you
+> can deploy your own instance of a router and point your contracts to it by
+> passing its address to the Messaging constructor.
+
 ## Deploy Messaging Contracts
 
 Deploy to Base Sepolia:
@@ -293,14 +327,14 @@ contract on Ethereum Sepolia,
 | `--contract $MESSAGING_BASE`            | Address of the messaging contract deployed on the source chain. This contract initiates the cross-chain call.                                           |
 | `--target-contract $MESSAGING_ETHEREUM` | The address of the contract on the **destination chain**. This is the final recipient of the message.                                                   |
 | `--types string`                        | The ABI type of the message you’re sending. This can be a single type (like `string`) or a tuple (e.g., `string,uint256`).                              |
-| `--values hello`                        | The actual value to encode and send across chains—in this case, just the string `"hello"`.                                                              |
+| `--values hello`                        | The actual value to encode and send across chains, in this case, just the string `"hello"`.                                                             |
 | `--target-token 0x...`                  | The ZRC20 token address on ZetaChain that represents the destination chain’s token. This tells ZetaChain what asset to transfer to the target contract. |
 | `--amount 0.005`                        | The total amount of tokens sent. A portion of this covers gas fees on the destination chain; the remainder is transferred to the destination contract.  |
 
 ### How Amount is Handled
 
 When you send a cross-chain message using `--amount`, you're not just
-transferring tokens—you’re also prepaying for gas on the destination chain.
+transferring tokens, you’re also prepaying for gas on the destination chain.
 Here's what happens behind the scenes:
 
 1. You **supply tokens** on the source chain (e.g., Base ETH). This can be
