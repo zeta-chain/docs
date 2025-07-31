@@ -1,0 +1,56 @@
+```
+npx zetachain new --project messaging
+```
+
+```
+cd messaging
+yarn
+forge soldeer update
+```
+
+```
+forge build
+```
+
+```
+PRIVATE_KEY=...
+```
+
+```
+MESSAGING_BASE=$(./commands/index.ts deploy --rpc https://sepolia.base.org --private-key $PRIVATE_KEY | jq -r .contractAddress)
+```
+
+```
+MESSAGING_ETHEREUM=$(./commands/index.ts deploy --rpc https://sepolia.drpc.org --private-key $PRIVATE_KEY | jq -r .contractAddress)
+```
+
+```
+./commands/index.ts connect \
+  --contract $MESSAGING_BASE \
+  --target-contract $MESSAGING_ETHEREUM \
+  --rpc https://sepolia.base.org \
+  --target-chain-id 11155111 \
+  --private-key $PRIVATE_KEY
+```
+
+
+```
+./commands/index.ts connect \
+  --contract $MESSAGING_ETHEREUM \
+  --target-contract $MESSAGING_BASE \
+  --rpc https://sepolia.drpc.org \
+  --target-chain-id 84532 \
+  --private-key $PRIVATE_KEY
+```
+
+```
+./commands/index.ts message \
+  --rpc https://sepolia.base.org \
+  --private-key $PRIVATE_KEY \
+  --contract $MESSAGING_BASE \
+  --target-contract $MESSAGING_ETHEREUM \
+  --types string \
+  --values hello \
+  --target-token 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --amount 0.005
+```
