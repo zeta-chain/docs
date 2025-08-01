@@ -6,8 +6,7 @@ calls originating from Sui.
 
 In this tutorial, you'll:
 
-- Set up a local development environment using
-  [localnet](/reference/localnet).
+- Set up a local development environment using [localnet](/reference/localnet).
 - Deploy a universal contract on ZetaChain.
 - Deposit SUI tokens from Sui to ZetaChain.
 - Execute deposit-and-call to deposit SUI tokens and call a universal app in a
@@ -79,12 +78,13 @@ A successful deployment will output:
 To deposit tokens from your local Sui Gateway contract to ZetaChain, use:
 
 ```
-npx hardhat localnet:sui-deposit \
+npx zetachain sui deposit \
   --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
-  --gateway 0x332483152b600f388b64adb4d98509ded379167df6047c49a564a4ed62f8bb71 \
-  --module 0xc478ce1cbbeb090889a0e728af4fd25d80993a653b5f03090dbf77e5a9476bcd \
-  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
-  --amount 100000000
+  --receiver 0xFD6F7A6a5c21A3f503EBaE7a473639974379c351 \
+  --gateway-package 0x6e142a9730f8d497905251074f0b4909c5fd47c6ea0668c0c643c7954b9f4d45 \
+  --gateway-object 0x83b40ac9eb0a9fa6ce2d6e98f17d53cedaed72d00807719055ed24a99b8f3d6e \
+  --amount 0.001 \
+  --chain-id 104
 ```
 
 In this example, a client makes a call on the Sui blockchain to the local
@@ -99,13 +99,15 @@ Execute a deposit and simultaneously make a function call to a universal
 contract on ZetaChain:
 
 ```
-npx hardhat localnet:sui-deposit-and-call \
+npx zetachain sui deposit-and-call \
   --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
-  --gateway 0x332483152b600f388b64adb4d98509ded379167df6047c49a564a4ed62f8bb71 \
-  --module 0xc478ce1cbbeb090889a0e728af4fd25d80993a653b5f03090dbf77e5a9476bcd \
-  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
-  --amount 1000000 \
-  --types '["string"]' alice
+  --receiver 0xFD6F7A6a5c21A3f503EBaE7a473639974379c351 \
+  --gateway-package 0x6e142a9730f8d497905251074f0b4909c5fd47c6ea0668c0c643c7954b9f4d45 \
+  --gateway-object 0x83b40ac9eb0a9fa6ce2d6e98f17d53cedaed72d00807719055ed24a99b8f3d6e \
+  --amount 0.001 \
+  --chain-id 104 \
+  --types string \
+  --values hello
 ```
 
 In this example, a call is made from a client on the Sui blockchain to the local
@@ -138,9 +140,9 @@ sui move build --force
 Deploy:
 
 ```
-sui client publish \
+SUI_CONTRACT=$(sui client publish \
   --skip-dependency-verification \
-  --json 2>/dev/null | jq -r '.objectChanges[] | select(.type == "published") | .packageId'
+  --json 2>/dev/null | jq -r '.objectChanges[] | select(.type == "published") | .packageId') && echo $SUI_CONTRACT
 ```
 
 ```
@@ -150,35 +152,31 @@ sui client publish \
 We're using `jq` to get the published module ID, but you can skip this to see
 the whole output.
 
-## Get Coins
-
-Get a list of coins for the currently active address:
+## Get Coins from the Faucet
 
 ```
-sui client objects \
-  $(sui client active-address) \
-  --json | jq -r '.[] | select(.data.type == "0x2::coin::Coin<0x2::sui::SUI>") | .data.objectId'
-```
-
-```
-0x561e2c0f84601d7a97bf57ed3b4258bbd60741a3ebecb5865e6dd92833e33c58
-0x7589bdfab5ccd5bc9ce40eefeb883c9fd817fbe74c89613e4d48fbcd90b12cf6
-0x7b18cbdb427965e851e6a128e43744f3452898c82605d5c7a4db681c9a7ffb91
-0xbd5270f4b2f90786cf9ab56b03baff734dad7e10a1288e9d0f4e188e37ed5209
-0xe0736dace410531fe970f03e45bb2797be0bcce083091f6b774c2ccc3132921c
+sui client faucet
 ```
 
 ## Deposit from a Sui Contract
 
+Get one of the coins for the currently active address:
+
+```
+COIN=$(sui client objects \
+  $(sui client active-address) \
+  --json | jq -r '.[] | select(.data.type == "0x2::coin::Coin<0x2::sui::SUI>") | .data.objectId' | head -n 1) && echo $COIN
+```
+
 ```
 sui client call \
-  --package 0xdefdceb18b96981b3635688ec93838845eb3534991d312b7562e2c1c6e4367a0 \
+  --package $SUI_CONTRACT \
   --module connected \
   --function deposit \
   --type-args 0x2::sui::SUI \
-  --args 0x332483152b600f388b64adb4d98509ded379167df6047c49a564a4ed62f8bb71 \
-    0x561e2c0f84601d7a97bf57ed3b4258bbd60741a3ebecb5865e6dd92833e33c58 \
-    0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
+  --args 0x188a31831156e0ca554123f4178d8e982aaa879f855b967de5f0e80950dc9e66 \
+      $COIN \
+      0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
 ```
 
 - `--package`: package ID of the Sui contract deployed in the previous step
@@ -189,16 +187,24 @@ sui client call \
 
 ## Deposit and Call a Universal Contract from Sui Contract
 
+Get one of the coins for the currently active address:
+
+```
+COIN=$(sui client objects \
+  $(sui client active-address) \
+  --json | jq -r '.[] | select(.data.type == "0x2::coin::Coin<0x2::sui::SUI>") | .data.objectId' | head -n 1) && echo $COIN
+```
+
 ```
 sui client call \
-  --package 0xdefdceb18b96981b3635688ec93838845eb3534991d312b7562e2c1c6e4367a0 \
+  --package $SUI_CONTRACT \
   --module connected \
   --function deposit_and_call \
   --type-args 0x2::sui::SUI \
-  --args 0x332483152b600f388b64adb4d98509ded379167df6047c49a564a4ed62f8bb71 \
-         0x7589bdfab5ccd5bc9ce40eefeb883c9fd817fbe74c89613e4d48fbcd90b12cf6\
-         0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
-         $(cast abi-encode "function(string)" "alice")
+  --args 0x188a31831156e0ca554123f4178d8e982aaa879f855b967de5f0e80950dc9e66 \
+      $COIN \
+      0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
+      $(cast abi-encode "function(string)" "alice")
 ```
 
 Note that in this example we're calling the `deposit_and_call` function and
