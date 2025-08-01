@@ -1,7 +1,6 @@
-# ZetaChain and EVM Protocol Contracts
 
 
-# GatewayEVM
+## GatewayEVM
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/GatewayEVM.sol)
 
 The GatewayEVM contract is the endpoint to call smart contracts on external chains.
@@ -9,8 +8,8 @@ The GatewayEVM contract is the endpoint to call smart contracts on external chai
 *The contract doesn't hold any funds and should never have active allowances.*
 
 
-## State Variables
-### custody
+### State Variables
+#### custody
 The address of the custody contract.
 
 
@@ -19,7 +18,7 @@ address public custody;
 ```
 
 
-### tssAddress
+#### tssAddress
 The address of the TSS (Threshold Signature Scheme) contract.
 
 
@@ -28,7 +27,7 @@ address public tssAddress;
 ```
 
 
-### zetaConnector
+#### zetaConnector
 The address of the ZetaConnector contract.
 
 
@@ -37,7 +36,7 @@ address public zetaConnector;
 ```
 
 
-### zetaToken
+#### zetaToken
 The address of the Zeta token contract.
 
 
@@ -46,7 +45,7 @@ address public zetaToken;
 ```
 
 
-### TSS_ROLE
+#### TSS_ROLE
 New role identifier for tss role.
 
 
@@ -55,7 +54,7 @@ bytes32 public constant TSS_ROLE = keccak256("TSS_ROLE");
 ```
 
 
-### ASSET_HANDLER_ROLE
+#### ASSET_HANDLER_ROLE
 New role identifier for asset handler role.
 
 
@@ -64,7 +63,7 @@ bytes32 public constant ASSET_HANDLER_ROLE = keccak256("ASSET_HANDLER_ROLE");
 ```
 
 
-### PAUSER_ROLE
+#### PAUSER_ROLE
 New role identifier for pauser role.
 
 
@@ -73,7 +72,7 @@ bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 ```
 
 
-### MAX_PAYLOAD_SIZE
+#### MAX_PAYLOAD_SIZE
 Max size of payload + revertOptions revert message.
 
 
@@ -82,8 +81,8 @@ uint256 public constant MAX_PAYLOAD_SIZE = 2880;
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 **Note:**
 oz-upgrades-unsafe-allow: constructor
@@ -93,7 +92,7 @@ oz-upgrades-unsafe-allow: constructor
 constructor();
 ```
 
-### initialize
+#### initialize
 
 Initialize with tss address. address of zeta token and admin account set as DEFAULT_ADMIN_ROLE.
 
@@ -104,7 +103,7 @@ Initialize with tss address. address of zeta token and admin account set as DEFA
 function initialize(address tssAddress_, address zetaToken_, address admin_) public initializer;
 ```
 
-### _authorizeUpgrade
+#### _authorizeUpgrade
 
 *Authorizes the upgrade of the contract, sender must be owner.*
 
@@ -119,7 +118,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |`newImplementation`|`address`|Address of the new implementation.|
 
 
-### updateTSSAddress
+#### updateTSSAddress
 
 Update tss address
 
@@ -134,7 +133,7 @@ function updateTSSAddress(address newTSSAddress) external onlyRole(DEFAULT_ADMIN
 |`newTSSAddress`|`address`|new tss address|
 
 
-### pause
+#### pause
 
 Pause contract.
 
@@ -143,7 +142,7 @@ Pause contract.
 function pause() external onlyRole(PAUSER_ROLE);
 ```
 
-### unpause
+#### unpause
 
 Unpause contract.
 
@@ -152,7 +151,7 @@ Unpause contract.
 function unpause() external onlyRole(PAUSER_ROLE);
 ```
 
-### executeRevert
+#### executeRevert
 
 Transfers msg.value to destination contract and executes it's onRevert function.
 
@@ -180,7 +179,7 @@ function executeRevert(
 |`revertContext`|`RevertContext`||
 
 
-### execute
+#### execute
 
 Executes a call to a destination address without ERC20 tokens.
 
@@ -215,7 +214,7 @@ function execute(
 |`<none>`|`bytes`|The result of the call.|
 
 
-### executeWithERC20
+#### executeWithERC20
 
 Executes a call to a destination contract using ERC20 tokens.
 
@@ -247,7 +246,7 @@ function executeWithERC20(
 |`data`|`bytes`|Calldata to pass to the call.|
 
 
-### revertWithERC20
+#### revertWithERC20
 
 Directly transfers ERC20 tokens and calls onRevert.
 
@@ -278,7 +277,7 @@ function revertWithERC20(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### deposit
+#### deposit
 
 Deposits ETH to the TSS address.
 
@@ -294,7 +293,7 @@ function deposit(address receiver, RevertOptions calldata revertOptions) externa
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### deposit
+#### deposit
 
 Deposits ERC20 tokens to the custody or connector contract.
 
@@ -319,7 +318,7 @@ function deposit(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposits ETH to the TSS address and calls an omnichain smart contract.
 
@@ -343,7 +342,7 @@ function depositAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposits ERC20 tokens to the custody or connector contract and calls an omnichain smart contract.
 
@@ -370,7 +369,7 @@ function depositAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### call
+#### call
 
 Calls an omnichain smart contract without asset transfer.
 
@@ -387,7 +386,7 @@ function call(address receiver, bytes calldata payload, RevertOptions calldata r
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### setCustody
+#### setCustody
 
 Sets the custody contract address.
 
@@ -402,7 +401,7 @@ function setCustody(address custody_) external onlyRole(DEFAULT_ADMIN_ROLE);
 |`custody_`|`address`|Address of the custody contract.|
 
 
-### setConnector
+#### setConnector
 
 Sets the connector contract address.
 
@@ -417,7 +416,7 @@ function setConnector(address zetaConnector_) external onlyRole(DEFAULT_ADMIN_RO
 |`zetaConnector_`|`address`|Address of the connector contract.|
 
 
-### _resetApproval
+#### _resetApproval
 
 Resets the approval of a token for a specified address.
 This is used to ensure that the approval is set to zero before setting it to a new value.
@@ -440,7 +439,7 @@ function _resetApproval(address token, address to) private returns (bool);
 |`<none>`|`bool`|True if the approval reset was successful or if the token reverts on zero approval.|
 
 
-### _transferFromToAssetHandler
+#### _transferFromToAssetHandler
 
 *Transfers tokens from the sender to the asset handler.
 This function handles the transfer of tokens to either the connector or custody contract based on the asset
@@ -459,7 +458,7 @@ function _transferFromToAssetHandler(address from, address token, uint256 amount
 |`amount`|`uint256`|Amount of tokens to transfer.|
 
 
-### _transferToAssetHandler
+#### _transferToAssetHandler
 
 *Transfers tokens to the asset handler.
 This function handles the transfer of tokens to either the connector or custody contract based on the asset
@@ -477,7 +476,7 @@ function _transferToAssetHandler(address token, uint256 amount) private;
 |`amount`|`uint256`|Amount of tokens to transfer.|
 
 
-### _executeArbitraryCall
+#### _executeArbitraryCall
 
 *Private function to execute an arbitrary call to a destination address.*
 
@@ -499,7 +498,7 @@ function _executeArbitraryCall(address destination, bytes calldata data) private
 |`<none>`|`bytes`|The result of the call.|
 
 
-### _executeAuthenticatedCall
+#### _executeAuthenticatedCall
 
 *Private function to execute an authenticated call to a destination address.*
 
@@ -528,7 +527,7 @@ function _executeAuthenticatedCall(
 |`<none>`|`bytes`|The result of the call.|
 
 
-### _revertIfOnCallOrOnRevert
+#### _revertIfOnCallOrOnRevert
 
 
 ```solidity
@@ -537,7 +536,7 @@ function _revertIfOnCallOrOnRevert(bytes calldata data) private pure;
 
 
 
-# GatewayZEVM
+## GatewayZEVM
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/GatewayZEVM.sol)
 
 The GatewayZEVM contract is the endpoint to call smart contracts on omnichain.
@@ -545,8 +544,8 @@ The GatewayZEVM contract is the endpoint to call smart contracts on omnichain.
 *The contract doesn't hold any funds and should never have active allowances.*
 
 
-## State Variables
-### PROTOCOL_ADDRESS
+### State Variables
+#### PROTOCOL_ADDRESS
 The constant address of the protocol
 
 
@@ -555,7 +554,7 @@ address public constant PROTOCOL_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6
 ```
 
 
-### PAUSER_ROLE
+#### PAUSER_ROLE
 New role identifier for pauser role.
 
 
@@ -564,7 +563,7 @@ bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 ```
 
 
-### zetaToken
+#### zetaToken
 The address of the Zeta token.
 
 
@@ -573,7 +572,7 @@ address public zetaToken;
 ```
 
 
-### registry
+#### registry
 The address of the registry contract on ZetaChain
 
 
@@ -582,8 +581,8 @@ address public registry;
 ```
 
 
-## Functions
-### onlyProtocol
+### Functions
+#### onlyProtocol
 
 *Only protocol address allowed modifier.*
 
@@ -592,7 +591,7 @@ address public registry;
 modifier onlyProtocol();
 ```
 
-### constructor
+#### constructor
 
 **Note:**
 oz-upgrades-unsafe-allow: constructor
@@ -602,7 +601,7 @@ oz-upgrades-unsafe-allow: constructor
 constructor();
 ```
 
-### initialize
+#### initialize
 
 Initialize with address of zeta token and admin account set as DEFAULT_ADMIN_ROLE.
 
@@ -613,7 +612,7 @@ Initialize with address of zeta token and admin account set as DEFAULT_ADMIN_ROL
 function initialize(address zetaToken_, address admin_) public initializer;
 ```
 
-### _authorizeUpgrade
+#### _authorizeUpgrade
 
 *Authorizes the upgrade of the contract.*
 
@@ -628,7 +627,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |`newImplementation`|`address`|The address of the new implementation.|
 
 
-### receive
+#### receive
 
 *Receive function to receive ZETA from WETH9.withdraw().*
 
@@ -637,7 +636,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 receive() external payable whenNotPaused;
 ```
 
-### pause
+#### pause
 
 Pause contract.
 
@@ -646,7 +645,7 @@ Pause contract.
 function pause() external onlyRole(PAUSER_ROLE);
 ```
 
-### unpause
+#### unpause
 
 Unpause contract.
 
@@ -655,7 +654,7 @@ Unpause contract.
 function unpause() external onlyRole(PAUSER_ROLE);
 ```
 
-### setRegistryAddress
+#### setRegistryAddress
 
 Set registry address, callable only by DEFAULT_ADMIN_ROLE.
 
@@ -670,7 +669,7 @@ function setRegistryAddress(address _registry) external onlyRole(DEFAULT_ADMIN_R
 |`_registry`|`address`|The address of the registry contract.|
 
 
-### _safeTransferFrom
+#### _safeTransferFrom
 
 Helper function to safely execute transferFrom
 
@@ -694,21 +693,21 @@ function _safeTransferFrom(address zrc20, address from, address to, uint256 amou
 |`<none>`|`bool`|True if the transfer was successful, false otherwise.|
 
 
-### _safeBurn
+#### _safeBurn
 
 
 ```solidity
 function _safeBurn(address zrc20, uint256 amount) private returns (bool);
 ```
 
-### _safeDeposit
+#### _safeDeposit
 
 
 ```solidity
 function _safeDeposit(address zrc20, address target, uint256 amount) private returns (bool);
 ```
 
-### _burnProtocolFees
+#### _burnProtocolFees
 
 Helper function to burn gas fees.
 
@@ -724,7 +723,7 @@ function _burnProtocolFees(address gasZRC20, uint256 gasFee) private;
 |`gasFee`|`uint256`|The amount of gasZRC20 that should be burned.|
 
 
-### _burnZRC20ProtocolFees
+#### _burnZRC20ProtocolFees
 
 Helper function to burn gas fees for ZRC20s withdrawals.
 
@@ -740,7 +739,7 @@ function _burnZRC20ProtocolFees(address zrc20, uint256 gasLimit) private returns
 |`gasLimit`|`uint256`|Gas limit.|
 
 
-### _withdrawZRC20WithGasLimit
+#### _withdrawZRC20WithGasLimit
 
 *Private function to withdraw ZRC20 tokens with gas limit.*
 
@@ -763,7 +762,7 @@ function _withdrawZRC20WithGasLimit(uint256 amount, address zrc20, uint256 gasLi
 |`<none>`|`uint256`|The gas fee for the withdrawal.|
 
 
-### _getGasLimitForZETATransfer
+#### _getGasLimitForZETATransfer
 
 *Helper function to get gas limit for the ZETA transfer to the external chain.*
 
@@ -784,7 +783,7 @@ function _getGasLimitForZETATransfer(uint256 chainId) private view returns (uint
 |`gasLimit`|`uint256`|The gas limit.|
 
 
-### _getProtocolFlatFeeFromRegistry
+#### _getProtocolFlatFeeFromRegistry
 
 *Helper function to get protocol flat fee for the external chain.*
 
@@ -805,7 +804,7 @@ function _getProtocolFlatFeeFromRegistry(uint256 chainId) private view returns (
 |`protocolFlatFee`|`uint256`|The protocol flat fee.|
 
 
-### _computeAndPayFeesForZETAWithdrawals
+#### _computeAndPayFeesForZETAWithdrawals
 
 *Helper function to burn gas fees for ZETA withdrawals.*
 
@@ -834,7 +833,7 @@ function _computeAndPayFeesForZETAWithdrawals(
 |`gasLimit_`|`uint256`|The gas limit used for the withdrawal.|
 
 
-### _transferZETA
+#### _transferZETA
 
 *Private function to transfer ZETA tokens.*
 
@@ -850,7 +849,7 @@ function _transferZETA(uint256 amount, address to) private;
 |`to`|`address`|The address to transfer the tokens to.|
 
 
-### withdraw
+#### withdraw
 
 Withdraw ZRC20 tokens to an external chain.
 
@@ -875,7 +874,7 @@ function withdraw(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### withdraw
+#### withdraw
 
 Withdraw ZRC20 tokens to an external chain with custom gas limit.
 
@@ -905,7 +904,7 @@ function withdraw(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 Withdraw ZRC20 tokens and call a smart contract on an external chain.
 
@@ -934,7 +933,7 @@ function withdrawAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### withdraw
+#### withdraw
 
 Withdraw ZETA tokens to an external chain.
 
@@ -951,7 +950,7 @@ function withdraw(
     nonReentrant;
 ```
 
-### withdrawAndCall
+#### withdrawAndCall
 
 Withdraw ZETA tokens and call a smart contract on an external chain.
 
@@ -970,7 +969,7 @@ function withdrawAndCall(
     nonReentrant;
 ```
 
-### call
+#### call
 
 Call a smart contract on an external chain without asset transfer.
 
@@ -997,7 +996,7 @@ function call(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### _call
+#### _call
 
 
 ```solidity
@@ -1011,7 +1010,7 @@ function _call(
     private;
 ```
 
-### deposit
+#### deposit
 
 Deposit foreign coins into ZRC20.
 
@@ -1028,7 +1027,7 @@ function deposit(address zrc20, uint256 amount, address target) external onlyPro
 |`target`|`address`|The target address to receive the deposited tokens.|
 
 
-### deposit
+#### deposit
 
 Deposit native ZETA.
 
@@ -1043,7 +1042,7 @@ function deposit(address target) external payable nonReentrant onlyProtocol when
 |`target`|`address`|The target address to receive the ZETA.|
 
 
-### execute
+#### execute
 
 Execute a user-specified contract on ZEVM.
 
@@ -1072,7 +1071,7 @@ function execute(
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposit foreign coins into ZRC20 and call a user-specified contract on ZEVM.
 
@@ -1101,7 +1100,7 @@ function depositAndCall(
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposit native ZETA and call a user-specified contract on ZEVM.
 
@@ -1127,7 +1126,7 @@ function depositAndCall(
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
 
-### executeRevert
+#### executeRevert
 
 Revert a user-specified contract on ZEVM.
 
@@ -1150,7 +1149,7 @@ function executeRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### depositAndRevert
+#### depositAndRevert
 
 Deposit foreign coins into ZRC20 and revert a user-specified contract on ZEVM.
 
@@ -1177,7 +1176,7 @@ function depositAndRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### depositAndRevert
+#### depositAndRevert
 
 Deposit native ZETA and revert a user-specified contract on ZEVM.
 
@@ -1201,7 +1200,7 @@ function depositAndRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### executeAbort
+#### executeAbort
 
 Call onAbort on a user-specified contract on ZEVM.
 this function doesn't deposit the asset to the target contract. This operation is done directly by the protocol.
@@ -1226,7 +1225,7 @@ function executeAbort(
 |`abortContext`|`AbortContext`|Abort context to pass to onAbort.|
 
 
-### getMaxMessageSize
+#### getMaxMessageSize
 
 Returns the maximum message size.
 
@@ -1241,7 +1240,7 @@ function getMaxMessageSize() external pure returns (uint256);
 |`<none>`|`uint256`|The maximum message size.|
 
 
-### getMinGasLimit
+#### getMinGasLimit
 
 Returns the minimum gas limit allowed.
 
@@ -1256,7 +1255,7 @@ function getMinGasLimit() external pure returns (uint256);
 |`<none>`|`uint256`|The minimum gas limit.|
 
 
-### getMaxRevertGasLimit
+#### getMaxRevertGasLimit
 
 Returns the maximum revert gas limit allowed.
 
@@ -1273,14 +1272,14 @@ function getMaxRevertGasLimit() external pure returns (uint256);
 
 
 
-# INotSupportedMethods
+## INotSupportedMethods
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Errors.sol)
 
 Interface for contracts that with non supported methods.
 
 
-## Errors
-### CallOnRevertNotSupported
+### Errors
+#### CallOnRevertNotSupported
 
 ```solidity
 error CallOnRevertNotSupported();
@@ -1288,7 +1287,7 @@ error CallOnRevertNotSupported();
 
 
 
-# ERC20Custody
+## ERC20Custody
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/ERC20Custody.sol)
 
 Holds the ERC20 tokens deposited on ZetaChain and includes functionality to call a contract.
@@ -1296,8 +1295,8 @@ Holds the ERC20 tokens deposited on ZetaChain and includes functionality to call
 *This contract does not call smart contracts directly, it passes through the Gateway contract.*
 
 
-## State Variables
-### gateway
+### State Variables
+#### gateway
 Gateway contract.
 
 
@@ -1306,7 +1305,7 @@ IGatewayEVM public gateway;
 ```
 
 
-### whitelisted
+#### whitelisted
 Mapping of whitelisted tokens => true/false.
 
 
@@ -1315,7 +1314,7 @@ mapping(address => bool) public whitelisted;
 ```
 
 
-### tssAddress
+#### tssAddress
 The address of the TSS (Threshold Signature Scheme) contract.
 
 
@@ -1324,7 +1323,7 @@ address public tssAddress;
 ```
 
 
-### supportsLegacy
+#### supportsLegacy
 Used to flag if contract supports legacy methods (eg. deposit).
 
 
@@ -1333,7 +1332,7 @@ bool public supportsLegacy;
 ```
 
 
-### PAUSER_ROLE
+#### PAUSER_ROLE
 New role identifier for pauser role.
 
 
@@ -1342,7 +1341,7 @@ bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 ```
 
 
-### WITHDRAWER_ROLE
+#### WITHDRAWER_ROLE
 New role identifier for withdrawer role.
 
 
@@ -1351,7 +1350,7 @@ bytes32 public constant WITHDRAWER_ROLE = keccak256("WITHDRAWER_ROLE");
 ```
 
 
-### WHITELISTER_ROLE
+#### WHITELISTER_ROLE
 New role identifier for whitelister role.
 
 
@@ -1360,8 +1359,8 @@ bytes32 public constant WHITELISTER_ROLE = keccak256("WHITELISTER_ROLE");
 ```
 
 
-## Functions
-### initialize
+### Functions
+#### initialize
 
 Initializer for ERC20Custody.
 
@@ -1372,7 +1371,7 @@ Initializer for ERC20Custody.
 function initialize(address gateway_, address tssAddress_, address admin_) public initializer;
 ```
 
-### _authorizeUpgrade
+#### _authorizeUpgrade
 
 *Authorizes the upgrade of the contract, sender must be owner.*
 
@@ -1387,7 +1386,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |`newImplementation`|`address`|Address of the new implementation.|
 
 
-### pause
+#### pause
 
 Pause contract.
 
@@ -1396,7 +1395,7 @@ Pause contract.
 function pause() external onlyRole(PAUSER_ROLE);
 ```
 
-### unpause
+#### unpause
 
 Unpause contract.
 
@@ -1405,7 +1404,7 @@ Unpause contract.
 function unpause() external onlyRole(PAUSER_ROLE);
 ```
 
-### updateTSSAddress
+#### updateTSSAddress
 
 Update tss address
 
@@ -1420,7 +1419,7 @@ function updateTSSAddress(address newTSSAddress) external onlyRole(DEFAULT_ADMIN
 |`newTSSAddress`|`address`|new tss address|
 
 
-### setSupportsLegacy
+#### setSupportsLegacy
 
 Unpause contract.
 
@@ -1429,7 +1428,7 @@ Unpause contract.
 function setSupportsLegacy(bool _supportsLegacy) external onlyRole(DEFAULT_ADMIN_ROLE);
 ```
 
-### whitelist
+#### whitelist
 
 Whitelist ERC20 token.
 
@@ -1444,7 +1443,7 @@ function whitelist(address token) external onlyRole(WHITELISTER_ROLE);
 |`token`|`address`|address of ERC20 token|
 
 
-### unwhitelist
+#### unwhitelist
 
 Unwhitelist ERC20 token.
 
@@ -1459,7 +1458,7 @@ function unwhitelist(address token) external onlyRole(WHITELISTER_ROLE);
 |`token`|`address`|address of ERC20 token|
 
 
-### withdraw
+#### withdraw
 
 Withdraw directly transfers the tokens to the destination address without contract call.
 
@@ -1486,7 +1485,7 @@ function withdraw(
 |`amount`|`uint256`|Amount of tokens to withdraw.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 WithdrawAndCall transfers tokens to Gateway and call a contract through the Gateway.
 
@@ -1517,7 +1516,7 @@ function withdrawAndCall(
 |`data`|`bytes`|Calldata to pass to the contract call.|
 
 
-### withdrawAndRevert
+#### withdrawAndRevert
 
 WithdrawAndRevert transfers tokens to Gateway and call a contract with a revert functionality through
 the Gateway.
@@ -1549,7 +1548,7 @@ function withdrawAndRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### deposit
+#### deposit
 
 Deposits asset to custody and pay fee in zeta erc20.
 
@@ -1571,12 +1570,12 @@ function deposit(
 
 
 
-# IERC20Custody
+## IERC20Custody
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IERC20Custody.sol)
 
 
-## Functions
-### whitelisted
+### Functions
+#### whitelisted
 
 Mapping of whitelisted tokens => true/false.
 
@@ -1585,7 +1584,7 @@ Mapping of whitelisted tokens => true/false.
 function whitelisted(address token) external view returns (bool);
 ```
 
-### withdraw
+#### withdraw
 
 Withdraw directly transfers the tokens to the destination address without contract call.
 
@@ -1604,7 +1603,7 @@ function withdraw(address token, address to, uint256 amount) external;
 |`amount`|`uint256`|Amount of tokens to withdraw.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 WithdrawAndCall transfers tokens to Gateway and call a contract through the Gateway.
 
@@ -1632,7 +1631,7 @@ function withdrawAndCall(
 |`data`|`bytes`|Calldata to pass to the contract call.|
 
 
-### withdrawAndRevert
+#### withdrawAndRevert
 
 WithdrawAndRevert transfers tokens to Gateway and call a contract with a revert functionality through
 the Gateway.
@@ -1663,14 +1662,14 @@ function withdrawAndRevert(
 
 
 
-# IERC20CustodyErrors
+## IERC20CustodyErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IERC20Custody.sol)
 
 Interface for the errors used in the ERC20 custody contract.
 
 
-## Errors
-### ZeroAddress
+### Errors
+#### ZeroAddress
 Error for zero address input.
 
 
@@ -1678,7 +1677,7 @@ Error for zero address input.
 error ZeroAddress();
 ```
 
-### NotWhitelisted
+#### NotWhitelisted
 Error for not whitelisted ERC20 token
 
 
@@ -1686,7 +1685,7 @@ Error for not whitelisted ERC20 token
 error NotWhitelisted();
 ```
 
-### LegacyMethodsNotSupported
+#### LegacyMethodsNotSupported
 Error for calling not supported legacy methods.
 
 
@@ -1696,14 +1695,14 @@ error LegacyMethodsNotSupported();
 
 
 
-# IERC20CustodyEvents
+## IERC20CustodyEvents
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IERC20Custody.sol)
 
 Interface for the events emitted by the ERC20 custody contract.
 
 
-## Events
-### Withdrawn
+### Events
+#### Withdrawn
 Emitted when tokens are withdrawn.
 
 
@@ -1719,7 +1718,7 @@ event Withdrawn(address indexed to, address indexed token, uint256 amount);
 |`token`|`address`|The address of the ERC20 token.|
 |`amount`|`uint256`|The amount of tokens withdrawn.|
 
-### WithdrawnAndCalled
+#### WithdrawnAndCalled
 Emitted when tokens are withdrawn and a contract call is made.
 
 
@@ -1736,7 +1735,7 @@ event WithdrawnAndCalled(address indexed to, address indexed token, uint256 amou
 |`amount`|`uint256`|The amount of tokens withdrawn.|
 |`data`|`bytes`|The calldata passed to the contract call.|
 
-### WithdrawnAndReverted
+#### WithdrawnAndReverted
 Emitted when tokens are withdrawn and a revertable contract call is made.
 
 
@@ -1756,7 +1755,7 @@ event WithdrawnAndReverted(
 |`data`|`bytes`|The calldata passed to the contract call.|
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
-### Whitelisted
+#### Whitelisted
 Emitted when ERC20 token is whitelisted
 
 
@@ -1770,7 +1769,7 @@ event Whitelisted(address indexed token);
 |----|----|-----------|
 |`token`|`address`|address of ERC20 token.|
 
-### Unwhitelisted
+#### Unwhitelisted
 Emitted when ERC20 token is unwhitelisted
 
 
@@ -1784,7 +1783,7 @@ event Unwhitelisted(address indexed token);
 |----|----|-----------|
 |`token`|`address`|address of ERC20 token.|
 
-### Deposited
+#### Deposited
 Emitted in legacy deposit method.
 
 
@@ -1792,7 +1791,7 @@ Emitted in legacy deposit method.
 event Deposited(bytes recipient, IERC20 indexed asset, uint256 amount, bytes message);
 ```
 
-### UpdatedCustodyTSSAddress
+#### UpdatedCustodyTSSAddress
 Emitted when tss address is updated
 
 
@@ -1809,14 +1808,14 @@ event UpdatedCustodyTSSAddress(address oldTSSAddress, address newTSSAddress);
 
 
 
-# Callable
+## Callable
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IGatewayEVM.sol)
 
 Interface implemented by contracts receiving authenticated calls.
 
 
-## Functions
-### onCall
+### Functions
+#### onCall
 
 
 ```solidity
@@ -1825,14 +1824,14 @@ function onCall(MessageContext calldata context, bytes calldata message) externa
 
 
 
-# IGatewayEVM
+## IGatewayEVM
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IGatewayEVM.sol)
 
 Interface for the GatewayEVM contract.
 
 
-## Functions
-### executeWithERC20
+### Functions
+#### executeWithERC20
 
 Executes a call to a contract using ERC20 tokens.
 
@@ -1858,7 +1857,7 @@ function executeWithERC20(
 |`data`|`bytes`|The calldata to pass to the contract call.|
 
 
-### executeRevert
+#### executeRevert
 
 Transfers msg.value to destination contract and executes it's onRevert function.
 
@@ -1883,7 +1882,7 @@ function executeRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### execute
+#### execute
 
 Executes a call to a destination address without ERC20 tokens.
 
@@ -1915,7 +1914,7 @@ function execute(
 |`<none>`|`bytes`|The result of the call.|
 
 
-### revertWithERC20
+#### revertWithERC20
 
 Executes a revertable call to a contract using ERC20 tokens.
 
@@ -1941,7 +1940,7 @@ function revertWithERC20(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### deposit
+#### deposit
 
 Deposits ETH to the TSS address.
 
@@ -1957,7 +1956,7 @@ function deposit(address receiver, RevertOptions calldata revertOptions) externa
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### deposit
+#### deposit
 
 Deposits ERC20 tokens to the custody or connector contract.
 
@@ -1975,7 +1974,7 @@ function deposit(address receiver, uint256 amount, address asset, RevertOptions 
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposits ETH to the TSS address and calls an omnichain smart contract.
 
@@ -1998,7 +1997,7 @@ function depositAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposits ERC20 tokens to the custody or connector contract and calls an omnichain smart contract.
 
@@ -2024,7 +2023,7 @@ function depositAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### call
+#### call
 
 Calls an omnichain smart contract without asset transfer.
 
@@ -2043,14 +2042,14 @@ function call(address receiver, bytes calldata payload, RevertOptions calldata r
 
 
 
-# IGatewayEVMErrors
+## IGatewayEVMErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IGatewayEVM.sol)
 
 Interface for the errors used in the GatewayEVM contract.
 
 
-## Errors
-### ExecutionFailed
+### Errors
+#### ExecutionFailed
 Error for failed execution.
 
 
@@ -2058,7 +2057,7 @@ Error for failed execution.
 error ExecutionFailed();
 ```
 
-### DepositFailed
+#### DepositFailed
 Error for failed deposit.
 
 
@@ -2066,7 +2065,7 @@ Error for failed deposit.
 error DepositFailed();
 ```
 
-### InsufficientETHAmount
+#### InsufficientETHAmount
 Error for insufficient ETH amount.
 
 
@@ -2074,7 +2073,7 @@ Error for insufficient ETH amount.
 error InsufficientETHAmount();
 ```
 
-### InsufficientERC20Amount
+#### InsufficientERC20Amount
 Error for insufficient ERC20 token amount.
 
 
@@ -2082,7 +2081,7 @@ Error for insufficient ERC20 token amount.
 error InsufficientERC20Amount();
 ```
 
-### ZeroAddress
+#### ZeroAddress
 Error for zero address input.
 
 
@@ -2090,7 +2089,7 @@ Error for zero address input.
 error ZeroAddress();
 ```
 
-### ApprovalFailed
+#### ApprovalFailed
 Error for failed token approval.
 
 
@@ -2105,7 +2104,7 @@ error ApprovalFailed(address token, address spender);
 |`token`|`address`|The address of the token for which approval failed.|
 |`spender`|`address`|The address that was supposed to be approved to spend the tokens.|
 
-### CustodyInitialized
+#### CustodyInitialized
 Error for already initialized custody.
 
 
@@ -2113,7 +2112,7 @@ Error for already initialized custody.
 error CustodyInitialized();
 ```
 
-### ConnectorInitialized
+#### ConnectorInitialized
 Error for already initialized connector.
 
 
@@ -2121,7 +2120,7 @@ Error for already initialized connector.
 error ConnectorInitialized();
 ```
 
-### NotWhitelistedInCustody
+#### NotWhitelistedInCustody
 Error when trying to transfer not whitelisted token to custody.
 
 
@@ -2135,7 +2134,7 @@ error NotWhitelistedInCustody(address token);
 |----|----|-----------|
 |`token`|`address`|The address of the token that is not whitelisted in custody.|
 
-### NotAllowedToCallOnCall
+#### NotAllowedToCallOnCall
 Error when trying to call onCall method using arbitrary call.
 
 
@@ -2143,7 +2142,7 @@ Error when trying to call onCall method using arbitrary call.
 error NotAllowedToCallOnCall();
 ```
 
-### NotAllowedToCallOnRevert
+#### NotAllowedToCallOnRevert
 Error when trying to call onRevert method using arbitrary call.
 
 
@@ -2151,7 +2150,7 @@ Error when trying to call onRevert method using arbitrary call.
 error NotAllowedToCallOnRevert();
 ```
 
-### PayloadSizeExceeded
+#### PayloadSizeExceeded
 Error indicating payload size exceeded in external functions.
 
 
@@ -2168,14 +2167,14 @@ error PayloadSizeExceeded(uint256 provided, uint256 maximum);
 
 
 
-# IGatewayEVMEvents
+## IGatewayEVMEvents
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IGatewayEVM.sol)
 
 Interface for the events emitted by the GatewayEVM contract.
 
 
-## Events
-### Executed
+### Events
+#### Executed
 Emitted when a contract call is executed.
 
 
@@ -2191,7 +2190,7 @@ event Executed(address indexed destination, uint256 value, bytes data);
 |`value`|`uint256`|The amount of ETH sent with the call.|
 |`data`|`bytes`|The calldata passed to the contract call.|
 
-### Reverted
+#### Reverted
 Emitted when a contract call is reverted.
 
 
@@ -2209,7 +2208,7 @@ event Reverted(address indexed to, address indexed token, uint256 amount, bytes 
 |`data`|`bytes`|The calldata passed to the contract call.|
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
-### ExecutedWithERC20
+#### ExecutedWithERC20
 Emitted when a contract call with ERC20 tokens is executed.
 
 
@@ -2226,7 +2225,7 @@ event ExecutedWithERC20(address indexed token, address indexed to, uint256 amoun
 |`amount`|`uint256`|The amount of tokens transferred.|
 |`data`|`bytes`|The calldata passed to the contract call.|
 
-### Deposited
+#### Deposited
 Emitted when a deposit is made.
 
 
@@ -2252,7 +2251,7 @@ event Deposited(
 |`payload`|`bytes`|The calldata passed with the deposit. No longer used. Kept to maintain compatibility.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
-### DepositedAndCalled
+#### DepositedAndCalled
 Emitted when a deposit and call is made.
 
 
@@ -2278,7 +2277,7 @@ event DepositedAndCalled(
 |`payload`|`bytes`|The calldata passed with the deposit.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
-### Called
+#### Called
 Emitted when an omnichain smart contract call is made without asset transfer.
 
 
@@ -2295,7 +2294,7 @@ event Called(address indexed sender, address indexed receiver, bytes payload, Re
 |`payload`|`bytes`|The calldata passed to the call.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
-### UpdatedGatewayTSSAddress
+#### UpdatedGatewayTSSAddress
 Emitted when tss address is updated
 
 
@@ -2312,7 +2311,7 @@ event UpdatedGatewayTSSAddress(address oldTSSAddress, address newTSSAddress);
 
 
 
-# MessageContext
+## MessageContext
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IGatewayEVM.sol)
 
 Message context passed to execute function.
@@ -2332,12 +2331,12 @@ struct MessageContext {
 
 
 
-# IRegistry
+## IRegistry
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IRegistry.sol)
 
 
-## Structs
-### ChainMetadataEntry
+### Structs
+#### ChainMetadataEntry
 Structure for metadata entries used during bootstrapping
 
 
@@ -2349,7 +2348,7 @@ struct ChainMetadataEntry {
 }
 ```
 
-### ContractConfigEntry
+#### ContractConfigEntry
 Structure for contract configuration entries used during bootstrapping
 
 
@@ -2364,14 +2363,14 @@ struct ContractConfigEntry {
 
 
 
-# IZetaConnectorEvents
+## IZetaConnectorEvents
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IZetaConnector.sol)
 
 Interface for the events emitted by the ZetaConnector contracts.
 
 
-## Events
-### Withdrawn
+### Events
+#### Withdrawn
 Emitted when tokens are withdrawn.
 
 
@@ -2386,7 +2385,7 @@ event Withdrawn(address indexed to, uint256 amount);
 |`to`|`address`|The address to which the tokens are withdrawn.|
 |`amount`|`uint256`|The amount of tokens withdrawn.|
 
-### WithdrawnAndCalled
+#### WithdrawnAndCalled
 Emitted when tokens are withdrawn and a contract is called.
 
 
@@ -2402,7 +2401,7 @@ event WithdrawnAndCalled(address indexed to, uint256 amount, bytes data);
 |`amount`|`uint256`|The amount of tokens withdrawn.|
 |`data`|`bytes`|The calldata passed to the contract call.|
 
-### WithdrawnAndReverted
+#### WithdrawnAndReverted
 Emitted when tokens are withdrawn and a contract is called with a revert callback.
 
 
@@ -2419,7 +2418,7 @@ event WithdrawnAndReverted(address indexed to, uint256 amount, bytes data, Rever
 |`data`|`bytes`|The calldata passed to the contract call.|
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
-### UpdatedZetaConnectorTSSAddress
+#### UpdatedZetaConnectorTSSAddress
 Emitted when tss address is updated
 
 
@@ -2436,14 +2435,14 @@ event UpdatedZetaConnectorTSSAddress(address oldTSSAddress, address newTSSAddres
 
 
 
-# IZetaNonEthNew
+## IZetaNonEthNew
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/interfaces/IZetaNonEthNew.sol)
 
 IZetaNonEthNew is a mintable / burnable version of IERC20.
 
 
-## Functions
-### burnFrom
+### Functions
+#### burnFrom
 
 Burns the specified amount of tokens from the specified account.
 
@@ -2461,7 +2460,7 @@ function burnFrom(address account, uint256 amount) external;
 |`amount`|`uint256`|The amount of tokens to burn.|
 
 
-### mint
+#### mint
 
 Mints the specified amount of tokens to the specified account.
 
@@ -2482,44 +2481,44 @@ function mint(address mintee, uint256 value, bytes32 internalSendHash) external;
 
 
 
-# ConnectorErrors
+## ConnectorErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ConnectorErrors.sol)
 
 *Interface with connector custom errors*
 
 
-## Errors
-### CallerIsNotPauser
+### Errors
+#### CallerIsNotPauser
 
 ```solidity
 error CallerIsNotPauser(address caller);
 ```
 
-### CallerIsNotTss
+#### CallerIsNotTss
 
 ```solidity
 error CallerIsNotTss(address caller);
 ```
 
-### CallerIsNotTssUpdater
+#### CallerIsNotTssUpdater
 
 ```solidity
 error CallerIsNotTssUpdater(address caller);
 ```
 
-### CallerIsNotTssOrUpdater
+#### CallerIsNotTssOrUpdater
 
 ```solidity
 error CallerIsNotTssOrUpdater(address caller);
 ```
 
-### ZetaTransferError
+#### ZetaTransferError
 
 ```solidity
 error ZetaTransferError();
 ```
 
-### ExceedsMaxSupply
+#### ExceedsMaxSupply
 
 ```solidity
 error ExceedsMaxSupply(uint256 maxSupply);
@@ -2527,21 +2526,21 @@ error ExceedsMaxSupply(uint256 maxSupply);
 
 
 
-# IZetaNonEthInterface
+## IZetaNonEthInterface
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/IZetaNonEthInterface.sol)
 
 *IZetaNonEthInterface.sol is a mintable / burnable version of IERC20*
 
 
-## Functions
-### burnFrom
+### Functions
+#### burnFrom
 
 
 ```solidity
 function burnFrom(address account, uint256 amount) external;
 ```
 
-### mint
+#### mint
 
 
 ```solidity
@@ -2550,7 +2549,7 @@ function mint(address mintee, uint256 value, bytes32 internalSendHash) external;
 
 
 
-# ZetaConnectorBase
+## ZetaConnectorBase
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaConnector.base.sol)
 
 *Main abstraction of ZetaConnector.
@@ -2558,15 +2557,15 @@ This contract manages interactions between TSS and different chains.
 There's an instance of this contract on each chain supported by ZetaChain.*
 
 
-## State Variables
-### zetaToken
+### State Variables
+#### zetaToken
 
 ```solidity
 address public immutable zetaToken;
 ```
 
 
-### pauserAddress
+#### pauserAddress
 *Multisig contract to pause incoming transactions.
 The responsibility of pausing outgoing transactions is left to the protocol for more flexibility.*
 
@@ -2576,7 +2575,7 @@ address public pauserAddress;
 ```
 
 
-### tssAddress
+#### tssAddress
 *Collectively held by ZetaChain validators.*
 
 
@@ -2585,7 +2584,7 @@ address public tssAddress;
 ```
 
 
-### tssAddressUpdater
+#### tssAddressUpdater
 *This address will start pointing to a multisig contract, then it will become the TSS address itself.*
 
 
@@ -2594,8 +2593,8 @@ address public tssAddressUpdater;
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 *Constructor requires initial addresses.
 zetaToken address is the only immutable one, while others can be updated.*
@@ -2605,7 +2604,7 @@ zetaToken address is the only immutable one, while others can be updated.*
 constructor(address zetaToken_, address tssAddress_, address tssAddressUpdater_, address pauserAddress_);
 ```
 
-### onlyPauser
+#### onlyPauser
 
 *Modifier to restrict actions to pauser address.*
 
@@ -2614,7 +2613,7 @@ constructor(address zetaToken_, address tssAddress_, address tssAddressUpdater_,
 modifier onlyPauser();
 ```
 
-### onlyTssAddress
+#### onlyTssAddress
 
 *Modifier to restrict actions to TSS address.*
 
@@ -2623,7 +2622,7 @@ modifier onlyPauser();
 modifier onlyTssAddress();
 ```
 
-### onlyTssUpdater
+#### onlyTssUpdater
 
 *Modifier to restrict actions to TSS updater address.*
 
@@ -2632,7 +2631,7 @@ modifier onlyTssAddress();
 modifier onlyTssUpdater();
 ```
 
-### updatePauserAddress
+#### updatePauserAddress
 
 *Update the pauser address. The only address allowed to do that is the current pauser.*
 
@@ -2641,7 +2640,7 @@ modifier onlyTssUpdater();
 function updatePauserAddress(address pauserAddress_) external onlyPauser;
 ```
 
-### updateTssAddress
+#### updateTssAddress
 
 *Update the TSS address. The address can be updated by the TSS updater or the TSS address itself.*
 
@@ -2650,7 +2649,7 @@ function updatePauserAddress(address pauserAddress_) external onlyPauser;
 function updateTssAddress(address tssAddress_) external;
 ```
 
-### renounceTssAddressUpdater
+#### renounceTssAddressUpdater
 
 *Changes the ownership of tssAddressUpdater to be the one held by the ZetaChain TSS Signer nodes.*
 
@@ -2659,7 +2658,7 @@ function updateTssAddress(address tssAddress_) external;
 function renounceTssAddressUpdater() external onlyTssUpdater;
 ```
 
-### pause
+#### pause
 
 *Pause the input (send) transactions.*
 
@@ -2668,7 +2667,7 @@ function renounceTssAddressUpdater() external onlyTssUpdater;
 function pause() external onlyPauser;
 ```
 
-### unpause
+#### unpause
 
 *Unpause the contract to allow transactions again.*
 
@@ -2677,7 +2676,7 @@ function pause() external onlyPauser;
 function unpause() external onlyPauser;
 ```
 
-### send
+#### send
 
 *Entrypoint to send data and value through ZetaChain.*
 
@@ -2686,7 +2685,7 @@ function unpause() external onlyPauser;
 function send(ZetaInterfaces.SendInput calldata input) external virtual;
 ```
 
-### onReceive
+#### onReceive
 
 *Handler to receive data from other chain.
 This method can be called only by TSS. Access validation is in implementation.*
@@ -2705,7 +2704,7 @@ function onReceive(
     virtual;
 ```
 
-### onRevert
+#### onRevert
 
 *Handler to receive errors from other chain.
 This method can be called only by TSS. Access validation is in implementation.*
@@ -2725,8 +2724,8 @@ function onRevert(
     virtual;
 ```
 
-## Events
-### ZetaSent
+### Events
+#### ZetaSent
 
 ```solidity
 event ZetaSent(
@@ -2741,7 +2740,7 @@ event ZetaSent(
 );
 ```
 
-### ZetaReceived
+#### ZetaReceived
 
 ```solidity
 event ZetaReceived(
@@ -2754,7 +2753,7 @@ event ZetaReceived(
 );
 ```
 
-### ZetaReverted
+#### ZetaReverted
 
 ```solidity
 event ZetaReverted(
@@ -2768,19 +2767,19 @@ event ZetaReverted(
 );
 ```
 
-### TSSAddressUpdated
+#### TSSAddressUpdated
 
 ```solidity
 event TSSAddressUpdated(address callerAddress, address newTssAddress);
 ```
 
-### TSSAddressUpdaterUpdated
+#### TSSAddressUpdaterUpdated
 
 ```solidity
 event TSSAddressUpdaterUpdated(address callerAddress, address newTssUpdaterAddress);
 ```
 
-### PauserAddressUpdated
+#### PauserAddressUpdated
 
 ```solidity
 event PauserAddressUpdated(address callerAddress, address newTssAddress);
@@ -2788,7 +2787,7 @@ event PauserAddressUpdated(address callerAddress, address newTssAddress);
 
 
 
-# ZetaConnectorEth
+## ZetaConnectorEth
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaConnector.eth.sol)
 
 *ETH implementation of ZetaConnector.
@@ -2797,8 +2796,8 @@ This version is only for Ethereum network because in the other chains we mint an
 unlock.*
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 
 ```solidity
@@ -2811,14 +2810,14 @@ constructor(
     ZetaConnectorBase(zetaToken_, tssAddress_, tssAddressUpdater_, pauserAddress_);
 ```
 
-### getLockedAmount
+#### getLockedAmount
 
 
 ```solidity
 function getLockedAmount() external view returns (uint256);
 ```
 
-### send
+#### send
 
 *Entrypoint to send data through ZetaChain
 This call locks the token on the contract and emits an event with all the data needed by the protocol.*
@@ -2828,7 +2827,7 @@ This call locks the token on the contract and emits an event with all the data n
 function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused;
 ```
 
-### onReceive
+#### onReceive
 
 *Handler to receive data from other chain.
 This method can be called only by TSS.
@@ -2849,7 +2848,7 @@ function onReceive(
     onlyTssAddress;
 ```
 
-### onRevert
+#### onRevert
 
 *Handler to receive errors from other chain.
 This method can be called only by TSS.
@@ -2874,7 +2873,7 @@ function onRevert(
 
 
 
-# ZetaConnectorNonEth
+## ZetaConnectorNonEth
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaConnector.non-eth.sol)
 
 *Non ETH implementation of ZetaConnector.
@@ -2883,16 +2882,16 @@ This version is for every chain but Etherum network because in the other chains 
 lock and unlock*
 
 
-## State Variables
-### maxSupply
+### State Variables
+#### maxSupply
 
 ```solidity
 uint256 public maxSupply = 2 ** 256 - 1;
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 
 ```solidity
@@ -2905,21 +2904,21 @@ constructor(
     ZetaConnectorBase(zetaTokenAddress_, tssAddress_, tssAddressUpdater_, pauserAddress_);
 ```
 
-### getLockedAmount
+#### getLockedAmount
 
 
 ```solidity
 function getLockedAmount() external view returns (uint256);
 ```
 
-### setMaxSupply
+#### setMaxSupply
 
 
 ```solidity
 function setMaxSupply(uint256 maxSupply_) external onlyTssAddress;
 ```
 
-### send
+#### send
 
 *Entry point to send data to protocol
 This call burn the token and emit an event with all the data needed by the protocol*
@@ -2929,7 +2928,7 @@ This call burn the token and emit an event with all the data needed by the proto
 function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused;
 ```
 
-### onReceive
+#### onReceive
 
 *Handler to receive data from other chain.
 This method can be called only by TSS.
@@ -2951,7 +2950,7 @@ function onReceive(
     onlyTssAddress;
 ```
 
-### onRevert
+#### onRevert
 
 *Handler to receive errors from other chain.
 This method can be called only by TSS.
@@ -2975,8 +2974,8 @@ function onRevert(
     onlyTssAddress;
 ```
 
-## Events
-### MaxSupplyUpdated
+### Events
+#### MaxSupplyUpdated
 
 ```solidity
 event MaxSupplyUpdated(address callerAddress, uint256 newMaxSupply);
@@ -2984,44 +2983,44 @@ event MaxSupplyUpdated(address callerAddress, uint256 newMaxSupply);
 
 
 
-# ZetaErrors
+## ZetaErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaErrors.sol)
 
 *Common custom errors*
 
 
-## Errors
-### CallerIsNotTss
+### Errors
+#### CallerIsNotTss
 
 ```solidity
 error CallerIsNotTss(address caller);
 ```
 
-### CallerIsNotConnector
+#### CallerIsNotConnector
 
 ```solidity
 error CallerIsNotConnector(address caller);
 ```
 
-### CallerIsNotTssUpdater
+#### CallerIsNotTssUpdater
 
 ```solidity
 error CallerIsNotTssUpdater(address caller);
 ```
 
-### CallerIsNotTssOrUpdater
+#### CallerIsNotTssOrUpdater
 
 ```solidity
 error CallerIsNotTssOrUpdater(address caller);
 ```
 
-### InvalidAddress
+#### InvalidAddress
 
 ```solidity
 error InvalidAddress();
 ```
 
-### ZetaTransferError
+#### ZetaTransferError
 
 ```solidity
 error ZetaTransferError();
@@ -3029,7 +3028,7 @@ error ZetaTransferError();
 
 
 
-# ZetaEth
+## ZetaEth
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaEth.sol)
 
 Ethereum is the origin and native chain of the ZETA token deployment (native)
@@ -3037,8 +3036,8 @@ Ethereum is the origin and native chain of the ZETA token deployment (native)
 *ZetaEth.sol is an implementation of OpenZeppelin's ERC20*
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 
 ```solidity
@@ -3047,12 +3046,12 @@ constructor(address creator, uint256 initialSupply);
 
 
 
-# ZetaCommonErrors
+## ZetaCommonErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaInterfaces.sol)
 
 
-## Errors
-### InvalidAddress
+### Errors
+#### InvalidAddress
 
 ```solidity
 error InvalidAddress();
@@ -3060,12 +3059,12 @@ error InvalidAddress();
 
 
 
-# ZetaConnector
+## ZetaConnector
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaInterfaces.sol)
 
 
-## Functions
-### send
+### Functions
+#### send
 
 *Sending value and data cross-chain is as easy as calling connector.send(SendInput)*
 
@@ -3076,12 +3075,12 @@ function send(ZetaInterfaces.SendInput calldata input) external;
 
 
 
-# ZetaInterfaces
+## ZetaInterfaces
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaInterfaces.sol)
 
 
-## Structs
-### SendInput
+### Structs
+#### SendInput
 *Use SendInput to interact with the Connector: connector.send(SendInput)*
 
 
@@ -3096,7 +3095,7 @@ struct SendInput {
 }
 ```
 
-### ZetaMessage
+#### ZetaMessage
 *Our Connector calls onZetaMessage with this struct as argument*
 
 
@@ -3110,7 +3109,7 @@ struct ZetaMessage {
 }
 ```
 
-### ZetaRevert
+#### ZetaRevert
 *Our Connector calls onZetaRevert with this struct as argument*
 
 
@@ -3127,12 +3126,12 @@ struct ZetaRevert {
 
 
 
-# ZetaReceiver
+## ZetaReceiver
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaInterfaces.sol)
 
 
-## Functions
-### onZetaMessage
+### Functions
+#### onZetaMessage
 
 *onZetaMessage is called when a cross-chain message reaches a contract*
 
@@ -3141,7 +3140,7 @@ struct ZetaRevert {
 function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external;
 ```
 
-### onZetaRevert
+#### onZetaRevert
 
 *onZetaRevert is called when a cross-chain message reverts.
 It's useful to rollback to the original state*
@@ -3153,7 +3152,7 @@ function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external;
 
 
 
-# ZetaTokenConsumer
+## ZetaTokenConsumer
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaInterfaces.sol)
 
 *ZetaTokenConsumer makes it easier to handle the following situations:
@@ -3165,15 +3164,15 @@ function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external;
 *The interface can be implemented using different strategies, like UniswapV2, UniswapV3, etc*
 
 
-## Functions
-### getZetaFromEth
+### Functions
+#### getZetaFromEth
 
 
 ```solidity
 function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable returns (uint256);
 ```
 
-### getZetaFromToken
+#### getZetaFromToken
 
 
 ```solidity
@@ -3187,7 +3186,7 @@ function getZetaFromToken(
     returns (uint256);
 ```
 
-### getEthFromZeta
+#### getEthFromZeta
 
 
 ```solidity
@@ -3200,7 +3199,7 @@ function getEthFromZeta(
     returns (uint256);
 ```
 
-### getTokenFromZeta
+#### getTokenFromZeta
 
 
 ```solidity
@@ -3214,33 +3213,33 @@ function getTokenFromZeta(
     returns (uint256);
 ```
 
-### hasZetaLiquidity
+#### hasZetaLiquidity
 
 
 ```solidity
 function hasZetaLiquidity() external view returns (bool);
 ```
 
-## Events
-### EthExchangedForZeta
+### Events
+#### EthExchangedForZeta
 
 ```solidity
 event EthExchangedForZeta(uint256 amountIn, uint256 amountOut);
 ```
 
-### TokenExchangedForZeta
+#### TokenExchangedForZeta
 
 ```solidity
 event TokenExchangedForZeta(address token, uint256 amountIn, uint256 amountOut);
 ```
 
-### ZetaExchangedForEth
+#### ZetaExchangedForEth
 
 ```solidity
 event ZetaExchangedForEth(uint256 amountIn, uint256 amountOut);
 ```
 
-### ZetaExchangedForToken
+#### ZetaExchangedForToken
 
 ```solidity
 event ZetaExchangedForToken(address token, uint256 amountIn, uint256 amountOut);
@@ -3248,22 +3247,22 @@ event ZetaExchangedForToken(address token, uint256 amountIn, uint256 amountOut);
 
 
 
-# ZetaNonEth
+## ZetaNonEth
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/legacy/ZetaNonEth.sol)
 
 On non-native (non-Ethereum) chains, ZETA tokens are minted and burned after the initial deployment on
 Ethereum.
 
 
-## State Variables
-### connectorAddress
+### State Variables
+#### connectorAddress
 
 ```solidity
 address public connectorAddress;
 ```
 
 
-### tssAddress
+#### tssAddress
 *Collectively held by Zeta blockchain validators*
 
 
@@ -3272,7 +3271,7 @@ address public tssAddress;
 ```
 
 
-### tssAddressUpdater
+#### tssAddressUpdater
 *Initially a multi-sig, eventually held by Zeta blockchain validators (via renounceTssAddressUpdater)*
 
 
@@ -3281,22 +3280,22 @@ address public tssAddressUpdater;
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 
 ```solidity
 constructor(address tssAddress_, address tssAddressUpdater_) ERC20("Zeta", "ZETA");
 ```
 
-### updateTssAndConnectorAddresses
+#### updateTssAndConnectorAddresses
 
 
 ```solidity
 function updateTssAndConnectorAddresses(address tssAddress_, address connectorAddress_) external;
 ```
 
-### renounceTssAddressUpdater
+#### renounceTssAddressUpdater
 
 *Sets tssAddressUpdater to be tssAddress*
 
@@ -3305,14 +3304,14 @@ function updateTssAndConnectorAddresses(address tssAddress_, address connectorAd
 function renounceTssAddressUpdater() external;
 ```
 
-### mint
+#### mint
 
 
 ```solidity
 function mint(address mintee, uint256 value, bytes32 internalSendHash) external override;
 ```
 
-### burnFrom
+#### burnFrom
 
 *Only Connector can mint. Minting requires burning the equivalent amount on another chain*
 
@@ -3321,32 +3320,32 @@ function mint(address mintee, uint256 value, bytes32 internalSendHash) external 
 function burnFrom(address account, uint256 amount) public override(IZetaNonEthInterface, ERC20Burnable);
 ```
 
-## Events
-### Minted
+### Events
+#### Minted
 
 ```solidity
 event Minted(address indexed mintee, uint256 amount, bytes32 indexed internalSendHash);
 ```
 
-### Burnt
+#### Burnt
 
 ```solidity
 event Burnt(address indexed burnee, uint256 amount);
 ```
 
-### TSSAddressUpdated
+#### TSSAddressUpdated
 
 ```solidity
 event TSSAddressUpdated(address callerAddress, address newTssAddress);
 ```
 
-### TSSAddressUpdaterUpdated
+#### TSSAddressUpdaterUpdated
 
 ```solidity
 event TSSAddressUpdaterUpdated(address callerAddress, address newTssUpdaterAddress);
 ```
 
-### ConnectorAddressUpdated
+#### ConnectorAddressUpdated
 
 ```solidity
 event ConnectorAddressUpdated(address callerAddress, address newConnectorAddress);
@@ -3354,7 +3353,7 @@ event ConnectorAddressUpdated(address callerAddress, address newConnectorAddress
 
 
 
-# Registry
+## Registry
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/Registry.sol)
 
 Satellite registry contract for connected chains, receiving updates from CoreRegistry.
@@ -3362,8 +3361,8 @@ Satellite registry contract for connected chains, receiving updates from CoreReg
 *This contract is deployed on every connected chain and maintains a synchronized view of the registry.*
 
 
-## State Variables
-### GATEWAY_ROLE
+### State Variables
+#### GATEWAY_ROLE
 Identifier for the gateway role
 
 
@@ -3372,7 +3371,7 @@ bytes32 public constant GATEWAY_ROLE = keccak256("GATEWAY_ROLE");
 ```
 
 
-### gatewayEVM
+#### gatewayEVM
 GatewayEVM contract that will call this contract with messages from CoreRegistry
 
 
@@ -3381,7 +3380,7 @@ IGatewayEVM public gatewayEVM;
 ```
 
 
-### coreRegistry
+#### coreRegistry
 Represents the address of the CoreRegistry contract on the ZetaChain
 
 
@@ -3390,8 +3389,8 @@ address public coreRegistry;
 ```
 
 
-## Functions
-### onlyRegistry
+### Functions
+#### onlyRegistry
 
 Restricts function calls to only be made by this contract itself
 
@@ -3405,7 +3404,7 @@ the onCall function using a self-call pattern, preventing direct external calls 
 modifier onlyRegistry();
 ```
 
-### initialize
+#### initialize
 
 Initialize the Registry contract
 
@@ -3430,7 +3429,7 @@ function initialize(
 |`coreRegistry_`|`address`|Address of the CoreRegistry contract deployed on ZetaChain|
 
 
-### onCall
+#### onCall
 
 onCall is called by the GatewayEVM when a cross-chain message is received
 
@@ -3453,7 +3452,7 @@ function onCall(
 |`data`|`bytes`|The encoded function call to execute|
 
 
-### changeChainStatus
+#### changeChainStatus
 
 Changes status of the chain to activated/deactivated
 
@@ -3481,7 +3480,7 @@ function changeChainStatus(
 |`activation`|`bool`|Whether activate or deactivate the chain|
 
 
-### updateChainMetadata
+#### updateChainMetadata
 
 Updates chain metadata, only for the active chains
 
@@ -3507,7 +3506,7 @@ function updateChainMetadata(
 |`value`|`bytes`|The new value for the metadata|
 
 
-### registerContract
+#### registerContract
 
 Registers a new contract address for a specific chain
 
@@ -3533,7 +3532,7 @@ function registerContract(
 |`addressBytes`|`bytes`|The address of the contract|
 
 
-### updateContractConfiguration
+#### updateContractConfiguration
 
 Updates contract configuration
 
@@ -3561,7 +3560,7 @@ function updateContractConfiguration(
 |`value`|`bytes`|The new value for the configuration|
 
 
-### setContractActive
+#### setContractActive
 
 Sets a contract's active status
 
@@ -3580,7 +3579,7 @@ function setContractActive(uint256 chainId, string calldata contractType, bool a
 |`active`|`bool`|Whether the contract should be active|
 
 
-### registerZRC20Token
+#### registerZRC20Token
 
 Registers a new ZRC20 token in the registry
 
@@ -3612,7 +3611,7 @@ function registerZRC20Token(
 |`decimals`|`uint8`|The number of decimals the token uses|
 
 
-### setZRC20TokenActive
+#### setZRC20TokenActive
 
 Updates ZRC20 token active status
 
@@ -3630,7 +3629,7 @@ function setZRC20TokenActive(address address_, bool active) external onlyRegistr
 |`active`|`bool`|Whether the token should be active|
 
 
-### bootstrapChains
+#### bootstrapChains
 
 Bootstrap the registry with chain data
 
@@ -3654,7 +3653,7 @@ function bootstrapChains(
 |`metadataEntries`|`ChainMetadataEntry[]`|Array of chain metadata entries|
 
 
-### bootstrapContracts
+#### bootstrapContracts
 
 Bootstrap the registry with contract data
 
@@ -3678,7 +3677,7 @@ function bootstrapContracts(
 |`configEntries`|`ContractConfigEntry[]`|Array of contract configuration entries|
 
 
-### bootstrapZRC20Tokens
+#### bootstrapZRC20Tokens
 
 Bootstrap the registry with ZRC20 token data
 
@@ -3697,7 +3696,7 @@ function bootstrapZRC20Tokens(ZRC20Info[] calldata tokens) external onlyRole(REG
 
 
 
-# ZetaConnectorBase
+## ZetaConnectorBase
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/ZetaConnectorBase.sol)
 
 Abstract base contract for ZetaConnector.
@@ -3705,8 +3704,8 @@ Abstract base contract for ZetaConnector.
 *This contract implements basic functionality for handling tokens and interacting with the Gateway contract.*
 
 
-## State Variables
-### gateway
+### State Variables
+#### gateway
 The Gateway contract used for executing cross-chain calls.
 
 
@@ -3715,7 +3714,7 @@ IGatewayEVM public gateway;
 ```
 
 
-### zetaToken
+#### zetaToken
 The address of the Zeta token.
 
 
@@ -3724,7 +3723,7 @@ address public zetaToken;
 ```
 
 
-### tssAddress
+#### tssAddress
 The address of the TSS (Threshold Signature Scheme) contract.
 
 
@@ -3733,7 +3732,7 @@ address public tssAddress;
 ```
 
 
-### WITHDRAWER_ROLE
+#### WITHDRAWER_ROLE
 New role identifier for withdrawer role.
 
 
@@ -3742,7 +3741,7 @@ bytes32 public constant WITHDRAWER_ROLE = keccak256("WITHDRAWER_ROLE");
 ```
 
 
-### PAUSER_ROLE
+#### PAUSER_ROLE
 New role identifier for pauser role.
 
 
@@ -3751,7 +3750,7 @@ bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 ```
 
 
-### TSS_ROLE
+#### TSS_ROLE
 New role identifier for tss role.
 
 
@@ -3760,8 +3759,8 @@ bytes32 public constant TSS_ROLE = keccak256("TSS_ROLE");
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 **Note:**
 oz-upgrades-unsafe-allow: constructor
@@ -3771,7 +3770,7 @@ oz-upgrades-unsafe-allow: constructor
 constructor();
 ```
 
-### initialize
+#### initialize
 
 Initializer for ZetaConnectors.
 
@@ -3790,7 +3789,7 @@ function initialize(
     onlyInitializing;
 ```
 
-### _authorizeUpgrade
+#### _authorizeUpgrade
 
 *Authorizes the upgrade of the contract, sender must be owner.*
 
@@ -3805,7 +3804,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |`newImplementation`|`address`|Address of the new implementation.|
 
 
-### updateTSSAddress
+#### updateTSSAddress
 
 Update tss address
 
@@ -3820,7 +3819,7 @@ function updateTSSAddress(address newTSSAddress) external onlyRole(DEFAULT_ADMIN
 |`newTSSAddress`|`address`|new tss address|
 
 
-### pause
+#### pause
 
 Pause contract.
 
@@ -3829,7 +3828,7 @@ Pause contract.
 function pause() external onlyRole(PAUSER_ROLE);
 ```
 
-### unpause
+#### unpause
 
 Unpause contract.
 
@@ -3838,7 +3837,7 @@ Unpause contract.
 function unpause() external onlyRole(PAUSER_ROLE);
 ```
 
-### deposit
+#### deposit
 
 Handle received tokens.
 
@@ -3853,8 +3852,8 @@ function deposit(uint256 amount) external virtual;
 |`amount`|`uint256`|The amount of tokens received.|
 
 
-## Errors
-### ZeroAddress
+### Errors
+#### ZeroAddress
 Error indicating that a zero address was provided.
 
 
@@ -3864,7 +3863,7 @@ error ZeroAddress();
 
 
 
-# ZetaConnectorNative
+## ZetaConnectorNative
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/ZetaConnectorNative.sol)
 
 Implementation of ZetaConnectorBase for native token handling.
@@ -3872,8 +3871,8 @@ Implementation of ZetaConnectorBase for native token handling.
 *This contract directly transfers Zeta tokens and interacts with the Gateway contract.*
 
 
-## Functions
-### initialize
+### Functions
+#### initialize
 
 Initializer for ZetaConnectorNative.
 
@@ -3890,7 +3889,7 @@ function initialize(
     initializer;
 ```
 
-### withdraw
+#### withdraw
 
 Withdraw tokens to a specified address.
 
@@ -3908,7 +3907,7 @@ function withdraw(address to, uint256 amount) external nonReentrant onlyRole(WIT
 |`amount`|`uint256`|The amount of tokens to withdraw.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 Withdraw tokens and call a contract through Gateway.
 
@@ -3937,7 +3936,7 @@ function withdrawAndCall(
 |`data`|`bytes`|The calldata to pass to the contract call.|
 
 
-### withdrawAndRevert
+#### withdrawAndRevert
 
 Withdraw tokens and call a contract with a revert callback through Gateway.
 
@@ -3966,7 +3965,7 @@ function withdrawAndRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### deposit
+#### deposit
 
 Handle received tokens.
 
@@ -3983,7 +3982,7 @@ function deposit(uint256 amount) external override whenNotPaused;
 
 
 
-# ZetaConnectorNonNative
+## ZetaConnectorNonNative
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/ZetaConnectorNonNative.sol)
 
 Implementation of ZetaConnectorBase for non-native token handling.
@@ -3991,8 +3990,8 @@ Implementation of ZetaConnectorBase for non-native token handling.
 *This contract mints and burns Zeta tokens and interacts with the Gateway contract.*
 
 
-## State Variables
-### maxSupply
+### State Variables
+#### maxSupply
 Max supply for minting.
 
 
@@ -4001,8 +4000,8 @@ uint256 public maxSupply;
 ```
 
 
-## Functions
-### initialize
+### Functions
+#### initialize
 
 Initializer for ZetaConnectorNonNative.
 
@@ -4019,7 +4018,7 @@ function initialize(
     initializer;
 ```
 
-### setMaxSupply
+#### setMaxSupply
 
 Set max supply for minting.
 
@@ -4036,7 +4035,7 @@ function setMaxSupply(uint256 maxSupply_) external onlyRole(TSS_ROLE) whenNotPau
 |`maxSupply_`|`uint256`|New max supply.|
 
 
-### withdraw
+#### withdraw
 
 Withdraw tokens to a specified address.
 
@@ -4063,7 +4062,7 @@ function withdraw(
 |`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 Withdraw tokens and call a contract through Gateway.
 
@@ -4094,7 +4093,7 @@ function withdrawAndCall(
 |`internalSendHash`|`bytes32`|A hash used for internal tracking of the transaction.|
 
 
-### withdrawAndRevert
+#### withdrawAndRevert
 
 Withdraw tokens and call a contract with a revert callback through Gateway.
 
@@ -4125,7 +4124,7 @@ function withdrawAndRevert(
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### deposit
+#### deposit
 
 Handle received tokens and burn them.
 
@@ -4140,7 +4139,7 @@ function deposit(uint256 amount) external override whenNotPaused;
 |`amount`|`uint256`|The amount of tokens received.|
 
 
-### _mintTo
+#### _mintTo
 
 *mints to provided account and checks if totalSupply will be exceeded*
 
@@ -4149,8 +4148,8 @@ function deposit(uint256 amount) external override whenNotPaused;
 function _mintTo(address to, uint256 amount, bytes32 internalSendHash) private;
 ```
 
-## Events
-### MaxSupplyUpdated
+### Events
+#### MaxSupplyUpdated
 Event triggered when max supply is updated.
 
 
@@ -4164,8 +4163,8 @@ event MaxSupplyUpdated(uint256 maxSupply);
 |----|----|-----------|
 |`maxSupply`|`uint256`|New max supply.|
 
-## Errors
-### ExceedsMaxSupply
+### Errors
+#### ExceedsMaxSupply
 
 ```solidity
 error ExceedsMaxSupply();
@@ -4173,12 +4172,12 @@ error ExceedsMaxSupply();
 
 
 
-# BaseRegistry
+## BaseRegistry
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/BaseRegistry.sol)
 
 
-## State Variables
-### PAUSER_ROLE
+### State Variables
+#### PAUSER_ROLE
 New role identifier for pauser role.
 
 
@@ -4187,7 +4186,7 @@ bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 ```
 
 
-### REGISTRY_MANAGER_ROLE
+#### REGISTRY_MANAGER_ROLE
 New role identifier for registry manager role.
 
 
@@ -4196,7 +4195,7 @@ bytes32 public constant REGISTRY_MANAGER_ROLE = keccak256("REGISTRY_MANAGER_ROLE
 ```
 
 
-### admin
+#### admin
 Address with DEFAULT_ADMIN_ROLE, authorized for upgrades and pausing actions.
 
 
@@ -4205,7 +4204,7 @@ address public admin;
 ```
 
 
-### registryManager
+#### registryManager
 Address with REGISTRY_MANAGER_ROLE, authorized for all registry write actions.
 
 
@@ -4214,7 +4213,7 @@ address public registryManager;
 ```
 
 
-### _activeChains
+#### _activeChains
 Active chains in the registry.
 
 
@@ -4223,7 +4222,7 @@ uint256[] internal _activeChains;
 ```
 
 
-### _allChains
+#### _allChains
 Array of all chain IDs in the registry (active and inactive).
 
 
@@ -4232,7 +4231,7 @@ uint256[] internal _allChains;
 ```
 
 
-### _allContracts
+#### _allContracts
 Array to store all contracts as chainId and contractType pairs.
 
 
@@ -4241,7 +4240,7 @@ ContractIdentifier[] internal _allContracts;
 ```
 
 
-### _allZRC20Addresses
+#### _allZRC20Addresses
 Array of all ZRC20 token addresses.
 
 
@@ -4250,7 +4249,7 @@ address[] internal _allZRC20Addresses;
 ```
 
 
-### _chains
+#### _chains
 Maps chain IDs to their information.
 
 
@@ -4259,7 +4258,7 @@ mapping(uint256 => ChainInfo) internal _chains;
 ```
 
 
-### _contracts
+#### _contracts
 Maps chain ID -> contract type -> ContractInfo
 
 
@@ -4268,7 +4267,7 @@ mapping(uint256 => mapping(string => ContractInfo)) internal _contracts;
 ```
 
 
-### _zrc20Tokens
+#### _zrc20Tokens
 Maps ZRC20 token address to their information
 
 
@@ -4277,7 +4276,7 @@ mapping(address => ZRC20Info) internal _zrc20Tokens;
 ```
 
 
-### _zrc20SymbolToAddress
+#### _zrc20SymbolToAddress
 Maps token symbol to ZRC20 address.
 
 
@@ -4286,7 +4285,7 @@ mapping(string => address) internal _zrc20SymbolToAddress;
 ```
 
 
-### _originAssetToZRC20
+#### _originAssetToZRC20
 Maps origin chain ID and origin address to ZRC20 token address.
 
 
@@ -4295,8 +4294,8 @@ mapping(uint256 => mapping(bytes => address)) internal _originAssetToZRC20;
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 **Note:**
 oz-upgrades-unsafe-allow: constructor
@@ -4306,7 +4305,7 @@ oz-upgrades-unsafe-allow: constructor
 constructor();
 ```
 
-### _authorizeUpgrade
+#### _authorizeUpgrade
 
 *Authorizes the upgrade of the contract, sender must be admin.*
 
@@ -4321,7 +4320,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |`newImplementation`|`address`|Address of the new implementation,|
 
 
-### pause
+#### pause
 
 Pause contract.
 
@@ -4330,7 +4329,7 @@ Pause contract.
 function pause() external onlyRole(PAUSER_ROLE);
 ```
 
-### unpause
+#### unpause
 
 Unpause contract.
 
@@ -4339,7 +4338,7 @@ Unpause contract.
 function unpause() external onlyRole(DEFAULT_ADMIN_ROLE);
 ```
 
-### changeAdmin
+#### changeAdmin
 
 Changes the admin address and transfers DEFAULT_ADMIN_ROLE and PAUSER_ROLE.
 
@@ -4356,7 +4355,7 @@ function changeAdmin(address newAdmin) external onlyRole(DEFAULT_ADMIN_ROLE);
 |`newAdmin`|`address`|The address of the new admin.|
 
 
-### changeRegistryManager
+#### changeRegistryManager
 
 Changes the registry manager address and transfers REGISTRY_MANAGER_ROLE and PAUSER_ROLE.
 
@@ -4373,7 +4372,7 @@ function changeRegistryManager(address newRegistryManager) external onlyRole(DEF
 |`newRegistryManager`|`address`|The address of the new registry manager.|
 
 
-### _changeChainStatus
+#### _changeChainStatus
 
 Changes status of the chain to activated/deactivated.
 
@@ -4391,7 +4390,7 @@ function _changeChainStatus(uint256 chainId, address gasZRC20, bytes calldata re
 |`activation`|`bool`|Whether activate or deactivate the chain|
 
 
-### _updateChainMetadata
+#### _updateChainMetadata
 
 Updates chain metadata, only for the active chains.
 
@@ -4408,7 +4407,7 @@ function _updateChainMetadata(uint256 chainId, string calldata key, bytes callda
 |`value`|`bytes`|The new value for the metadata.|
 
 
-### _registerContract
+#### _registerContract
 
 Registers a new contract address for a specific chain.
 
@@ -4425,7 +4424,7 @@ function _registerContract(uint256 chainId, string calldata contractType, bytes 
 |`addressBytes`|`bytes`|The bytes representation of the non-EVM address.|
 
 
-### _updateContractConfiguration
+#### _updateContractConfiguration
 
 Updates contract configuration.
 
@@ -4449,7 +4448,7 @@ function _updateContractConfiguration(
 |`value`|`bytes`|The new value for the configuration.|
 
 
-### _setContractActive
+#### _setContractActive
 
 Sets a contract's active status
 
@@ -4466,7 +4465,7 @@ function _setContractActive(uint256 chainId, string calldata contractType, bool 
 |`active`|`bool`|Whether the contract should be active.|
 
 
-### _registerZRC20Token
+#### _registerZRC20Token
 
 Registers a new ZRC20 token in the registry.
 
@@ -4494,7 +4493,7 @@ function _registerZRC20Token(
 |`decimals`|`uint8`|The number of decimals the token uses.|
 
 
-### _setZRC20TokenActive
+#### _setZRC20TokenActive
 
 Updates ZRC20 token active status.
 
@@ -4503,7 +4502,7 @@ Updates ZRC20 token active status.
 function _setZRC20TokenActive(address address_, bool active) internal;
 ```
 
-### getChainInfo
+#### getChainInfo
 
 Gets information about a specific chain.
 
@@ -4525,7 +4524,7 @@ function getChainInfo(uint256 chainId) external view returns (address gasZRC20, 
 |`registry`|`bytes`|The registry address deployed on the chain.|
 
 
-### getChainMetadata
+#### getChainMetadata
 
 Gets chain-specific metadata
 
@@ -4547,7 +4546,7 @@ function getChainMetadata(uint256 chainId, string calldata key) external view re
 |`<none>`|`bytes`|The value of the requested metadata|
 
 
-### getContractInfo
+#### getContractInfo
 
 Gets information about a specific contract
 
@@ -4576,7 +4575,7 @@ function getContractInfo(
 |`addressBytes`|`bytes`|The address of the contract|
 
 
-### getContractConfiguration
+#### getContractConfiguration
 
 Gets contract-specific configuration
 
@@ -4606,7 +4605,7 @@ function getContractConfiguration(
 |`<none>`|`bytes`|The value of the requested configuration|
 
 
-### getZRC20TokenInfo
+#### getZRC20TokenInfo
 
 Gets information about a specific ZRC20 token
 
@@ -4642,7 +4641,7 @@ function getZRC20TokenInfo(address address_)
 |`decimals`|`uint8`|The number of decimals the token uses|
 
 
-### getZRC20AddressByForeignAsset
+#### getZRC20AddressByForeignAsset
 
 Gets the ZRC20 token address for a specific asset on a foreign chain.
 
@@ -4670,7 +4669,7 @@ function getZRC20AddressByForeignAsset(
 |`<none>`|`address`|The address of the corresponding ZRC20 token on ZetaChain.|
 
 
-### getActiveChains
+#### getActiveChains
 
 Gets all active chains in the registry.
 
@@ -4685,7 +4684,7 @@ function getActiveChains() external view returns (uint256[] memory);
 |`<none>`|`uint256[]`|Array of chain IDs for all active chains.|
 
 
-### getAllChains
+#### getAllChains
 
 Returns information for all chains (active and inactive) in the registry.
 
@@ -4700,7 +4699,7 @@ function getAllChains() external view returns (ChainInfoDTO[] memory chainsInfo)
 |`chainsInfo`|`ChainInfoDTO[]`|Array of ChainInfoDTO structs containing information about all chains.|
 
 
-### getAllContracts
+#### getAllContracts
 
 Returns information for all contracts in the registry.
 
@@ -4715,7 +4714,7 @@ function getAllContracts() external view returns (ContractInfoDTO[] memory contr
 |`contractsInfo`|`ContractInfoDTO[]`|Array of ContractInfoDTO structs containing information about all contracts.|
 
 
-### getAllZRC20Tokens
+#### getAllZRC20Tokens
 
 Returns information for all ZRC20 tokens in the registry.
 
@@ -4730,7 +4729,7 @@ function getAllZRC20Tokens() external view returns (ZRC20Info[] memory tokensInf
 |`tokensInfo`|`ZRC20Info[]`|Array of ZRC20Info structs containing information about all ZRC20 tokens.|
 
 
-### _removeFromActiveChains
+#### _removeFromActiveChains
 
 Removes a chain ID from the active chains array.
 
@@ -4747,14 +4746,14 @@ function _removeFromActiveChains(uint256 chainId) private;
 
 
 
-# IBaseRegistry
+## IBaseRegistry
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Interface for the BaseRegistry contract.
 
 
-## Functions
-### changeChainStatus
+### Functions
+#### changeChainStatus
 
 Changes status of the chain to activated/deactivated.
 
@@ -4772,7 +4771,7 @@ function changeChainStatus(uint256 chainId, address gasZRC20, bytes calldata reg
 |`activation`|`bool`|Whether activate or deactivate a chain|
 
 
-### updateChainMetadata
+#### updateChainMetadata
 
 Updates chain metadata.
 
@@ -4789,7 +4788,7 @@ function updateChainMetadata(uint256 chainId, string calldata key, bytes calldat
 |`value`|`bytes`|The new value for the metadata.|
 
 
-### registerContract
+#### registerContract
 
 Registers a new contract address for a specific chain.
 
@@ -4806,7 +4805,7 @@ function registerContract(uint256 chainId, string calldata contractType, bytes c
 |`addressBytes`|`bytes`|The bytes representation of the non-EVM address.|
 
 
-### updateContractConfiguration
+#### updateContractConfiguration
 
 Updates contract configuration.
 
@@ -4830,14 +4829,14 @@ function updateContractConfiguration(
 |`value`|`bytes`|The new value for the configuration.|
 
 
-### setContractActive
+#### setContractActive
 
 
 ```solidity
 function setContractActive(uint256 chainId, string calldata contractType, bool active) external;
 ```
 
-### registerZRC20Token
+#### registerZRC20Token
 
 Registers a new ZRC20 token in the registry.
 
@@ -4865,7 +4864,7 @@ function registerZRC20Token(
 |`decimals`|`uint8`||
 
 
-### setZRC20TokenActive
+#### setZRC20TokenActive
 
 Updates ZRC20 token information.
 
@@ -4881,7 +4880,7 @@ function setZRC20TokenActive(address address_, bool active) external;
 |`active`|`bool`|Whether the token should be active.|
 
 
-### getChainInfo
+#### getChainInfo
 
 Gets information about a specific chain.
 
@@ -4903,7 +4902,7 @@ function getChainInfo(uint256 chainId) external view returns (address gasZRC20, 
 |`registry`|`bytes`|The registry address deployed on the chain.|
 
 
-### getChainMetadata
+#### getChainMetadata
 
 Gets chain-specific metadata.
 
@@ -4925,7 +4924,7 @@ function getChainMetadata(uint256 chainId, string calldata key) external view re
 |`<none>`|`bytes`|The value of the requested metadata.|
 
 
-### getContractInfo
+#### getContractInfo
 
 Gets information about a specific contract.
 
@@ -4954,7 +4953,7 @@ function getContractInfo(
 |`addressBytes`|`bytes`|The address of the contract.|
 
 
-### getContractConfiguration
+#### getContractConfiguration
 
 Gets contract-specific configuration.
 
@@ -4984,7 +4983,7 @@ function getContractConfiguration(
 |`<none>`|`bytes`|The value of the requested configuration.|
 
 
-### getZRC20TokenInfo
+#### getZRC20TokenInfo
 
 Gets information about a specific ZRC20 token.
 
@@ -5020,7 +5019,7 @@ function getZRC20TokenInfo(address address_)
 |`decimals`|`uint8`|The number of decimals the token uses.|
 
 
-### getZRC20AddressByForeignAsset
+#### getZRC20AddressByForeignAsset
 
 Gets the ZRC20 token address for a specific asset on a foreign chain.
 
@@ -5048,7 +5047,7 @@ function getZRC20AddressByForeignAsset(
 |`<none>`|`address`|The address of the corresponding ZRC20 token on ZetaChain.|
 
 
-### getActiveChains
+#### getActiveChains
 
 Gets all active chains in the registry.
 
@@ -5063,7 +5062,7 @@ function getActiveChains() external view returns (uint256[] memory);
 |`<none>`|`uint256[]`|Array of chain IDs for all active chains.|
 
 
-### getAllChains
+#### getAllChains
 
 Returns information for all chains (active and inactive) in the registry.
 
@@ -5078,7 +5077,7 @@ function getAllChains() external view returns (ChainInfoDTO[] memory);
 |`<none>`|`ChainInfoDTO[]`|chainsInfo Array of ChainInfoDTO structs containing information about all chains.|
 
 
-### getAllContracts
+#### getAllContracts
 
 Returns information for all contracts in the registry.
 
@@ -5093,7 +5092,7 @@ function getAllContracts() external view returns (ContractInfoDTO[] memory);
 |`<none>`|`ContractInfoDTO[]`|contractsInfo Array of ContractInfoDTO structs containing information about all contracts.|
 
 
-### getAllZRC20Tokens
+#### getAllZRC20Tokens
 
 Gets all active chains in the registry.
 
@@ -5110,14 +5109,14 @@ function getAllZRC20Tokens() external view returns (ZRC20Info[] memory);
 
 
 
-# IBaseRegistryErrors
+## IBaseRegistryErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Interface for the errors used by the BaseRegistry contract.
 
 
-## Errors
-### ZeroAddress
+### Errors
+#### ZeroAddress
 Error thrown when a zero address is provided where a non-zero address is required.
 
 
@@ -5125,7 +5124,7 @@ Error thrown when a zero address is provided where a non-zero address is require
 error ZeroAddress();
 ```
 
-### InvalidSender
+#### InvalidSender
 Error thrown when the sender is invalid
 
 
@@ -5133,7 +5132,7 @@ Error thrown when the sender is invalid
 error InvalidSender();
 ```
 
-### TransferFailed
+#### TransferFailed
 Error thrown when a ZRC20 token transfer failed.
 
 
@@ -5141,7 +5140,7 @@ Error thrown when a ZRC20 token transfer failed.
 error TransferFailed();
 ```
 
-### ChainActive
+#### ChainActive
 Error thrown when a chain is already active.
 
 
@@ -5155,7 +5154,7 @@ error ChainActive(uint256 chainId);
 |----|----|-----------|
 |`chainId`|`uint256`|The ID of the chain that is already active.|
 
-### ChainNonActive
+#### ChainNonActive
 Error thrown when a chain is not active.
 
 
@@ -5169,7 +5168,7 @@ error ChainNonActive(uint256 chainId);
 |----|----|-----------|
 |`chainId`|`uint256`|The ID of the chain that is not active.|
 
-### InvalidContractType
+#### InvalidContractType
 Error thrown when a contract type is invalid.
 
 
@@ -5183,7 +5182,7 @@ error InvalidContractType(string message);
 |----|----|-----------|
 |`message`|`string`|Describes why error happened|
 
-### ContractAlreadyRegistered
+#### ContractAlreadyRegistered
 Error thrown when a contract is already registered.
 
 
@@ -5199,7 +5198,7 @@ error ContractAlreadyRegistered(uint256 chainId, string contractType, bytes addr
 |`contractType`|`string`|The type of the contract.|
 |`addressBytes`|`bytes`|The address of the contract.|
 
-### ContractNotFound
+#### ContractNotFound
 Error thrown when a contract is not found in the registry.
 
 
@@ -5214,7 +5213,7 @@ error ContractNotFound(uint256 chainId, string contractType);
 |`chainId`|`uint256`|The ID of the chain,|
 |`contractType`|`string`|The type of the contract.|
 
-### ZRC20AlreadyRegistered
+#### ZRC20AlreadyRegistered
 Error thrown when a ZRC20 token is already registered.
 
 
@@ -5228,7 +5227,7 @@ error ZRC20AlreadyRegistered(address address_);
 |----|----|-----------|
 |`address_`|`address`|The address of the ZRC20 token.|
 
-### ZRC20SymbolAlreadyInUse
+#### ZRC20SymbolAlreadyInUse
 Error thrown when a ZRC20 token symbol is already in use.
 
 
@@ -5244,14 +5243,14 @@ error ZRC20SymbolAlreadyInUse(string symbol);
 
 
 
-# IBaseRegistryEvents
+## IBaseRegistryEvents
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Interface for the events emitted by the BaseRegistry contract.
 
 
-## Events
-### ChainStatusChanged
+### Events
+#### ChainStatusChanged
 Emitted when a chain status has changed.
 
 
@@ -5266,7 +5265,7 @@ event ChainStatusChanged(uint256 indexed chainId, bool newStatus);
 |`chainId`|`uint256`|The ID of the chain.|
 |`newStatus`|`bool`|The new chain status (is active or not).|
 
-### ChainMetadataUpdated
+#### ChainMetadataUpdated
 Emitted when a chain metadata is set.
 
 
@@ -5282,7 +5281,7 @@ event ChainMetadataUpdated(uint256 indexed chainId, string key, bytes value);
 |`key`|`string`|The metadata key to update.|
 |`value`|`bytes`|The new value for the metadata.|
 
-### ContractRegistered
+#### ContractRegistered
 Emitted when a new contract is registered.
 
 
@@ -5298,7 +5297,7 @@ event ContractRegistered(uint256 indexed chainId, string indexed contractType, b
 |`contractType`|`string`|The type of the contract (e.g. "connector", "gateway", "tss").|
 |`addressBytes`|`bytes`|The contract address in bytes representation.|
 
-### ContractStatusChanged
+#### ContractStatusChanged
 Emitted when a contract status has changed.
 
 
@@ -5312,7 +5311,7 @@ event ContractStatusChanged(bytes addressBytes);
 |----|----|-----------|
 |`addressBytes`|`bytes`|The contract address in bytes representation.|
 
-### ContractConfigurationUpdated
+#### ContractConfigurationUpdated
 Emitted when a contract configuration is updated.
 
 
@@ -5329,7 +5328,7 @@ event ContractConfigurationUpdated(uint256 indexed chainId, string contractType,
 |`key`|`string`|The configuration key to update.|
 |`value`|`bytes`|The new value for the configuration.|
 
-### ZRC20TokenRegistered
+#### ZRC20TokenRegistered
 Emitted when a ZRC20 token is registered.
 
 
@@ -5349,7 +5348,7 @@ event ZRC20TokenRegistered(
 |`originChainId`|`uint256`|The ID of the foreign chain where the original asset exists.|
 |`symbol`|`string`|The symbol of the token.|
 
-### ZRC20TokenUpdated
+#### ZRC20TokenUpdated
 Emitted when a ZRC20 token is updated.
 
 
@@ -5364,7 +5363,7 @@ event ZRC20TokenUpdated(address address_, bool active);
 |`address_`|`address`|The address of the ZRC20 token.|
 |`active`|`bool`|Whether the token should be active.|
 
-### AdminChanged
+#### AdminChanged
 Emitted when admin address is changed.
 
 
@@ -5379,7 +5378,7 @@ event AdminChanged(address oldAdmin, address newAdmin);
 |`oldAdmin`|`address`|The previous admin address.|
 |`newAdmin`|`address`|The new admin address.|
 
-### RegistryManagerChanged
+#### RegistryManagerChanged
 Emitted when registry manager address is changed.
 
 
@@ -5396,7 +5395,7 @@ event RegistryManagerChanged(address oldRegistryManager, address newRegistryMana
 
 
 
-# ChainInfo
+## ChainInfo
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Structure that contains information about a chain.
@@ -5414,7 +5413,7 @@ struct ChainInfo {
 
 
 
-# ChainInfoDTO
+## ChainInfoDTO
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Structure that contains information about a chain, used for data retrieving.
@@ -5431,7 +5430,7 @@ struct ChainInfoDTO {
 
 
 
-# ContractIdentifier
+## ContractIdentifier
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Each entry consists of: chainId (uint256) and contractType (string)
@@ -5446,7 +5445,7 @@ struct ContractIdentifier {
 
 
 
-# ContractInfo
+## ContractInfo
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Structure that contains information about a contract registered in the system.
@@ -5463,7 +5462,7 @@ struct ContractInfo {
 
 
 
-# ContractInfoDTO
+## ContractInfoDTO
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Structure that contains information about a contract registered in the system, used for data retrieving.
@@ -5480,7 +5479,7 @@ struct ContractInfoDTO {
 
 
 
-# ZRC20Info
+## ZRC20Info
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/helpers/interfaces/IBaseRegistry.sol)
 
 Structure that contains information about a ZRC20 token.
@@ -5500,10 +5499,10 @@ struct ZRC20Info {
 
 
 
-# Constants
+## Constants
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
-### MAX_REVERT_GAS_LIMIT
+#### MAX_REVERT_GAS_LIMIT
 
 ```solidity
 uint256 constant MAX_REVERT_GAS_LIMIT = 2_000_000;
@@ -5511,7 +5510,7 @@ uint256 constant MAX_REVERT_GAS_LIMIT = 2_000_000;
 
 
 
-# RevertGasLimitExceeded
+## RevertGasLimitExceeded
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
 Error indicating revert gas limit exceeds maximum allowed
@@ -5530,14 +5529,14 @@ error RevertGasLimitExceeded(uint256 provided, uint256 maximum);
 
 
 
-# Abortable
+## Abortable
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
 Interface for contracts that support abortable calls.
 
 
-## Functions
-### onAbort
+### Functions
+#### onAbort
 
 Called when a revertable call is aborted.
 
@@ -5554,14 +5553,14 @@ function onAbort(AbortContext calldata abortContext) external;
 
 
 
-# Revertable
+## Revertable
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
 Interface for contracts that support revertable calls.
 
 
-## Functions
-### onRevert
+### Functions
+#### onRevert
 
 Called when a revertable call is made.
 
@@ -5578,7 +5577,7 @@ function onRevert(RevertContext calldata revertContext) external payable;
 
 
 
-# AbortContext
+## AbortContext
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
 Struct containing abort context passed to onAbort.
@@ -5608,7 +5607,7 @@ struct AbortContext {
 
 
 
-# RevertContext
+## RevertContext
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
 Struct containing revert context passed to onRevert.
@@ -5634,7 +5633,7 @@ struct RevertContext {
 
 
 
-# RevertOptions
+## RevertOptions
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)
 
 Struct containing revert options
@@ -5662,7 +5661,7 @@ struct RevertOptions {
 
 
 
-# CoreRegistry
+## CoreRegistry
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/CoreRegistry.sol)
 
 Central registry for ZetaChain, managing chain info, ZRC20 data, and contract addresses across all chains.
@@ -5670,8 +5669,8 @@ Central registry for ZetaChain, managing chain info, ZRC20 data, and contract ad
 *The contract doesn't hold any funds and should never have active allowances.*
 
 
-## State Variables
-### CROSS_CHAIN_GAS_LIMIT
+### State Variables
+#### CROSS_CHAIN_GAS_LIMIT
 Cross-chain message gas limit
 
 
@@ -5680,7 +5679,7 @@ uint256 public constant CROSS_CHAIN_GAS_LIMIT = 500_000;
 ```
 
 
-### gatewayZEVM
+#### gatewayZEVM
 Instance of the GatewayZEVM contract for cross-chain communication
 
 
@@ -5689,8 +5688,8 @@ IGatewayZEVM public gatewayZEVM;
 ```
 
 
-## Functions
-### initialize
+### Functions
+#### initialize
 
 Initialize the CoreRegistry contract.
 
@@ -5707,7 +5706,7 @@ function initialize(address admin_, address registryManager_, address gatewayZEV
 |`gatewayZEVM_`|`address`|Address of the GatewayZEVM contract for cross-chain messaging|
 
 
-### changeChainStatus
+#### changeChainStatus
 
 Changes status of the chain to activated/deactivated.
 
@@ -5733,7 +5732,7 @@ function changeChainStatus(
 |`activation`|`bool`|Whether activate or deactivate the chain|
 
 
-### updateChainMetadata
+#### updateChainMetadata
 
 Updates chain metadata, only for the active chains.
 
@@ -5757,7 +5756,7 @@ function updateChainMetadata(
 |`value`|`bytes`|The new value for the metadata.|
 
 
-### registerContract
+#### registerContract
 
 Registers a new contract address for a specific chain.
 
@@ -5781,7 +5780,7 @@ function registerContract(
 |`addressBytes`|`bytes`|The bytes representation of the non-EVM address.|
 
 
-### updateContractConfiguration
+#### updateContractConfiguration
 
 Updates contract configuration.
 
@@ -5807,7 +5806,7 @@ function updateContractConfiguration(
 |`value`|`bytes`|The new value for the configuration.|
 
 
-### setContractActive
+#### setContractActive
 
 Sets a contract's active status
 
@@ -5831,7 +5830,7 @@ function setContractActive(
 |`active`|`bool`|Whether the contract should be active.|
 
 
-### registerZRC20Token
+#### registerZRC20Token
 
 Registers a new ZRC20 token in the registry.
 
@@ -5861,7 +5860,7 @@ function registerZRC20Token(
 |`decimals`|`uint8`|The number of decimals the token uses.|
 
 
-### setZRC20TokenActive
+#### setZRC20TokenActive
 
 Updates ZRC20 token active status.
 
@@ -5870,7 +5869,7 @@ Updates ZRC20 token active status.
 function setZRC20TokenActive(address address_, bool active) external onlyRole(REGISTRY_MANAGER_ROLE) whenNotPaused;
 ```
 
-### _broadcastChainActivation
+#### _broadcastChainActivation
 
 Broadcast chain activation update to all satellite registries.
 
@@ -5894,7 +5893,7 @@ function _broadcastChainActivation(
 |`activation`|`bool`|Whether activate or deactivate the chain|
 
 
-### _broadcastChainMetadataUpdate
+#### _broadcastChainMetadataUpdate
 
 Broadcast chain metadata to all satellite registries
 
@@ -5911,7 +5910,7 @@ function _broadcastChainMetadataUpdate(uint256 chainId, string calldata key, byt
 |`value`|`bytes`|The new value for the metadata|
 
 
-### _broadcastContractRegistration
+#### _broadcastContractRegistration
 
 Broadcast contract registration to all satellite registries
 
@@ -5937,7 +5936,7 @@ function _broadcastContractRegistration(
 |`addressBytes`|`bytes`||
 
 
-### _broadcastContractConfigUpdate
+#### _broadcastContractConfigUpdate
 
 Broadcast contract configuration update to all satellite registries
 
@@ -5967,7 +5966,7 @@ function _broadcastContractConfigUpdate(
 |`value`|`bytes`||
 
 
-### _broadcastContractStatusUpdate
+#### _broadcastContractStatusUpdate
 
 Broadcast contract status update to all satellite registries
 
@@ -5988,7 +5987,7 @@ function _broadcastContractStatusUpdate(uint256 chainId, string calldata contrac
 |`active`|`bool`||
 
 
-### _broadcastZRC20Registration
+#### _broadcastZRC20Registration
 
 Broadcast ZRC20 token registration to all satellite registries
 
@@ -6016,7 +6015,7 @@ function _broadcastZRC20Registration(
 |`decimals`|`uint8`|The number of decimals the token uses|
 
 
-### _broadcastZRC20Update
+#### _broadcastZRC20Update
 
 Broadcast ZRC20 token update to all satellite registries
 
@@ -6032,7 +6031,7 @@ function _broadcastZRC20Update(address address_, bool active) private;
 |`active`|`bool`|Whether the token should be active|
 
 
-### _broadcastToAllChains
+#### _broadcastToAllChains
 
 Generic function to broadcast encoded messages to all satellite registries
 
@@ -6047,7 +6046,7 @@ function _broadcastToAllChains(bytes memory encodedMessage) private;
 |`encodedMessage`|`bytes`|The fully encoded function call to broadcast|
 
 
-### _sendCrossChainMessage
+#### _sendCrossChainMessage
 
 Sends a cross-chain message to the Registry contract on a target chain.
 
@@ -6065,12 +6064,12 @@ function _sendCrossChainMessage(uint256 targetChainId, bytes memory message) pri
 
 
 
-# ICoreRegistry
+## ICoreRegistry
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/ICoreRegistry.sol)
 
 
-## Functions
-### gatewayZEVM
+### Functions
+#### gatewayZEVM
 
 
 ```solidity
@@ -6079,7 +6078,7 @@ function gatewayZEVM() external returns (address);
 
 
 
-# IGatewayZEVM
+## IGatewayZEVM
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IGatewayZEVM.sol)
 
 Interface for the GatewayZEVM contract.
@@ -6087,8 +6086,8 @@ Interface for the GatewayZEVM contract.
 *Defines functions for cross-chain interactions and token handling.*
 
 
-## Functions
-### withdraw
+### Functions
+#### withdraw
 
 Withdraw ZRC20 tokens to an external chain.
 
@@ -6112,7 +6111,7 @@ function withdraw(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### withdraw
+#### withdraw
 
 Withdraw ZETA tokens to an external chain.
 
@@ -6129,7 +6128,7 @@ function withdraw(bytes memory receiver, uint256 chainId, RevertOptions calldata
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 Withdraw ZRC20 tokens and call a smart contract on an external chain.
 
@@ -6157,7 +6156,7 @@ function withdrawAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### withdrawAndCall
+#### withdrawAndCall
 
 Withdraw ZETA tokens and call a smart contract on an external chain.
 
@@ -6184,7 +6183,7 @@ function withdrawAndCall(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### call
+#### call
 
 Call a smart contract on an external chain without asset transfer.
 
@@ -6210,7 +6209,7 @@ function call(
 |`revertOptions`|`RevertOptions`|Revert options.|
 
 
-### deposit
+#### deposit
 
 Deposit foreign coins into ZRC20.
 
@@ -6227,7 +6226,7 @@ function deposit(address zrc20, uint256 amount, address target) external;
 |`target`|`address`|The target address to receive the deposited tokens.|
 
 
-### deposit
+#### deposit
 
 Deposit native ZETA.
 
@@ -6242,7 +6241,7 @@ function deposit(address target) external payable;
 |`target`|`address`|The target address to receive the ZETA.|
 
 
-### execute
+#### execute
 
 Execute a user-specified contract on ZEVM.
 
@@ -6268,7 +6267,7 @@ function execute(
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposit foreign coins into ZRC20 and call a user-specified contract on ZEVM.
 
@@ -6294,7 +6293,7 @@ function depositAndCall(
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
 
-### depositAndCall
+#### depositAndCall
 
 Deposit native ZETA and call a user-specified contract on ZEVM.
 
@@ -6311,7 +6310,7 @@ function depositAndCall(MessageContext calldata context, address target, bytes c
 |`message`|`bytes`|The calldata to pass to the contract call.|
 
 
-### executeRevert
+#### executeRevert
 
 Revert a user-specified contract on ZEVM.
 
@@ -6327,7 +6326,7 @@ function executeRevert(address target, RevertContext calldata revertContext) ext
 |`revertContext`|`RevertContext`|Revert context to pass to onRevert.|
 
 
-### depositAndRevert
+#### depositAndRevert
 
 Deposit foreign coins into ZRC20 and revert a user-specified contract on ZEVM.
 
@@ -6353,14 +6352,14 @@ function depositAndRevert(
 
 
 
-# IGatewayZEVMErrors
+## IGatewayZEVMErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IGatewayZEVM.sol)
 
 Interface for the errors used in the GatewayZEVM contract.
 
 
-## Errors
-### WithdrawalFailed
+### Errors
+#### WithdrawalFailed
 Error indicating a withdrawal failure.
 
 
@@ -6376,7 +6375,7 @@ error WithdrawalFailed(address token, address recipient, uint256 amount);
 |`recipient`|`address`|The address that was supposed to receive the tokens.|
 |`amount`|`uint256`|The amount of tokens that failed to withdraw.|
 
-### InsufficientAmount
+#### InsufficientAmount
 Error indicating an insufficient token amount.
 
 
@@ -6384,7 +6383,7 @@ Error indicating an insufficient token amount.
 error InsufficientAmount();
 ```
 
-### ZRC20BurnFailed
+#### ZRC20BurnFailed
 Error indicating a failure to burn ZRC20 tokens.
 
 
@@ -6399,7 +6398,7 @@ error ZRC20BurnFailed(address zrc20, uint256 amount);
 |`zrc20`|`address`|The address of the ZRC20 token that failed to burn.|
 |`amount`|`uint256`|The amount of tokens that failed to burn.|
 
-### ZRC20TransferFailed
+#### ZRC20TransferFailed
 Error indicating a failure to transfer ZRC20 tokens.
 
 
@@ -6416,7 +6415,7 @@ error ZRC20TransferFailed(address zrc20, address from, address to, uint256 amoun
 |`to`|`address`|The address receiving the tokens.|
 |`amount`|`uint256`|The amount of tokens that failed to transfer.|
 
-### ZRC20DepositFailed
+#### ZRC20DepositFailed
 Error indicating a failure to deposit ZRC20 tokens.
 
 
@@ -6432,7 +6431,7 @@ error ZRC20DepositFailed(address zrc20, address to, uint256 amount);
 |`to`|`address`|The address that was supposed to receive the deposit.|
 |`amount`|`uint256`|The amount of tokens that failed to deposit.|
 
-### GasFeeTransferFailed
+#### GasFeeTransferFailed
 Error indicating a failure to transfer gas fee.
 
 
@@ -6448,7 +6447,7 @@ error GasFeeTransferFailed(address token, address to, uint256 amount);
 |`to`|`address`|The address that was supposed to receive the gas fee.|
 |`amount`|`uint256`|The amount of gas fee that failed to transfer.|
 
-### CallerIsNotProtocol
+#### CallerIsNotProtocol
 Error indicating that the caller is not the protocol account.
 
 
@@ -6456,7 +6455,7 @@ Error indicating that the caller is not the protocol account.
 error CallerIsNotProtocol();
 ```
 
-### InvalidTarget
+#### InvalidTarget
 Error indicating an invalid target address.
 
 
@@ -6464,7 +6463,7 @@ Error indicating an invalid target address.
 error InvalidTarget();
 ```
 
-### FailedZetaSent
+#### FailedZetaSent
 Error indicating a failure to send ZETA tokens.
 
 
@@ -6479,7 +6478,7 @@ error FailedZetaSent(address recipient, uint256 amount);
 |`recipient`|`address`|The address that was supposed to receive the ZETA tokens.|
 |`amount`|`uint256`|The amount of ZETA tokens that failed to send.|
 
-### OnlyWZETAOrProtocol
+#### OnlyWZETAOrProtocol
 Error indicating that only WZETA or the protocol address can call the function.
 
 
@@ -6487,7 +6486,7 @@ Error indicating that only WZETA or the protocol address can call the function.
 error OnlyWZETAOrProtocol();
 ```
 
-### InsufficientGasLimit
+#### InsufficientGasLimit
 Error indicating an insufficient gas limit.
 
 
@@ -6495,7 +6494,7 @@ Error indicating an insufficient gas limit.
 error InsufficientGasLimit();
 ```
 
-### MessageSizeExceeded
+#### MessageSizeExceeded
 Error indicating message size exceeded in external functions.
 
 
@@ -6510,7 +6509,7 @@ error MessageSizeExceeded(uint256 provided, uint256 maximum);
 |`provided`|`uint256`|The size of the message that was provided.|
 |`maximum`|`uint256`|The maximum allowed message size.|
 
-### ZeroGasPrice
+#### ZeroGasPrice
 Error indicating an invalid gas price.
 
 
@@ -6520,14 +6519,14 @@ error ZeroGasPrice();
 
 
 
-# IGatewayZEVMEvents
+## IGatewayZEVMEvents
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IGatewayZEVM.sol)
 
 Interface for the events emitted by the GatewayZEVM contract.
 
 
-## Events
-### Called
+### Events
+#### Called
 Emitted when a cross-chain call is made.
 
 
@@ -6553,7 +6552,7 @@ event Called(
 |`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
-### Withdrawn
+#### Withdrawn
 Emitted when a withdrawal is made.
 
 
@@ -6587,7 +6586,7 @@ event Withdrawn(
 |`callOptions`|`CallOptions`|Call options including gas limit and arbirtrary call flag.|
 |`revertOptions`|`RevertOptions`|Revert options.|
 
-### WithdrawnAndCalled
+#### WithdrawnAndCalled
 Emitted when a withdraw and call is made.
 
 
@@ -6623,7 +6622,7 @@ event WithdrawnAndCalled(
 
 
 
-# CallOptions
+## CallOptions
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IGatewayZEVM.sol)
 
 CallOptions struct passed to call and withdrawAndCall functions.
@@ -6645,7 +6644,7 @@ struct CallOptions {
 
 
 
-# ISystem
+## ISystem
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/ISystem.sol)
 
 Interface for the System contract.
@@ -6653,43 +6652,43 @@ Interface for the System contract.
 *Defines functions for system contract callable by fungible module.*
 
 
-## Functions
-### FUNGIBLE_MODULE_ADDRESS
+### Functions
+#### FUNGIBLE_MODULE_ADDRESS
 
 
 ```solidity
 function FUNGIBLE_MODULE_ADDRESS() external view returns (address);
 ```
 
-### wZetaContractAddress
+#### wZetaContractAddress
 
 
 ```solidity
 function wZetaContractAddress() external view returns (address);
 ```
 
-### uniswapv2FactoryAddress
+#### uniswapv2FactoryAddress
 
 
 ```solidity
 function uniswapv2FactoryAddress() external view returns (address);
 ```
 
-### gasPriceByChainId
+#### gasPriceByChainId
 
 
 ```solidity
 function gasPriceByChainId(uint256 chainID) external view returns (uint256);
 ```
 
-### gasCoinZRC20ByChainId
+#### gasCoinZRC20ByChainId
 
 
 ```solidity
 function gasCoinZRC20ByChainId(uint256 chainID) external view returns (address);
 ```
 
-### gasZetaPoolByChainId
+#### gasZetaPoolByChainId
 
 
 ```solidity
@@ -6698,89 +6697,89 @@ function gasZetaPoolByChainId(uint256 chainID) external view returns (address);
 
 
 
-# IWETH9
+## IWETH9
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IWZETA.sol)
 
 Interface for the Weth9 contract.
 
 
-## Functions
-### totalSupply
+### Functions
+#### totalSupply
 
 
 ```solidity
 function totalSupply() external view returns (uint256);
 ```
 
-### balanceOf
+#### balanceOf
 
 
 ```solidity
 function balanceOf(address owner) external view returns (uint256);
 ```
 
-### allowance
+#### allowance
 
 
 ```solidity
 function allowance(address owner, address spender) external view returns (uint256);
 ```
 
-### approve
+#### approve
 
 
 ```solidity
 function approve(address spender, uint256 wad) external returns (bool);
 ```
 
-### transfer
+#### transfer
 
 
 ```solidity
 function transfer(address to, uint256 wad) external returns (bool);
 ```
 
-### transferFrom
+#### transferFrom
 
 
 ```solidity
 function transferFrom(address from, address to, uint256 wad) external returns (bool);
 ```
 
-### deposit
+#### deposit
 
 
 ```solidity
 function deposit() external payable;
 ```
 
-### withdraw
+#### withdraw
 
 
 ```solidity
 function withdraw(uint256 wad) external;
 ```
 
-## Events
-### Approval
+### Events
+#### Approval
 
 ```solidity
 event Approval(address indexed owner, address indexed spender, uint256 value);
 ```
 
-### Transfer
+#### Transfer
 
 ```solidity
 event Transfer(address indexed from, address indexed to, uint256 value);
 ```
 
-### Deposit
+#### Deposit
 
 ```solidity
 event Deposit(address indexed dst, uint256 wad);
 ```
 
-### Withdrawal
+#### Withdrawal
 
 ```solidity
 event Withdrawal(address indexed src, uint256 wad);
@@ -6788,7 +6787,7 @@ event Withdrawal(address indexed src, uint256 wad);
 
 
 
-# CoinType
+## CoinType
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)
 
 *Coin types for ZRC20. Zeta value should not be used.*
@@ -6804,91 +6803,91 @@ enum CoinType {
 
 
 
-# IZRC20
+## IZRC20
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)
 
 Interface for the ZRC20 token contract.
 
 
-## Functions
-### totalSupply
+### Functions
+#### totalSupply
 
 
 ```solidity
 function totalSupply() external view returns (uint256);
 ```
 
-### balanceOf
+#### balanceOf
 
 
 ```solidity
 function balanceOf(address account) external view returns (uint256);
 ```
 
-### transfer
+#### transfer
 
 
 ```solidity
 function transfer(address recipient, uint256 amount) external returns (bool);
 ```
 
-### allowance
+#### allowance
 
 
 ```solidity
 function allowance(address owner, address spender) external view returns (uint256);
 ```
 
-### approve
+#### approve
 
 
 ```solidity
 function approve(address spender, uint256 amount) external returns (bool);
 ```
 
-### transferFrom
+#### transferFrom
 
 
 ```solidity
 function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 ```
 
-### deposit
+#### deposit
 
 
 ```solidity
 function deposit(address to, uint256 amount) external returns (bool);
 ```
 
-### burn
+#### burn
 
 
 ```solidity
 function burn(uint256 amount) external returns (bool);
 ```
 
-### withdraw
+#### withdraw
 
 
 ```solidity
 function withdraw(bytes memory to, uint256 amount) external returns (bool);
 ```
 
-### withdrawGasFee
+#### withdrawGasFee
 
 
 ```solidity
 function withdrawGasFee() external view returns (address, uint256);
 ```
 
-### withdrawGasFeeWithGasLimit
+#### withdrawGasFeeWithGasLimit
 
 
 ```solidity
 function withdrawGasFeeWithGasLimit(uint256 gasLimit) external view returns (address, uint256);
 ```
 
-### PROTOCOL_FLAT_FEE
+#### PROTOCOL_FLAT_FEE
 
 *Name is in upper case to maintain compatibility with ZRC20.sol v1*
 
@@ -6897,7 +6896,7 @@ function withdrawGasFeeWithGasLimit(uint256 gasLimit) external view returns (add
 function PROTOCOL_FLAT_FEE() external view returns (uint256);
 ```
 
-### GAS_LIMIT
+#### GAS_LIMIT
 
 *Name is in upper case to maintain compatibility with ZRC20.sol v1*
 
@@ -6906,7 +6905,7 @@ function PROTOCOL_FLAT_FEE() external view returns (uint256);
 function GAS_LIMIT() external view returns (uint256);
 ```
 
-### SYSTEM_CONTRACT_ADDRESS
+#### SYSTEM_CONTRACT_ADDRESS
 
 *Name is in upper case to maintain compatibility with ZRC20.sol v1*
 
@@ -6915,14 +6914,14 @@ function GAS_LIMIT() external view returns (uint256);
 function SYSTEM_CONTRACT_ADDRESS() external view returns (address);
 ```
 
-### setName
+#### setName
 
 
 ```solidity
 function setName(string memory newName) external;
 ```
 
-### setSymbol
+#### setSymbol
 
 
 ```solidity
@@ -6931,28 +6930,28 @@ function setSymbol(string memory newSymbol) external;
 
 
 
-# IZRC20Metadata
+## IZRC20Metadata
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)
 
 Interface for the ZRC20 metadata.
 
 
-## Functions
-### name
+### Functions
+#### name
 
 
 ```solidity
 function name() external view returns (string memory);
 ```
 
-### symbol
+#### symbol
 
 
 ```solidity
 function symbol() external view returns (string memory);
 ```
 
-### decimals
+#### decimals
 
 
 ```solidity
@@ -6961,56 +6960,56 @@ function decimals() external view returns (uint8);
 
 
 
-# ZRC20Events
+## ZRC20Events
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/IZRC20.sol)
 
 Interface for the ZRC20 events.
 
 
-## Events
-### Transfer
+### Events
+#### Transfer
 
 ```solidity
 event Transfer(address indexed from, address indexed to, uint256 value);
 ```
 
-### Approval
+#### Approval
 
 ```solidity
 event Approval(address indexed owner, address indexed spender, uint256 value);
 ```
 
-### Deposit
+#### Deposit
 
 ```solidity
 event Deposit(bytes from, address indexed to, uint256 value);
 ```
 
-### Withdrawal
+#### Withdrawal
 
 ```solidity
 event Withdrawal(address indexed from, bytes to, uint256 value, uint256 gasFee, uint256 protocolFlatFee);
 ```
 
-### UpdatedSystemContract
+#### UpdatedSystemContract
 
 ```solidity
 event UpdatedSystemContract(address systemContract);
 ```
 
-### UpdatedGateway
+#### UpdatedGateway
 
 ```solidity
 event UpdatedGateway(address gateway);
 ```
 
-### UpdatedGasLimit
+#### UpdatedGasLimit
 
 ```solidity
 event UpdatedGasLimit(uint256 gasLimit);
 ```
 
-### UpdatedProtocolFlatFee
+#### UpdatedProtocolFlatFee
 
 ```solidity
 event UpdatedProtocolFlatFee(uint256 protocolFlatFee);
@@ -7018,7 +7017,7 @@ event UpdatedProtocolFlatFee(uint256 protocolFlatFee);
 
 
 
-# UniversalContract
+## UniversalContract
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/UniversalContract.sol)
 
 Abstract contract for contracts that can receive cross-chain calls on ZetaChain.
@@ -7027,8 +7026,8 @@ Abstract contract for contracts that can receive cross-chain calls on ZetaChain.
 and execute logic based on the provided context, token, and message payload.*
 
 
-## State Variables
-### registry
+### State Variables
+#### registry
 Reference to the ZetaChain Registry contract
 
 
@@ -7037,7 +7036,7 @@ ICoreRegistry public constant registry = ICoreRegistry(0x7CCE3Eb018bf23e1FE2a326
 ```
 
 
-### gateway
+#### gateway
 Reference to the ZetaChain Gateway contract
 
 
@@ -7046,8 +7045,8 @@ IGatewayZEVM public immutable gateway;
 ```
 
 
-## Functions
-### onlyGateway
+### Functions
+#### onlyGateway
 
 Restricts function access to only the gateway contract
 
@@ -7061,7 +7060,7 @@ operations.*
 modifier onlyGateway();
 ```
 
-### constructor
+#### constructor
 
 Initializes the contract by retrieving the gateway address from the registry
 
@@ -7073,7 +7072,7 @@ If the gateway is not active or not found, the gateway will remain uninitialized
 constructor();
 ```
 
-### onCall
+#### onCall
 
 Function to handle cross-chain calls with native ZETA transfers
 
@@ -7082,7 +7081,7 @@ Function to handle cross-chain calls with native ZETA transfers
 function onCall(MessageContext calldata context, bytes calldata message) external payable virtual;
 ```
 
-### onCall
+#### onCall
 
 Function to handle cross-chain calls with ZRC20 token transfers
 
@@ -7098,8 +7097,8 @@ function onCall(
     virtual;
 ```
 
-## Errors
-### Unauthorized
+### Errors
+#### Unauthorized
 Error thrown when a function is called by an unauthorized address
 
 
@@ -7109,7 +7108,7 @@ error Unauthorized();
 
 
 
-# zContract
+## zContract
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/UniversalContract.sol)
 
 **Note:**
@@ -7117,8 +7116,8 @@ deprecated: should be removed once v2 SystemContract is not used anymore.
 UniversalContract should be used
 
 
-## Functions
-### onCrossChainCall
+### Functions
+#### onCrossChainCall
 
 
 ```solidity
@@ -7127,7 +7126,7 @@ function onCrossChainCall(zContext calldata context, address zrc20, uint256 amou
 
 
 
-# MessageContext
+## MessageContext
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/UniversalContract.sol)
 
 Provides contextual information when executing a cross-chain call on ZetaChain.
@@ -7145,7 +7144,7 @@ struct MessageContext {
 
 
 
-# zContext
+## zContext
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/interfaces/UniversalContract.sol)
 
 **Note:**
@@ -7163,12 +7162,12 @@ struct zContext {
 
 
 
-# ZetaConnectorZEVM
+## ZetaConnectorZEVM
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/legacy/ZetaConnectorZEVM.sol)
 
 
-## State Variables
-### wzeta
+### State Variables
+#### wzeta
 WZETA token address.
 
 
@@ -7177,7 +7176,7 @@ address public wzeta;
 ```
 
 
-### FUNGIBLE_MODULE_ADDRESS
+#### FUNGIBLE_MODULE_ADDRESS
 Fungible module address.
 
 
@@ -7186,8 +7185,8 @@ address public constant FUNGIBLE_MODULE_ADDRESS = payable(0x735b14BB79463307AAcB
 ```
 
 
-## Functions
-### onlyFungibleModule
+### Functions
+#### onlyFungibleModule
 
 *Modifier to restrict actions to fungible module.*
 
@@ -7196,14 +7195,14 @@ address public constant FUNGIBLE_MODULE_ADDRESS = payable(0x735b14BB79463307AAcB
 modifier onlyFungibleModule();
 ```
 
-### constructor
+#### constructor
 
 
 ```solidity
 constructor(address wzeta_);
 ```
 
-### receive
+#### receive
 
 *Receive function to receive ZETA from WETH9.withdraw().*
 
@@ -7212,14 +7211,14 @@ constructor(address wzeta_);
 receive() external payable;
 ```
 
-### setWzetaAddress
+#### setWzetaAddress
 
 
 ```solidity
 function setWzetaAddress(address wzeta_) external onlyFungibleModule;
 ```
 
-### send
+#### send
 
 *Sends ZETA and bytes messages (to execute it) crosschain.*
 
@@ -7234,7 +7233,7 @@ function send(ZetaInterfaces.SendInput calldata input) external;
 |`input`|`ZetaInterfaces.SendInput`||
 
 
-### onReceive
+#### onReceive
 
 *Handler to receive data from other chain.
 This method can be called only by Fungible Module.
@@ -7256,7 +7255,7 @@ function onReceive(
     onlyFungibleModule;
 ```
 
-### onRevert
+#### onRevert
 
 *Handler to receive errors from other chain.
 This method can be called only by Fungible Module.
@@ -7278,14 +7277,14 @@ function onRevert(
     onlyFungibleModule;
 ```
 
-## Events
-### SetWZETA
+### Events
+#### SetWZETA
 
 ```solidity
 event SetWZETA(address wzeta_);
 ```
 
-### ZetaSent
+#### ZetaSent
 
 ```solidity
 event ZetaSent(
@@ -7300,7 +7299,7 @@ event ZetaSent(
 );
 ```
 
-### ZetaReceived
+#### ZetaReceived
 
 ```solidity
 event ZetaReceived(
@@ -7313,7 +7312,7 @@ event ZetaReceived(
 );
 ```
 
-### ZetaReverted
+#### ZetaReverted
 
 ```solidity
 event ZetaReverted(
@@ -7327,8 +7326,8 @@ event ZetaReverted(
 );
 ```
 
-## Errors
-### OnlyWZETAOrFungible
+### Errors
+#### OnlyWZETAOrFungible
 Contract custom errors.
 
 
@@ -7336,25 +7335,25 @@ Contract custom errors.
 error OnlyWZETAOrFungible();
 ```
 
-### WZETATransferFailed
+#### WZETATransferFailed
 
 ```solidity
 error WZETATransferFailed();
 ```
 
-### OnlyFungibleModule
+#### OnlyFungibleModule
 
 ```solidity
 error OnlyFungibleModule();
 ```
 
-### FailedZetaSent
+#### FailedZetaSent
 
 ```solidity
 error FailedZetaSent();
 ```
 
-### WrongValue
+#### WrongValue
 
 ```solidity
 error WrongValue();
@@ -7362,12 +7361,12 @@ error WrongValue();
 
 
 
-# ZetaInterfaces
+## ZetaInterfaces
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/legacy/ZetaConnectorZEVM.sol)
 
 
-## Structs
-### SendInput
+### Structs
+#### SendInput
 *Use SendInput to interact with the Connector: connector.send(SendInput)*
 
 
@@ -7382,7 +7381,7 @@ struct SendInput {
 }
 ```
 
-### ZetaMessage
+#### ZetaMessage
 *Our Connector calls onZetaMessage with this struct as argument*
 
 
@@ -7396,7 +7395,7 @@ struct ZetaMessage {
 }
 ```
 
-### ZetaRevert
+#### ZetaRevert
 *Our Connector calls onZetaRevert with this struct as argument*
 
 
@@ -7413,12 +7412,12 @@ struct ZetaRevert {
 
 
 
-# ZetaReceiver
+## ZetaReceiver
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/legacy/ZetaConnectorZEVM.sol)
 
 
-## Functions
-### onZetaMessage
+### Functions
+#### onZetaMessage
 
 *onZetaMessage is called when a cross-chain message reaches a contract*
 
@@ -7427,7 +7426,7 @@ struct ZetaRevert {
 function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external;
 ```
 
-### onZetaRevert
+#### onZetaRevert
 
 *onZetaRevert is called when a cross-chain message reverts.
 It's useful to rollback to the original state*
@@ -7439,7 +7438,7 @@ function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external;
 
 
 
-# GatewayZEVMValidations
+## GatewayZEVMValidations
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/libraries/GatewayZEVMValidations.sol)
 
 Library containing validation functions for GatewayZEVM contract
@@ -7447,8 +7446,8 @@ Library containing validation functions for GatewayZEVM contract
 *This library provides common validation logic used across GatewayZEVM contract*
 
 
-## State Variables
-### MAX_MESSAGE_SIZE
+### State Variables
+#### MAX_MESSAGE_SIZE
 Maximum message size constant
 
 
@@ -7457,7 +7456,7 @@ uint256 internal constant MAX_MESSAGE_SIZE = 2880;
 ```
 
 
-### MIN_GAS_LIMIT
+#### MIN_GAS_LIMIT
 Minimum gas limit constant
 
 
@@ -7466,8 +7465,8 @@ uint256 internal constant MIN_GAS_LIMIT = 100_000;
 ```
 
 
-## Functions
-### validateNonZeroAddress
+### Functions
+#### validateNonZeroAddress
 
 *Validates that an address is not zero*
 
@@ -7482,7 +7481,7 @@ function validateNonZeroAddress(address addr) internal pure;
 |`addr`|`address`|The address to validate|
 
 
-### validateReceiver
+#### validateReceiver
 
 *Validates that receiver bytes are not empty*
 
@@ -7497,7 +7496,7 @@ function validateReceiver(bytes memory receiver) internal pure;
 |`receiver`|`bytes`|The receiver bytes to validate|
 
 
-### validateAmount
+#### validateAmount
 
 *Validates that amount is not zero*
 
@@ -7512,7 +7511,7 @@ function validateAmount(uint256 amount) internal pure;
 |`amount`|`uint256`|The amount to validate|
 
 
-### validateGasLimit
+#### validateGasLimit
 
 *Validates that gas limit meets minimum requirement*
 
@@ -7527,7 +7526,7 @@ function validateGasLimit(uint256 gasLimit) internal pure;
 |`gasLimit`|`uint256`|The gas limit to validate|
 
 
-### validateTarget
+#### validateTarget
 
 *Validates that target address is not restricted*
 
@@ -7544,7 +7543,7 @@ function validateTarget(address target, address protocolAddress, address contrac
 |`contractAddress`|`address`|The contract address to check against|
 
 
-### validateMessageSize
+#### validateMessageSize
 
 *Validates message size constraints*
 
@@ -7560,7 +7559,7 @@ function validateMessageSize(uint256 messageLength, uint256 revertMessageLength)
 |`revertMessageLength`|`uint256`|The length of the revert message|
 
 
-### validateRevertOptions
+#### validateRevertOptions
 
 *Validates revert options*
 
@@ -7575,7 +7574,7 @@ function validateRevertOptions(RevertOptions calldata revertOptions) internal pu
 |`revertOptions`|`RevertOptions`|The revert options to validate|
 
 
-### validateCallAndRevertOptions
+#### validateCallAndRevertOptions
 
 *Validates call options and revert options together*
 
@@ -7598,7 +7597,7 @@ function validateCallAndRevertOptions(
 |`messageLength`|`uint256`|The length of the message|
 
 
-### validateWithdrawalParams
+#### validateWithdrawalParams
 
 *Validates standard withdrawal parameters*
 
@@ -7621,7 +7620,7 @@ function validateWithdrawalParams(
 |`revertOptions`|`RevertOptions`|The revert options|
 
 
-### validateWithdrawalAndCallParams
+#### validateWithdrawalAndCallParams
 
 *Validates withdrawal and call parameters*
 
@@ -7648,7 +7647,7 @@ function validateWithdrawalAndCallParams(
 |`revertOptions`|`RevertOptions`|The revert options|
 
 
-### validateDepositParams
+#### validateDepositParams
 
 *Validates deposit parameters*
 
@@ -7675,7 +7674,7 @@ function validateDepositParams(
 |`contractAddress`|`address`|The contract address|
 
 
-### validateExecuteParams
+#### validateExecuteParams
 
 *Validates execute parameters*
 
@@ -7691,7 +7690,7 @@ function validateExecuteParams(address zrc20, address target) internal pure;
 |`target`|`address`|The target address|
 
 
-### validateZetaDepositParams
+#### validateZetaDepositParams
 
 *Validates ZETA deposit and call parameters*
 
@@ -7716,8 +7715,8 @@ function validateZetaDepositParams(
 |`contractAddress`|`address`|The contract address|
 
 
-## Errors
-### EmptyAddress
+### Errors
+#### EmptyAddress
 Error indicating a empty address was provided.
 
 
@@ -7727,15 +7726,15 @@ error EmptyAddress();
 
 
 
-# SystemContract
+## SystemContract
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/SystemContract.sol)
 
 *The system contract it's called by the protocol to interact with the blockchain.
 Also includes a lot of tools to make easier to interact with ZetaChain.*
 
 
-## State Variables
-### gasPriceByChainId
+### State Variables
+#### gasPriceByChainId
 Map to know the gas price of each chain given a chain id.
 
 
@@ -7744,7 +7743,7 @@ mapping(uint256 => uint256) public gasPriceByChainId;
 ```
 
 
-### gasCoinZRC20ByChainId
+#### gasCoinZRC20ByChainId
 Map to know the ZRC20 address of a token given a chain id, ex zETH, zBNB etc.
 
 
@@ -7753,14 +7752,14 @@ mapping(uint256 => address) public gasCoinZRC20ByChainId;
 ```
 
 
-### gasZetaPoolByChainId
+#### gasZetaPoolByChainId
 
 ```solidity
 mapping(uint256 => address) public gasZetaPoolByChainId;
 ```
 
 
-### FUNGIBLE_MODULE_ADDRESS
+#### FUNGIBLE_MODULE_ADDRESS
 Fungible address is always the same, it's on protocol level.
 
 
@@ -7769,7 +7768,7 @@ address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3
 ```
 
 
-### uniswapv2FactoryAddress
+#### uniswapv2FactoryAddress
 Uniswap V2 addresses.
 
 
@@ -7778,14 +7777,14 @@ address public immutable uniswapv2FactoryAddress;
 ```
 
 
-### uniswapv2Router02Address
+#### uniswapv2Router02Address
 
 ```solidity
 address public immutable uniswapv2Router02Address;
 ```
 
 
-### wZetaContractAddress
+#### wZetaContractAddress
 Address of the wrapped ZETA to interact with Uniswap V2.
 
 
@@ -7794,7 +7793,7 @@ address public wZetaContractAddress;
 ```
 
 
-### zetaConnectorZEVMAddress
+#### zetaConnectorZEVMAddress
 Address of ZEVM Zeta Connector.
 
 
@@ -7803,8 +7802,8 @@ address public zetaConnectorZEVMAddress;
 ```
 
 
-## Functions
-### constructor
+### Functions
+#### constructor
 
 *Only fungible module can deploy a system contract.*
 
@@ -7813,7 +7812,7 @@ address public zetaConnectorZEVMAddress;
 constructor(address wzeta_, address uniswapv2Factory_, address uniswapv2Router02_);
 ```
 
-### depositAndCall
+#### depositAndCall
 
 *Deposit foreign coins into ZRC20 and call user specified contract on zEVM.*
 
@@ -7839,7 +7838,7 @@ function depositAndCall(
 |`message`|`bytes`||
 
 
-### sortTokens
+#### sortTokens
 
 *Sort token addresses lexicographically. Used to handle return values from pairs sorted in the order.*
 
@@ -7862,7 +7861,7 @@ function sortTokens(address tokenA, address tokenB) internal pure returns (addre
 |`token1`|`address`||
 
 
-### uniswapv2PairFor
+#### uniswapv2PairFor
 
 *Calculates the CREATE2 address for a pair without making any external calls.*
 
@@ -7885,7 +7884,7 @@ function uniswapv2PairFor(address factory, address tokenA, address tokenB) publi
 |`pair`|`address`|tokens pair address.|
 
 
-### setGasPrice
+#### setGasPrice
 
 *Fungible module updates the gas price oracle periodically.*
 
@@ -7901,7 +7900,7 @@ function setGasPrice(uint256 chainID, uint256 price) external;
 |`price`|`uint256`||
 
 
-### setGasCoinZRC20
+#### setGasCoinZRC20
 
 *Setter for gasCoinZRC20ByChainId map.*
 
@@ -7917,7 +7916,7 @@ function setGasCoinZRC20(uint256 chainID, address zrc20) external;
 |`zrc20`|`address`||
 
 
-### setGasZetaPool
+#### setGasZetaPool
 
 *Set the pool wzeta/erc20 address.*
 
@@ -7933,7 +7932,7 @@ function setGasZetaPool(uint256 chainID, address erc20) external;
 |`erc20`|`address`||
 
 
-### setWZETAContractAddress
+#### setWZETAContractAddress
 
 *Setter for wrapped ZETA address.*
 
@@ -7948,7 +7947,7 @@ function setWZETAContractAddress(address addr) external;
 |`addr`|`address`||
 
 
-### setConnectorZEVMAddress
+#### setConnectorZEVMAddress
 
 *Setter for zetaConnector ZEVM Address*
 
@@ -7963,8 +7962,8 @@ function setConnectorZEVMAddress(address addr) external;
 |`addr`|`address`||
 
 
-## Events
-### SystemContractDeployed
+### Events
+#### SystemContractDeployed
 Custom SystemContract errors.
 
 
@@ -7972,31 +7971,31 @@ Custom SystemContract errors.
 event SystemContractDeployed();
 ```
 
-### SetGasPrice
+#### SetGasPrice
 
 ```solidity
 event SetGasPrice(uint256, uint256);
 ```
 
-### SetGasCoin
+#### SetGasCoin
 
 ```solidity
 event SetGasCoin(uint256, address);
 ```
 
-### SetGasZetaPool
+#### SetGasZetaPool
 
 ```solidity
 event SetGasZetaPool(uint256, address);
 ```
 
-### SetWZeta
+#### SetWZeta
 
 ```solidity
 event SetWZeta(address);
 ```
 
-### SetConnectorZEVM
+#### SetConnectorZEVM
 
 ```solidity
 event SetConnectorZEVM(address);
@@ -8004,38 +8003,38 @@ event SetConnectorZEVM(address);
 
 
 
-# SystemContractErrors
+## SystemContractErrors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/SystemContract.sol)
 
 *Custom errors for SystemContract*
 
 
-## Errors
-### CallerIsNotFungibleModule
+### Errors
+#### CallerIsNotFungibleModule
 
 ```solidity
 error CallerIsNotFungibleModule();
 ```
 
-### InvalidTarget
+#### InvalidTarget
 
 ```solidity
 error InvalidTarget();
 ```
 
-### CantBeIdenticalAddresses
+#### CantBeIdenticalAddresses
 
 ```solidity
 error CantBeIdenticalAddresses();
 ```
 
-### CantBeZeroAddress
+#### CantBeZeroAddress
 
 ```solidity
 error CantBeZeroAddress();
 ```
 
-### ZeroAddress
+#### ZeroAddress
 
 ```solidity
 error ZeroAddress();
@@ -8043,116 +8042,116 @@ error ZeroAddress();
 
 
 
-# WETH9
+## WETH9
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/WZETA.sol)
 
 
-## State Variables
-### name
+### State Variables
+#### name
 
 ```solidity
 string public name = "Wrapped Ether";
 ```
 
 
-### symbol
+#### symbol
 
 ```solidity
 string public symbol = "WETH";
 ```
 
 
-### decimals
+#### decimals
 
 ```solidity
 uint8 public decimals = 18;
 ```
 
 
-### balanceOf
+#### balanceOf
 
 ```solidity
 mapping(address => uint256) public balanceOf;
 ```
 
 
-### allowance
+#### allowance
 
 ```solidity
 mapping(address => mapping(address => uint256)) public allowance;
 ```
 
 
-## Functions
-### receive
+### Functions
+#### receive
 
 
 ```solidity
 receive() external payable;
 ```
 
-### deposit
+#### deposit
 
 
 ```solidity
 function deposit() public payable;
 ```
 
-### withdraw
+#### withdraw
 
 
 ```solidity
 function withdraw(uint256 wad) public;
 ```
 
-### totalSupply
+#### totalSupply
 
 
 ```solidity
 function totalSupply() public view returns (uint256);
 ```
 
-### approve
+#### approve
 
 
 ```solidity
 function approve(address guy, uint256 wad) public returns (bool);
 ```
 
-### transfer
+#### transfer
 
 
 ```solidity
 function transfer(address dst, uint256 wad) public returns (bool);
 ```
 
-### transferFrom
+#### transferFrom
 
 
 ```solidity
 function transferFrom(address src, address dst, uint256 wad) public returns (bool);
 ```
 
-## Events
-### Approval
+### Events
+#### Approval
 
 ```solidity
 event Approval(address indexed src, address indexed guy, uint256 wad);
 ```
 
-### Transfer
+#### Transfer
 
 ```solidity
 event Transfer(address indexed src, address indexed dst, uint256 wad);
 ```
 
-### Deposit
+#### Deposit
 
 ```solidity
 event Deposit(address indexed dst, uint256 wad);
 ```
 
-### Withdrawal
+#### Withdrawal
 
 ```solidity
 event Withdrawal(address indexed src, uint256 wad);
@@ -8160,12 +8159,12 @@ event Withdrawal(address indexed src, uint256 wad);
 
 
 
-# ZRC20
+## ZRC20
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/ZRC20.sol)
 
 
-## State Variables
-### FUNGIBLE_MODULE_ADDRESS
+### State Variables
+#### FUNGIBLE_MODULE_ADDRESS
 Fungible address is always the same, maintained at the protocol level
 
 
@@ -8174,7 +8173,7 @@ address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3
 ```
 
 
-### CHAIN_ID
+#### CHAIN_ID
 Chain id.abi
 
 
@@ -8183,7 +8182,7 @@ uint256 public immutable CHAIN_ID;
 ```
 
 
-### COIN_TYPE
+#### COIN_TYPE
 Coin type, checkout Interfaces.sol.
 
 
@@ -8192,7 +8191,7 @@ CoinType public immutable COIN_TYPE;
 ```
 
 
-### SYSTEM_CONTRACT_ADDRESS
+#### SYSTEM_CONTRACT_ADDRESS
 System contract address.
 
 *Name is in upper case to maintain compatibility with ZRC20.sol v1*
@@ -8203,7 +8202,7 @@ address public SYSTEM_CONTRACT_ADDRESS;
 ```
 
 
-### GAS_LIMIT
+#### GAS_LIMIT
 Gas limit.
 
 *Name is in upper case to maintain compatibility with ZRC20.sol v1*
@@ -8214,7 +8213,7 @@ uint256 public GAS_LIMIT;
 ```
 
 
-### PROTOCOL_FLAT_FEE
+#### PROTOCOL_FLAT_FEE
 Protocol flat fee.
 
 *Name is in upper case to maintain compatibility with ZRC20.sol v1*
@@ -8225,49 +8224,49 @@ uint256 public override PROTOCOL_FLAT_FEE;
 ```
 
 
-### _balances
+#### _balances
 
 ```solidity
 mapping(address => uint256) private _balances;
 ```
 
 
-### _allowances
+#### _allowances
 
 ```solidity
 mapping(address => mapping(address => uint256)) private _allowances;
 ```
 
 
-### _totalSupply
+#### _totalSupply
 
 ```solidity
 uint256 private _totalSupply;
 ```
 
 
-### _name
+#### _name
 
 ```solidity
 string private _name;
 ```
 
 
-### _symbol
+#### _symbol
 
 ```solidity
 string private _symbol;
 ```
 
 
-### _decimals
+#### _decimals
 
 ```solidity
 uint8 private _decimals;
 ```
 
 
-### gatewayAddress
+#### gatewayAddress
 Gateway contract address.
 
 *This variable is added at last position to maintain storage layout with ZRC20.sol v1*
@@ -8278,15 +8277,15 @@ address public gatewayAddress;
 ```
 
 
-## Functions
-### _msgSender
+### Functions
+#### _msgSender
 
 
 ```solidity
 function _msgSender() internal view virtual returns (address);
 ```
 
-### onlyFungible
+#### onlyFungible
 
 *Only fungible module modifier.*
 
@@ -8295,7 +8294,7 @@ function _msgSender() internal view virtual returns (address);
 modifier onlyFungible();
 ```
 
-### constructor
+#### constructor
 
 *The only one allowed to deploy new ZRC20 is fungible address.*
 
@@ -8313,7 +8312,7 @@ constructor(
 );
 ```
 
-### name
+#### name
 
 *ZRC20 name*
 
@@ -8328,7 +8327,7 @@ function name() public view virtual override returns (string memory);
 |`<none>`|`string`|name as string|
 
 
-### setName
+#### setName
 
 *Name can be updated by fungible module account.*
 
@@ -8337,7 +8336,7 @@ function name() public view virtual override returns (string memory);
 function setName(string memory newName) external override onlyFungible;
 ```
 
-### setSymbol
+#### setSymbol
 
 *Symbol can be updated by fungible module account.*
 
@@ -8346,7 +8345,7 @@ function setName(string memory newName) external override onlyFungible;
 function setSymbol(string memory newSymbol) external override onlyFungible;
 ```
 
-### symbol
+#### symbol
 
 *ZRC20 symbol.*
 
@@ -8361,7 +8360,7 @@ function symbol() public view virtual override returns (string memory);
 |`<none>`|`string`|symbol as string.|
 
 
-### decimals
+#### decimals
 
 *ZRC20 decimals.*
 
@@ -8376,7 +8375,7 @@ function decimals() public view virtual override returns (uint8);
 |`<none>`|`uint8`|returns uint8 decimals.|
 
 
-### totalSupply
+#### totalSupply
 
 *ZRC20 total supply.*
 
@@ -8391,7 +8390,7 @@ function totalSupply() public view virtual override returns (uint256);
 |`<none>`|`uint256`|returns uint256 total supply.|
 
 
-### balanceOf
+#### balanceOf
 
 *Returns ZRC20 balance of an account.*
 
@@ -8412,7 +8411,7 @@ function balanceOf(address account) public view virtual override returns (uint25
 |`<none>`|`uint256`|uint256 account balance.|
 
 
-### transfer
+#### transfer
 
 *Returns ZRC20 balance of an account.*
 
@@ -8434,7 +8433,7 @@ function transfer(address recipient, uint256 amount) public virtual override ret
 |`<none>`|`bool`|true/false if transfer succeeded/failed.|
 
 
-### allowance
+#### allowance
 
 *Returns token allowance from owner to spender.*
 
@@ -8456,7 +8455,7 @@ function allowance(address owner, address spender) public view virtual override 
 |`<none>`|`uint256`|uint256 allowance.|
 
 
-### approve
+#### approve
 
 *Approves amount transferFrom for spender.*
 
@@ -8478,7 +8477,7 @@ function approve(address spender, uint256 amount) public virtual override return
 |`<none>`|`bool`|true/false if succeeded/failed.|
 
 
-### transferFrom
+#### transferFrom
 
 *Transfers tokens from sender to recipient.*
 
@@ -8501,7 +8500,7 @@ function transferFrom(address sender, address recipient, uint256 amount) public 
 |`<none>`|`bool`|true/false if succeeded/failed.|
 
 
-### burn
+#### burn
 
 *Burns an amount of tokens.*
 
@@ -8522,35 +8521,35 @@ function burn(uint256 amount) external override returns (bool);
 |`<none>`|`bool`|true/false if succeeded/failed.|
 
 
-### _transfer
+#### _transfer
 
 
 ```solidity
 function _transfer(address sender, address recipient, uint256 amount) internal virtual;
 ```
 
-### _mint
+#### _mint
 
 
 ```solidity
 function _mint(address account, uint256 amount) internal virtual;
 ```
 
-### _burn
+#### _burn
 
 
 ```solidity
 function _burn(address account, uint256 amount) internal virtual;
 ```
 
-### _approve
+#### _approve
 
 
 ```solidity
 function _approve(address owner, address spender, uint256 amount) internal virtual;
 ```
 
-### deposit
+#### deposit
 
 *Deposits corresponding tokens from external chain, only callable by Fungible module.*
 
@@ -8572,7 +8571,7 @@ function deposit(address to, uint256 amount) external override returns (bool);
 |`<none>`|`bool`|true/false if succeeded/failed.|
 
 
-### withdrawGasFee
+#### withdrawGasFee
 
 *Withdraws gas fees.*
 
@@ -8588,7 +8587,7 @@ function withdrawGasFee() public view override returns (address, uint256);
 |`<none>`|`uint256`||
 
 
-### withdrawGasFeeWithGasLimit
+#### withdrawGasFeeWithGasLimit
 
 *Withdraws gas fees with specified gasLimit*
 
@@ -8604,7 +8603,7 @@ function withdrawGasFeeWithGasLimit(uint256 gasLimit) public view override retur
 |`<none>`|`uint256`||
 
 
-### withdraw
+#### withdraw
 
 *Withraws ZRC20 tokens to external chains, this function causes cctx module to send out outbound tx to the
 outbound chain
@@ -8628,7 +8627,7 @@ function withdraw(bytes memory to, uint256 amount) external override returns (bo
 |`<none>`|`bool`|true/false if succeeded/failed.|
 
 
-### updateSystemContractAddress
+#### updateSystemContractAddress
 
 *Updates system contract address. Can only be updated by the fungible module.*
 
@@ -8643,7 +8642,7 @@ function updateSystemContractAddress(address addr) external onlyFungible;
 |`addr`|`address`||
 
 
-### updateGatewayAddress
+#### updateGatewayAddress
 
 *Updates gateway contract address. Can only be updated by the fungible module.*
 
@@ -8658,7 +8657,7 @@ function updateGatewayAddress(address addr) external onlyFungible;
 |`addr`|`address`||
 
 
-### updateGasLimit
+#### updateGasLimit
 
 *Updates gas limit. Can only be updated by the fungible module.*
 
@@ -8673,7 +8672,7 @@ function updateGasLimit(uint256 gasLimit_) external onlyFungible;
 |`gasLimit_`|`uint256`||
 
 
-### updateProtocolFlatFee
+#### updateProtocolFlatFee
 
 *Updates protocol flat fee. Can only be updated by the fungible module.*
 
@@ -8690,56 +8689,56 @@ function updateProtocolFlatFee(uint256 protocolFlatFee_) external onlyFungible;
 
 
 
-# ZRC20Errors
+## ZRC20Errors
 [Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/zevm/ZRC20.sol)
 
 *Custom errors for ZRC20*
 
 
-## Errors
-### CallerIsNotFungibleModule
+### Errors
+#### CallerIsNotFungibleModule
 
 ```solidity
 error CallerIsNotFungibleModule();
 ```
 
-### InvalidSender
+#### InvalidSender
 
 ```solidity
 error InvalidSender();
 ```
 
-### GasFeeTransferFailed
+#### GasFeeTransferFailed
 
 ```solidity
 error GasFeeTransferFailed();
 ```
 
-### ZeroGasCoin
+#### ZeroGasCoin
 
 ```solidity
 error ZeroGasCoin();
 ```
 
-### ZeroGasPrice
+#### ZeroGasPrice
 
 ```solidity
 error ZeroGasPrice();
 ```
 
-### LowAllowance
+#### LowAllowance
 
 ```solidity
 error LowAllowance();
 ```
 
-### LowBalance
+#### LowBalance
 
 ```solidity
 error LowBalance();
 ```
 
-### ZeroAddress
+#### ZeroAddress
 
 ```solidity
 error ZeroAddress();
