@@ -19,6 +19,11 @@
     "readTime": "30 min",
     "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
   },
+  "messaging": {
+    "title": "Messaging",
+    "readTime": "30 min",
+    "description": "Learn how to make cross-chain calls between contracts on EVM chains"
+  },
   "solana": {
     "title": "Solana",
     "readTime": "60 min",
