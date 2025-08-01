@@ -18,91 +18,129 @@ ZetaChain from Sui, both from a client wallet and from a Sui smart contract.
 
 ## Prerequisites
 
-Ensure you have installed and configured the following tools before starting:
+Make sure the following tools are installed before you begin:
 
-- [Sui CLI](https://docs.sui.io/references/cli): Required for starting a local
-  Sui node and interacting with it.
-- [Foundry](https://getfoundry.sh/): Needed for encoding payload data using ABI.
+| Tool                                          | Purpose                                                                   |
+| --------------------------------------------- | ------------------------------------------------------------------------- |
+| [Sui CLI](https://docs.sui.io/references/cli) | Run a local Sui validator, manage addresses and objects, deploy contracts |
+| [Foundry](https://getfoundry.sh/)             | Encode ABI payloads for cross-chain calls using `cast`                    |
+| [Node.js](https://nodejs.org/en)              | Run the ZetaChain CLI and JavaScript-based tooling                        |
+| [Yarn](https://yarnpkg.com/)                  | Install and manage project dependencies                                   |
+| [jq](https://jqlang.org/)                     | Parse JSON output in shell scripts                                        |
 
 ## Clone the Example Project
 
-Start by creating a project and installing the necessary dependencies:
+Start by generating a new project using the ZetaChain CLI:
 
 ```bash
 npx zetachain@latest new --project call
 cd call
+```
+
+This sets up a ready-to-use example with Sui and ZetaChain contracts.
+
+Install dependencies:
+
+```bash
 yarn
 ```
 
+The project is now ready for local development and testing.
+
 ## Launch Localnet
 
-Start your local development environment, which sets up instances of ZetaChain
-and Sui:
+Start a local development environment with both ZetaChain and Sui running side
+by side:
 
 ```bash
-yarn zetachain localnet start
+yarn zetachain localnet start --chains sui
 ```
 
-Keep this terminal window open. You should see a table displaying the deployment
-details, including Gateway module and object IDs:
+This command boots up:
+
+- A local ZetaChain instance
+- A local Sui validator
+- Pre-deployed gateway contracts on both networks
+
+Leave this terminal open. Once started, you’ll see a table like this:
 
 ```
 SUI
-┌─────────────────┬────────────────────────────────────────────────────────────────────────────────┐
-│ (index)         │ Values                                                                         │
-├─────────────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ gatewayModuleID │ '0xc478ce1cbbeb090889a0e728af4fd25d80993a653b5f03090dbf77e5a9476bcd'           │
-│ gatewayObjectId │ '0x332483152b600f388b64adb4d98509ded379167df6047c49a564a4ed62f8bb71'           │
-│ userMnemonic    │ 'grape subway rack mean march bubble carry avoid muffin consider thing street' │
-│ userAddress     │ '0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65'           │
-└─────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────┬──────────────────────────────────────────────────────────────────────────────────┐
+│ (index)          │ Values                                                                           │
+├──────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+│ gatewayPackageId │ '0x2f43a5df90e8fbbcf315f0ed0bd3818c348b66175bbfa57ebc45dce5a969e49f'             │
+│ gatewayObjectId  │ '0xf016928f8ccd5d2420f4cb8639dfab39613836a0e1c486271322abf5e13db6e8'             │
+│ userMnemonic     │ 'grape subway rack mean march bubble carry avoid muffin consider thing street'   │
+│ userAddress      │ '0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65'             │
+│ tokenUSDC        │ '37242f8b5af2a2cd9a846688d9a36c4fb8dbd4284166f94788aa4f7e5e7c3153::token::TOKEN' │
+└──────────────────┴──────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+> 💡 Keep this output handy. You’ll reference the `gatewayObjectId`,
+> `gatewayModuleID`, and `userMnemonic` in later steps.
 
 ## Deploying a Universal Contract
 
-Open a new terminal window to compile and deploy your Universal Contract:
+You’ll now deploy a universal smart contract to ZetaChain.
+
+First, grab the local Gateway address and a funded private key from your
+localnet setup:
 
 ```bash
-npx hardhat compile --force
-npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
 ```
 
-A successful deployment will output:
-
+```bash
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
 ```
-🚀 Successfully deployed "Universal" contract on localhost.
-📜 Contract address: 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
+
+Then deploy the `Universal` contract:
+
+```bash
+UNIVERSAL=$(forge create Universal \
+  --rpc-url http://localhost:8545 \
+  --private-key $PRIVATE_KEY \
+  --evm-version paris \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
 ```
 
 ## Deposit to ZetaChain
 
-To deposit tokens from your local Sui Gateway contract to ZetaChain, use:
+Now that your universal contract is deployed on ZetaChain, you can deposit SUI
+tokens from the Sui Gateway contract to that contract address.
 
-```
+Use the following command to deposit tokens from Sui to your universal contract
+on ZetaChain:
+
+```bash
 npx zetachain sui deposit \
   --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
-  --receiver 0xFD6F7A6a5c21A3f503EBaE7a473639974379c351 \
-  --gateway-package 0x6e142a9730f8d497905251074f0b4909c5fd47c6ea0668c0c643c7954b9f4d45 \
-  --gateway-object 0x83b40ac9eb0a9fa6ce2d6e98f17d53cedaed72d00807719055ed24a99b8f3d6e \
+  --receiver $UNIVERSAL \
+  --gateway-package 0x2f43a5df90e8fbbcf315f0ed0bd3818c348b66175bbfa57ebc45dce5a969e49f \
+  --gateway-object 0xf016928f8ccd5d2420f4cb8639dfab39613836a0e1c486271322abf5e13db6e8 \
   --amount 0.001 \
   --chain-id 104
 ```
 
-In this example, a client makes a call on the Sui blockchain to the local
-Gateway contract. The local development environment (Localnet) observes this
-transaction similarly to how ZetaChain would in a live scenario, and as a
-result, deposits ZRC-20 SUI tokens to the specified receiver address on
-ZetaChain.
+> 🔎 Replace `--gateway-package` and `--gateway-object` with the values printed
+> in your localnet output table.
+
+This command calls the deposit function on the Sui Gateway contract. ZetaChain
+observes the deposit event and propagates the deposit to ZetaChain by minting
+ZRC-20 SUI tokens and transferring them to your universal contract.
 
 ## Deposit and Call
 
-Execute a deposit and simultaneously make a function call to a universal
-contract on ZetaChain:
+In this step, you’ll deposit SUI tokens from Sui and simultaneously trigger a
+function call on the universal contract deployed on ZetaChain.
 
-```
+```bash
 npx zetachain sui deposit-and-call \
   --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
-  --receiver 0xFD6F7A6a5c21A3f503EBaE7a473639974379c351 \
+  --receiver $UNIVERSAL \
   --gateway-package 0x6e142a9730f8d497905251074f0b4909c5fd47c6ea0668c0c643c7954b9f4d45 \
   --gateway-object 0x83b40ac9eb0a9fa6ce2d6e98f17d53cedaed72d00807719055ed24a99b8f3d6e \
   --amount 0.001 \
@@ -111,11 +149,10 @@ npx zetachain sui deposit-and-call \
   --values hello
 ```
 
-In this example, a call is made from a client on the Sui blockchain to the local
-Gateway contract. The local development environment (Localnet) observes this
-call, deposits ZRC-20 SUI tokens to the specified receiver address on ZetaChain,
-and then triggers the receiver contract on ZetaChain with the provided payload
-(alice).
+This command calls the `deposit_and_call` function on the Sui Gateway contract,
+transferring the specified SUI amount, encoding the payload (`"hello"`) using
+the provided `--types` and `--values`, and triggering the `onCall` function on
+the universal contract deployed on ZetaChain.
 
 ## Build and Deploy a Sui Contract
 
