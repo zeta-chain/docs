@@ -1,19 +1,20 @@
-Interacting with ZetaChain universal apps directly from the Sui blockchain is
-straightforward and intuitive. You can deposit SUI tokens to ZetaChain
-addresses—both externally owned accounts (EOAs) and smart contracts. Universal
-apps deployed on ZetaChain can accept these token deposits and handle contract
-calls originating from Sui.
+ZetaChain enables Sui-based applications to interact directly with universal
+smart contracts deployed on ZetaChain. Using ZetaChain’s universal
+interoperability layer, Sui apps can:
 
-In this tutorial, you'll:
+- Deposit SUI and supported fungible tokens to ZetaChain
+- Make cross-chain calls to universal contracts
+- Receive cross-chain calls and token transfers from universal contracts
 
-- Set up a local development environment using [localnet](/reference/localnet).
-- Deploy a universal contract on ZetaChain.
-- Deposit SUI tokens from Sui to ZetaChain.
-- Execute deposit-and-call to deposit SUI tokens and call a universal app in a
-  single transaction.
+In this tutorial, you'll learn how to:
 
-By the end, you'll clearly understand how Sui-based applications and contracts
-can integrate seamlessly with the ZetaChain ecosystem.
+- Set up a local development environment with both ZetaChain and Sui
+- Deploy a universal contract on ZetaChain
+- Deposit SUI tokens from a Sui address to ZetaChain
+- Make a cross-chain call to trigger a function on a universal contract
+
+By the end, you’ll understand how to transfer assets and trigger logic on
+ZetaChain from Sui, both from a client wallet and from a Sui smart contract.
 
 ## Prerequisites
 
