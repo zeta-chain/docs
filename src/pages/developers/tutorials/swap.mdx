@@ -1,496 +1,280 @@
----
-title: Swap
----
+## Introduction
 
-import { Alert } from "~/components/shared";
+In this tutorial, you'll build a Universal App on ZetaChain that enables
+seamless cross-chain token swaps. This app allows users to send native gas
+tokens or ERC-20 tokens from a connected chain and receive a different token on
+another chain, all in a single transaction. For example, a user can swap USDC on
+Ethereum for BTC on Bitcoin, without interacting with bridges or centralized
+exchanges.
 
-In this tutorial, you will create a cross-chain swap contract. This contract
-will enable users to exchange a native gas token or a supported ERC-20 token
-from one connected blockchain for a token on another blockchain. For example, a
-user will be able to swap USDC from Ethereum to BTC on Bitcoin in a single
-transaction.
+You’ll learn how to:
 
-You will learn how to:
+- Create a Universal App that performs token swaps across chains
+- Deploy it to ZetaChain
+- Trigger a cross-chain swap from a connected EVM chain
 
-- Define a universal app contract that performs token swaps across chains.
-- Deploy the contract to localnet.
-- Interact with the contract by swapping tokens from a connected EVM blockchain
-  in localnet.
+The swap logic is implemented as a smart contract deployed on ZetaChain,
+conforming to the `UniversalContract` interface. This makes the contract
+callable from any connected chain through the Gateway. When tokens are sent from
+a connected chain, they arrive on ZetaChain as [ZRC-20](/developers/evm/zrc20)
+tokens, a native representation of external assets. ZRC-20 tokens preserve the
+original asset’s properties while enabling programmable behavior on ZetaChain,
+including cross-chain withdrawals.
 
-The swap contract will be implemented as a universal app and deployed on
-ZetaChain.
+The Swap contract performs the following steps:
 
-Universal apps can accept token transfers and contract calls from connected
-chains. Tokens transferred from connected chains to a universal app contract are
-represented as [ZRC-20](/developers/evm/zrc20). For example, ETH transferred
-from Ethereum is represented as ZRC-20 ETH. ZRC-20 tokens have the unique
-property of being able to be withdrawn back to their original chain as native
-assets.
+1. Receives a cross-chain call along with native or ERC-20 tokens from a
+   connected chain.
+2. Decodes the message payload to extract:
 
-The swap contract will:
+   - The address of the target token (ZRC-20)
+   - The recipient’s address on the destination chain
 
-1. Accept a contract call from a connected chain containing native gas or
-   supported ERC-20 tokens and a message.
-2. Decode the message to extract:
-   - The target token's address (represented as ZRC-20).
-   - The recipient's address on the destination chain.
-3. Query the withdrawal gas fee for the target token.
-4. Swap part of the input token for ZRC-20 gas tokens to cover the withdrawal
-   fee using Uniswap v2 liquidity pools.
-5. Swap the remaining input token amount for the target ZRC-20 token.
-6. Withdraw the ZRC-20 tokens to the destination chain.
+3. Queries the withdrawal gas fee required to send the target token back to the
+   destination chain.
+4. Swaps a portion of the incoming tokens for ZRC-20 gas tokens to cover the
+   withdrawal fee using Uniswap v2 pools.
+5. Swaps the remaining balance into the target token.
+6. Withdraws the swapped tokens to the recipient on the destination chain.
+
+This approach allows users to initiate complex multi-chain operations with a
+single transaction from any supported chain, abstracting away the complexity of
+liquidity routing, gas payments, and execution across chains.
+
+## Prerequisites
+
+Before you begin, make sure your development environment includes the following
+tools:
+
+- [Node.js](https://nodejs.org/en) (v18 or later): Required for running scripts
+  and managing project dependencies.
+- [Yarn](https://yarnpkg.com/): A package manager for installing project
+  dependencies. You may use `npm` if preferred.
+- [Git](https://git-scm.com/): Used to clone repositories and track changes.
+- [jq](https://jqlang.org/): A lightweight command-line tool for parsing and
+  querying JSON data. It’s especially useful for extracting values from localnet
+  outputs.
+- [Foundry](https://getfoundry.sh/): A fast, portable toolkit for Ethereum
+  application development. You’ll use `forge` and `cast` to compile and deploy
+  contracts.
+- [ZetaChain CLI](/reference/cli): The command-line interface for interacting
+  with ZetaChain’s localnet and connected chain gateways.
+
+To install the CLI globally:
+
+```bash
+npm install -g zetachain@latest
+```
+
+> 💡 If you prefer not to install it globally, you can use `npx
+> zetachain@latest` throughout the tutorial instead.
 
 ## Setting Up Your Environment
 
-Start by creating a project and installing the necessary dependencies:
+Start by creating a new ZetaChain project using the CLI:
 
 ```bash
-npx zetachain@latest new --project swap
+zetachain new --project swap
+```
+
+Install dependencies:
+
+```bash
 cd swap
 yarn
 ```
 
+Pull Solidity dependencies using Foundry’s package manager:
+
+```bash
+forge soldeer update
+```
+
+This will set up a working environment with Foundry and ZetaChain CLI support,
+and prepare your project for local deployment and testing.
+
 ## Understanding the Swap Contract
 
-The `Swap` contract is a universal application that facilitates cross-chain
-token swaps on ZetaChain. It inherits from the `UniversalContract` interface and
-handles incoming cross-chain calls, processes token swaps using ZetaChain's
-liquidity pools, and sends the swapped tokens to the recipient on the target
-chain.
+The `Swap` contract is a Universal App deployed on ZetaChain. It enables users
+to perform token swaps across blockchains with a single cross-chain call. Tokens
+are received as ZRC-20s, optionally swapped using Uniswap v2 liquidity, and
+withdrawn back to a connected chain.
+
+### Universal App entrypoint: on_call
+
+The contract is deployed on ZetaChain and implements `UniversalContract`,
+exposing a single entrypoint. Cross-chain deliveries are executed only via the
+Gateway, so the call surface stays minimal and trusted.
 
 ```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+function onCall(
+    MessageContext calldata context,
+    address zrc20,
+    uint256 amount,
+    bytes calldata message
+) external onlyGateway
+```
 
-import {SystemContract, IZRC20} from "@zetachain/toolkit/contracts/SystemContract.sol";
-import {SwapHelperLib} from "@zetachain/toolkit/contracts/SwapHelperLib.sol";
-import {BytesHelperLib} from "@zetachain/toolkit/contracts/BytesHelperLib.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+- `onlyGateway` ensures `onCall` is invoked exclusively by the Gateway.
+- `MessageContext` carries the origin chain (`context.chainID`) and the original
+  caller (`context.sender`). Treat this as the canonical source identity.
 
-import {RevertContext, RevertOptions} from "@zetachain/protocol-contracts/contracts/Revert.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IGatewayZEVM.sol";
-import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IWZETA.sol";
-import {GatewayZEVM} from "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
+### Asset model: ZRC-20
 
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+Assets arriving from connected chains are represented as ZRC-20s on ZetaChain.
+In `onCall`, `zrc20` is the input token and `amount` is how much was delivered.
+To send assets out to another chain, the contract approves the Gateway to spend
+specific ZRC-20 amounts and then calls `withdraw`.
 
-contract Swap is
-    UniversalContract,
-    Initializable,
-    UUPSUpgradeable,
-    OwnableUpgradeable
-{
-    address public uniswapRouter;
-    GatewayZEVM public gateway;
-    uint256 constant BITCOIN = 8332;
-    uint256 constant BITCOIN_TESTNET = 18332;
-    uint256 public gasLimit;
+Two interfaces are central:
 
-    error InvalidAddress();
-    error Unauthorized();
-    error ApprovalFailed();
-    error TransferFailed(string);
-    error InsufficientAmount(string);
+**Withdrawal gas quote** for the destination chain:
 
-    event TokenSwap(
-        address sender,
-        bytes indexed recipient,
-        address indexed inputToken,
-        address indexed targetToken,
-        uint256 inputAmount,
-        uint256 outputAmount
-    );
+```solidity
+(address gasZRC20, uint256 gasFee) = IZRC20(targetToken).withdrawGasFee();
+```
 
-    modifier onlyGateway() {
-        if (msg.sender != address(gateway)) revert Unauthorized();
-        _;
+- `gasZRC20` is the ZRC-20 that represents the destination chain’s gas token.
+- `gasFee` is the amount required to execute on the destination chain.
+
+**Withdrawal** to a connected chain (burn ZRC-20, release native on the other
+side):
+
+```solidity
+IZRC20(gasZRC20).approve(address(gateway), gasFee);
+IZRC20(params.target).approve(address(gateway), out);
+
+gateway.withdraw(
+  abi.encodePacked(params.to), // chain-agnostic recipient (bytes)
+  out,                         // amount of target token
+  params.target,               // ZRC-20 to withdraw
+  revertOptions                // failure handling
+);
+```
+
+### Funding destination execution from the user’s input
+
+The app provisions destination gas out of the input, so users don’t need to
+pre-hold gas on the target chain.
+
+Flow:
+
+1. Quote the destination gas requirement via `withdrawGasFee()`.
+2. Verify the input covers it using a DEX quote:
+
+   ```solidity
+   uint256 minInput = quoteMinInput(inputToken, targetToken);
+   if (amount < minInput) revert InsufficientAmount(...);
+   ```
+
+3. If the input isn’t already `gasZRC20`, swap just enough to buy `gasFee`:
+
+   ```solidity
+   inputForGas = SwapHelperLib.swapTokensForExactTokens(
+     uniswapRouter, inputToken, gasFee, gasZRC20, amount
+   );
+   ```
+
+4. Swap the remainder into the target token:
+
+   ```solidity
+   out = SwapHelperLib.swapExactTokensForTokens(
+     uniswapRouter, inputToken, amount - inputForGas, targetToken, 0
+   );
+   ```
+
+`quoteMinInput()` uses Uniswap v2 pricing (`getAmountsIn`) to determine the
+minimum input necessary to cover the gas fee.
+
+### Chain-agnostic addresses
+
+Recipients (and senders in events) are carried as raw `bytes`, not `address`, so
+the same contract can serve EVM, Bitcoin, Solana, etc. For cross-chain withdraw:
+pass `bytes` directly to `gateway.withdraw`.
+
+### Compact messages for Bitcoin
+
+With the 80-byte `OP_RETURN` constraint, the contract supports a compact payload
+when `context.chainID` corresponds to Bitcoin (mainnet `8332`, testnet `18334`):
+
+```solidity
+if (context.chainID == BITCOIN_TESTNET || context.chainID == BITCOIN) {
+    if (message.length < 41) revert InvalidMessageLength();
+
+    // [0..19] target ZRC-20
+    params.target = BytesHelperLib.bytesToAddress(message, 0);
+
+    // [20..len-2] recipient bytes (variable)
+    params.to = new bytes(message.length - 21);
+    for (uint256 i = 0; i < message.length - 21; i++) {
+        params.to[i] = message[20 + i];
     }
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(
-        address payable gatewayAddress,
-        address uniswapRouterAddress,
-        uint256 gasLimitAmount,
-        address owner
-    ) public initializer {
-        if (gatewayAddress == address(0) || uniswapRouterAddress == address(0))
-            revert InvalidAddress();
-        __UUPSUpgradeable_init();
-        __Ownable_init(owner);
-        uniswapRouter = uniswapRouterAddress;
-        gateway = GatewayZEVM(gatewayAddress);
-        gasLimit = gasLimitAmount;
-    }
-
-    struct Params {
-        address target;
-        bytes to;
-        bool withdraw;
-    }
-
-    /**
-     * @notice Swap tokens from a connected chain to another connected chain or ZetaChain
-     */
-    function onCall(
-        MessageContext calldata context,
-        address zrc20,
-        uint256 amount,
-        bytes calldata message
-    ) external onlyGateway {
-        Params memory params = Params({
-            target: address(0),
-            to: bytes(""),
-            withdraw: true
-        });
-
-        if (context.chainID == BITCOIN_TESTNET || context.chainID == BITCOIN) {
-            params.target = BytesHelperLib.bytesToAddress(message, 0);
-            params.to = abi.encodePacked(
-                BytesHelperLib.bytesToAddress(message, 20)
-            );
-            if (message.length >= 41) {
-                params.withdraw = BytesHelperLib.bytesToBool(message, 40);
-            }
-        } else {
-            (
-                address targetToken,
-                bytes memory recipient,
-                bool withdrawFlag
-            ) = abi.decode(message, (address, bytes, bool));
-            params.target = targetToken;
-            params.to = recipient;
-            params.withdraw = withdrawFlag;
-        }
-
-        (uint256 out, address gasZRC20, uint256 gasFee) = handleGasAndSwap(
-            zrc20,
-            amount,
-            params.target,
-            params.withdraw
-        );
-        emit TokenSwap(
-            context.sender,
-            params.to,
-            zrc20,
-            params.target,
-            amount,
-            out
-        );
-        withdraw(params, context.sender, gasFee, gasZRC20, out, zrc20);
-    }
-
-    /**
-     * @notice Swap tokens from ZetaChain optionally withdrawing to a connected chain
-     */
-    function swap(
-        address inputToken,
-        uint256 amount,
-        address targetToken,
-        bytes memory recipient,
-        bool withdrawFlag
-    ) public {
-        bool success = IZRC20(inputToken).transferFrom(
-            msg.sender,
-            address(this),
-            amount
-        );
-        if (!success) {
-            revert TransferFailed(
-                "Failed to transfer ZRC-20 tokens from the sender to the contract"
-            );
-        }
-
-        (uint256 out, address gasZRC20, uint256 gasFee) = handleGasAndSwap(
-            inputToken,
-            amount,
-            targetToken,
-            withdrawFlag
-        );
-        emit TokenSwap(
-            msg.sender,
-            recipient,
-            inputToken,
-            targetToken,
-            amount,
-            out
-        );
-        withdraw(
-            Params({
-                target: targetToken,
-                to: recipient,
-                withdraw: withdrawFlag
-            }),
-            msg.sender,
-            gasFee,
-            gasZRC20,
-            out,
-            inputToken
-        );
-    }
-
-    /**
-     * @notice Swaps enough tokens to pay gas fees, then swaps the remainder to the target token
-     */
-    function handleGasAndSwap(
-        address inputToken,
-        uint256 amount,
-        address targetToken,
-        bool withdraw
-    ) internal returns (uint256, address, uint256) {
-        uint256 inputForGas;
-        address gasZRC20;
-        uint256 gasFee = 0;
-        uint256 swapAmount = amount;
-
-        if (withdraw) {
-            (gasZRC20, gasFee) = IZRC20(targetToken).withdrawGasFee();
-            uint256 minInput = quoteMinInput(inputToken, targetToken);
-            if (amount < minInput) {
-                revert InsufficientAmount(
-                    "The input amount is less than the min amount required to cover the withdraw gas fee"
-                );
-            }
-            if (gasZRC20 == inputToken) {
-                swapAmount = amount - gasFee;
-            } else {
-                inputForGas = SwapHelperLib.swapTokensForExactTokens(
-                    uniswapRouter,
-                    inputToken,
-                    gasFee,
-                    gasZRC20,
-                    amount
-                );
-                swapAmount = amount - inputForGas;
-            }
-        }
-
-        uint256 out = SwapHelperLib.swapExactTokensForTokens(
-            uniswapRouter,
-            inputToken,
-            swapAmount,
-            targetToken,
-            0
-        );
-        return (out, gasZRC20, gasFee);
-    }
-
-    /**
-     * @notice Transfer tokens to the recipient on ZetaChain or withdraw to a connected chain
-     */
-    function withdraw(
-        Params memory params,
-        address sender,
-        uint256 gasFee,
-        address gasZRC20,
-        uint256 out,
-        address inputToken
-    ) public {
-        if (params.withdraw) {
-            if (gasZRC20 == params.target) {
-                if (!IZRC20(gasZRC20).approve(address(gateway), out + gasFee)) {
-                    revert ApprovalFailed();
-                }
-            } else {
-                if (!IZRC20(gasZRC20).approve(address(gateway), gasFee)) {
-                    revert ApprovalFailed();
-                }
-                if (!IZRC20(params.target).approve(address(gateway), out)) {
-                    revert ApprovalFailed();
-                }
-            }
-            gateway.withdraw(
-                abi.encodePacked(params.to),
-                out,
-                params.target,
-                RevertOptions({
-                    revertAddress: address(this),
-                    callOnRevert: true,
-                    abortAddress: address(0),
-                    revertMessage: abi.encode(sender, inputToken),
-                    onRevertGasLimit: gasLimit
-                })
-            );
-        } else {
-            bool success = IWETH9(params.target).transfer(
-                address(uint160(bytes20(params.to))),
-                out
-            );
-            if (!success) {
-                revert TransferFailed(
-                    "Failed to transfer target tokens to the recipient on ZetaChain"
-                );
-            }
-        }
-    }
-
-    /**
-     * @notice onRevert handles an edge-case when a swap fails when the recipient
-     * on the destination chain is a contract that cannot accept tokens.
-     */
-    function onRevert(RevertContext calldata context) external onlyGateway {
-        (address sender, address zrc20) = abi.decode(
-            context.revertMessage,
-            (address, address)
-        );
-        (uint256 out, , ) = handleGasAndSwap(
-            context.asset,
-            context.amount,
-            zrc20,
-            true
-        );
-
-        gateway.withdraw(
-            abi.encodePacked(sender),
-            out,
-            zrc20,
-            RevertOptions({
-                revertAddress: sender,
-                callOnRevert: false,
-                abortAddress: address(0),
-                revertMessage: "",
-                onRevertGasLimit: gasLimit
-            })
-        );
-    }
-
-    /**
-     * @notice Returns the minimum amount of input tokens required to cover the gas fee for withdrawal
-     */
-    function quoteMinInput(
-        address inputToken,
-        address targetToken
-    ) public view returns (uint256) {
-        (address gasZRC20, uint256 gasFee) = IZRC20(targetToken)
-            .withdrawGasFee();
-
-        if (inputToken == gasZRC20) {
-            return gasFee;
-        }
-
-        address zeta = IUniswapV2Router01(uniswapRouter).WETH();
-
-        address[] memory path;
-        if (inputToken == zeta || gasZRC20 == zeta) {
-            path = new address[](2);
-            path[0] = inputToken;
-            path[1] = gasZRC20;
-        } else {
-            path = new address[](3);
-            path[0] = inputToken;
-            path[1] = zeta;
-            path[2] = gasZRC20;
-        }
-
-        uint256[] memory amountsIn = IUniswapV2Router02(uniswapRouter)
-            .getAmountsIn(gasFee, path);
-
-        return amountsIn[0];
-    }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
+    // [len-1] withdraw flag
+    params.withdraw = BytesHelperLib.bytesToBool(message, message.length - 1);
+} else {
+    (address targetToken, bytes memory recipient, bool withdrawFlag) =
+        abi.decode(message, (address, bytes, bool));
+    params.target = targetToken;
+    params.to = recipient;
+    params.withdraw = withdrawFlag;
 }
 ```
 
-### Decoding the Message
+### Revert with `RevertOptions` and `onRevert`
 
-The contract uses a `Params` struct to store the following pieces of
-information:
+If the destination call/transfer fails, the Gateway triggers `onRevert` with a
+`RevertContext`. The contract pre-encodes a small recovery message in
+`revertMessage` (original sender and original input token), then executes a
+deterministic refund:
 
-- **`address target`**: The ZRC-20 address of the target token on ZetaChain.
-- **`bytes to`**: The recipient's address on the destination chain, stored as
-  `bytes` to support both EVM chains (e.g., Ethereum, BNB) and non-EVM chains
-  like Bitcoin.
-- **`bool withdraw`**: Indicates whether to withdraw the swapped token to the
-  destination chain or transfer it to the recipient on ZetaChain.
+```solidity
+function onRevert(RevertContext calldata context) external onlyGateway {
+    (bytes memory sender, address zrc20) =
+        abi.decode(context.revertMessage, (bytes, address));
 
-When the `onCall` function is invoked, it receives a `message` parameter that
-must be decoded to extract the swap details. The decoding logic adapts to the
-source chain's specific requirements and limitations.
+    (uint256 out,,) = handleGasAndSwap(
+        context.asset, context.amount, zrc20, true
+    );
 
-- **For Bitcoin**: Due to Bitcoin's 80-byte OP_RETURN limit, the contract
-  employs an efficient encoding method. The target token address
-  (`params.target`) is extracted from the first 20 bytes of the `message`,
-  converted into an `address` using a helper function. The recipient’s address
-  is extracted from the next 20 bytes and encoded as `bytes` format.
-- **For EVM Chains and Solana**: Without strict size limitations on messages,
-  the contract uses `abi.decode` to extract all parameters directly.
+    gateway.withdraw(
+        sender, // chain-agnostic refund address
+        out,
+        zrc20,
+        RevertOptions({
+            revertAddress: address(bytes20(sender)), // best-effort for EVM
+            callOnRevert: false,
+            abortAddress: address(0),
+            revertMessage: "",
+            onRevertGasLimit: gasLimit
+        })
+    );
+}
+```
 
-The source chain is identified using `context.chainID`, which determines the
-appropriate decoding logic. After decoding, the contract proceeds to handle the
-token swap by invoking `handleGasAndSwap` and, if required, initiating a
-withdrawal.
+The result is a consistent refund flow across chains, governed by the app.
 
----
+### Swapping using liquidity pools
 
-### Handling Gas and Swapping Tokens
+Universal contracts can route through any DEX/AMM available on ZetaChain.
+Uniswap v2 is used here purely as an example via SwapHelperLib, which wraps
+common router calls.
 
-The `handleGasAndSwap` function handles both obtaining gas tokens for withdrawal
-fees and swapping the remaining tokens for the target token.
+```solidity
+// Buy exact destination gas
+SwapHelperLib.swapTokensForExactTokens(
+  uniswapRouter, inputToken, gasFee, gasZRC20, amount
+);
 
-The contract ensures sufficient gas tokens to cover the withdrawal fee on the
-destination chain by calculating the required amount through the ZRC-20
-contract's `withdrawGasFee` method. This method provides the fee amount
-(`gasFee`) and the gas token address (`gasZRC20`).
+// Swap remainder to target
+SwapHelperLib.swapExactTokensForTokens(
+  uniswapRouter, inputToken, swapAmount, targetToken, 0
+);
+```
 
-If the incoming token is already the gas token, the required gas fee is deducted
-directly. Otherwise, the contract swaps a portion of the incoming tokens for the
-gas fee using a helper function. This ensures the contract is always prepared
-for cross-chain withdrawal operations.
-
-After addressing the gas fee, the remaining tokens are swapped for the target
-token using ZetaChain's internal liquidity pools. This step ensures that the
-recipient receives the correct token as specified in the `Params`.
-
-### Withdrawing Target Token to Connected Chain
-
-Once the gas and target tokens are prepared, the contract determines the
-appropriate action based on the `withdraw` parameter:
-
-- **If `withdraw` is `true`**: The target token and gas tokens are approved,
-  either combined or separately depending on whether they are the same. The
-  contract calls `gateway.withdraw` to transfer the tokens to the destination
-  chain. The recipient's address is encoded using `abi.encodePacked`. The Swap
-  contract is supplied as the revert address, while the sender's address and
-  input token are included as a revert message for potential recovery. The
-  ZRC-20 contract inherently ensures that tokens are withdrawn to the correct
-  connected chain.
-- **If `withdraw` is `false`**: The target token is transferred directly to the
-  recipient on ZetaChain, bypassing the withdrawal process.
-
-### Revert Logic
-
-If a withdrawal fails on the destination chain, the `onRevert` function is
-invoked to recover the funds. The sender's address and the original token are
-decoded from the revert message, ensuring the correct data for recovery.
-
-The contract swaps the reverted tokens back to the original token sent from the
-source chain. Finally, it attempts to withdraw the tokens back to the source
-chain. If this withdrawal also fails, the tokens are transferred directly to the
-sender on ZetaChain. This approach minimizes the risk of lost funds and ensures
-a robust fallback mechanism.
-
-### Companion Contract
-
-The Swap contract can be called in two ways:
-
-1. **Directly via `depositAndCall`**: This method uses the EVM gateway on a
-   connected chain, eliminating the need for an intermediary contract. It is
-   suitable for straightforward swaps without additional logic on the connected
-   chain.
-2. **Through a companion contract**: This approach is useful when additional
-   logic must be executed on the connected chain before initiating the swap. The
-   tutorial provides an example of such a companion contract in
-   `SwapCompanion.sol`.
+You’re free to replace uniswapRouter and the helper calls with any DEX interface
+or custom routing logic—only the ZRC-20 token flow and the Gateway withdraw
+semantics are assumed by the rest of the contract.
 
 ## Option 1: Deploy on Testnet
 
