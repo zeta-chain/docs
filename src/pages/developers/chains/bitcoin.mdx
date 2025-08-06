@@ -66,7 +66,7 @@ Compact-encoded fields (depending on format).
 | ---------- | -------------------------------------------------------------------------------------------------- |
 | 0          | Fixed identifier: `0x5a` (ASCII `'Z'`) for ZetaChain inscriptions                                  |
 | 1          | Encoding format (lower nibble). Example: `0x00` = ABI, `0x01` = CompactShort, `0x02` = CompactLong |
-| 2          | Operation code (upper nibble). Example: `0x10` for Call = `0x02 << 4`                              |
+| 2          | Operation code (upper nibble). Example: `0x20` for Call = `0x02 << 4`                              |
 | 3          | Flags bitmask. Indicates which fields are set. Common value: `0x07` (receiver + payload + revert)  |
 
 **Fields**
@@ -130,9 +130,9 @@ Each field is encoded in a more concise form:
 
 | Operation        | Code     | Description                                                          |
 | ---------------- | -------- | -------------------------------------------------------------------- |
-| `Deposit`        | `0b0010` | Only receiver, no payload. Optional revert address                   |
-| `DepositAndCall` | `0b0000` | Transfers BTC and invokes onCall() with payload. Revert **required** |
-| `Call`           | `0b0001` | Sends no BTC, invokes onCall() with payload. Revert optional         |
+| `Deposit`        | `0b0000` | Only receiver, no payload. Optional revert address                   |
+| `DepositAndCall` | `0b0001` | Transfers BTC and invokes onCall() with payload. Revert **required** |
+| `Call`           | `0b0010` | Sends no BTC, invokes onCall() with payload. Revert optional         |
 | `Invalid`        | `0b0011` | Reserved                                                             |
 
 ## Inscription: Deposit
