@@ -284,7 +284,7 @@ semantics are assumed by the rest of the contract.
 To deploy the Swap contract to ZetaChain testnet, run the following command:
 
 ```bash
-UNIVERSAL=$(tsx commands/index.ts deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
+UNIVERSAL=$(npx ts-node commands/index.ts deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 This deploys the precompiled contract using the specified private key and
@@ -300,7 +300,7 @@ triggering swaps from connected chains.
 Get your EVM sender address from the private key:
 
 ```bash
-RECIPIENT=$(cast wallet address $PRIVATE_KEY) && echo $SENDER
+RECIPIENT=$(cast wallet address $PRIVATE_KEY) && echo $RECIPIENT
 ```
 
 Query the ZRC-20 address that represents ETH from Ethereum Sepolia:
@@ -382,9 +382,14 @@ npx zetachain solana deposit-and-call \
   --amount 0.01
 ```
 
-This sends 0.01 SOL to the universal swap contract on ZetaChain. The Solana Gateway locks the native SOL and delivers its ZRC-20 representation to the contract along with the swap payload.
+This sends 0.01 SOL to the universal swap contract on ZetaChain. The Solana
+Gateway locks the native SOL and delivers its ZRC-20 representation to the
+contract along with the swap payload.
 
-The contract swaps the ZRC-20 SOL for ZRC-20 Ethereum ETH and withdraws the resulting amount to the `RECIPIENT` on Ethereum Sepolia. The recipient address is passed as raw bytes, which allows the same universal contract to serve cross-chain swaps from both EVM and non-EVM chains like Solana.
+The contract swaps the ZRC-20 SOL for ZRC-20 Ethereum ETH and withdraws the
+resulting amount to the `RECIPIENT` on Ethereum Sepolia. The recipient address
+is passed as raw bytes, which allows the same universal contract to serve
+cross-chain swaps from both EVM and non-EVM chains like Solana.
 
 Transaction on Solana:
 
@@ -414,6 +419,80 @@ Sender:   0x92ae647a9D8d09D58514037d6535ab93a2A8138f
 Receiver: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 Amount:   8645129169842 Gas tokens
 ```
+
+## Option 2: Deploy on Localnet
+
+Query the Uniswap router:
+
+```bash
+UNISWAP_ROUTER=$(jq -r '.["31337"].contracts[] | select(.contractType == "uniswapRouterInstance") | .address' ~/.zetachain/localnet/registry.json) && echo $UNISWAP_ROUTER
+```
+
+Query the Gateway address:
+
+```bash
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
+```
+
+Get the localnet private key:
+
+```bash
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+```
+
+Deploy the contract:
+
+```bash
+UNIVERSAL=$(npx ts-node commands/index.ts deploy \
+  --private-key $PRIVATE_KEY \
+  --rpc http://localhost:8545 \
+  --gateway $GATEWAY_ZETACHAIN \
+  --uniswap-router $UNISWAP_ROUTER | jq -r .contractAddress) && echo $UNIVERSAL
+```
+
+This will deploy the contract to your Localnet and store the deployed address in
+`UNIVERSAL`.
+
+## Swap from Ethereum to BNB
+
+To perform a cross-chain swap from Ethereum to BNB on Localnet, first set the
+relevant variables.
+
+Get the Gateway contract address for Ethereum:
+
+```bash
+GATEWAY_ETHEREUM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ETHEREUM
+```
+
+Get the ZRC-20 address that represents the BNB gas token:
+
+```bash
+ZRC20_BNB=$(jq -r '."98".chainInfo.gasZRC20' ~/.zetachain/localnet/registry.json) && echo $ZRC20_BNB
+```
+
+Get your local sender address from the private key:
+
+```bash
+RECIPIENT=$(cast wallet address $PRIVATE_KEY) && echo $RECIPIENT
+```
+
+Then trigger the swap:
+
+```bash
+npx zetachain evm deposit-and-call \
+  --rpc http://localhost:8545 \
+  --chain-id 11155112 \
+  --gateway $GATEWAY_ETHEREUM \
+  --amount 0.001 \
+  --types address bytes bool \
+  --receiver $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --values $ZRC20_BNB $RECIPIENT true
+```
+
+This sends 0.001 ETH from Ethereum to ZetaChain on Localnet, where it will be
+swapped for ZRC-20 BNB and then withdrawn to your address on the BNB localnet
+chain.
 
 ## Conclusion
 
