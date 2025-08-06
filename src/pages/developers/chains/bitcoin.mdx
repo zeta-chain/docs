@@ -130,9 +130,9 @@ Each field is encoded in a more concise form:
 
 | Operation        | Code     | Description                                                          |
 | ---------------- | -------- | -------------------------------------------------------------------- |
-| `Deposit`        | `0b0010` | Only receiver, no payload. Optional revert address                   |
-| `DepositAndCall` | `0b0000` | Transfers BTC and invokes onCall() with payload. Revert **required** |
-| `Call`           | `0b0001` | Sends no BTC, invokes onCall() with payload. Revert optional         |
+| `Deposit`        | `0b0000` | Only receiver, no payload. Optional revert address                   |
+| `DepositAndCall` | `0b0001` | Transfers BTC and invokes onCall() with payload. Revert **required** |
+| `Call`           | `0b0010` | Sends no BTC, invokes onCall() with payload. Revert optional         |
 | `Invalid`        | `0b0011` | Reserved                                                             |
 
 ## Inscription: Deposit
