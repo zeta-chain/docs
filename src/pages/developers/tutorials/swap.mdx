@@ -284,49 +284,92 @@ semantics are assumed by the rest of the contract.
 
 ## Option 1: Deploy on Testnet
 
-```
-npx hardhat compile --force
+To deploy the Swap contract to ZetaChain testnet, run the following command:
 
-npx hardhat deploy \
-  --gateway 0x6c533f7fe93fae114d0954697069df33c9b74fd7 \
-  --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
-  --network zeta_testnet
+```bash
+UNIVERSAL=$(tsx commands/index.ts deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
-```
-🔑 Using account: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+This deploys the precompiled contract using the specified private key and
+outputs the deployed address.
 
-🚀 Successfully deployed contract on zeta_testnet.
-📜 Contract address: 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3
+The deployment script automatically uses the correct Gateway and Uniswap router
+addresses for testnet.
+
+Once complete, the `UNIVERSAL` environment variable will contain the address of
+your deployed Swap contract on testnet. You’ll reference this address when
+triggering swaps from connected chains.
+
+Get your EVM sender address from the private key:
+
+```bash
+RECIPIENT=$(cast wallet address $PRIVATE_KEY) && echo $SENDER
 ```
 
-## Swap from Base Sepolia to Polygon Amoy
+Query the ZRC-20 address that represents ETH from Ethereum Sepolia:
 
+```bash
+ZRC20_ETHEREUM_ETH=$(zetachain q tokens show --symbol sETH.SEPOLIA -f zrc20) && echo $ZRC20_ETHEREUM_ETH
 ```
- npx hardhat evm-deposit-and-call \
-  --receiver 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
+
+## Swap from Base to Ethereum
+
+To initiate a swap from Base to Ethereum, run:
+
+```bash
+zetachain evm deposit-and-call \
+  --chain-id 84532 \
   --amount 0.001 \
-  --network base_sepolia \
-  --gas-price 10000000000 \
-  --gateway-evm 0x0c487a766110c85d301d96e33579c5b317fa4995 \
-  --types '["address", "bytes", "bool"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 true
+  --types address bytes bool \
+  --receiver $UNIVERSAL \
+  --values $ZRC20_ETHEREUM_ETH $RECIPIENT true
 ```
+
+This sends 0.001 ETH from Base Sepolia into ZetaChain. Under the hood, this
+command invokes the `depositAndCall` function on the Base Gateway. The Gateway
+wraps the incoming ETH as ZRC-20 Base ETH and delivers it to the universal swap
+contract on ZetaChain along with the encoded payload.
+
+The contract receives the Base ETH as a ZRC-20 token, performs the swap to
+ZRC-20 Ethereum ETH using Uniswap v2 liquidity on ZetaChain, and then withdraws
+the swapped tokens to your address on Ethereum Sepolia.
+
+This entire flow is completed as a single cross-chain transaction. You don’t
+need to pre-fund gas on the destination chain or interact with bridges or
+routers—everything is orchestrated by the universal contract on ZetaChain.
 
 Transaction on Base:
 
-https://sepolia.basescan.org/tx/0xd6fea6e27fd0be9589e064deeee58810ed0dab0e7d3ea651e4af893af7ffbfba
+https://sepolia.basescan.org/tx/0x8def0ff44c0e45803f209bc864123a08a03e6e1fadc5ac6f28f4c17f1463aae9
 
-Incoming transaction from Base to ZetaChain:
+You can inspect the full cross-chain context with:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xd6fea6e27fd0be9589e064deeee58810ed0dab0e7d3ea651e4af893af7ffbfba
+```
+zetachain query cctx --hash 0x8def0ff44c0e45803f209bc864123a08a03e6e1fadc5ac6f28f4c17f1463aae9
+```
 
-Outgoing transaction from ZetaChain to Polygon:
+This will show the inbound delivery from Base to ZetaChain, and the outbound
+delivery from ZetaChain to Ethereum Sepolia, including transaction hashes,
+sender and recipient addresses, and token amounts.
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x5a5f49a8b1361224457fdbf88e548204221e47d9923c24af84476f8e68d93841
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0x11ff9e850f0974de3b23f5347feb8684a88c6124e972da725b854031a632ad37
+Tx Hash:  0x8def0ff44c0e45803f209bc864123a08a03e6e1fadc5ac6f28f4c17f1463aae9 (on chain 84532)
+Tx Hash:  0xe5e5f72154140f63673d8260ed638c7dbb8c5b6901bc19b1e93651fdb35c6a00 (on chain 7001)
+Sender:   0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+Receiver: 0x92ae647a9D8d09D58514037d6535ab93a2A8138f
+Message:  00000000000000000000000005ba149a7bd6dc1f937fa9046a9e05c05f3b18b00000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000144955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000
+Amount:   1000000000000000 Gas tokens
 
-Transaction on Polygon:
-
-https://amoy.polygonscan.com/tx/0xab2941227d17bda1c46af58b6f430a5b3e635dfd22fce1ff0c3bfdecc35847fb
+7001 → 11155111 ✅ OutboundMined
+CCTX:     0xfb6f6e1cb94e646fa7a8123082054aea08fa9a65a5f07e1e0dc48463ebfaf9dd
+Tx Hash:  0x11ff9e850f0974de3b23f5347feb8684a88c6124e972da725b854031a632ad37 (on chain 7001)
+Tx Hash:  0x285a47661b2216ff6d76cd811ca3e3de622b6927f9da94b1cb706f88ad86ef38 (on chain 11155111)
+Sender:   0x92ae647a9D8d09D58514037d6535ab93a2A8138f
+Receiver: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+Amount:   17091458311542 Gas tokens
+```
 
 ## Swap from Solana SOL to Base Sepolia ETH
 
