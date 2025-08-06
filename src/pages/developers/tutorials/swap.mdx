@@ -371,176 +371,51 @@ Receiver: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 Amount:   17091458311542 Gas tokens
 ```
 
-## Swap from Solana SOL to Base Sepolia ETH
+## Swap from Solana to Ethereum
 
+To initiate a swap from Solana to Ethereum Sepolia, run:
+
+```bash
+zetachain solana deposit-and-call \
+  --recipient $UNIVERSAL \
+  --types address bytes bool \
+  --values $ZRC20_ETHEREUM_ETH $RECIPIENT true \
+  --chain-id 901 \
+  --private-key $SOLANA_PRIVATE_KEY \
+  --amount 0.01
 ```
-npx hardhat solana-deposit-and-call \
-  --amount 0.1 \
-  --recipient 0x162CefCe314726698ac1Ee5895a6c392ba8e20d3 \
-  --types '["address", "bytes", "bool"]' 0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32 true
-```
+
+This sends 0.01 SOL to the universal swap contract on ZetaChain. The Solana Gateway locks the native SOL and delivers its ZRC-20 representation to the contract along with the swap payload.
+
+The contract swaps the ZRC-20 SOL for ZRC-20 Ethereum ETH and withdraws the resulting amount to the `RECIPIENT` on Ethereum Sepolia. The recipient address is passed as raw bytes, which allows the same universal contract to serve cross-chain swaps from both EVM and non-EVM chains like Solana.
 
 Transaction on Solana:
 
-https://solana.fm/tx/4TyLdAt2jcxPwnddbwvHSUzrUTZrLoJ8idTGgNXySFw5vDsW3uo4qwGVxBFD3ziLzbWrVrmfx9boYM9pWooftM5x?cluster=devnet-solana
+https://solana.fm/tx/28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm?cluster=devnet-solana
 
-Incoming transaction from Solana to ZetaChain:
+To inspect the full cross-chain context:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/4TyLdAt2jcxPwnddbwvHSUzrUTZrLoJ8idTGgNXySFw5vDsW3uo4qwGVxBFD3ziLzbWrVrmfx9boYM9pWooftM5x
-
-Outgoing transaction from ZetaChain to Base:
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x52e483e4b8d0945a77955cc8abed4ae51f1a2fc0482c43c16f367bd73bf67290
-
-Transaction on Base:
-
-https://sepolia.basescan.org/tx/0xd70e5a437f730b0e64ae24dd188994c0c2d9cccfc0582942cb0dea4198dc8a15
-
-## Option 2: Deploy on Localnet
-
-Start the local development environment to simulate ZetaChain's behavior by
-running:
-
-```
-yarn zetachain localnet start
+```bash
+zetachain query cctx --hash 28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm
 ```
 
-Compile the contract and deploy it to localnet by running:
-
 ```
-npx hardhat deploy \
-  --name Swap \
-  --network localhost \
-  --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
-  --uniswap-router 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-```
+901 → 7001 ✅ OutboundMined
+CCTX:     0xd6e73b3ce77bc16bfaf1b8449b46991476ea7a8cec7ab1f508cd14aaf972028b
+Tx Hash:  28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm (on chain 901)
+Tx Hash:  0x91001d6539c04bf3629d611543ccf8f819a9f7fdf1f1c76bfd695b7e46750bbe (on chain 7001)
+Sender:   AS48jKNQsDGkEdDvfwu1QpqjtqbCadrAq9nGXjFmdX3Z
+Receiver: 0x92ae647a9D8d09D58514037d6535ab93a2A8138f
+Message:  00000000000000000000000005ba149a7bd6dc1f937fa9046a9e05c05f3b18b00000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000144955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000
+Amount:   10000000 Gas tokens
 
-You should see output similar to:
-
-```
-🔑 Using account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-
-🚀 Successfully deployed contract on localhost.
-📜 Contract address: =0x0355B7B8cb128fA5692729Ab3AAa199C1753f726
-```
-
-## Swapping Gas Tokens for ERC-20 Tokens
-
-To swap gas tokens for ERC-20 tokens, run the following command:
-
-```
-npx hardhat evm-swap \
-  --network localhost \
-  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
-  --amount 0.1 \
-  --gateway-evm 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0 \
-  --target 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
-  --skip-checks \
-  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-```
-
-This script deposits tokens into the gateway on a connected EVM chain and sends
-a message to the Swap contract on ZetaChain to execute the swap logic.
-
-In this command, the `--receiver` parameter is the address of the Swap contract
-on ZetaChain that will handle the swap. The `--amount 1` option indicates that
-you want to swap 1 ETH. `--target` is the ZRC-20 address of the destination
-token (in this example, it's ZRC-20 USDC).
-
-When you execute this command, the script calls the `gateway.depositAndCall`
-method on the connected EVM chain, depositing 1 ETH and sending a message to the
-Swap contract on ZetaChain.
-
-ZetaChain then picks up the event and executes the `onCall` function of the Swap
-contract with the provided message.
-
-The Swap contract decodes the message, identifies the target ERC-20 token and
-recipient, and initiates the swap logic.
-
-Finally, the EVM chain receives the withdrawal request, and the swapped ERC-20
-tokens are transferred to the recipient's address:
-
-### Swapping ERC-20 Tokens for Gas Tokens
-
-To swap ERC-20 tokens for gas tokens, adjust the command by specifying the
-ERC-20 token you're swapping from using the `--erc20` parameter:
-
-```
-npx hardhat evm-swap \
-  --network localhost \
-  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
-  --amount 0.1 \
-  --target 0x65a45c57636f9BcCeD4fe193A602008578BcA90b \
-  --gateway-evm 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0 \
-  --skip-checks \
-  --erc20 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E \
-  --recipient 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-```
-
-Here, the `--erc20` option specifies the ERC-20 token address you're swapping
-from on the source chain. The other parameters remain the same as in the
-previous command.
-
-When you run the command, the script calls the `gateway.depositAndCall` method
-with the specified ERC-20 token and amount, sending a message to the Swap
-contract on ZetaChain.
-
-ZetaChain picks up the event and executes the `onCall` function of the Swap
-contract:
-
-The Swap contract decodes the message, identifies the target gas token and
-recipient, and initiates the swap logic.
-
-The EVM chain then receives the withdrawal request, and the swapped gas tokens
-are transferred to the recipient's address.
-
-## Swapping SUI for Solana SOL
-
-```
-npx hardhat localnet:sui-deposit-and-call \
-  --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
-  --gateway 0x36f26de84772c7dc8d4b9e291c92c2b067c448e14936aa7bad546ed9a5f348d3 \
-  --module 0x7418f0a63ff1d1fdc0b4dd2a1b7fc1760c62e7bc7609e1fb71ec30f0fbfb0a00 \
-  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
-  --amount 1000000 \
-  --types '["address", "bytes", "bool"]' 0x777915D031d1e8144c90D025C594b3b8Bf07a08d DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd true
-```
-
-### Swapping Solana SOL for SUI
-
-```
-npx hardhat localnet:solana-deposit-and-call \
-  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
-  --amount 0.0001 \
-  --types '["address", "bytes", "bool"]' 0xe573a6e11f8506620F123DBF930222163D46BCB6 0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65 true
-```
-
-Before swapping to Sui, make sure you have either deposited tokens from Sui or
-deposited and made a call from Sui first. Otherwise, there will be no tokens
-available in custody on Sui.
-
-### Swapping Solana SPL for SUI
-
-```
-npx hardhat localnet:solana-deposit-and-call \
-  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
-  --mint 2rJE9EiWx7hrCKiBsAgtmTZbcuDRESkEvw9ZaAwX1YHN \
-  --to 7nHtQCVaUMRkwiUhDmoJUJ2p1WMatoz3k22C3xGvid64 \
-  --from DdTS9SENotAj5z96TQX5pRKd11TkvHKaSneK1GnCCrKD \
-  --amount 0.1 \
-  --types '["address", "bytes", "bool"]' 0xe573a6e11f8506620F123DBF930222163D46BCB6 0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65 true
-```
-
-### Swapping SUI for Solana SPL
-
-```
-npx hardhat localnet:sui-deposit-and-call \
-  --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
-  --gateway 0xb58507c84f8247d2866b393fbd11467211c89e4e4935d01714a868b2dde493ae \
-  --module 0xb98bb74211a4f8463d87b61ace7d36f703370dae989baf8c620131d28525a899 \
-  --receiver 0x0355B7B8cb128fA5692729Ab3AAa199C1753f726 \
-  --amount 100000 \
-  --types '["address", "bytes", "bool"]' 0xfC9201f4116aE6b054722E10b98D904829b469c3 DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd true
+7001 → 11155111 ✅ OutboundMined
+CCTX:     0xc718334a07bac99c6ac21bc8a69bf743eff5c391a3998d957bd51af6240b6d07
+Tx Hash:  0xd6e73b3ce77bc16bfaf1b8449b46991476ea7a8cec7ab1f508cd14aaf972028b (on chain 7001)
+Tx Hash:  0x791aade1bb72cf516f9a4c6d774237f7736fbe49430aa669fb82b34b27623a85 (on chain 11155111)
+Sender:   0x92ae647a9D8d09D58514037d6535ab93a2A8138f
+Receiver: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+Amount:   8645129169842 Gas tokens
 ```
 
 ## Conclusion
