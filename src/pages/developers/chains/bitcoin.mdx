@@ -66,7 +66,7 @@ Compact-encoded fields (depending on format).
 | ---------- | -------------------------------------------------------------------------------------------------- |
 | 0          | Fixed identifier: `0x5a` (ASCII `'Z'`) for ZetaChain inscriptions                                  |
 | 1          | Encoding format (lower nibble). Example: `0x00` = ABI, `0x01` = CompactShort, `0x02` = CompactLong |
-| 2          | Operation code (upper nibble). Example: `0x10` for Call = `0x02 << 4`                              |
+| 2          | Operation code (upper nibble). Example: `0x20` for Call = `0x02 << 4`                              |
 | 3          | Flags bitmask. Indicates which fields are set. Common value: `0x07` (receiver + payload + revert)  |
 
 **Fields**
