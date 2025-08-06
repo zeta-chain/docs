@@ -66,9 +66,6 @@ To install the CLI globally:
 npm install -g zetachain@latest
 ```
 
-> 💡 If you prefer not to install it globally, you can use `npx
-> zetachain@latest` throughout the tutorial instead.
-
 ## Setting Up Your Environment
 
 Start by creating a new ZetaChain project using the CLI:
@@ -317,7 +314,7 @@ ZRC20_ETHEREUM_ETH=$(zetachain q tokens show --symbol sETH.SEPOLIA -f zrc20) && 
 To initiate a swap from Base to Ethereum, run:
 
 ```bash
-zetachain evm deposit-and-call \
+npx zetachain evm deposit-and-call \
   --chain-id 84532 \
   --amount 0.001 \
   --types address bytes bool \
@@ -376,7 +373,7 @@ Amount:   17091458311542 Gas tokens
 To initiate a swap from Solana to Ethereum Sepolia, run:
 
 ```bash
-zetachain solana deposit-and-call \
+npx zetachain solana deposit-and-call \
   --recipient $UNIVERSAL \
   --types address bytes bool \
   --values $ZRC20_ETHEREUM_ETH $RECIPIENT true \
@@ -396,7 +393,7 @@ https://solana.fm/tx/28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2
 To inspect the full cross-chain context:
 
 ```bash
-zetachain query cctx --hash 28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm
+npx zetachain query cctx --hash 28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm
 ```
 
 ```
