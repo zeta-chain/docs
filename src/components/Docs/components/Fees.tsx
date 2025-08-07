@@ -1,23 +1,26 @@
 /* eslint-disable react/no-array-index-key */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getFees } from "@zetachain/toolkit/query";
 import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 
-type FeesState = {
-  messaging: any[];
-  omnichain: any[];
+type Fee = {
+  chain_id: string;
+  gasFeeAmount: string;
+  gasFeeDecimals: number;
+  gasTokenSymbol: string;
+  symbol: string;
 };
 
 type FeesProps = {
-  type: "messaging" | "omnichain";
+  /** Component previously accepted a type prop but it's no longer used. Keeping for backward-compatibility. */
+  type?: string;
 };
 
-export const Fees: React.FC<FeesProps> = ({ type }) => {
-  const [mainnetFees, setMainnetFees] = useState<FeesState>({ messaging: [], omnichain: [] });
-  const [testnetFees, setTestnetFees] = useState<FeesState>({ messaging: [], omnichain: [] });
+export const Fees: React.FC<FeesProps> = (_props) => {
+  const [mainnetFees, setMainnetFees] = useState<Fee[]>([]);
+  const [testnetFees, setTestnetFees] = useState<Fee[]>([]);
 
   const [activeTab, setActiveTab] = useState(networkTypeTabs[0]);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +28,6 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
   useEffect(() => {
     const fetchFees = async () => {
       setIsLoading(true);
-
       try {
         const networkConfig =
           activeTab.networkType === "mainnet"
@@ -38,25 +40,10 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
                 rpc: "https://zetachain-athens.g.allthatnode.com/archive/evm",
               };
 
-        const data = await getFees({ gasLimit: 500000 }, networkConfig);
+        const data: Fee[] = (await getFees({ gasLimit: 500000 }, networkConfig)) as Fee[];
 
-        // Transform the data to match the expected format
-        const transformedData: FeesState = {
-          messaging: [], // getFees only returns omnichain fees
-          omnichain: data.map((fee: any) => ({
-            symbol: fee.symbol,
-            foreign_chain_id: fee.chain_id,
-            totalFee: fee.gasFeeAmount,
-            gasFee: fee.gasFeeAmount,
-            protocolFee: "0", // Protocol fee not available in new format
-            gasTokenSymbol: fee.gasTokenSymbol,
-            gasFeeDecimals: fee.gasFeeDecimals,
-            zrc20Address: fee.zrc20Address,
-          })),
-        };
-
-        if (activeTab.networkType === "mainnet") setMainnetFees(transformedData);
-        if (activeTab.networkType === "testnet") setTestnetFees(transformedData);
+        if (activeTab.networkType === "mainnet") setMainnetFees(data);
+        if (activeTab.networkType === "testnet") setTestnetFees(data);
       } catch (error) {
         console.error("Error fetching fees:", error);
       } finally {
@@ -71,76 +58,39 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
     return activeTab.networkType === "mainnet" ? mainnetFees : testnetFees;
   }, [activeTab.networkType, mainnetFees, testnetFees]);
 
-  const renderTableHeaders = () => {
-    if (type === "messaging") {
-      return (
-        <tr>
-          <th>Chain ID</th>
-          <th>Total Fee</th>
-          <th>Gas Fee</th>
-          <th>Protocol Fee</th>
-        </tr>
-      );
-    }
-    return (
-      <tr>
-        <th>Chain ID</th>
-        <th>ZRC-20</th>
-        <th>Fee Amount</th>
-        <th>Fee Token</th>
+  const formatFeeAmount = (amount: string, decimals: number): string => {
+    if (decimals === 0) return amount;
+    const padded = amount.padStart(decimals + 1, "0");
+    const integerPart = padded.slice(0, -decimals);
+    const decimalPart = padded.slice(-decimals).replace(/0+$/, "");
+    return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
+  };
+
+  const renderTableHeaders = () => (
+    <tr>
+      <th>Chain ID</th>
+      <th>ZRC-20</th>
+      <th>Fee Amount</th>
+      <th>Fee Token</th>
+    </tr>
+  );
+
+  const renderTableRows = () =>
+    fees.map((fee, index) => (
+      <tr key={index}>
+        <td>{fee.chain_id}</td>
+        <td>{fee.symbol}</td>
+        <td>{formatFeeAmount(fee.gasFeeAmount, fee.gasFeeDecimals)}</td>
+        <td>{fee.gasTokenSymbol}</td>
       </tr>
-    );
-  };
-
-  const renderTableRows = () => {
-    if (type === "messaging") {
-      return fees.messaging.map((fee: any, index) => (
-        <tr key={index}>
-          <td>{fee.chainID}</td>
-          <td>{fee.totalFee}</td>
-          <td>{fee.gasFee}</td>
-          <td>{fee.protocolFee}</td>
-        </tr>
-      ));
-    }
-
-    return fees.omnichain.map((fee: any, index) => {
-      // Format fee amount based on decimals
-      let feeAmount = fee.gasFee;
-      if (fee.gasFeeDecimals) {
-        const amount = fee.gasFee;
-        const decimals = fee.gasFeeDecimals;
-
-        // Pad with zeros if needed
-        const paddedAmount = amount.padStart(decimals + 1, "0");
-
-        // Insert decimal point
-        const integerPart = paddedAmount.slice(0, -decimals);
-        const decimalPart = paddedAmount.slice(-decimals);
-
-        feeAmount = `${integerPart}.${decimalPart}`;
-
-        // Remove trailing zeros
-        feeAmount = feeAmount.replace(/\.?0+$/, "");
-      }
-
-      return (
-        <tr key={index}>
-          <td>{fee.foreign_chain_id}</td>
-          <td>{fee.symbol}</td>
-          <td>{feeAmount}</td>
-          <td>{fee.gasTokenSymbol}</td>
-        </tr>
-      );
-    });
-  };
+    ));
 
   return (
     <div className="mt-8 first:mt-0">
-      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix={`${type}-fees-`} />
+      <NetworkTypeTabs activeTab={activeTab} setActiveTab={setActiveTab} layoutIdPrefix="fees-" />
 
       {isLoading ? (
-        <LoadingTable rowCount={type === "messaging" ? 2 : 7} />
+        <LoadingTable rowCount={7} />
       ) : (
         <div className="overflow-x-auto mt-8">
           <table>

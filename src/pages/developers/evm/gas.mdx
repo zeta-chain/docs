@@ -4,8 +4,6 @@ title: Gas Fees
 
 import { Fees } from "~/components/Docs";
 
-import { Alert } from "~/components/shared";
-
 ## Calling Universal Apps
 
 When interacting with a universal app on ZetaChain from a connected chain
@@ -41,7 +39,7 @@ query the withdraw gas fee for the expected gas limit:
 ```
 
 - `gasZRC20` is the address of the gas token for the destination chain of the
-  call or withdrawal. For example, the gas token for both Ethereum USDC and ETH 
+  call or withdrawal. For example, the gas token for both Ethereum USDC and ETH
   is ZRC-20 ETH.
 - `gasFee` is the required amount for the specified gas limit. This ensures you
   can accurately estimate the necessary fees for successful execution.
@@ -66,12 +64,11 @@ The table below displays the current withdraw gas fees, calculated using a
 default gas limit of 500,000. Fees are represented in the native gas token of
 the destination chain.
 
-<Fees type="omnichain" />
+<Fees />
 
-To calculate fees for a different gas limit, please, check out the `fees`
-command in the smart-contract
-[template](https://github.com/zeta-chain/template):
+To calculate fees for a different gas limit, please, check out use the `query
+fees` command:
 
 ```
-npx hardhat fees
+npx zetachain query fees
 ```
