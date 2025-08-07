@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ZetaChainClient } from "@zetachain/toolkit/client";
+import { getFees } from "@zetachain/toolkit/query";
 import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
@@ -27,44 +27,36 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
       setIsLoading(true);
 
       try {
-        const client = new ZetaChainClient({
-          network: activeTab.networkType,
-          chains: {
-            zeta_testnet: {
-              api: [
-                {
-                  url: `https://zetachain-athens.g.allthatnode.com/archive/evm`,
-                  type: "evm",
-                },
-              ],
-            },
-            zeta_mainnet: {
-              api: [
-                {
-                  url: `https://zetachain-mainnet.g.allthatnode.com/archive/evm`,
-                  type: "evm",
-                },
-                {
-                  url: `https://zetachain-mainnet.g.allthatnode.com/archive/rest`,
-                  type: "cosmos-http",
-                },
-              ],
-            },
-          },
-        });
-        const data = await client.getFees(500000);
+        const networkConfig =
+          activeTab.networkType === "mainnet"
+            ? {
+                api: "https://zetachain-mainnet.g.allthatnode.com/archive/rest",
+                rpc: "https://zetachain-mainnet.g.allthatnode.com/archive/evm",
+              }
+            : {
+                api: "https://zetachain-athens.g.allthatnode.com/archive/rest",
+                rpc: "https://zetachain-athens.g.allthatnode.com/archive/evm",
+              };
 
-        const sortedOmnichainFees = [...data.omnichain].sort((a, b) =>
-          a.foreign_chain_id.localeCompare(b.foreign_chain_id)
-        );
+        const data = await getFees({ gasLimit: 500000 }, networkConfig);
 
-        const updatedData: FeesState = {
-          messaging: data.messaging,
-          omnichain: sortedOmnichainFees,
+        // Transform the data to match the expected format
+        const transformedData: FeesState = {
+          messaging: [], // getFees only returns omnichain fees
+          omnichain: data.map((fee: any) => ({
+            symbol: fee.symbol,
+            foreign_chain_id: fee.chain_id,
+            totalFee: fee.gasFeeAmount,
+            gasFee: fee.gasFeeAmount,
+            protocolFee: "0", // Protocol fee not available in new format
+            gasTokenSymbol: fee.gasTokenSymbol,
+            gasFeeDecimals: fee.gasFeeDecimals,
+            zrc20Address: fee.zrc20Address,
+          })),
         };
 
-        if (activeTab.networkType === "mainnet") setMainnetFees(updatedData);
-        if (activeTab.networkType === "testnet") setTestnetFees(updatedData);
+        if (activeTab.networkType === "mainnet") setMainnetFees(transformedData);
+        if (activeTab.networkType === "testnet") setTestnetFees(transformedData);
       } catch (error) {
         console.error("Error fetching fees:", error);
       } finally {
@@ -92,11 +84,10 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
     }
     return (
       <tr>
-        <th>Symbol</th>
         <th>Chain ID</th>
-        <th>Total Fee</th>
-        <th>Gas Fee</th>
-        <th>Protocol Fee</th>
+        <th>ZRC-20</th>
+        <th>Fee Amount</th>
+        <th>Fee Token</th>
       </tr>
     );
   };
@@ -113,15 +104,35 @@ export const Fees: React.FC<FeesProps> = ({ type }) => {
       ));
     }
 
-    return fees.omnichain.map((fee: any, index) => (
-      <tr key={index}>
-        <td>{fee.symbol}</td>
-        <td>{fee.foreign_chain_id}</td>
-        <td>{fee.totalFee}</td>
-        <td>{fee.gasFee}</td>
-        <td>{fee.protocolFee}</td>
-      </tr>
-    ));
+    return fees.omnichain.map((fee: any, index) => {
+      // Format fee amount based on decimals
+      let feeAmount = fee.gasFee;
+      if (fee.gasFeeDecimals) {
+        const amount = fee.gasFee;
+        const decimals = fee.gasFeeDecimals;
+
+        // Pad with zeros if needed
+        const paddedAmount = amount.padStart(decimals + 1, "0");
+
+        // Insert decimal point
+        const integerPart = paddedAmount.slice(0, -decimals);
+        const decimalPart = paddedAmount.slice(-decimals);
+
+        feeAmount = `${integerPart}.${decimalPart}`;
+
+        // Remove trailing zeros
+        feeAmount = feeAmount.replace(/\.?0+$/, "");
+      }
+
+      return (
+        <tr key={index}>
+          <td>{fee.foreign_chain_id}</td>
+          <td>{fee.symbol}</td>
+          <td>{feeAmount}</td>
+          <td>{fee.gasTokenSymbol}</td>
+        </tr>
+      );
+    });
   };
 
   return (
