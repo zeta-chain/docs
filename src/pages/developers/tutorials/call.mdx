@@ -370,7 +370,7 @@ cast send --json \
   $UNIVERSAL \
   "call(bytes,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
   $(cast abi-encode "f(bytes)" $CONNECTED) \
-  0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD \
+  $ZRC20_BASE \
   $(cast abi-encode "f(string)" "hello") \
   "($GAS_LIMIT,false)" \
   "($UNIVERSAL,false,$UNIVERSAL,0x,0)" | jq -r '.transactionHash'
