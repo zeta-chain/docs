@@ -335,10 +335,10 @@ The third parameter to the `call` function is the **RevertOptions** struct:
 ## Make a call from the Universal App
 
 Your Universal App on ZetaChain can initiate an outgoing call to a contract on a
-connected EVM chain. The Universal App pulls the **destination gas fee** in the
+connected EVM chain. The Universal App pulls the destination gas fee in the
 chain’s gas ZRC-20, then calls the Gateway.
 
-Quote the exact gas fee and approve it:
+First, quote the exact fee using the destination gas limit:
 
 ```bash
 GAS_LIMIT=500000
@@ -349,6 +349,8 @@ GAS_FEE=$(cast call --json $ZRC20_BASE \
   $GAS_LIMIT \
   --rpc-url $RPC_ZETACHAIN | jq -r '.[1]') && echo $GAS_FEE
 ```
+
+Approve the Universal App to spend the quoted fee:
 
 ```bash
 cast send $ZRC20_BASE \
