@@ -268,6 +268,8 @@ for each chain.
 
 ```bash
 GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
+RPC_ZETACHAIN=https://zetachain-athens-evm.blockpi.network/v1/rpc/public
+RPC_BASE=https://sepolia.base.org
 
 GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
 ```
@@ -276,7 +278,7 @@ GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
 
 ```bash
 UNIVERSAL=$(forge create Universal \
-  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
+  --rpc-url RPC_ZETACHAIN \
   --private-key $PRIVATE_KEY \
   --evm-version paris \
   --broadcast \
@@ -288,7 +290,7 @@ UNIVERSAL=$(forge create Universal \
 
 ```bash
 CONNECTED=$(forge create Connected \
-  --rpc-url https://sepolia.base.org \
+  --rpc-url RPC_BASE \
   --private-key $PRIVATE_KEY \
   --evm-version paris \
   --broadcast \
@@ -304,7 +306,7 @@ the Universal App’s `onCall` executes.
 
 ```bash
 cast send $CONNECTED \
-  --rpc-url https://sepolia.base.org \
+  --rpc-url $RPC_BASE \
   --private-key $PRIVATE_KEY \
   --json \
   "call(address,bytes,(address,bool,address,bytes,uint256))" \
@@ -345,7 +347,7 @@ ZRC20_BASE=0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD
 GAS_FEE=$(cast call --json $ZRC20_BASE \
   "withdrawGasFeeWithGasLimit(uint256)(address,uint256)" \
   $GAS_LIMIT \
-  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public | jq -r '.[1]') && echo $GAS_FEE
+  --rpc-url $RPC_ZETACHAIN | jq -r '.[1]') && echo $GAS_FEE
 ```
 
 ```bash
@@ -353,7 +355,7 @@ cast send $ZRC20_BASE \
   "approve(address,uint256)" \
   $UNIVERSAL \
   $GAS_FEE \
-  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
+  --rpc-url $RPC_ZETACHAIN \
   --private-key $PRIVATE_KEY
 ```
 
@@ -361,7 +363,7 @@ Make the cross-chain call:
 
 ```bash
 cast send --json \
-  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
+  --rpc-url $RPC_ZETACHAIN \
   --private-key $PRIVATE_KEY \
   $UNIVERSAL \
   "call(bytes,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
