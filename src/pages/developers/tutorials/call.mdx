@@ -268,17 +268,17 @@ for each chain.
 
 ```bash
 GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
+GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
+
 RPC_ZETACHAIN=https://zetachain-athens-evm.blockpi.network/v1/rpc/public
 RPC_BASE=https://sepolia.base.org
-
-GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
 ```
 
 ### Deploy Universal to ZetaChain testnet
 
 ```bash
 UNIVERSAL=$(forge create Universal \
-  --rpc-url RPC_ZETACHAIN \
+  --rpc-url $RPC_ZETACHAIN \
   --private-key $PRIVATE_KEY \
   --evm-version paris \
   --broadcast \
@@ -290,7 +290,7 @@ UNIVERSAL=$(forge create Universal \
 
 ```bash
 CONNECTED=$(forge create Connected \
-  --rpc-url RPC_BASE \
+  --rpc-url $RPC_BASE \
   --private-key $PRIVATE_KEY \
   --evm-version paris \
   --broadcast \
@@ -331,6 +331,19 @@ The third parameter to the `call` function is the **RevertOptions** struct:
 - `revertMessage`: arbitrary bytes returned in the revert context.
 - `onRevertGasLimit`: gas allocated for `onRevert`. Since `callOnRevert` is
   `false`, set this to `0`.
+
+You can also run the same call with a command:
+
+```bash
+npx tsx ./commands connected call \
+  --rpc $RPC_BASE \
+  --contract $CONNECTED \
+  --private-key $PRIVATE_KEY \
+  --receiver $UNIVERSAL \
+  --types string \
+  --values hello \
+  --name Connected
+```
 
 ## Make a call from the Universal App
 
@@ -393,3 +406,17 @@ RevertOptions:
 - `revertMessage` is left empty in this example to keep the payload minimal.
 - `onRevertGasLimit` is set to **0**, because revert calls from connected chains
   to ZetaChain do not incur gas fees.
+
+You can also run the same call with a command:
+
+```
+npx tsx ./commands universal call \
+  --rpc $RPC_ZETACHAIN \
+  --contract $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --receiver $CONNECTED \
+  --types string \
+  --values hello \
+  --name Universal \
+  --zrc20 $ZRC20_BASE
+```
