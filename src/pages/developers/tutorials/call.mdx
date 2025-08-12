@@ -20,8 +20,8 @@ ZetaChain and a connected chain:
 - Optional token transfers alongside calls in either direction
 - Revert handling to recover gracefully from failed calls
 
-By the end, you’ll have a minimal, working example of **bi-directional contract
-calls** with optional token movement and robust error handling.
+By the end, you’ll have a minimal, working example of bi-directional contract
+calls with optional token movement and robust error handling.
 
 ## Prerequisites
 
@@ -55,7 +55,7 @@ forge build
 
 Your workspace is now ready for adding the Universal App and Connected Contract
 logic. Next, we’ll walk through the key parts of the Universal App that handles
-**incoming calls** and makes **outgoing calls** to a connected chain.
+incoming calls and makes outgoing calls to a connected chain.
 
 ## Universal App
 
@@ -129,8 +129,8 @@ executing the call.
 
 ## Connected Contract
 
-The Connected contract lives on a **connected EVM chain** and uses EVM Gateway
-to interact with your Universal App on ZetaChain.
+The Connected contract lives on a connected EVM chain and uses EVM Gateway to
+interact with your Universal App on ZetaChain.
 
 A Connected contract is not required to make calls to a Universal App, you can
 call the Gateway directly from an EOA to trigger a cross-chain call.
@@ -162,7 +162,7 @@ Deposit native gas (e.g., ETH) to an address/contract on ZetaChain:
 gateway.deposit{value: msg.value}(receiver, revertOptions);
 ```
 
-Deposit a supported **ERC-20**:
+Deposit a supported ERC-20:
 
 ```solidity
 IERC20(asset).transferFrom(msg.sender, address(this), amount);
@@ -315,7 +315,7 @@ cast send $CONNECTED \
   "(0x0000000000000000000000000000000000000000,false,$UNIVERSAL,0x,0)" | jq -r '.transactionHash'
 ```
 
-The third parameter to the `call` function is the **RevertOptions** struct:
+The third parameter to the `call` function is the RevertOptions struct:
 
 ```
 (revertAddress, callOnRevert, abortAddress, revertMessage, onRevertGasLimit)
@@ -391,8 +391,8 @@ cast send --json \
 
 - `$GAS_LIMIT` is the amount of gas forwarded to the destination call. It must
   match the value used in `withdrawGasFeeWithGasLimit`.
-- isArbitraryCall controls call type. Use **false** for an authenticated
-  message, use **true** for an arbitrary function call payload.
+- isArbitraryCall controls call type. Use false for an authenticated message,
+  use true for an arbitrary function call payload.
 
 RevertOptions:
 
@@ -404,8 +404,8 @@ RevertOptions:
 - `abortAddress` is also the Universal contract address, so if the outgoing call
   fails and cannot be reverted, the abort is handled by the Universal contract.
 - `revertMessage` is left empty in this example to keep the payload minimal.
-- `onRevertGasLimit` is set to **0**, because revert calls from connected chains
-  to ZetaChain do not incur gas fees.
+- `onRevertGasLimit` is set to 0, because revert calls from connected chains to
+  ZetaChain do not incur gas fees.
 
 You can also run the same call with a command:
 
@@ -506,3 +506,36 @@ The command will:
 1. Quote the destination gas fee in $ZRC20_ETHEREUM
 2. Approve the Universal App to spend that fee
 3. Send the cross-chain call through the Gateway
+
+## Conclusion
+
+You’ve now built and tested a Universal App that demonstrates the core mechanics
+of two-way contract communication on ZetaChain. By deploying both the Universal
+App (on ZetaChain) and the Connected Contract (on a connected EVM chain), you
+learned how to:
+
+- Receive and process incoming calls from connected chains through the Gateway.
+- Send calls back from ZetaChain to a connected chain.
+- Handle failures gracefully using revert handling so your cross-chain logic
+  remains robust.
+- Run the exact same flows on testnet or entirely on localnet for faster
+  iteration.
+
+This pattern is the backbone of building Universal dApps—applications that are
+not limited to a single chain, but instead can orchestrate logic, assets, and
+data across multiple environments from one place.
+
+From here, you can:
+
+- Add more connected chains to expand your app’s reach.
+- Extend the contract logic to support complex workflows like swaps, staking, or
+  NFT transfers.
+- Integrate your Universal App into larger protocols to unify liquidity and user
+  experience across ecosystems.
+
+With ZetaChain, these patterns work the same regardless of which chains you
+connect, making your application future-proof and chain-agnostic from day one.
+
+Your next step is to take this minimal example and turn it into a real
+cross-chain feature for your project—without ever having to think in “single
+chain” terms again.
