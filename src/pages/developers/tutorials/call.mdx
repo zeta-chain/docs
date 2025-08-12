@@ -420,3 +420,58 @@ npx tsx ./commands universal call \
   --name Universal \
   --zrc20 $ZRC20_BASE
 ```
+
+## Option 2: Deploy on Localnet
+
+```bash
+npx zetachain localnet start
+```
+
+```bash
+RPC=http://localhost:8545
+ZRC20_ETHEREUM=$(jq -r '."11155112".chainInfo.gasZRC20' ~/.zetachain/localnet/registry.json) && echo $ZRC20_ETHEREUM
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+GATEWAY_ETHEREUM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ETHEREUM
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
+```
+
+```bash
+UNIVERSAL=$(forge create Universal \
+  --rpc-url $RPC \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+```
+
+```bash
+CONNECTED=$(forge create Connected \
+  --rpc-url $RPC \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ETHEREUM | jq -r .deployedTo) && echo $CONNECTED
+```
+
+```bash
+npx tsx ./commands connected call \
+  --rpc $RPC \
+  --contract $CONNECTED \
+  --private-key $PRIVATE_KEY \
+  --receiver $UNIVERSAL \
+  --types string \
+  --values hello \
+  --name Connected
+```
+
+```bash
+npx tsx ./commands universal call \
+  --rpc $RPC \
+  --contract $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --receiver $CONNECTED \
+  --types string \
+  --values hello \
+  --name Universal \
+  --zrc20 $ZRC20_ETHEREUM
+```
