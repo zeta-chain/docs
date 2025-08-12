@@ -195,33 +195,28 @@ Recipients (and senders in events) are carried as raw `bytes`, not `address`, so
 the same contract can serve EVM, Bitcoin, Solana, etc. For cross-chain withdraw:
 pass `bytes` directly to `gateway.withdraw`.
 
-### Compact messages for Bitcoin
+### Decoding the message payload
 
-With the 80-byte `OP_RETURN` constraint, the contract supports a compact payload
-when `context.chainID` corresponds to Bitcoin (mainnet `8332`, testnet `18334`):
+When a cross-chain call reaches your universal app, any extra parameters are
+passed as an ABI-encoded payload. For the swap contract, this payload contains
+three values:
+
+```
+(address targetToken, bytes recipient, bool withdrawFlag)
+```
+
+- `targetToken`: The ZRC-20 token address for the asset to deliver after the
+  swap.
+- `recipient`: The destination address in raw `bytes` form, which works for any
+  supported chain (EVM, Solana, etc.).
+- `withdrawFlag`: Controls whether the swapped tokens are sent to another chain
+  (`true`) or transferred locally on ZetaChain (`false`).
+
+Inside `onCall`, you decode the payload like this:
 
 ```solidity
-if (context.chainID == BITCOIN_TESTNET || context.chainID == BITCOIN) {
-    if (message.length < 41) revert InvalidMessageLength();
-
-    // [0..19] target ZRC-20
-    params.target = BytesHelperLib.bytesToAddress(message, 0);
-
-    // [20..len-2] recipient bytes (variable)
-    params.to = new bytes(message.length - 21);
-    for (uint256 i = 0; i < message.length - 21; i++) {
-        params.to[i] = message[20 + i];
-    }
-
-    // [len-1] withdraw flag
-    params.withdraw = BytesHelperLib.bytesToBool(message, message.length - 1);
-} else {
-    (address targetToken, bytes memory recipient, bool withdrawFlag) =
-        abi.decode(message, (address, bytes, bool));
-    params.target = targetToken;
-    params.to = recipient;
-    params.withdraw = withdrawFlag;
-}
+(address targetToken, bytes memory recipient, bool withdrawFlag) =
+    abi.decode(message, (address, bytes, bool));
 ```
 
 ### Revert with `RevertOptions` and `onRevert`
@@ -419,6 +414,25 @@ Sender:   0x92ae647a9D8d09D58514037d6535ab93a2A8138f
 Receiver: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
 Amount:   8645129169842 Gas tokens
 ```
+
+### Swap from Bitcoin to Ethereum
+
+You can also trigger the same swap flow from Bitcoin. This command sends 0.05
+BTC via inscription, delivers the ZRC-20 representation of BTC to your universal
+contract on ZetaChain with the encoded payload, swaps to ZRC-20 Ethereum ETH,
+and withdraws to your address on Ethereum Sepolia:
+
+```bash
+zetachain bitcoin inscription deposit-and-call \
+  --private-key $PRIVATE_KEY \
+  --receiver $UNIVERSAL \
+  --types address bytes bool \
+  --values $ZRC20_ETHEREUM_ETH $RECIPIENT true \
+  --amount 0.05
+```
+
+Once the Bitcoin transaction is observed and processed, your contract executes
+the swap and withdrawal in a single cross-chain flow.
 
 ## Option 2: Deploy on Localnet
 
