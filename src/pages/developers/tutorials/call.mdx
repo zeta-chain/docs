@@ -345,6 +345,18 @@ npx tsx ./commands connected call \
   --name Connected
 ```
 
+After you broadcast a transaction on testnet, you can track its progress
+end-to-end using the ZetaChain CLI:
+
+```bash
+zetachain query cctx --hash $HASH
+```
+
+This command shows the full cross-chain transaction (CCTX) lifecycle, including
+its current status, source and destination chain events, and any error or revert
+details if execution fails. It's the easiest way to confirm when your
+cross-chain call has been delivered and processed successfully.
+
 ## Make a call from the Universal App
 
 Your Universal App on ZetaChain can initiate an outgoing call to a contract on a
@@ -521,7 +533,7 @@ learned how to:
 - Run the exact same flows on testnet or entirely on localnet for faster
   iteration.
 
-This pattern is the backbone of building Universal dApps—applications that are
+This pattern is the backbone of building Universal dApps applications that are
 not limited to a single chain, but instead can orchestrate logic, assets, and
 data across multiple environments from one place.
 
@@ -537,5 +549,5 @@ With ZetaChain, these patterns work the same regardless of which chains you
 connect, making your application future-proof and chain-agnostic from day one.
 
 Your next step is to take this minimal example and turn it into a real
-cross-chain feature for your project—without ever having to think in “single
+cross-chain feature for your project without ever having to think in “single
 chain” terms again.
