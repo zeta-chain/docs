@@ -423,9 +423,21 @@ npx tsx ./commands universal call \
 
 ## Option 2: Deploy on Localnet
 
+Localnet lets you deploy and test both contracts entirely on your machine. It
+runs a local ZetaChain instance alongside connected EVM chains, so you can
+iterate quickly without waiting for testnet confirmations or dealing with
+faucets.
+
 ```bash
 npx zetachain localnet start
 ```
+
+This command launches Anvil with pre-funded accounts and deploys the ZetaChain
+core contracts locally. Deployment metadata is saved under
+`~/.zetachain/localnet/`.
+
+Extract the RPC URL, a funded private key, and the relevant contract addresses
+from the localnet registry:
 
 ```bash
 RPC=http://localhost:8545
@@ -434,6 +446,8 @@ PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo
 GATEWAY_ETHEREUM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ETHEREUM
 GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
 ```
+
+Deploy the Universal App:
 
 ```bash
 UNIVERSAL=$(forge create Universal \
@@ -444,6 +458,8 @@ UNIVERSAL=$(forge create Universal \
   --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
 ```
 
+Deploy the Connected contract:
+
 ```bash
 CONNECTED=$(forge create Connected \
   --rpc-url $RPC \
@@ -452,6 +468,9 @@ CONNECTED=$(forge create Connected \
   --json \
   --constructor-args $GATEWAY_ETHEREUM | jq -r .deployedTo) && echo $CONNECTED
 ```
+
+This simulates a connected chain sending a message to the Universal App on
+ZetaChain:
 
 ```bash
 npx tsx ./commands connected call \
@@ -464,6 +483,12 @@ npx tsx ./commands connected call \
   --name Connected
 ```
 
+Once the cross-chain transaction is processed locally, the Universal App’s
+`onCall` will execute.
+
+This sends a message in the opposite direction, from ZetaChain to the connected
+chain:
+
 ```bash
 npx tsx ./commands universal call \
   --rpc $RPC \
@@ -475,3 +500,9 @@ npx tsx ./commands universal call \
   --name Universal \
   --zrc20 $ZRC20_ETHEREUM
 ```
+
+The command will:
+
+1. Quote the destination gas fee in $ZRC20_ETHEREUM
+2. Approve the Universal App to spend that fee
+3. Send the cross-chain call through the Gateway
