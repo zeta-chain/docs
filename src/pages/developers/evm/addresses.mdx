@@ -46,7 +46,7 @@ The equivalent EVM address for the same account is:
 You can also query the balance of the account associated with this address using
 the Foundry `cast`:
 
-````
+```
 cast balance 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public
 ```
 
@@ -56,8 +56,10 @@ This means, for example, that you can import the same mnemonic into a Cosmos
 wallet and an EVM wallet and access the same account. Some wallets, like Keplr
 display both bech32 and hex addresses.
 
-<Alert variant="tip"> You don't need to transfer your tokens between a bech32
-  address and an hex address that represent the same account. </Alert>
+<Alert variant="tip">
+  {" "}
+  You don't need to transfer your tokens between a bech32 address and an hex address that represent the same account.{" "}
+</Alert>
 
 ## Account Type
 
@@ -73,4 +75,7 @@ For Cosmos and EVM compatiblity the account `@type` should be
 
 To convert between bech32 and EVM addresses, you can use the [address
 converter](/reference/tools/address-converter).
-````
+
+```
+
+```
