@@ -7,6 +7,10 @@
     "title": "RPC & Contracts",
     "description": "RPC/API endpoints and protocol contract addresses"
   },
+  "cli": {
+    "title": "CLI",
+    "description": "Command line interface for building and interacting with universal apps"
+  },
   "localnet": {
     "title": "Localnet",
     "readTime": "30 min",
