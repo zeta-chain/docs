@@ -8,7 +8,7 @@ import { Alert } from "~/components/shared";
 
 ## Overview
 
-ZetaChain is built with Cosmos SDK and uses the Ethermint module to provide EVM
+ZetaChain is built with Cosmos SDK and uses the Cosmos EVM module to provide EVM
 compatibility. Being both a Cosmos and an EVM chain means that ZetaChain
 supports two types of addresses: [bech32 Cosmos
 addresses](https://docs.cosmos.network/main/build/spec/addresses/bech32) and
@@ -44,9 +44,11 @@ The equivalent EVM address for the same account is:
 ```
 
 You can also query the balance of the account associated with this address using
-the HTTP API:
+the Foundry `cast`:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/ethermint/evm/v1/balances/0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+````
+cast balance 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public
+```
 
 As you can see, both queries return the same balance.
 
@@ -71,3 +73,4 @@ For Cosmos and EVM compatiblity the account `@type` should be
 
 To convert between bech32 and EVM addresses, you can use the [address
 converter](/reference/tools/address-converter).
+````
