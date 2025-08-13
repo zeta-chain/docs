@@ -2,14 +2,20 @@
 title: "Universal EVM"
 ---
 
-ZetaChain is a Proof of Stake (PoS) blockchain built on the Cosmos SDK and the
-Comet BFT consensus engine. It serves as a universal connector for multiple
-blockchains, simplifying cross-chain interactions and fostering a unified
-ecosystem. Leveraging the robust foundations of the Cosmos SDK and Comet BFT,
-ZetaChain provides fast block times (approximately five seconds), instant
-finality (eliminating the need for confirmations and preventing chain
-reorganizations), and high throughput capabilities—potentially reaching up to a
-hundred transactions per second.
+ZetaChain is a Proof of Stake (PoS) blockchain built with the [Cosmos
+SDK](https://docs.cosmos.network/), the [CometBFT](https://docs.cometbft.com/)
+consensus engine, and [Cosmos EVM](https://evm.cosmos.network/). This stack
+combines the modularity of Cosmos SDK, the fast-finality consensus of CometBFT,
+and full EVM compatibility via Cosmos EVM, allowing developers to deploy EVM
+smart contracts and enjoy the familiar Ethereum developer experience.
+
+It serves as a universal connector for multiple blockchains, simplifying
+cross-chain interactions and fostering a unified ecosystem. Leveraging the
+robust foundations of the Cosmos SDK, CometBFT, and Cosmos EVM, ZetaChain
+provides fast block times (approximately 4 seconds), instant finality
+(eliminating the need for confirmations and preventing chain reorganizations),
+and high throughput capabilities potentially reaching up to a hundred
+transactions per second.
 
 ## Architecture Overview
 
@@ -208,5 +214,5 @@ sacrificing security or performance. With a strong validator network, reliable
 consensus mechanisms, and built-in support for cross-chain transactions,
 ZetaChain sets the stage for a future where blockchains can work together more
 naturally, expanding what's possible in decentralized applications. It's not
-just a technical solution—it's a key piece in the puzzle of a more connected
+just a technical solution, it's a key piece in the puzzle of a more connected
 blockchain ecosystem.
