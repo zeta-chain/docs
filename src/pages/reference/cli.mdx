@@ -195,6 +195,7 @@ Commands:
   cctx [options]      Query cross-chain transaction data in real-time
   fees [options]      Fetch omnichain and cross-chain messaging fees
   tokens|t            ZRC-20 token commands
+  chains|c            Supported chains commands
 
 ```
 
@@ -303,6 +304,58 @@ Options:
                         as shorthand for 'zrc20_contract_address'
   --json                Output token as JSON
   -h, --help            display help for command
+
+```
+
+## zetachain query chains
+
+```
+Usage: zetachain query chains|c [options] [command]
+
+Supported chains commands
+
+Options:
+  -h, --help        display help for command
+
+Commands:
+  list|l [options]  List all supported chains
+  show|s [options]  Show detailed information for a specific chain (by chain
+                    name or chain ID)
+
+```
+
+## zetachain query chains list
+
+```
+Usage: zetachain query chains list|l [options]
+
+List all supported chains
+
+Options:
+  --api <url>  API endpoint URL (default:
+               "https://zetachain-athens.blockpi.network/lcd/v1/public")
+  --json       Output chains as JSON
+  -h, --help   display help for command
+
+```
+
+## zetachain query chains show
+
+```
+Usage: zetachain query chains show|s [options]
+
+Show detailed information for a specific chain (by chain name or chain ID)
+
+Options:
+  --api-testnet <url>        Testnet API endpoint URL (default:
+                             "https://zetachain-athens.blockpi.network/lcd/v1/public")
+  --api-mainnet <url>        Mainnet API endpoint URL (default:
+                             "https://zetachain.blockpi.network/lcd/v1/public")
+  --chain-name  <chain>      Chain name
+  -c, --chain-id <chain-id>  Chain ID
+  --field -f <field>         Return specific field value (for scripting)
+  --json                     Output chain as JSON
+  -h, --help                 display help for command
 
 ```
 
@@ -838,11 +891,14 @@ Usage: zetachain bitcoin inscription call [options]
 Options:
   --yes                       Skip confirmation prompt (default: false)
   -r, --receiver <address>    ZetaChain receiver address
+  --commit-fee <fee>          Commit fee (in sats) (default: "15000")
   -g, --gateway <address>     Bitcoin gateway (TSS) address (default:
                               "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur")
   --private-key <key>         Bitcoin private key
   --name <name>               Account name (default: "default")
   --revert-address <address>  Revert address
+  --network <network>         Network (choices: "signet", "mainnet", default:
+                              "signet")
   --format <format>           Encoding format (choices: "ABI", "CompactLong",
                               "CompactShort", default: "ABI")
   --data <data>               Pass raw data
@@ -864,11 +920,14 @@ Usage: zetachain bitcoin inscription deposit-and-call [options]
 Options:
   --yes                       Skip confirmation prompt (default: false)
   -r, --receiver <address>    ZetaChain receiver address
+  --commit-fee <fee>          Commit fee (in sats) (default: "15000")
   -g, --gateway <address>     Bitcoin gateway (TSS) address (default:
                               "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur")
   --private-key <key>         Bitcoin private key
   --name <name>               Account name (default: "default")
   --revert-address <address>  Revert address
+  --network <network>         Network (choices: "signet", "mainnet", default:
+                              "signet")
   --format <format>           Encoding format (choices: "ABI", "CompactLong",
                               "CompactShort", default: "ABI")
   --data <data>               Pass raw data
@@ -891,11 +950,14 @@ Usage: zetachain bitcoin inscription deposit [options]
 Options:
   --yes                       Skip confirmation prompt (default: false)
   -r, --receiver <address>    ZetaChain receiver address
+  --commit-fee <fee>          Commit fee (in sats) (default: "15000")
   -g, --gateway <address>     Bitcoin gateway (TSS) address (default:
                               "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur")
   --private-key <key>         Bitcoin private key
   --name <name>               Account name (default: "default")
   --revert-address <address>  Revert address
+  --network <network>         Network (choices: "signet", "mainnet", default:
+                              "signet")
   --format <format>           Encoding format (choices: "ABI", "CompactLong",
                               "CompactShort", default: "ABI")
   --data <data>               Pass raw data
@@ -950,12 +1012,19 @@ Usage: zetachain bitcoin memo call [options]
 Options:
   --yes                     Skip confirmation prompt (default: false)
   -r, --receiver <address>  ZetaChain receiver address
+  --commit-fee <fee>        Commit fee (in sats) (default: "15000")
   -g, --gateway <address>   Bitcoin gateway (TSS) address (default:
                             "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur")
   --private-key <key>       Bitcoin private key
   --name <name>             Account name (default: "default")
   -d, --data <data>         Pass raw data
   --network-fee <fee>       Network fee (in sats) (default: "1750")
+  --network <network>       Network (choices: "signet", "mainnet", default:
+                            "signet")
+  --bitcoin-api <url>       Bitcoin API (default:
+                            "https://mempool.space/signet/api")
+  --gas-price-api <url>     ZetaChain API (default:
+                            "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/gasPrice/18333")
   -h, --help                display help for command
 
 ```
@@ -968,12 +1037,19 @@ Usage: zetachain bitcoin memo deposit-and-call [options]
 Options:
   --yes                     Skip confirmation prompt (default: false)
   -r, --receiver <address>  ZetaChain receiver address
+  --commit-fee <fee>        Commit fee (in sats) (default: "15000")
   -g, --gateway <address>   Bitcoin gateway (TSS) address (default:
                             "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur")
   --private-key <key>       Bitcoin private key
   --name <name>             Account name (default: "default")
   -d, --data <data>         Pass raw data
   --network-fee <fee>       Network fee (in sats) (default: "1750")
+  --network <network>       Network (choices: "signet", "mainnet", default:
+                            "signet")
+  --bitcoin-api <url>       Bitcoin API (default:
+                            "https://mempool.space/signet/api")
+  --gas-price-api <url>     ZetaChain API (default:
+                            "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/gasPrice/18333")
   -a, --amount <btcAmount>  BTC amount to send (in BTC)
   -h, --help                display help for command
 
@@ -987,12 +1063,19 @@ Usage: zetachain bitcoin memo deposit [options]
 Options:
   --yes                     Skip confirmation prompt (default: false)
   -r, --receiver <address>  ZetaChain receiver address
+  --commit-fee <fee>        Commit fee (in sats) (default: "15000")
   -g, --gateway <address>   Bitcoin gateway (TSS) address (default:
                             "tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur")
   --private-key <key>       Bitcoin private key
   --name <name>             Account name (default: "default")
   -d, --data <data>         Pass raw data
   --network-fee <fee>       Network fee (in sats) (default: "1750")
+  --network <network>       Network (choices: "signet", "mainnet", default:
+                            "signet")
+  --bitcoin-api <url>       Bitcoin API (default:
+                            "https://mempool.space/signet/api")
+  --gas-price-api <url>     ZetaChain API (default:
+                            "https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/gasPrice/18333")
   -a, --amount <btcAmount>  BTC amount to send (in BTC)
   -h, --help                display help for command
 
