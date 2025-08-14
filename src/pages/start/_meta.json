@@ -10,10 +10,6 @@
     "title": "Why Build on ZetaChain?",
     "description": "Chain orchestration, cross-chain native token transfers, gasless execution environment."
   },
-  "evm": {
-    "title": "Universal EVM",
-    "description": "Smart contract platform with built-in interoperability."
-  },
   "app": {
     "title": "Universal Apps",
     "description": "Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more."
