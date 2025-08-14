@@ -422,9 +422,11 @@ BTC via inscription, delivers the ZRC-20 representation of BTC to your universal
 contract on ZetaChain with the encoded payload, swaps to ZRC-20 Ethereum ETH,
 and withdraws to your address on Ethereum Sepolia:
 
+Before running the command, set `PRIVATE_KEY_BTC` to your Bitcoin private key.
+
 ```bash
 zetachain bitcoin inscription deposit-and-call \
-  --private-key $PRIVATE_KEY \
+  --private-key $PRIVATE_KEY_BTC \
   --receiver $UNIVERSAL \
   --types address bytes bool \
   --values $ZRC20_ETHEREUM_ETH $RECIPIENT true \
