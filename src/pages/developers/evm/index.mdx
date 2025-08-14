@@ -1,0 +1,198 @@
+---
+title: "Universal EVM"
+---
+
+ZetaChain is a Proof of Stake (PoS) blockchain built with the [Cosmos
+SDK](https://docs.cosmos.network/), the [CometBFT](https://docs.cometbft.com/)
+consensus engine, and [Cosmos EVM](https://evm.cosmos.network/).
+
+This stack delivers:
+
+- Modularity: via the Cosmos SDK for flexible, upgradeable architecture.
+- Fast finality: through CometBFT’s instant consensus mechanism
+- Full EVM compatibility: with Cosmos EVM, enabling Ethereum smart contracts to
+  run natively on ZetaChain without modification.
+
+ZetaChain acts as a universal connector between blockchains, offering fast
+~4-second blocks, instant finality, and throughput up to hundreds of
+transactions per second, all on infrastructure purpose-built for secure,
+seamless cross-chain interactions.
+
+## Architecture Overview
+
+### Hub-and-Spoke Model
+
+ZetaChain uses a hub-and-spoke architecture:
+
+- Hub: ZetaChain, the main coordination layer for all cross-chain activity.
+- Spokes: External blockchains (EVM, Solana, Sui, Ton, and Bitcoin) connected
+  with standardized protocols.
+
+All cross-chain messages and transactions pass through ZetaChain, ensuring
+consistent handling, easier integration of new chains, and a single point for
+enforcing security and validation rules.
+
+### Validators
+
+ZetaChain’s validator set includes two main roles:
+
+**Core Validators**
+
+- Run ZetaChain node.
+- Participate in CometBFT consensus to produce blocks and maintain state.
+- Open to anyone staking the required ZETA tokens.
+- Incentivized via transaction fees and rewards; subject to slashing for
+  malicious or negligent behavior.
+
+**Observer-Signer Validators**
+
+- Run both ZetaChain node and ZetaClient.
+- Monitor ZetaChain and connected chains for cross-chain events.
+- Vote on event validity; upon majority agreement, coordinate outbound
+  transactions.
+- Sign outbound transactions using a Threshold Signature Scheme (TSS) so no
+  single validator controls the signing key.
+
+## Modules and Components
+
+ZetaChain's functionality is organized into several key modules, each
+responsible for specific aspects of cross-chain transaction processing.
+
+### CrossChain Module
+
+The CrossChain module manages the state and lifecycle of cross-chain
+transactions (CCTX), serving as the central ledger for tracking their progress
+and statuses. It handles the creation of new cross-chain transaction records
+when inbound events are validated, updates transaction statuses based on events
+(such as `PendingInbound`, `PendingOutbound`, `OutboundMined`), and stores
+detailed parameters for both inbound and outbound transactions, including sender
+and receiver information, asset details, and transaction hashes.
+
+### Observer Module
+
+The Observer module handles the operations of the observer set, including
+validator management, voting mechanisms, and consensus policies. It maintains a
+list of authorized observers eligible to participate in the consensus process,
+creates and tracks ballots for each observed event to facilitate the voting
+process, and defines core parameters such as ballot thresholds, minimum observer
+delegation, and supported chains.
+
+### Fungible Module
+
+The Fungible module facilitates the deployment and management of fungible tokens
+(ZRC20 tokens) representing assets from connected blockchains on ZetaChain. It
+handles the deployment of ZRC20 contracts corresponding to foreign coins from
+connected chains, manages pools and liquidity for these tokens, and provides
+functions for depositing to and calling omnichain smart contracts on ZetaChain
+from connected chains.
+
+### Emissions Module
+
+The Emissions module orchestrates the distribution of rewards to network
+participants, including observers, validators, and TSS signers. It calculates
+rewards based on participation metrics and predefined parameters, distributes
+rewards from a pre-funded emissions pool, and allows participants to securely
+withdraw their earned rewards.
+
+### Authority Module
+
+The Authority module encapsulates logic for administrative functions and
+permission checks, ensuring that only authorized entities can perform sensitive
+actions. It maintains tables for different admin groups and their permissions,
+validates whether a user or entity has the necessary permissions to execute
+specific actions, and facilitates changes to admin groups or permissions through
+governance proposals, ensuring transparent and decentralized decision-making.
+
+## Protocol Contracts
+
+To enable interaction between users, applications, and the ZetaChain network,
+protocol contracts are deployed both on ZetaChain and on connected external
+chains. These contracts provide standardized entry points for initiating and
+managing cross-chain transactions, as well as registry data for discovering
+deployed protocol components.
+
+**On ZetaChain**
+
+| Contract         | Purpose                                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| GatewayZEVM      | Primary entry point for outbound transactions. Handles asset withdrawals, external contract calls, and ZRC-20 mint/burn logic.            |
+| ZRC-20           | ERC-20–compliant tokens representing assets from connected chains, enabling fungible asset transfers within ZetaChain.                    |
+| ContractRegistry | Stores and provides metadata for deployed protocol contracts (e.g., gateway, ZRC-20s) to ensure consistent references across the network. |
+
+**On Connected EVM Chains**
+
+| Contract         | Purpose                                                                                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GatewayEVM       | Entry point for inbound transactions. Handles deposits, contract calls to ZetaChain, and emits events for observers to track.                                |
+| ERC20Custody     | Holds ERC-20 assets deposited for cross-chain transfers, ensuring secure custody until transactions are processed.                                           |
+| ContractRegistry | Stores and provides metadata for deployed protocol contracts on the connected chain, allowing clients and services to locate the correct contract addresses. |
+
+**On Other Connected Chains (Solana, Sui, TON, etc.)**
+
+| Contract | Purpose                                                                                                                                                                                                                       |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gateway  | Entry point for initiating and receiving cross-chain transactions between the connected chain and ZetaChain. Functions are adapted to the chain’s native runtime (e.g., Solana program, Sui Move module, TON smart contract). |
+
+You can find up-to-date contract addresses for both mainnet and testnet in the
+[Contract Addresses Reference](/reference/network/contracts/).
+
+## Economic Incentives and Bonded Stakes
+
+ZetaChain employs bonded stakes and positive/negative incentives to ensure
+economic safety and encourage validators to act honestly. Validators are
+required to stake bonds in the form of ZETA tokens, which are at risk if they
+act maliciously or negligently. This staking mechanism aligns the interests of
+validators with the network's health and security.
+
+Validators earn transaction fees and block rewards in return for their services
+in processing transactions and maintaining network security. Those who act
+dishonestly or fail to fulfill their duties can have a portion of their staked
+bonds slashed as a penalty. Positive incentives are provided to encourage
+validators to remain online and actively participate in consensus and
+observation processes.
+
+## Cross-Chain Transaction Workflow
+
+Cross-chain transactions are at the core of ZetaChain’s functionality, enabling
+assets and data to move between ZetaChain and connected blockchains.
+
+The process differs for **incoming** (connected chain → ZetaChain) and
+**outgoing** (ZetaChain → connected chain) transactions, but both follow a
+secure, validator-driven workflow.
+
+### Incoming Transactions (Connected Chain → ZetaChain)
+
+1. Initiation: A user interacts with the gateway contract on a connected chain
+   (e.g., deposits assets or makes a cross-chain call).
+2. Observation: Observer-Signer Validators detect the emitted event and extract
+   transaction details.
+3. Voting: Validators submit and vote on a ballot in ZetaChain; a majority is
+   required for approval.
+4. Execution on ZetaChain: Once approved, ZetaChain updates the CCTX record,
+   mints assets (if applicable), and/or calls the target universal contract.
+
+### Outgoing Transactions (ZetaChain → Connected Chain)
+
+1. Initiation: A user or contract calls the `GatewayZEVM` contract on ZetaChain,
+   specifying the target chain, recipient, assets, and payload.
+2. Preparation: Validators process the request, validate parameters, and
+   generate the outbound transaction.
+3. TSS Signing: A subset of validators collaboratively sign the outbound
+   transaction using Threshold Signature Scheme (TSS), ensuring no single
+   validator holds the private key.
+4. Submission: The signed transaction is broadcast to the destination chain.
+5. Completion or Revert:
+
+   - On success: Assets or data are delivered, and the CCTX is marked complete.
+   - On failure: ZetaChain executes revert logic per developer-defined options
+     (e.g., refund assets, trigger fallback contract calls).
+
+## Conclusion
+
+For developers, ZetaChain removes much of the friction of building cross-chain
+applications. Instead of juggling different SDKs, bridges, and security models,
+you get a single platform that handles cross-chain messaging, asset movement,
+and contract calls for you. Fast finality and a unified protocol mean you can
+focus on application logic, not infrastructure. Whether your app needs to reach
+EVM chains, Solana, Sui, or even Bitcoin, ZetaChain gives you one place to build
+and deploy, with security and scalability baked in from the start.
