@@ -1,0 +1,58 @@
+---
+title: "OnFinality"
+---
+
+## OnFinality
+[OnFinality](https://onfinality.io) is a blockchain infrastructure platform that saves web3 builders time and makes their lives easier. OnFinality delivers scalable API endpoints, nodes, and industry leading Data Inexer hosting for the largest teams in Blockchain
+
+OnFinality Indexing now offers our easy to use, enterprise grade SubQuery and Subgraph managed service to ZetaChain so you can sleep easy knowing that your most important asset - your data - is in safe hands
+
+In this tutorial we will run a new ZetaChain SubQuery project. The process for [Subgraph Indexing](https://documentation.onfinality.io/support/publishing-your-subgraph-project), though almost identical, can be found here
+
+## Getting Ready
+
+Before getting started, ensure you have:
+- A working SubQuery project for ZetaChain Network
+- A GitHub repository or IPFS-hosted version of your project - we will use 'QmeUwNvKGoaL211UfgEm2kbSztFCTJ2RuCXzbRRUacCaFx' for this tutorial
+- An account on OnFinality’s Indexing Service
+
+## Create your Zetachain Indexing project
+
+To create your first project, head to [OnFinality Indexing](https://indexing.onfinality.io/) Service. You'll need to authenticate with your GitHub account to login.
+
+![](/img/docs/onfinality-1.png)
+
+Start by clicking on "Create Project". You'll be taken to the new project form. Start by selecting what project type you would like to deploy (SubQuery) and enter the Name & Description
+
+![](/img/docs/onfinality-2.png)
+
+## Deploy your Project
+
+While creating a project will setup the display details of the project, you must deploy a version of it before it becomes operational. Deploying a version triggers an indexing operation to start, and sets up the required query service to start accepting GraphQL requests. You can also deploy new versions to existing projects here.
+With your new project, you'll see a "Deploy your first version" button. 
+
+![](/img/docs/onfinality-3.png)
+
+Click this, and fill in the required information about the deployment:
+
+![](/img/docs/onfinality-4.png)
+- **CID:** Provide your IPFS deployment CID from Getting Ready
+- **Manifest:** The details are obtained from the contents of the provided CID, used to confirm that you have the correct deployment
+![](/img/docs/onfinality-5.png)
+- **Query Version:** This is the version of SubQuery's query service that you want to run this project on. We suggest using the latest version
+- **Advanced Settings:** There are numerous advanced settings which are explained via the in built help feature.
+![](/img/docs/onfinality-6.png)
+- **Network Endpoints:** The RPC endpoint used to read data from ZetaChain
+
+Once submitted, OnFinality will begin indexing your project. Depending on ZetaChain Network's chain state and your query configuration, this may take a few minutes to fully sync.
+
+## Connect to your Project
+Once your deployment has successfully completed and our nodes have indexed your data from the chain, you'll be able to connect to your project via the displayed GraphQL Query endpoint.
+
+![](/img/docs/onfinality-7.png)
+
+Alternatively, you can click on the three dots next to the title of your project, and view it on SubQuery Explorer. There you can use the in browser playground to get started.
+
+Well done! You now have everything in place to create fast, scalable, data-rich dApps on ZetaChain.
+
+Need help? Contact support@onfinality.io
