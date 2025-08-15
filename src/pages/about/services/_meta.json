@@ -42,5 +42,9 @@
   "space-id": {
     "title": "Web3 Name SDK",
     "description": "SPACE ID Web3 Name SDK"
+  },
+  "onfinality": {
+    "title": "OnFinality",
+    "description": "Subgraph and SubQuery indexer"
   }
 }
