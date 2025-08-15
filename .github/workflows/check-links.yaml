@@ -36,5 +36,5 @@ jobs:
 
       - name: Check for broken links
         env:
-          NEXT_PUBLIC_BASE_PATH: "" # empty string = behaves as if unset
+          NEXT_PUBLIC_BASE_PATH: ""
         run: yarn check-links
