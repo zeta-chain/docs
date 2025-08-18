@@ -246,7 +246,8 @@ npx zetachain evm call \
   --values hello
 ```
 
-Once the transaction is processed, you’ll see an `[ZetaChain]: Event from onCall` log in the Localnet terminal.
+Once the transaction is processed, you’ll see an `[ZetaChain]: Event from
+onCall` log in the Localnet terminal.
 
 ## Option 2: Deploy on Testnet
 
@@ -282,13 +283,7 @@ Deploy the contract to ZetaChain’s testnet using the Gateway address from the
 [Contract Addresses page](/reference/network/contracts/):
 
 ```
-UNIVERSAL=$(forge create Universal \
-  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
-  --private-key $PRIVATE_KEY \
-  --evm-version paris \
-  --broadcast \
-  --json \
-  --constructor-args 0x6c533f7fe93fae114d0954697069df33c9b74fd7 | jq -r .deployedTo)
+UNIVERSAL=$(npx tsx commands deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 ### Call a Universal Contract from Base
@@ -345,7 +340,8 @@ https://sepolia.basescan.org/tx/0x89308870b0863c5ae48dc783059277cbcf4296b1b34341
 
 After the transaction is initiated on Base Sepolia, ZetaChain's protocol
 facilitates its cross-chain transfer and execution on the destination chain
-(ZetaChain). To monitor the status of this cross-chain transaction, the `npx zetachain query cctx` command is used, providing real-time updates on the
+(ZetaChain). To monitor the status of this cross-chain transaction, the `npx
+zetachain query cctx` command is used, providing real-time updates on the
 transaction's journey.
 
 The command for tracking is:
@@ -375,12 +371,15 @@ Key Information from the Output:
 - `84532 → 7001`: This clearly indicates the cross-chain flow, from Base Sepolia
   (chain ID 84532) to ZetaChain (chain ID 7001). The ✅ symbol signifies a
   successful outbound mining of the cross-chain transaction.
-- `OutboundMinedCCTX: 0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3b`: This is
+- `OutboundMinedCCTX:
+  0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3b`: This is
   the hash of the Cross-Chain Transaction (CCTX) on ZetaChain, representing the
   internal identifier for this specific cross-chain operation.
-- `Tx Hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc (on chain 84532)`: This confirms the original transaction hash on the source
+- `Tx Hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
+  (on chain 84532)`: This confirms the original transaction hash on the source
   chain (Base Sepolia).
-- `Tx Hash: 0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc (on chain 7001)`: This is the transaction hash of the execution on ZetaChain,
+- `Tx Hash: 0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc
+  (on chain 7001)`: This is the transaction hash of the execution on ZetaChain,
   indicating that the universal application has been successfully called on the
   destination chain.
 - `Sender: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32`: The address of the
@@ -388,4 +387,5 @@ Key Information from the Output:
 - `Receiver: 0xFeb4F33d424D6685104624d985095dacab567151`: The address of the
   receiver contract on ZetaChain, which is the universal application in this
   context.
-- `Message: 0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000`
+- `Message:
+  0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000`

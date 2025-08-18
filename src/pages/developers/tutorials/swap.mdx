@@ -279,7 +279,7 @@ semantics are assumed by the rest of the contract.
 To deploy the Swap contract to ZetaChain testnet, run the following command:
 
 ```bash
-UNIVERSAL=$(npx ts-node commands/index.ts deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
+UNIVERSAL=$(npx tsx commands deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 This deploys the precompiled contract using the specified private key and
