@@ -9,7 +9,7 @@
   },
   "cli": {
     "title": "CLI",
-    "description": "Command line interface for building universal apps"
+    "description": "Command line interface for building and interacting with universal apps"
   },
   "localnet": {
     "title": "Localnet",

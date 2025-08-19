@@ -184,7 +184,7 @@ const pillars = [
         description: (
           <StyledUnorderedList>
             <li>
-              Ethermint: Enhance compatibility with Ethereum tooling, efficiency, and interoperability with EVM and
+              Cosmos EVM: Enhance compatibility with Ethereum tooling, efficiency, and interoperability with EVM and
               Cosmos modules.
             </li>
             <li>TSS-lib & Go-TSS: Improve security, performance, and support for new signature schemes and chains.</li>

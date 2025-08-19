@@ -1,4 +1,8 @@
 {
+  "index": {
+    "title": "Overview",
+    "description": "Universal EVM is a smart contract platform with built-in interoperability features, enabling the development of universal apps."
+  },
   "gateway": {
     "title": "Gateway",
     "description": "A single point of entry for interacting with universal apps"
