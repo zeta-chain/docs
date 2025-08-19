@@ -49,6 +49,10 @@ The receiver `bytes` should be:
 The `amount` specifies the quantity to withdraw, and `zrc20` is the ZRC-20
 address of the token being withdrawn.
 
+Note: Some connected chains enforce a minimum withdrawal amount. For example,
+withdrawing ZRC-20 SOL to Solana requires a minimum of 1,000,000 (lamports) to
+satisfy rent-exemption requirements.
+
 The `revertOptions.revertMessage` must not exceed 1024 bytes in length.
 
 You don't need to specify the destination chain since each ZRC-20 token is tied
