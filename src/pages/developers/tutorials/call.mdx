@@ -277,25 +277,13 @@ RPC_BASE=https://sepolia.base.org
 ### Deploy Universal to ZetaChain testnet
 
 ```bash
-UNIVERSAL=$(forge create Universal \
-  --rpc-url $RPC_ZETACHAIN \
-  --private-key $PRIVATE_KEY \
-  --evm-version paris \
-  --broadcast \
-  --json \
-  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+UNIVERSAL=$(npx tsx commands deploy --private-key $PRIVATE_KEY --rpc $RPC_ZETACHAIN --gateway $GATEWAY_ZETACHAIN | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 ### Deploy Connected to Base Sepolia
 
 ```bash
-CONNECTED=$(forge create Connected \
-  --rpc-url $RPC_BASE \
-  --private-key $PRIVATE_KEY \
-  --evm-version paris \
-  --broadcast \
-  --json \
-  --constructor-args $GATEWAY_BASE | jq -r .deployedTo) && echo $CONNECTED
+CONNECTED=$(npx tsx commands deploy --private-key $PRIVATE_KEY --rpc $RPC_BASE --gateway $GATEWAY_BASE | jq -r .contractAddress) && echo $CONNECTED
 ```
 
 ### Make a call to the Universal App
