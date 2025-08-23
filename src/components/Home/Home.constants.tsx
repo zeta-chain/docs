@@ -117,12 +117,6 @@ export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
     title: "CLI",
     description: "Scaffolding & more",
   },
-  // {
-  //   href: "/reference/universalkit/",
-  //   svg: <UniversalKitSvg />,
-  //   title: "UniversalKit",
-  //   description: "Ready-to-build",
-  // },
   {
     href: "https://github.com/zeta-chain/toolkit",
     svg: <ToolkitSvg />,
