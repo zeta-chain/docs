@@ -12,7 +12,7 @@
   "frontend": {
     "title": "Build a Web App",
     "readTime": "10 min",
-    "description": "Build a web app to interact with your universal contract"
+    "description": "Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution"
   },
   "call": {
     "title": "Call & Deposit",

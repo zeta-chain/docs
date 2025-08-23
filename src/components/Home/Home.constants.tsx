@@ -17,10 +17,10 @@ export const HERO_CARD_LINKS: NarrowCardLink[] = [
     description: "Scaffold your first app",
   },
   {
-    href: "/reference/universalkit/",
+    href: "/developers/tutorials/frontend/",
     svg: <BuildWithUiSvg />,
-    title: "Build with a UI",
-    description: "Start with UniversalKit",
+    title: "Build a Web App",
+    description: "Start with a frontend",
   },
 ];
 
@@ -72,13 +72,13 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     readType: "Intermediate",
   },
   {
-    href: "/reference/universalkit/",
+    href: "/developers/tutorials/frontend/",
     svg: <FrontEndSvg />,
     svgBackgroundColor: "#A03595",
     topTitle: "Universal",
     title: "Front-end",
     description:
-      "Learn how to use UniversalKit, a set of ready to use React components that lets you build user interfaces for universal apps on ZetaChain.",
+      "Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution",
     readTime: "20 min",
     readType: "Beginner",
   },
@@ -117,12 +117,12 @@ export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
     title: "CLI",
     description: "Scaffolding & more",
   },
-  {
-    href: "/reference/universalkit/",
-    svg: <UniversalKitSvg />,
-    title: "UniversalKit",
-    description: "Ready-to-build",
-  },
+  // {
+  //   href: "/reference/universalkit/",
+  //   svg: <UniversalKitSvg />,
+  //   title: "UniversalKit",
+  //   description: "Ready-to-build",
+  // },
   {
     href: "https://github.com/zeta-chain/toolkit",
     svg: <ToolkitSvg />,
