@@ -33,6 +33,10 @@
     "readTime": "5 min",
     "readType": "Beginner"
   },
+  "explorers": {
+    "title": "Explorers",
+    "description": "Block explorers for ZetaChain mainnet and testnet"
+  },
   "tools": {
     "title": "More Tools",
     "description": "More useful tools and resources"
