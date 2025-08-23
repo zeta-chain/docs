@@ -5,9 +5,14 @@
     "description": "Learn more about universal apps"
   },
   "hello": {
-    "title": "First Universal App",
+    "title": "First Universal Contract",
     "readTime": "10 min",
-    "description": "Build your first universal app"
+    "description": "Build your first universal contract"
+  },
+  "frontend": {
+    "title": "Build a Web App",
+    "readTime": "10 min",
+    "description": "Build a web app to interact with your universal contract"
   },
   "call": {
     "title": "Call & Deposit",

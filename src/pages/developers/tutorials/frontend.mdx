@@ -1,0 +1,237 @@
+In this tutorial, you’ll extend the **Hello World Universal App** by adding a
+React-based frontend. The app will connect to an EVM testnet wallet, send a
+cross-chain call through ZetaChain’s Gateway, and track the resulting execution
+on ZetaChain.
+
+You’ll learn how to:
+
+- Import and use the ZetaChain Toolkit (`evmCall`) in React
+- Configure network and contract addresses
+- Send a message from a connected EVM chain to your Hello contract on ZetaChain
+- Poll ZetaChain for the cross-chain transaction status (CCTX) and display links
+  to both explorers
+
+![Web App](/img/docs/frontend.png)
+
+## What the App Does
+
+The Hello frontend provides a simple UI to demonstrate a full cross-chain flow:
+
+1. Connect a wallet on a supported EVM testnet (e.g., Arbitrum Sepolia).
+2. Send a message through the ZetaChain Gateway using `evmCall`, targeting your
+   Hello contract deployed on ZetaChain.
+3. Track the transaction: the app saves the source-chain transaction hash, polls
+   ZetaChain for the cross-chain execution (CCTX), and displays links to both
+   explorers.
+
+## Set Up Your Environment
+
+Assuming you already have the Hello project from the First Universal App
+tutorial. Simply navigate into the frontend directory and install dependencies:
+
+```bash
+cd hello/frontend
+yarn
+```
+
+If you don’t yet have the project, scaffold it now:
+
+```bash
+npx zetachain@latest new --project hello
+cd hello/frontend
+yarn
+```
+
+## How It Works
+
+The frontend integrates with ZetaChain by importing helpers, connecting to a
+wallet, preparing call parameters, and polling for the cross-chain result. Let’s
+look at the important pieces.
+
+### Import the Toolkit
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+import { evmCall } from "@zetachain/toolkit/chains/evm";
+import { ethers, ZeroAddress } from "ethers";
+```
+
+The ZetaChain Toolkit provides the `evmCall` function used to send cross-chain
+transactions. Alongside it, the app uses `ethers` for wallet and transaction
+management, and `ZeroAddress` for revert configuration.
+
+### Get a Signer from the Wallet
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const ethersProvider = new ethers.BrowserProvider(selectedProvider.provider);
+const signer = (await ethersProvider.getSigner()) as ethers.AbstractSigner;
+```
+
+The app connects to a wallet via the
+[EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) standard. A signer is
+required to authorize and send the cross-chain call.
+
+### Define the Hello Contract Address
+
+```ts filename="frontend/src/constants/contracts.ts"
+export const HELLO_UNIVERSAL_CONTRACT_ADDRESS = "0x61a184EB30D29eD0395d1ADF38CC7d2F966c4A82";
+```
+
+Replace this with the address of your Hello contract deployed on ZetaChain
+testnet. This address will be used as the `receiver` of the cross-chain call.
+
+### Build the Call Parameters
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const evmCallParams = {
+  receiver: helloUniversalContractAddress,
+  types: ["string"],
+  values: [stringValue],
+  revertOptions: {
+    callOnRevert: false,
+    revertAddress: ZeroAddress,
+    revertMessage: "",
+    abortAddress: ZeroAddress,
+    onRevertGasLimit: 1000000,
+  },
+};
+
+const evmCallOptions = {
+  signer,
+  txOptions: {
+    gasLimit: 1000000,
+  },
+};
+```
+
+Here you define the payload and execution options:
+
+- `receiver`: the Hello contract on ZetaChain.
+- `types` / `values`: ABI-encoded arguments passed into `onCall` (a single
+  `string` in this example).
+- `revertOptions`: optional instructions for how to handle reverts.
+- `txOptions`: transaction settings such as gas limits.
+
+### Send the Cross-Chain Call
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const result = await evmCall(evmCallParams, evmCallOptions);
+await result.wait();
+
+setConnectedChainTxHash(result.hash);
+```
+
+The call is sent through the Gateway. `result.hash` is the transaction hash on
+the source EVM chain, which the app stores for explorer links and for tracking
+the cross-chain status.
+
+### Configure Networks and Explorers
+
+```ts filename="frontend/src/constants/chains.ts"
+export const SUPPORTED_CHAINS = [
+  {
+    explorerUrl: "https://sepolia.arbiscan.io/tx/",
+    name: "Arbitrum Sepolia",
+    chainId: 421614,
+    icon: "/logos/arbitrum-logo.svg",
+    colorHex: "#28446A",
+  },
+];
+
+export const ZETACHAIN_ATHENS_BLOCKSCOUT_EXPLORER_URL = "https://zetachain-testnet.blockscout.com/tx/";
+```
+
+The app maintains a list of supported networks and their explorer URLs. After
+sending a call, it can display links to the source chain and to ZetaChain for
+the corresponding transactions.
+
+### Poll for Cross-Chain Status
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const response = await fetch(`${CCTX_POLLING_URL}/${connectedChainTxHash}`);
+if (response.ok) {
+  const data = (await response.json()) as CrossChainTxResponse;
+  const txHash = data.CrossChainTxs?.[0]?.outbound_params?.[0]?.hash;
+  if (txHash) setZetachainTxHash(txHash);
+}
+```
+
+The app periodically queries ZetaChain’s public API using the source-chain
+transaction hash. Once ZetaChain processes the call, the response contains the
+ZetaChain transaction hash, which is shown in the UI.
+
+## End-to-End Flow in the UI
+
+The frontend guides the user through a simple but complete cross-chain flow:
+
+1. Connect a Wallet. The app detects EIP-6963 compatible wallets and connects
+   through a `WalletProvider`. The connected account is used to sign and send
+   transactions.
+2. Select a Network. Users must choose a source chain from the predefined
+   `SUPPORTED_CHAINS`. Each chain includes its own name, ID, and explorer URL.
+3. Enter a Message. A plain string message is entered into the UI. The app
+   enforces a byte-length limit so that the input can be safely encoded and sent
+   in the cross-chain call.
+4. Send the Call. When the user clicks **Send**, the frontend executes
+   `evmCall`, passing the Hello contract address on ZetaChain as the receiver.
+   The resulting transaction hash on the source chain is saved for tracking.
+5. Track the Result. The UI displays the source-chain transaction immediately,
+   then begins polling ZetaChain for the cross-chain transaction (CCTX). Once
+   available, the app shows links to both the source chain and ZetaChain
+   explorers.
+
+## Install and Start
+
+From the frontend directory, install dependencies and start the dev server:
+
+```bash
+cd examples/hello/frontend
+yarn
+yarn dev
+```
+
+This launches a Vite development server. By default, the app will be available
+at [http://localhost:5173](http://localhost:5173).
+
+### Configure the Contract Address (optional)
+
+By default, the app points to a pre-set Hello contract address:
+
+```ts filename="frontend/src/constants/contracts.ts"
+export const HELLO_UNIVERSAL_CONTRACT_ADDRESS = "0x61a184EB30D29eD0395d1ADF38CC7d2F966c4A82";
+```
+
+If you’ve deployed your own Hello contract on ZetaChain testnet, replace this
+value with your deployed address. Otherwise, you can use the default address to
+test the flow.
+
+### Troubleshooting
+
+- Wrong network: Switch to a supported connected EVM testnet.
+- Invalid receiver: Ensure the ZetaChain Hello contract address is correct and
+  deployed.
+- Toolkit/ethers bundling: Keep the `vite.config.ts` `optimizeDeps` and
+  `resolve.dedupe/alias` settings as shown.
+- CCTX not found yet: It can take a moment for the cross-chain execution to
+  finalize; the app polls every 15s.
+
+## Conclusion
+
+With this frontend, you now have a complete end-to-end flow for the Hello World
+Universal App:
+
+- A contract deployed on ZetaChain that responds to cross-chain calls.
+- A React app that connects to a wallet, sends a message through the Gateway,
+  and tracks execution on ZetaChain.
+
+This simple example demonstrates the **core pattern of building Universal
+Apps**: accept a call from any connected chain, process it on ZetaChain, and
+provide clear visibility back to the user across explorers.
+
+From here, you can expand the app to:
+
+- Accept richer payloads (numbers, addresses, structs).
+- Trigger state-changing logic in your Universal Contract.
+- Build more advanced UIs for managing cross-chain assets and actions.
+
+ZetaChain’s toolkit and APIs make it straightforward to extend this Hello
+example into real-world Universal Apps.
