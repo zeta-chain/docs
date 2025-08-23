@@ -459,7 +459,7 @@ PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo
 Deploy the contract:
 
 ```bash
-UNIVERSAL=$(npx ts-node commands/index.ts deploy \
+UNIVERSAL=$(npx tsx commands/index.ts deploy \
   --private-key $PRIVATE_KEY \
   --rpc http://localhost:8545 \
   --gateway $GATEWAY_ZETACHAIN \
