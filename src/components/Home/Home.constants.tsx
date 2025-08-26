@@ -1,6 +1,6 @@
 import { DexSvg, FrontEndSvg, FungibleTokenSvg, NftSvg } from "./components/svg/BuildAnythingSvgs";
 import { BuildWithTheCliSvg, BuildWithUiSvg } from "./components/svg/HomeHeroSvgs";
-import { CliSvg, LocalnetSvg, ToolkitSvg, UniversalKitSvg } from "./components/svg/ShipFasterSvgs";
+import { CliSvg, LocalnetSvg, ToolkitSvg } from "./components/svg/ShipFasterSvgs";
 
 export type NarrowCardLink = {
   href: string;
