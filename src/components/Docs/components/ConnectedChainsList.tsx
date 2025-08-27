@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs, rpcByNetworkType } from "~/components/shared";
@@ -193,14 +194,14 @@ export const ConnectedChainsList = () => {
                     <td>{confirmations[chain.chain_id] || ""}</td>
                     <td>
                       {docsLink ? (
-                        <a
+                        <Link
                           href={docsLink.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#00A5C6] dark:text-lime-500"
                         >
                           {docsLink.text}
-                        </a>
+                        </Link>
                       ) : (
                         "N/A"
                       )}
