@@ -283,7 +283,12 @@ Deploy the contract to ZetaChain’s testnet using the Gateway address from the
 [Contract Addresses page](/reference/network/contracts/):
 
 ```
-UNIVERSAL=$(npx tsx commands deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
+UNIVERSAL=$(forge create Universal \
+  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args 0x6c533f7fe93fae114d0954697069df33c9b74fd7 | jq -r .deployedTo)
 ```
 
 ### Call a Universal Contract from Base
