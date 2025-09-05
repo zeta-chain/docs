@@ -14,11 +14,6 @@
     "readTime": "10 min",
     "description": "Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution"
   },
-  "call": {
-    "title": "Call & Deposit",
-    "readTime": "30 min",
-    "description": "Learn the fundamentals of message passing and cross-chain contract calls"
-  },
   "swap": {
     "title": "Swap",
     "readTime": "30 min",
@@ -29,18 +24,23 @@
     "readTime": "30 min",
     "description": "Learn how to make cross-chain calls between contracts on EVM chains"
   },
+  "call": {
+    "title": "Calls to/from EVM",
+    "readTime": "30 min",
+    "description": "Learn the fundamentals of message passing and cross-chain contract calls"
+  },
   "solana": {
-    "title": "Solana",
+    "title": "Calls to/from Solana",
     "readTime": "60 min",
     "description": "Deposit assets and call universal apps from Solana, make outgoing calls to Solana"
   },
   "sui": {
-    "title": "Sui",
+    "title": "Calls from Sui",
     "readTime": "60 min",
     "description": "Deposit assets and call universal apps from Sui"
   },
   "sui-withdraw-and-call": {
-    "title": "Sui Withdraw & Call",
+    "title": "Calls to Sui",
     "readTime": "60 min",
     "description": "Withdraw assets and call contracts on Sui"
   }
