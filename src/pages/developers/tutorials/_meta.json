@@ -46,7 +46,7 @@
   },
   "staking": {
     "title": "Staking",
-    "readTime": "60 min",
+    "readTime": "10 min",
     "description": "Delegate and undelegate ZETA from EVM"
   }
 }
