@@ -17,25 +17,10 @@ By the end of this tutorial, you will understand how to:
 
 ## Prerequisites
 
-Before embarking on your ZetaChain development journey, ensure your system is
-equipped with the following essential tools:
+Before you begin, make sure you've completed the following tutorials:
 
-- [Node.js](https://nodejs.org/en) (v18 or later recommended): A JavaScript
-  runtime environment crucial for managing project dependencies and executing
-  commands.
-- [Yarn](https://yarnpkg.com/) (or npm): A package manager used to install,
-  update, and manage project libraries and dependencies. You can choose either
-  Yarn or npm based on your preference.
-- [Git](https://git-scm.com/): A distributed version control system for tracking
-  changes in source code during software development. It's essential for
-  managing your project and collaborating with others.
-- [jq](https://jqlang.org/) (for shell scripts): A lightweight and flexible
-  command-line JSON processor. It's particularly useful for parsing and
-  manipulating JSON data within shell scripts, which will be helpful for
-  extracting specific information from localnet output.
-- [Foundry](https://getfoundry.sh/): A fast, portable, and modular toolkit for
-  Ethereum application development. You'll use Forge (Foundry's CLI) and Soldeer
-  to compile contracts and manage dependencies throughout this tutorial.
+- [Introduction to Universal Apps](/start/app/)
+- [Getting Started with ZetaChain](/developers/tutorials/intro)
 
 ## Set Up Your Environment
 
@@ -246,8 +231,7 @@ npx zetachain evm call \
   --values hello
 ```
 
-Once the transaction is processed, you’ll see an `[ZetaChain]: Event from
-onCall` log in the Localnet terminal.
+Once the transaction is processed, you’ll see an `[ZetaChain]: Event from onCall` log in the Localnet terminal.
 
 ## Option 2: Deploy on Testnet
 
@@ -345,8 +329,7 @@ https://sepolia.basescan.org/tx/0x89308870b0863c5ae48dc783059277cbcf4296b1b34341
 
 After the transaction is initiated on Base Sepolia, ZetaChain's protocol
 facilitates its cross-chain transfer and execution on the destination chain
-(ZetaChain). To monitor the status of this cross-chain transaction, the `npx
-zetachain query cctx` command is used, providing real-time updates on the
+(ZetaChain). To monitor the status of this cross-chain transaction, the `npx zetachain query cctx` command is used, providing real-time updates on the
 transaction's journey.
 
 The command for tracking is:
@@ -376,15 +359,12 @@ Key Information from the Output:
 - `84532 → 7001`: This clearly indicates the cross-chain flow, from Base Sepolia
   (chain ID 84532) to ZetaChain (chain ID 7001). The ✅ symbol signifies a
   successful outbound mining of the cross-chain transaction.
-- `OutboundMinedCCTX:
-  0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3b`: This is
+- `OutboundMinedCCTX: 0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3b`: This is
   the hash of the Cross-Chain Transaction (CCTX) on ZetaChain, representing the
   internal identifier for this specific cross-chain operation.
-- `Tx Hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
-  (on chain 84532)`: This confirms the original transaction hash on the source
+- `Tx Hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc (on chain 84532)`: This confirms the original transaction hash on the source
   chain (Base Sepolia).
-- `Tx Hash: 0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc
-  (on chain 7001)`: This is the transaction hash of the execution on ZetaChain,
+- `Tx Hash: 0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc (on chain 7001)`: This is the transaction hash of the execution on ZetaChain,
   indicating that the universal application has been successfully called on the
   destination chain.
 - `Sender: 0x4955a3F38ff86ae92A914445099caa8eA2B9bA32`: The address of the
@@ -392,5 +372,4 @@ Key Information from the Output:
 - `Receiver: 0xFeb4F33d424D6685104624d985095dacab567151`: The address of the
   receiver contract on ZetaChain, which is the universal application in this
   context.
-- `Message:
-  0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000`
+- `Message: 0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000`

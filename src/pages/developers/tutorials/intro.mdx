@@ -1,41 +1,147 @@
-ZetaChain is a blockchain designed for universal apps—smart contracts on the
-ZetaChain EVM that are natively connected to other blockchains like Ethereum,
-BNB, Solana, and Bitcoin.
+On ZetaChain, you can build universal apps: smart contracts that can read,
+write, and manage assets across multiple chains. Universal apps remove the
+complexity of cross-chain development and let you create seamless user
+experiences that work everywhere.
 
-A universal app can accept incoming contract calls, messages, and token
-transfers from connected chains and initiate outgoing transactions to those
-chains.
+This page will help you set up your environment, install the core tools, and
+point you to the right tutorials depending on what you want to build.
 
-Each chain, including ZetaChain, has a Gateway. On ZetaChain and EVM chains, the
-Gateway is a smart contract; on Solana, it is a program; and on Bitcoin, it is
-an address. All interactions with universal apps happen through Gateways.
+<div className="mt-8" style={{ width: "100%", height: "auto", "aspect-ratio": "16 / 9" }}>
+  <iframe
+    width="100%"
+    height="100%"
+    src="https://www.youtube.com/embed/rDVwxRMhq2w"
+    filename="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
 
-ZetaChain acts as a hub in the hub-spoke-model and developers build universal
-apps that can orchestrate cross-chain transactions. This architecture allows
-most of the app's logic to be encapsulated in a single universal contract.
+## Prerequisites
 
-## Native Token Transfer
+Before you begin, make sure your system is set up with the following tools:
 
-Universal apps can accept transfers of supported native tokens from connected
-chains. For example, native USDC can be transferred (deposited) from Ethereum
-through the Gateway to a universal app on ZetaChain. Assets transferred from
-connected chains are represented as ZRC-20 tokens on ZetaChain. A ZRC-20 token
-can be transferred back (withdrawn) to its origin chain as a native asset. To
-facilitate native token transfers ZetaChain validators maintain custody of
-tokens on every connected chain. Tokens get locked in the custody when being
-transferred to ZetaChain and get unlocked when being transferred from ZetaChain.
+- **[Node.js](https://nodejs.org/en) (v21 or later recommended):** Required to
+  run the ZetaChain CLI and manage JavaScript dependencies.
+- **[Yarn](https://yarnpkg.com/) or npm:** Package managers used to install and
+  update project libraries. Either works, use whichever you prefer.
+- **[Git](https://git-scm.com/):** Essential for managing your project source
+  code and collaborating with others.
+- **[jq](https://jqlang.org/):** A lightweight command-line JSON processor,
+  useful for parsing Localnet output and writing shell scripts.
+- **[Foundry](https://getfoundry.sh/):** A fast, modular toolkit for Ethereum
+  development. You’ll use it to compile contracts, manage dependencies, and run
+  Localnet.
 
-There are ZRC-20 liquidity pools on ZetaChain, which can be used by universal
-apps to swap between ZRC-20s and other tokens, to acquire ZRC-20 to pay for gas
-for outgoing transactions and by the ZetaChain protocol to handle gas when
-processing reverts.
+## Setting up Environment
 
-## Gas Fees
+Install the ZetaChain CLI:
 
-Making an incoming call or a deposit to a universal app only costs a gas fee on
-the connected chain from which the call is made. Execution of universal apps is
-free when called from a connected chain.
+```bash
+npm install -g zetachain
+```
 
-Making an outgoing call or a withdrawal from a universal app costs a gas fee on
-the destination chain. The Gateway charges a universal app making a call in
-ZRC-20 token. To cover the gas fee a universal app can swap tokens
+The [ZetaChain CLI](/reference/cli/) is your primary tool for working with
+ZetaChain. You’ll use it to make cross-chain calls, transfer tokens, track
+cross-chain transactions, manage accounts across multiple networks, query
+balances, and more.
+
+Try running:
+
+```bash
+zetachain query chains list
+```
+
+This command prints all the chains currently connected to ZetaChain, a good way
+to confirm your setup is working.
+
+For local development, we recommend running Localnet, a self-contained
+environment that includes ZetaChain, EVM, Solana, Sui, and TON. Localnet is the
+fastest way to build and test universal apps without relying on public testnets.
+
+To run Localnet, make sure you have [Foundry](https://getfoundry.sh/) installed.
+Foundry provides the core tooling for EVM development and is required to start
+the local network.
+
+If you want to include non-EVM chains in Localnet, check the prerequisites in
+the [Localnet documentation](/reference/localnet/).
+
+## Tools & References
+
+With your environment ready, these resources will help you interact with and
+build on ZetaChain.
+
+### Explorers
+
+ZetaChain is both a Cosmos chain and an EVM chain. You can use Cosmos explorers
+to view blocks, validators, and governance activity, or EVM explorers to track
+contracts and transactions. Links to both are available in the [Explorers
+reference](/reference/explorers/).
+
+### Faucets
+
+Before deploying or testing on testnet, you’ll need tokens. The
+[Faucet](/reference/faucet/) page lists all available faucets: for ZETA gas and
+for tokens on connected chains.
+
+### Networks
+
+ZetaChain runs on mainnet and testnet. Tutorials focus on testnet, but you can
+switch at any time. RPC endpoints, chain IDs, and other details are listed in
+the [Networks reference](/developers/chains/list/).
+
+### RPCs
+
+To connect apps, wallets, or frameworks like Foundry and Hardhat, you’ll need
+RPC endpoints. Public RPCs for both ZetaChain mainnet and testnet are listed in
+the [RPC reference](/reference/network/api).
+
+### Contracts
+
+Core protocol contracts such as the Gateway, and other system contracts are
+deployed on ZetaChain. Their addresses are listed in the [Protocol Contracts
+reference](/reference/network/contracts/).
+
+### Tokens
+
+All whitelisted tokens available on ZetaChain are listed along with their ZRC-20
+contract addresses in the [Tokens reference](/developers/evm/zrc20/).
+
+## Where to Go Next
+
+Once your environment is set up, you can dive straight into building. Choose a
+path based on what you want to create:
+
+### Learn the basics
+
+- [First Universal Contract](/developers/tutorials/hello/) (10 min) Build your
+  first universal contract and understand the foundation of ZetaChain
+  development.
+- [Build a Web App](/developers/tutorials/frontend) (10 min) Connect a wallet,
+  send cross-chain calls, and track execution with a simple frontend.
+
+### Make calls to and from universal apps
+
+- [EVM](/developers/tutorials/call/) (30 min) Learn how to send and receive
+  calls between EVM chains and universal apps on ZetaChain.
+- [Solana](/developers/tutorials/solana/) (60 min) Deposit assets and call
+  universal apps from Solana, or make outgoing calls to Solana.
+- [Sui](/developers/tutorials/sui/) (60 min) Deposit assets and call universal
+  apps from Sui.
+- [Sui Withdraw & Call](/developers/tutorials/sui-withdraw-and-call/) (60 min)
+  Withdraw assets and call contracts on Sui.
+
+### Cross-Chain Messaging
+
+- [Messaging](/developers/tutorials/messaging/) (30 min) Make cross-chain calls
+  directly between EVM networks without building a universal app.
+
+### Build real-world apps
+
+- [Universal NFT](/developers/standards/nft/) (45 min) Create NFTs that can move
+  seamlessly across multiple chains.
+- [Universal Token](/developers/standards/token/) (45 min) Deploy a fungible
+  token that exists everywhere and can be transferred across chains.
+- [Swap](/developers/tutorials/swap/) (30 min) Implement a universal swap app
+  compatible with chains like Ethereum, Solana, and Bitcoin.
