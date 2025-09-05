@@ -174,7 +174,7 @@ cd sui
 
 Check the `Move.toml`:
 
-```toml title="sui/Move.toml"
+```toml filename="sui/Move.toml"
 [dependencies]
 gateway = { local = "/usr/local/share/localnet/protocol-contracts-sui" }
 ```
@@ -230,7 +230,7 @@ it directly to the Sui Gateway. We’ll modify it to:
 
 Open `commands/suiDepositAndCall.ts` and replace the payload construction:
 
-```ts title="commands/suiDepositAndCall.ts"
+```ts filename="commands/suiDepositAndCall.ts"
 // const payload = tx.pure.vector("u8", utils.arrayify(payloadABI));
 
 const payload = tx.moveCall({
