@@ -44,3 +44,88 @@ ZetaChain nodes have been developed and tested on x86_64 architecture. Our
 binary files have been compiled with Ubuntu 22.04 LTS x86_64. This guide assumes
 you are using Ubuntu 22.04 LTS x86_64. If you are using a different OS you may
 need to make some adjustments.
+
+## Infrastructure Cost Analysis
+
+Understanding the costs associated with running a ZetaChain node is crucial for planning your deployment. Below is a comprehensive cost breakdown for different hosting options.
+
+### Monthly Cost Comparison
+
+#### Cloud Providers
+
+| Provider | Instance Type | Compute | Storage | Total Base | With Bandwidth* |
+| :------- | :------------ | :------ | :------ | :--------- | :-------------- |
+| **AWS** | t3.xlarge | $121.47 | $24.00 | $145.47 | $235-595 |
+| **AWS** | m5.xlarge | $140.00 | $24.00 | $164.00 | $254-614 |
+| **AWS** | Reserved (1yr) | $85.00 | $24.00 | $109.00 | $199-559 |
+| **GCP** | n2-standard-4 | $141.79 | $51.00 | $192.79 | $271-754 |
+
+*Bandwidth costs vary significantly based on data transfer (1-5 TB/month estimated)
+
+#### Bare Metal/Dedicated Servers
+
+| Provider        | Configuration                  | Monthly Cost     | Notes                                         |
+| :-------------- | :----------------------------- | :--------------- | :--------------------------------------------- |
+| **Hetzner**     | 4-core, 32GB RAM, NVMe SSD      | €54.99 (~$60)    | Unmetered on 1 Gbps port; FUP may apply         |
+| **OVHcloud**    | 4-core, 16GB RAM, NVMe/1TB SSD   | €43.99 (~$48)    | Unmetered on 1 Gbps port; FUP may apply         |
+| **Vultr**       | 8 vCPU, 16GB RAM, 300GB NVMe     | $180.00          | Good performance; check port speed cap          |
+| **Cherry Servers** | 4-core, 32GB RAM, 240GB SSD   | $120.00          | Enterprise grade                                |
+| **InMotion Hosting** | 4-core, 16GB RAM, 1TB SSD  | $69.99           | Budget option                                   |
+### Annual Cost Summary
+
+| Provider Type | Low End | High End | Best For |
+| :------------ | :------ | :------- | :------- |
+| **Bare Metal** | $576 | $2,160 | Cost optimization |
+| **AWS Reserved** | $2,388 | $6,708 | Enterprise/Production |
+| **GCP Optimized** | $2,772 | $7,608 | Google ecosystem |
+
+### Additional Costs to Consider
+
+#### Bandwidth Requirements
+ZetaChain validators require significant bandwidth for:
+- Block propagation and validation
+- P2P network communication  
+- State synchronization
+
+**Estimated**: 1-5 TB/month additional data transfer
+- Cloud providers: $90-600/month (after free tiers)
+- Bare metal: Usually unlimited or much cheaper
+
+#### Operational Costs
+- **Monitoring & Management**: $20-50/month
+- **Backup & Disaster Recovery**: $10-50/month
+- **Security & Maintenance**: Variable
+
+### Recommendations
+
+#### For Cost Optimization
+- **Bare Metal** (Hetzner/OVHcloud): **$48-60/month**
+  - Best price/performance ratio
+  - Unlimited bandwidth typically included
+  - Good for validators in stable regions
+
+#### For Enterprise/Production
+- **AWS Savings Plans or Reserved Instances**: **$199–300/month** (estimate)
+  - Better SLA/support, mature IAM/KMS
+  - Easier scaling and management
+  - Multi-AZ placement recommended to reduce outage risk
+
+- **Bare Metal Enterprise** (Cherry Servers): **$120/month**
+  - Dedicated hardware performance
+  - Ensure spare-host or hot-standby for failover
+#### For High Performance
+- Ensure NVMe SSD storage for validator requirements
+- Consider dedicated bandwidth allocation
+- Implement proper monitoring and alerting
+
+### Key Considerations
+
+#### Performance Requirements
+- ZetaChain validators need high IOPS (12K+)
+- NVMe SSDs strongly recommended over regular SSDs
+- Network latency critical for validator performance
+
+#### Reliability Factors
+- Uptime requirements for validator rewards
+- Slashing risks with poor performance
+- Geographic distribution considerations
