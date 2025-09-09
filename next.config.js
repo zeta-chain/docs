@@ -29,6 +29,21 @@ const baseNextConfig = {
   },
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
+  // Rewrites to proxy PostHog ingestion endpoints
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+    ];
+  },
   /**
    * Generating source maps consumes extra memory during the build process.
    * https://nextjs.org/docs/app/building-your-application/optimizing/memory-usage#disable-source-maps
