@@ -105,15 +105,14 @@ ZetaChain validators require significant bandwidth for:
   - Good for validators in stable regions
 
 #### For Enterprise/Production
-- **AWS Reserved Instances**: **$199-300/month**
-  - Better SLA and support
+- **AWS Savings Plans or Reserved Instances**: **$199–300/month** (estimate)
+  - Better SLA/support, mature IAM/KMS
   - Easier scaling and management
-  - Global presence
+  - Multi-AZ placement recommended to reduce outage risk
 
 - **Bare Metal Enterprise** (Cherry Servers): **$120/month**
   - Dedicated hardware performance
-  - Good compromise between cost and reliability
-
+  - Ensure spare-host or hot-standby for failover
 #### For High Performance
 - Ensure NVMe SSD storage for validator requirements
 - Consider dedicated bandwidth allocation
