@@ -41,6 +41,13 @@ This approach allows users to initiate complex multi-chain operations with a
 single transaction from any supported chain, abstracting away the complexity of
 liquidity routing, gas payments, and execution across chains.
 
+> Note: This tutorial uses Uniswap v2 pools on ZetaChain. These pools are
+> primarily used by ZetaChain to swap small amounts of tokens, for example, to
+> obtain gas fees for a revert in a cross-chain transaction. They may not have
+> sufficient liquidity for larger swaps. For real-world usage, consider using
+> pools maintained by active DEXes such as [Beam](https://docs.beamdex.xyz/) or
+> [Zuno](https://docs.zunodex.xyz/), or any other DEX deployed on ZetaChain.
+
 ## Prerequisites
 
 Before you begin, make sure you've completed the following tutorials:
