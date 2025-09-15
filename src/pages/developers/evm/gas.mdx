@@ -1,5 +1,5 @@
 ---
-title: Gas Fees
+title: Gas
 ---
 
 import { Fees } from "~/components/Docs";
@@ -66,9 +66,24 @@ the destination chain.
 
 <Fees />
 
-To calculate fees for a different gas limit, please, check out use the `query
-fees` command:
+To calculate fees for a different gas limit, please, check out use the `query fees` command:
 
 ```
 npx zetachain query fees
 ```
+
+## Gas Limits
+
+Gas limits set the upper bound for how much computation a cross-chain
+transaction can use. They’re defined per direction (incoming or outgoing) to
+make sure calls have enough room to execute reliably. The values may change as
+the network evolves.
+
+| Direction                | Gas Limit | Notes                                                                                                 |
+| ------------------------ | --------- | ----------------------------------------------------------------------------------------------------- |
+| Incoming To ZetaChain    | 1.6M      | [API](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/system_contract)     |
+| Outgoing to EVM          | 2.5M      | [Source](https://github.com/zeta-chain/node/blob/835341df/zetaclient/chains/evm/signer/gas.go)        |
+| Outgoing to EVM (revert) | 2M        | [Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/Revert.sol)             |
+| Outgoing to TON          | 1M        | [Source](https://github.com/zeta-chain/node/blob/835341df/zetaclient/chains/ton/observer/outbound.go) |
+| Outgoing to Sui          | 50B       | [Source](https://github.com/zeta-chain/node/blob/835341df/zetaclient/chains/ton/observer/outbound.go) |
+| Outgoing to Solana       | 1.6M      | [Source](https://github.com/zeta-chain/node/blob/835341df/zetaclient/chains/solana/signer/signer.go)  |
