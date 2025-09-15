@@ -359,6 +359,21 @@ Options:
 
 ```
 
+## zetachain faucet
+
+```
+Usage: zetachain faucet [options]
+
+Request testnet ZETA tokens from the faucet.
+
+Options:
+  --address <address>  Recipient address.
+  --name <name>        Account name to use if address not provided (default:
+                       "default")
+  -h, --help           display help for command
+
+```
+
 ## zetachain zetachain
 
 ```
