@@ -37,6 +37,7 @@ const ChatRequestSchema = z.object({
 });
 
 const CHATBASE_URL = "https://www.chatbase.co/api/v1/chat";
+const MAX_RESPONSE_SIZE = 1 * 1024 * 1024; // 1MB
 
 type ChatbaseSuccessResponse = {
   text: string;
@@ -145,8 +146,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.end();
     }
 
-    // Fallback: if no reader, buffer and send
+    // Fallback: if no reader, buffer and send (with size limit)
+    const contentLength = chatRes.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > MAX_RESPONSE_SIZE) {
+      return res.status(413).json({
+        error: `Response too large (${contentLength} bytes, max ${MAX_RESPONSE_SIZE})`,
+      });
+    }
+
     const fallbackText = await chatRes.text();
+
+    if (fallbackText.length > MAX_RESPONSE_SIZE) {
+      return res.status(413).json({
+        error: `Response too large (${fallbackText.length} bytes, max ${MAX_RESPONSE_SIZE})`,
+      });
+    }
+
     res.write(fallbackText);
     return res.end();
   } catch (error: unknown) {
