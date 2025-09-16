@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Support both CHATBASE_API_KEY and legacy CHATBASE_SECRET_KEY environment variables
     const apiKey = process.env.CHATBASE_API_KEY || process.env.CHATBASE_SECRET_KEY;
     if (!apiKey) {
-      return res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: "Missing CHATBASE_API_KEY server configuration" });
+      return res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: "Server configuration error" });
     }
 
     const parseResult = ChatRequestSchema.safeParse(req.body);
