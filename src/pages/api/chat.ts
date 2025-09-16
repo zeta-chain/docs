@@ -116,8 +116,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader("Cache-Control", "no-cache, no-transform");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no");
-    // Keep the socket alive for long-running streams
-    res.socket?.setTimeout?.(0);
+    // Keep the socket alive for long-running streams (5 minute timeout)
+    res.socket?.setTimeout?.(300000);
     res.socket?.setNoDelay?.(true);
     res.socket?.setKeepAlive?.(true);
 
