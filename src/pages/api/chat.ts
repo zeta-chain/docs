@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Cors from "cors";
 import type { NextApiRequest, NextApiResponse } from "next/types";
+import { z } from "zod";
 
 // CORS configuration aligned with other API routes
 const cors = Cors({
@@ -10,7 +11,7 @@ const cors = Cors({
 
 function runMiddleware(req: NextApiRequest, res: NextApiResponse) {
   return new Promise((resolve, reject) => {
-    cors(req, res, (result: any) => {
+    cors(req, res, (result: Error | undefined) => {
       if (result instanceof Error) {
         return reject(result);
       }
@@ -19,9 +20,32 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
-type ChatbaseMessage = { role: "user" | "assistant"; content: string };
+const ChatRequestSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string().min(1),
+      })
+    )
+    .min(1, "At least one message is required"),
+  chatbotId: z.string().min(1, "chatbotId is required"),
+  stream: z.boolean().default(false),
+  temperature: z.number().min(0).max(1).optional(),
+  model: z.string().trim().min(1).optional(),
+  conversationId: z.string().trim().min(1).optional(),
+});
 
 const CHATBASE_URL = "https://www.chatbase.co/api/v1/chat";
+
+type ChatbaseSuccessResponse = {
+  text: string;
+};
+
+type ChatbaseErrorResponse = {
+  message?: string;
+  [key: string]: unknown;
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -41,45 +65,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: "Missing CHATBASE_API_KEY server configuration" });
     }
 
-    const body = req.body;
-    if (!body || typeof body !== "object") {
-      return res.status(400).json({ error: "Invalid request body" });
+    const parseResult = ChatRequestSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      const firstError = parseResult.error.errors[0];
+      return res.status(400).json({
+        error: `${firstError.path.join(".")}: ${firstError.message}`,
+      });
     }
 
-    const {
-      messages,
-      chatbotId,
-      stream = false,
-      temperature,
-      model,
-      conversationId,
-    } = body as {
-      messages?: ChatbaseMessage[];
-      chatbotId?: string;
-      stream?: boolean;
-      temperature?: number;
-      model?: string;
-      conversationId?: string;
-    };
-
-    if (!Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ error: "'messages' must be a non-empty array" });
-    }
-    if (!chatbotId || typeof chatbotId !== "string") {
-      return res.status(400).json({ error: "'chatbotId' is required" });
-    }
-    if (!messages.every((m) => m && typeof m.content === "string" && (m.role === "user" || m.role === "assistant"))) {
-      return res.status(400).json({ error: "Each message must have { content: string, role: 'user' | 'assistant' }" });
-    }
+    const { messages, chatbotId, stream, temperature, model, conversationId } = parseResult.data;
 
     const payload: Record<string, unknown> = {
       messages,
       chatbotId,
-      stream: Boolean(stream),
+      stream,
     };
-    if (typeof temperature === "number") payload.temperature = Math.min(1, Math.max(0, temperature));
-    if (typeof model === "string" && model.trim()) payload.model = model.trim();
-    if (typeof conversationId === "string" && conversationId.trim()) payload.conversationId = conversationId.trim();
+
+    if (temperature !== undefined) payload.temperature = temperature;
+    if (model !== undefined) payload.model = model;
+    if (conversationId !== undefined) payload.conversationId = conversationId;
 
     // For streaming, we need to fetch first to know if it's ok; then pipe chunks through.
     const chatRes = await fetch(CHATBASE_URL, {
@@ -91,13 +95,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       body: JSON.stringify(payload),
     });
 
-    if (!Boolean(stream)) {
+    if (!stream) {
       // Non-streaming: proxy the JSON response or return error
       const text = await chatRes.text();
       const isJson = chatRes.headers.get("content-type")?.includes("application/json");
-      const data = isJson ? safeParseJson(text) : null;
+      const data = isJson ? safeParseJson<ChatbaseSuccessResponse | ChatbaseErrorResponse>(text) : null;
+      const dataMessage = data && "message" in data ? data.message : undefined;
       if (!chatRes.ok) {
-        const message = (data as any)?.message || chatRes.statusText || "Upstream error";
+        const message = dataMessage || chatRes.statusText || "Upstream error";
         return res
           .status(chatRes.status)
           .json({ error: message, upstreamStatus: chatRes.status, upstreamBody: isJson ? data : text });
@@ -124,7 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.end();
     }
 
-    const reader = (chatRes.body as any).getReader?.();
+    const reader = (chatRes.body as ReadableStream<Uint8Array>)?.getReader?.();
     if (reader && typeof reader.read === "function") {
       const decoder = new TextDecoder();
       let done = false;
@@ -144,16 +149,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const fallbackText = await chatRes.text();
     res.write(fallbackText);
     return res.end();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Chat API proxy error:", error);
-    return res.status(500).json({ error: error?.message ?? "Internal Server Error" });
+    return res.status(500).json({ error: error instanceof Error ? error.message : "Internal Server Error" });
   }
 }
 
-function safeParseJson(text: string) {
+function safeParseJson<T>(text: string): T | null {
   try {
     return JSON.parse(text);
-  } catch (_) {
+  } catch {
     return null;
   }
 }
