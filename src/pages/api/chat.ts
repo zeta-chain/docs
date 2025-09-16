@@ -73,6 +73,9 @@ type ChatbaseErrorResponse = {
  *
  * Supports both streaming and non-streaming responses, with proper CORS handling,
  * input validation, and resource limits to prevent abuse.
+ *
+ * Note: Explicit return statements are used after res.end()/res.json() calls because
+ * these methods only complete the HTTP response but don't terminate function execution.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -80,25 +83,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === "OPTIONS") {
       // CORS preflight
-      return res.status(HTTP_NO_CONTENT).end();
+      res.status(HTTP_NO_CONTENT).end();
+      return;
     }
 
     if (req.method !== "POST") {
-      return res.status(HTTP_METHOD_NOT_ALLOWED).json({ error: "Method not allowed" });
+      res.status(HTTP_METHOD_NOT_ALLOWED).json({ error: "Method not allowed" });
+      return;
     }
 
     // Support both CHATBASE_API_KEY and legacy CHATBASE_SECRET_KEY environment variables
     const apiKey = process.env.CHATBASE_API_KEY || process.env.CHATBASE_SECRET_KEY;
     if (!apiKey) {
-      return res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: "Server configuration error" });
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: "Server configuration error" });
+      return;
     }
 
     const parseResult = ChatRequestSchema.safeParse(req.body);
     if (!parseResult.success) {
       const firstError = parseResult.error.errors[0];
-      return res.status(HTTP_BAD_REQUEST).json({
+      res.status(HTTP_BAD_REQUEST).json({
         error: `${firstError.path.join(".")}: ${firstError.message}`,
       });
+      return;
     }
 
     const { messages, chatbotId, stream, temperature, model, conversationId } = parseResult.data;
@@ -139,7 +146,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .json({ error: message, upstreamStatus: chatRes.status, upstreamBody: isJson ? data : text });
       }
       // Successful JSON proxy (expected shape: { text: string })
-      return res.status(200).send(isJson ? data : text);
+      res.status(200).send(isJson ? data : text);
+      return;
     }
 
     // Streaming: set up Server-Sent Events (SSE) headers for real-time streaming
@@ -157,7 +165,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.statusCode = chatRes.status || HTTP_BAD_GATEWAY;
       res.write(`event: error\n`);
       res.write(`data: ${JSON.stringify({ message: chatRes.statusText || "Upstream error", body: errBody })}\n\n`);
-      return res.end();
+      res.end();
+      return;
     }
 
     // Try to get a readable stream reader for efficient streaming
@@ -174,32 +183,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           res.write(chunkValue);
         }
       }
-      return res.end();
+      res.end();
+      return;
     }
 
     // Fallback: if no reader, buffer and send (with size limit)
     const contentLength = chatRes.headers.get("content-length");
     if (contentLength && parseInt(contentLength) > MAX_RESPONSE_SIZE) {
-      return res.status(HTTP_PAYLOAD_TOO_LARGE).json({
+      res.status(HTTP_PAYLOAD_TOO_LARGE).json({
         error: `Response too large (${contentLength} bytes, max ${MAX_RESPONSE_SIZE})`,
       });
+      return;
     }
 
     const fallbackText = await chatRes.text();
 
     if (fallbackText.length > MAX_RESPONSE_SIZE) {
-      return res.status(HTTP_PAYLOAD_TOO_LARGE).json({
+      res.status(HTTP_PAYLOAD_TOO_LARGE).json({
         error: `Response too large (${fallbackText.length} bytes, max ${MAX_RESPONSE_SIZE})`,
       });
+      return;
     }
 
     res.write(fallbackText);
-    return res.end();
+    res.end();
+    return;
   } catch (error: unknown) {
     console.error("Chat API proxy error:", error);
-    return res
+    res
       .status(HTTP_INTERNAL_SERVER_ERROR)
       .json({ error: error instanceof Error ? error.message : "Internal Server Error" });
+    return;
   }
 }
 
