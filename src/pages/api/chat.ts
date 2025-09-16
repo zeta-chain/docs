@@ -9,6 +9,9 @@ const cors = Cors({
   methods: ["POST", "OPTIONS"],
 });
 
+/**
+ * Converts CORS middleware to Promise for Next.js API routes.
+ */
 function runMiddleware(req: NextApiRequest, res: NextApiResponse) {
   return new Promise((resolve, reject) => {
     cors(req, res, (result: Error | undefined) => {
@@ -65,6 +68,12 @@ type ChatbaseErrorResponse = {
   [key: string]: unknown;
 };
 
+/**
+ * Handler for proxying chat requests to Chatbase.
+ *
+ * Supports both streaming and non-streaming responses, with proper CORS handling,
+ * input validation, and resource limits to prevent abuse.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await runMiddleware(req, res);
@@ -78,6 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(HTTP_METHOD_NOT_ALLOWED).json({ error: "Method not allowed" });
     }
 
+    // Support both CHATBASE_API_KEY and legacy CHATBASE_SECRET_KEY environment variables
     const apiKey = process.env.CHATBASE_API_KEY || process.env.CHATBASE_SECRET_KEY;
     if (!apiKey) {
       return res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: "Missing CHATBASE_API_KEY server configuration" });
@@ -93,6 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { messages, chatbotId, stream, temperature, model, conversationId } = parseResult.data;
 
+    // Build payload for Chatbase API, only including defined optional parameters
     const payload: Record<string, unknown> = {
       messages,
       chatbotId,
@@ -118,6 +129,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const text = await chatRes.text();
       const isJson = chatRes.headers.get("content-type")?.includes("application/json");
       const data = isJson ? safeParseJson<ChatbaseSuccessResponse | ChatbaseErrorResponse>(text) : null;
+
+      // Extract error message from response if available
       const dataMessage = data && "message" in data ? data.message : undefined;
       if (!chatRes.ok) {
         const message = dataMessage || chatRes.statusText || "Upstream error";
@@ -129,15 +142,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).send(isJson ? data : text);
     }
 
-    // Streaming: set up SSE headers and pipe upstream chunks through
+    // Streaming: set up Server-Sent Events (SSE) headers for real-time streaming
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache, no-transform");
     res.setHeader("Connection", "keep-alive");
-    res.setHeader("X-Accel-Buffering", "no");
+    res.setHeader("X-Accel-Buffering", "no"); // Disable nginx buffering for real-time streaming
     // Keep the socket alive for long-running streams (5 minute timeout)
     res.socket?.setTimeout?.(SOCKET_TIMEOUT_MS);
-    res.socket?.setNoDelay?.(true);
-    res.socket?.setKeepAlive?.(true);
+    res.socket?.setNoDelay?.(true); // Send data immediately without buffering
+    res.socket?.setKeepAlive?.(true); // Keep connection alive for streaming
 
     if (!chatRes.ok || !chatRes.body) {
       const errBody = await chatRes.text().catch(() => "");
@@ -147,6 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.end();
     }
 
+    // Try to get a readable stream reader for efficient streaming
     const reader = (chatRes.body as ReadableStream<Uint8Array>)?.getReader?.();
     if (reader && typeof reader.read === "function") {
       const decoder = new TextDecoder();
@@ -189,6 +203,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
+/**
+ * Safely parses JSON text without throwing errors.
+ * @param text - The JSON string to parse
+ * @returns Parsed object of type T, or null if parsing fails
+ */
 function safeParseJson<T>(text: string): T | null {
   try {
     return JSON.parse(text);
