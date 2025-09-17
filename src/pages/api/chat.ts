@@ -37,7 +37,7 @@ const ChatRequestSchema = z.object({
       })
     )
     .min(MIN_CONTENT_LENGTH, "At least one message is required"),
-  chatbotId: z.string().min(MIN_CONTENT_LENGTH, "chatbotId is required"),
+  chatbotId: z.string().min(MIN_CONTENT_LENGTH, "cghatbotId is required"),
   stream: z.boolean().default(false),
   temperature: z.number().min(MIN_TEMPERATURE).max(MAX_TEMPERATURE).optional(),
   model: z.string().trim().min(MIN_CONTENT_LENGTH).optional(),
@@ -122,6 +122,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (conversationId !== undefined) payload.conversationId = conversationId;
 
     // For streaming, we need to fetch first to know if it's ok; then pipe chunks through.
+    // Use an AbortController so we can cancel upstream when the client disconnects.
+    const abortController = new AbortController();
     const chatRes = await fetch(CHATBASE_URL, {
       method: "POST",
       headers: {
@@ -129,6 +131,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+      signal: abortController.signal,
     });
 
     if (!stream) {
@@ -160,6 +163,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.socket?.setNoDelay?.(true); // Send data immediately without buffering
     res.socket?.setKeepAlive?.(true); // Keep connection alive for streaming
 
+    // Proactively flush headers if supported to start the stream right away
+    if (typeof (res as unknown as { flushHeaders?: () => void }).flushHeaders === "function")
+      (res as unknown as { flushHeaders: () => void }).flushHeaders();
+
+    // Heartbeat to prevent idle timeouts on hosting proxies (e.g., Vercel/CDN)
+    // Sends SSE comment lines every 15s while streaming is active
+    const HEARTBEAT_INTERVAL_MS = 15000;
+    const heartbeat = setInterval(() => {
+      try {
+        res.write(`: keepalive\n\n`);
+      } catch {
+        return null;
+      }
+    }, HEARTBEAT_INTERVAL_MS);
+
+    // Ensure we cleanup and abort upstream if the client disconnects
+    const onClose = () => {
+      clearInterval(heartbeat);
+      try {
+        abortController.abort();
+      } catch {
+        return null;
+      }
+    };
+    // res.on('close') is not always available; use req socket close as well
+    (res as unknown as { on?: (ev: string, cb: () => void) => void }).on?.("close", onClose);
+    (req as unknown as { on?: (ev: string, cb: () => void) => void }).on?.("close", onClose);
+
     if (!chatRes.ok || !chatRes.body) {
       const errBody = await chatRes.text().catch(() => "");
       res.statusCode = chatRes.status || HTTP_BAD_GATEWAY;
@@ -175,15 +206,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const decoder = new TextDecoder();
       let done = false;
       // Forward chunks as-is; upstream already formats as SSE `data: ...` lines
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        if (value) {
-          const chunkValue = decoder.decode(value);
-          res.write(chunkValue);
+      try {
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (value) {
+            const chunkValue = decoder.decode(value);
+            res.write(chunkValue);
+          }
         }
+      } catch (streamErr) {
+        // If aborted due to client disconnect, silently end
+        if (!(streamErr instanceof Error && streamErr.name === "AbortError")) {
+          try {
+            res.write(`event: error\n`);
+            res.write(`data: ${JSON.stringify({ message: (streamErr as Error).message || "Stream error" })}\n\n`);
+          } catch {
+            // ignore
+          }
+        }
+      } finally {
+        clearInterval(heartbeat);
+        res.end();
       }
-      res.end();
       return;
     }
 
@@ -205,6 +250,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
+    clearInterval(heartbeat);
     res.write(fallbackText);
     res.end();
     return;
