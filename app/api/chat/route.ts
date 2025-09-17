@@ -1,6 +1,6 @@
 // app/api/chat/route.ts
 export const runtime = "edge";
-export const dynamic = "force-dynamic";
+export const dynamic = (process.env.EXPORT ? "force-static" : "force-dynamic") as "force-static" | "force-dynamic";
 
 import { NextRequest } from "next/server";
 import { z } from "zod";
