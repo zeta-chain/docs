@@ -13,7 +13,6 @@ const MAX_TEMPERATURE = 1;
 const MAX_RESPONSE_SIZE = 1 * 1024 * 1024; // 1MB
 const HEARTBEAT_MS = 15000;
 
-/** ----- Validation ----- */
 const ChatRequestSchema = z.object({
   messages: z
     .array(
@@ -30,22 +29,16 @@ const ChatRequestSchema = z.object({
   conversationId: z.string().trim().min(MIN_CONTENT_LENGTH).optional(),
 });
 
-/** ----- CORS ----- */
 const originAllowlist = ["https://zetachain.com", "https://zetachain.app"];
-const originRegexes = [
-  /^https?:\/\/([a-z0-9-]+\.)*zetachain\.com$/i,
-  /^https?:\/\/([a-z0-9-]+\.)*zetachain\.app$/i,
-  // add preview domains during testing if needed:
-  // /^https?:\/\/([a-z0-9-]+\.)*vercel\.app$/i,
-];
+const originRegexes = [/^https?:\/\/([a-z0-9-]+\.)*zetachain\.com$/i, /^https?:\/\/([a-z0-9-]+\.)*zetachain\.app$/i];
 
-function isAllowedOrigin(origin: string | null): boolean {
+const isAllowedOrigin = (origin: string | null): boolean => {
   if (!origin) return false;
   if (originAllowlist.includes(origin)) return true;
   return originRegexes.some((re) => re.test(origin));
-}
+};
 
-function corsHeaders(req: NextRequest): Headers {
+const corsHeaders = (req: NextRequest): Headers => {
   const origin = req.headers.get("origin");
   const headers = new Headers({
     Vary: "Origin",
@@ -57,10 +50,9 @@ function corsHeaders(req: NextRequest): Headers {
     headers.set("Access-Control-Allow-Origin", origin!);
   }
   return headers;
-}
+};
 
-/** ----- Helpers ----- */
-function json(status: number, data: unknown, extra?: HeadersInit) {
+const json = (status: number, data: unknown, extra?: HeadersInit) => {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -69,26 +61,24 @@ function json(status: number, data: unknown, extra?: HeadersInit) {
       ...(extra || {}),
     },
   });
-}
+};
 
-function safeParseJson<T>(text: string): T | null {
+const safeParseJson = <T>(text: string): T | null => {
   try {
     return JSON.parse(text) as T;
   } catch {
     return null;
   }
-}
+};
 
-/** ----- OPTIONS (CORS preflight) ----- */
-export async function OPTIONS(req: NextRequest) {
+export const OPTIONS = async (req: NextRequest) => {
   return new Response(null, {
     status: 204,
     headers: corsHeaders(req),
   });
-}
+};
 
-/** ----- POST ----- */
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   const headers = corsHeaders(req);
 
   const apiKey = process.env.CHATBASE_API_KEY || process.env.CHATBASE_SECRET_KEY;
@@ -139,7 +129,7 @@ export async function POST(req: NextRequest) {
 
     if (!upstream.ok) {
       const message =
-        (data && typeof data === "object" && "message" in (data as any) && (data as any).message) ||
+        (data && typeof data === "object" && "message" in data && data.message) ||
         upstream.statusText ||
         "Upstream error";
       return json(
@@ -160,6 +150,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Streaming SSE path
+  const upstreamContentType = upstream.headers.get("content-type") || "";
+  const isUpstreamSSE = /text\/event-stream/i.test(upstreamContentType);
+
   if (!upstream.ok || !upstream.body) {
     const errBody = await upstream.text().catch(() => "");
     const sseErr = `event: error\ndata: ${JSON.stringify({
@@ -170,7 +163,7 @@ export async function POST(req: NextRequest) {
       status: upstream.status || 502,
       headers: new Headers({
         ...Object.fromEntries(headers),
-        "Content-Type": "text/event-stream",
+        "Content-Type": isUpstreamSSE ? "text/event-stream" : "text/plain; charset=utf-8",
         "Cache-Control": "no-store",
       }),
     });
@@ -182,10 +175,11 @@ export async function POST(req: NextRequest) {
       const encoder = new TextEncoder();
       const reader = upstream.body!.getReader();
 
-      // heartbeat
-      const hb = setInterval(() => {
-        controller.enqueue(encoder.encode(`:heartbeat\n\n`));
-      }, HEARTBEAT_MS);
+      const hb = isUpstreamSSE
+        ? setInterval(() => {
+            controller.enqueue(encoder.encode(`:\n\n`));
+          }, HEARTBEAT_MS)
+        : null;
 
       let total = 0;
 
@@ -201,13 +195,13 @@ export async function POST(req: NextRequest) {
               );
               break;
             }
-            controller.enqueue(value); // Chatbase already formats SSE lines
+            controller.enqueue(value); // Pass through upstream bytes as-is
           }
         }
       } catch (e) {
         controller.enqueue(encoder.encode(`event: error\ndata: ${JSON.stringify({ message: String(e) })}\n\n`));
       } finally {
-        clearInterval(hb);
+        if (hb) clearInterval(hb as unknown as number);
         controller.close();
       }
     },
@@ -217,9 +211,9 @@ export async function POST(req: NextRequest) {
     status: 200,
     headers: new Headers({
       ...Object.fromEntries(headers),
-      "Content-Type": "text/event-stream",
+      "Content-Type": isUpstreamSSE ? "text/event-stream" : upstreamContentType || "text/plain; charset=utf-8",
       "Cache-Control": "no-store",
-      Connection: "keep-alive", // hint; Edge may ignore
+      ...(isUpstreamSSE ? { Connection: "keep-alive" } : {}), // hint; Edge may ignore
     }),
   });
-}
+};
