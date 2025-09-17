@@ -29,7 +29,7 @@ const ChatRequestSchema = z.object({
 });
 
 const originAllowlist = ["https://zetachain.com", "https://zetachain.app"];
-const originRegexes = [/^https?:\/\/([a-z0-9-]+\.)*zetachain\.com$/i, /^https?:\/\/([a-z0-9-]+\.)*zetachain\.app$/i];
+const originRegexes = [/^https:\/\/([a-z0-9-]+\.)*zetachain\.com$/i, /^https:\/\/([a-z0-9-]+\.)*zetachain\.app$/i];
 
 const isAllowedOrigin = (origin: string | null): boolean => {
   if (!origin) return false;
