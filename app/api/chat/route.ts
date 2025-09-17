@@ -5,7 +5,6 @@ export const dynamic = "force-dynamic";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
-/** ----- Config ----- */
 const CHATBASE_URL = "https://www.chatbase.co/api/v1/chat";
 const MIN_CONTENT_LENGTH = 1;
 const MIN_TEMPERATURE = 0;
@@ -213,7 +212,7 @@ export const POST = async (req: NextRequest) => {
       ...Object.fromEntries(headers),
       "Content-Type": isUpstreamSSE ? "text/event-stream" : upstreamContentType || "text/plain; charset=utf-8",
       "Cache-Control": "no-store",
-      ...(isUpstreamSSE ? { Connection: "keep-alive" } : {}), // hint; Edge may ignore
+      ...(isUpstreamSSE ? { Connection: "keep-alive" } : {}),
     }),
   });
 };
