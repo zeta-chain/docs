@@ -154,7 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Streaming: set up Server-Sent Events (SSE) headers for real-time streaming
-    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-transform");
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no"); // Disable nginx buffering for real-time streaming
@@ -169,7 +169,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Heartbeat to prevent idle timeouts on hosting proxies (e.g., Vercel/CDN)
     // Sends SSE comment lines every 15s while streaming is active
-    const HEARTBEAT_INTERVAL_MS = 15000;
+    const HEARTBEAT_INTERVAL_MS = 5000;
     const heartbeat = setInterval(() => {
       try {
         res.write(`: keepalive\n\n`);
@@ -188,8 +188,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     };
     // res.on('close') is not always available; use req socket close as well
-    (res as unknown as { on?: (ev: string, cb: () => void) => void }).on?.("close", onClose);
-    (req as unknown as { on?: (ev: string, cb: () => void) => void }).on?.("close", onClose);
+    const addOn = (obj: unknown) => (obj as unknown as { on?: (ev: string, cb: () => void) => void }).on?.bind(obj);
+    addOn(res)?.("close", onClose);
+    addOn(req)?.("close", onClose);
+    addOn(req)?.("aborted", onClose);
 
     if (!chatRes.ok || !chatRes.body) {
       const errBody = await chatRes.text().catch(() => "");
