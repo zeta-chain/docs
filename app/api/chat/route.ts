@@ -101,14 +101,17 @@ export const POST = async (req: NextRequest) => {
 
   const { messages, chatbotId, stream, temperature, model, conversationId } = parsed.data;
 
+  const trimmedConversationId = conversationId?.trim();
+  const hasConversationId = !!trimmedConversationId;
+
   const payload: Record<string, unknown> = {
     messages,
     chatbotId,
     stream,
   };
+  if (hasConversationId) payload.conversationId = trimmedConversationId;
   if (temperature !== undefined) payload.temperature = temperature;
   if (model !== undefined) payload.model = model;
-  if (conversationId !== undefined) payload.conversationId = conversationId;
 
   // Call Chatbase
   const upstream = await fetch(CHATBASE_URL, {
@@ -134,17 +137,19 @@ export const POST = async (req: NextRequest) => {
       return json(
         upstream.status,
         { error: message, upstreamStatus: upstream.status, upstreamBody: isJson ? data : text },
-        headers
+        { ...Object.fromEntries(headers) }
       );
     }
 
+    const respHeaders = new Headers({
+      ...Object.fromEntries(headers),
+      "Content-Type": isJson ? "application/json" : "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+
     return new Response(isJson ? JSON.stringify(data) : text, {
       status: 200,
-      headers: new Headers({
-        ...Object.fromEntries(headers),
-        "Content-Type": isJson ? "application/json" : "text/plain; charset=utf-8",
-        "Cache-Control": "no-store",
-      }),
+      headers: respHeaders,
     });
   }
 
@@ -158,13 +163,15 @@ export const POST = async (req: NextRequest) => {
       message: upstream.statusText || "Upstream error",
       body: errBody,
     })}\n\n`;
+    const errHeaders = new Headers({
+      ...Object.fromEntries(headers),
+      "Content-Type": isUpstreamSSE ? "text/event-stream" : "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+
     return new Response(sseErr, {
       status: upstream.status || 502,
-      headers: new Headers({
-        ...Object.fromEntries(headers),
-        "Content-Type": isUpstreamSSE ? "text/event-stream" : "text/plain; charset=utf-8",
-        "Cache-Control": "no-store",
-      }),
+      headers: errHeaders,
     });
   }
 
@@ -206,13 +213,15 @@ export const POST = async (req: NextRequest) => {
     },
   });
 
+  const respHeaders = new Headers({
+    ...Object.fromEntries(headers),
+    "Content-Type": isUpstreamSSE ? "text/event-stream" : upstreamContentType || "text/plain; charset=utf-8",
+    "Cache-Control": "no-store",
+    ...(isUpstreamSSE ? { Connection: "keep-alive" } : {}),
+  });
+
   return new Response(streamOut, {
     status: 200,
-    headers: new Headers({
-      ...Object.fromEntries(headers),
-      "Content-Type": isUpstreamSSE ? "text/event-stream" : upstreamContentType || "text/plain; charset=utf-8",
-      "Cache-Control": "no-store",
-      ...(isUpstreamSSE ? { Connection: "keep-alive" } : {}),
-    }),
+    headers: respHeaders,
   });
 };
