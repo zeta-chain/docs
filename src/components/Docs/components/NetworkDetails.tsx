@@ -15,7 +15,7 @@ const networkDetails: Record<NetworkType, NetworkData> = {
     { name: "Decimals", value: "18" },
     { name: "HD Path", value: "m/44'/60'/0'/0/0" },
     { name: "Bech32 prefix", value: "zeta" },
-    { name: "Explorer", value: "https://athens.explorer.zetachain.com" },
+    { name: "Explorer", value: "https://testnet.zetascan.com" },
     {
       name: "EVM RPC",
       value: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
@@ -29,7 +29,7 @@ const networkDetails: Record<NetworkType, NetworkData> = {
     { name: "Decimals", value: "18" },
     { name: "HD Path", value: "m/44'/60'/0'/0/0" },
     { name: "Bech32 prefix", value: "zeta" },
-    { name: "Explorer", value: "https://explorer.zetachain.com" },
+    { name: "Explorer", value: "https://zetascan.com" },
     {
       name: "EVM RPC",
       value: "https://zetachain-evm.blockpi.network/v1/rpc/public",
