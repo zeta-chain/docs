@@ -387,7 +387,7 @@ runcmd:
 Configuring the node as a validator is currently performed manually once the
 node is up and running. **Before** deploying the validator, ensure that the node
 is fully synced by comparing the block number in the logs with the block height
-on an explorer such as [ZetaScan](https://explorer.zetachain.com/).
+on an explorer such as [ZetaScan](https://zetascan.com/).
 
 The key steps configuring the validator are:
 
@@ -486,5 +486,4 @@ sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacor
 
 This will prompt for the keyring passphrase set when creating the key, and ask
 you to confirm the transaction. Once the transaction succeeds the validator is
-created on chain and can be confirmed in the [ZetaChain
-Explorer](https://explorer.zetachain.com/validators).
+created on chain.
