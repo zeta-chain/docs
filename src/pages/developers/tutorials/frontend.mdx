@@ -200,6 +200,39 @@ yarn dev
 This launches a Vite development server. By default, the app will be available
 at `http://localhost:5173`.
 
+## Wallets
+
+By default, the frontend uses `@zetachain/wallet` powered by
+[Dynamic](https://www.dynamic.xyz/), which supports EVM, Solana, Sui, and
+Bitcoin. With a single toggle you can switch to an EIP-6963 wallet, which only
+supports EVM chains.
+
+- Default: `USE_DYNAMIC_WALLET = true`
+- EIP-6963: set `USE_DYNAMIC_WALLET = false`
+
+```ts filename="frontend/src/constants/wallets.ts"
+export const USE_DYNAMIC_WALLET = true;
+```
+
+The root renders either directly or inside the EIP-6963 provider based on this
+flag:
+
+```ts filename="frontend/src/main.tsx"
+{
+  USE_DYNAMIC_WALLET ? (
+    <App />
+  ) : (
+    <Eip6963WalletProvider>
+      <App />
+    </Eip6963WalletProvider>
+  );
+}
+```
+
+Both wallet modes provide a signer to the same message flow for EVM chains, so
+the rest of this tutorial (sending `evmCall`, tracking CCTX, and showing
+explorers) is the same.
+
 ### Configure the Contract Address (optional)
 
 By default, the app points to a pre-set Hello contract address:
