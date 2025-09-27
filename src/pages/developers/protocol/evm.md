@@ -2306,20 +2306,12 @@ Error for failed deposit.
 error DepositFailed();
 ```
 
-#### InsufficientETHAmount
-Error for insufficient ETH amount.
+#### InsufficientEVMAmount
+Error for insufficient token amount.
 
 
 ```solidity
-error InsufficientETHAmount();
-```
-
-#### InsufficientERC20Amount
-Error for insufficient ERC20 token amount.
-
-
-```solidity
-error InsufficientERC20Amount();
+error InsufficientEVMAmount();
 ```
 
 #### ZeroAddress
@@ -3623,8 +3615,6 @@ function mint(address mintee, uint256 value, bytes32 internalSendHash) external 
 
 #### burnFrom
 
-*Only Connector can mint. Minting requires burning the equivalent amount on another chain*
-
 
 ```solidity
 function burnFrom(address account, uint256 amount) public override(IZetaNonEthInterface, ERC20Burnable);
@@ -3660,6 +3650,183 @@ event TSSAddressUpdaterUpdated(address callerAddress, address newTssUpdaterAddre
 ```solidity
 event ConnectorAddressUpdated(address callerAddress, address newConnectorAddress);
 ```
+
+
+
+## GatewayEVMValidations
+[Git Source](https://github.com/zeta-chain/protocol-contracts/blob/main/contracts/evm/libraries/GatewayEVMValidations.sol)
+
+Library containing validation functions for GatewayEVM contract.
+
+*This library provides common validation logic used across GatewayEVM contract.*
+
+
+### State Variables
+#### MAX_PAYLOAD_SIZE
+Maximum payload size constant.
+
+
+```solidity
+uint256 internal constant MAX_PAYLOAD_SIZE = 2880;
+```
+
+
+### Functions
+#### validateNonZeroAddress
+
+*Validates that an address is not zero.*
+
+
+```solidity
+function validateNonZeroAddress(address addr) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`addr`|`address`|The address to validate.|
+
+
+#### validateAmount
+
+*Validates that amount is not zero.*
+
+
+```solidity
+function validateAmount(uint256 amount) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`amount`|`uint256`|The amount to validate.|
+
+
+#### validatePayloadSize
+
+*Validates payload size constraints.*
+
+
+```solidity
+function validatePayloadSize(uint256 payloadLength, uint256 revertMessageLength) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`payloadLength`|`uint256`|The length of the main payload.|
+|`revertMessageLength`|`uint256`|The length of the revert message.|
+
+
+#### validateGasLimitRevertOptions
+
+*Validates on revert gas limit.*
+
+
+```solidity
+function validateGasLimitRevertOptions(RevertOptions calldata revertOptions) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`revertOptions`|`RevertOptions`|The revert options to validate.|
+
+
+#### validateRevertMessageLength
+
+*Validates on revert message length.*
+
+
+```solidity
+function validateRevertMessageLength(RevertOptions calldata revertOptions) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`revertOptions`|`RevertOptions`|The revert options to validate.|
+
+
+#### validateCallRevertOptions
+
+*Validates revert options for call operations (includes callOnRevert check).*
+
+
+```solidity
+function validateCallRevertOptions(RevertOptions calldata revertOptions) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`revertOptions`|`RevertOptions`|The revert options to validate.|
+
+
+#### validateDepositParams
+
+*Validates standard deposit parameters.*
+
+
+```solidity
+function validateDepositParams(address receiver, uint256 amount, RevertOptions calldata revertOptions) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`receiver`|`address`|The receiver address.|
+|`amount`|`uint256`|The amount to deposit.|
+|`revertOptions`|`RevertOptions`|The revert options.|
+
+
+#### validateDepositAndCallParams
+
+*Validates deposit and call parameters.*
+
+
+```solidity
+function validateDepositAndCallParams(
+    address receiver,
+    uint256 amount,
+    bytes calldata payload,
+    RevertOptions calldata revertOptions
+)
+    internal
+    pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`receiver`|`address`|The receiver address.|
+|`amount`|`uint256`|The amount to deposit.|
+|`payload`|`bytes`|The payload to send.|
+|`revertOptions`|`RevertOptions`|The revert options.|
+
+
+#### validateCallParams
+
+*Validates call parameters.*
+
+
+```solidity
+function validateCallParams(
+    address receiver,
+    bytes calldata payload,
+    RevertOptions calldata revertOptions
+)
+    internal
+    pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`receiver`|`address`|The receiver address.|
+|`payload`|`bytes`|The payload to send.|
+|`revertOptions`|`RevertOptions`|The revert options.|
+
 
 
 
