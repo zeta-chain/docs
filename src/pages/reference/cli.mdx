@@ -1252,3 +1252,18 @@ Options:
   -h, --help  display help for command
 
 ```
+
+## zetachain ask
+
+```
+Usage: zetachain ask [options] [prompt...]
+
+Chat with ZetaChain Docs AI
+
+Arguments:
+  prompt      Prompt to send to AI
+
+Options:
+  -h, --help  display help for command
+
+```
