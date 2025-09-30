@@ -17,7 +17,7 @@ time.
 Create a new Universal NFT project:
 
 ```
-npx zetachain@next new --project nft
+npx zetachain@latest new --project nft
 ```
 
 Install dependencies:
@@ -25,12 +25,13 @@ Install dependencies:
 ```
 cd nft
 yarn
+forge soldeer update
 ```
 
-Compile Contracts:
+Compile contracts:
 
 ```
-npx hardhat compile --force
+forge build
 ```
 
 ## Upgrade an Existing ERC-721 Project
@@ -52,30 +53,54 @@ token IDs across ZetaChain and connected EVM chains.
 
 ## Deploy on Testnet
 
+```
+RPC_ETHEREUM=$(zetachain q chains show --chain-id 11155111 -f rpc)
+RPC_BASE=$(zetachain q chains show --chain-id 84532 -f rpc)
+RPC_ZETACHAIN=$(zetachain q chains show --chain-id 7001 -f rpc)
+
+ZRC20_ETHEREUM=$(zetachain q tokens show -s ETH.ETHSEP -f zrc20)
+ZRC20_BASE=$(zetachain q tokens show -s ETH.BASESEP	-f zrc20)
+
+GATEWAY_ETHEREUM=0x0c487a766110c85d301d96e33579c5b317fa4995
+GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
+GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
+UNISWAP_ROUTER=0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe
+
+GAS_LIMIT=1000000
+```
+
+```
+PRIVATE_KEY=...
+```
+
 Deploy contracts on ZetaChain, Base and Ethereum.
 
 ```
-ZETACHAIN_NFT=$(npx hardhat nft:deploy \
-  --network zeta_testnet \
-  --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+NFT_ZETACHAIN=$(npx tsx commands deploy \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
   --name ZetaChainUniversalNFT \
-  --json | jq -r .contractAddress) && echo $ZETACHAIN_NFT
+  --uniswap-router $UNISWAP_ROUTER \
+  --gateway $GATEWAY_ZETACHAIN \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $NFT_ZETACHAIN
 ```
 
 ```
-BASE_NFT=$(npx hardhat nft:deploy \
-  --network base_sepolia \
-  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+NFT_BASE=$(npx tsx commands deploy \
+  --rpc $RPC_BASE \
+  --private-key $PRIVATE_KEY \
   --name EVMUniversalNFT \
-  --json | jq -r .contractAddress) && echo $BASE_NFT
+  --gateway $GATEWAY_BASE \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $NFT_BASE
 ```
 
 ```
-ETHEREUM_NFT=$(npx hardhat nft:deploy \
-  --network sepolia_testnet \
-  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+NFT_ETHEREUM=$(npx tsx commands deploy \
+  --rpc $RPC_ETHEREUM \
+  --private-key $PRIVATE_KEY \
   --name EVMUniversalNFT \
-  --json | jq -r .contractAddress) && echo $ETHEREUM_NFT
+  --gateway $GATEWAY_ETHEREUM \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $NFT_ETHEREUM
 ```
 
 ### Connect Contracts
@@ -85,37 +110,22 @@ cross-chain communication. Use `setConnected` on ZetaChain to register Connected
 contracts by their ZRC-20 gas token (used to identify the chain):
 
 ```
-npx hardhat nft:set-connected \
-  --contract $ZETACHAIN_NFT \
-  --connected $BASE_NFT \
-  --zrc20 $BASE_ZRC20 \
-  --network zeta_testnet \
-  --json
+cast send $NFT_ZETACHAIN 'setConnected(address,bytes)' $ZRC20_BASE $NFT_BASE --rpc-url $RPC_ZETACHAIN --private-key $PRIVATE_KEY
 ```
 
 ```
-npx hardhat nft:set-connected \
-  --contract $ZETACHAIN_NFT \
-  --connected $ETHEREUM_NFT \
-  --zrc20 $ETHEREUM_ZRC20 \
-  --network zeta_testnet
+cast send $NFT_ZETACHAIN 'setConnected(address,bytes)' $ZRC20_ETHEREUM $NFT_ETHEREUM --rpc-url $RPC_ZETACHAIN --private-key $PRIVATE_KEY
 ```
 
 Then, on each connected chain, use `setUniversal` to point back to the Universal
 contract on ZetaChain:
 
 ```
-npx hardhat nft:set-universal \
-  --contract $BASE_NFT \
-  --universal $ZETACHAIN_NFT \
-  --network base_sepolia
+cast send $NFT_BASE 'setUniversal(address)' $NFT_ZETACHAIN --rpc-url $RPC_BASE --private-key $PRIVATE_KEY
 ```
 
 ```
-npx hardhat nft:set-universal \
-  --contract $ETHEREUM_NFT \
-  --universal $ZETACHAIN_NFT \
-  --network sepolia_testnet
+cast send $NFT_ETHEREUM 'setUniversal(address)' $NFT_ZETACHAIN --rpc-url $RPC_ETHEREUM --private-key $PRIVATE_KEY
 ```
 
 This ensures only authorized contracts can send and receive NFT transfers across
@@ -124,14 +134,12 @@ chains.
 ### Mint on ZetaChain
 
 ```
-NFT1=$(npx hardhat nft:mint \
-  --contract $ZETACHAIN_NFT \
-  --token-uri https://example.org \
-  --network zeta_testnet \
-  --json | jq -r .tokenId) && echo $NFT1
+TOKEN_ID=$(npx tsx commands mint \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --contract $NFT_ZETACHAIN \
+  --token-uri https://example.com/nft/metadata/1 | jq -r .tokenId) && echo $TOKEN_ID
 ```
-
-https://zetachain-testnet.blockscout.com/tx/0xc9f8e3a8b3e1f1e2511fae649d510f0ce483dd1b3c481c8b01f066a0ca342458
 
 ### Transfer from ZetaChain to Base
 
@@ -142,28 +150,34 @@ Use ZRC-20 Base ETH as the destination address to specify the chain to which the
 NFT will be transferred.
 
 ```
-npx hardhat nft:transfer \
-  --contract $ZETACHAIN_NFT \
-  --destination $BASE_ZRC20 \
-  --token-id $NFT1 \
-  --network zeta_testnet \
-  --gas-amount 5
+npx tsx commands transfer \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --contract $NFT_ZETACHAIN \
+  --token-id $TOKEN_ID \
+  --destination $ZRC20_BASE \
+  --gas-amount 5 | jq -r .transferTransactionHash
 ```
 
 ```
-🚀 Successfully transferred NFT to the contract.
-📜 Contract address: 0xb2c095a2e05B5C886041a53b6f3d62736fC2C1Bc
-🖼 NFT Contract address: 0xb2c095a2e05B5C886041a53b6f3d62736fC2C1Bc
-🆔 Token ID: 269200511667900488584833727349313006688770271102
-🔗 Transaction hash: 0x219370f4200c934dd647a1ea27099c25061de2fb25bb13194ec7bd328cdb624e
-⛽ Gas used: 500000
+0xc1d363c8fddd21add48580c52550248f969a9a3b65d1377440cefe7fa8631db8
 ```
 
 Outgoing cross-chain transaction from ZetaChain to Base:
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x219370f4200c934dd647a1ea27099c25061de2fb25bb13194ec7bd328cdb624e
+```
+zetachain q cctx --hash 0xc1d363c8fddd21add48580c52550248f969a9a3b65d1377440cefe7fa8631db8
+```
 
-https://sepolia.basescan.org/tx/0xb56e0fccb95d40e79d6078dbdf2b4e47454e4c6da1dd7a9afb6082e1bd9f1a78
+```
+7001 → 84532 ✅ OutboundMined
+CCTX:     0x8066aaf467afb79d5c969b3389f958d566637ad690410b7538706d20d6eeceac
+Tx Hash:  0xc1d363c8fddd21add48580c52550248f969a9a3b65d1377440cefe7fa8631db8 (on chain 7001)
+Tx Hash:  0xe2c966b67fdc6759669cebc021466c408449f5c2c19954ffdb6e73d714ec29bc (on chain 84532)
+Sender:   0x6335bAB2eF31B79eE01dCFDB656a1eEf5ACd0840
+Receiver: 0xB7c73Ee9B4E65458C972d64bbfAe653d0E6F389A
+Message:  0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000a6ca386bc8dc2baad9c67208f0129de2244bda1b00000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba320000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000002268747470733a2f2f6578616d706c652e636f6d2f6e66742f6d657461646174612f310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+```
 
 ### Transfer from Base to Ethereum
 
@@ -171,33 +185,44 @@ Let’s move the NFT again — this time from Base to Ethereum. You’ll referen
 same token ID, which remains unchanged.
 
 ```
-npx hardhat nft:transfer \
-  --contract $BASE_NFT \
-  --network base_sepolia \
-  --destination $ETHEREUM_ZRC20 \
-  --token-id $NFT1 \
-  --gas-amount 0.005
+npx tsx commands transfer \
+  --rpc $RPC_BASE \
+  --private-key $PRIVATE_KEY \
+  --contract $NFT_BASE \
+  --token-id $TOKEN_ID \
+  --destination $ZRC20_ETHEREUM \
+  --gas-amount 0.05 | jq -r .transferTransactionHash
 ```
 
 ```
-🚀 Successfully transferred NFT to the contract.
-📜 Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
-🖼 NFT Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
-🆔 Token ID: 269200511667900488584833727349313006688770271102
-🔗 Transaction hash: 0x27c3ca27da7576e8b00ceb588c9aa5e5622dcf03273d22c58660268149c445a4
-⛽ Gas used: 118428
+0x4aa957b2678232fb3f09557e8fcee22d5503272b6d6b8001677f32cbcdfa30dc
 ```
 
-Incoming cross-chain transaction from Base to ZetaChain:
+```
+zetachain q cctx --hash 0x4aa957b2678232fb3f09557e8fcee22d5503272b6d6b8001677f32cbcdfa30dc
+```
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x27c3ca27da7576e8b00ceb588c9aa5e5622dcf03273d22c58660268149c445a4
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0xa54aea97073e6f76bf28c46290b0544b80aa1e85702284aacbedf03d5f59c322
+Tx Hash:  0x4aa957b2678232fb3f09557e8fcee22d5503272b6d6b8001677f32cbcdfa30dc (on chain 84532)
+Tx Hash:  0xe8d8432917cc0cb98f60285c711608003859924f3dc962c648db23232a36dcbb (on chain 7001)
+Sender:   0xB7c73Ee9B4E65458C972d64bbfAe653d0E6F389A
+Receiver: 0x6335bAB2eF31B79eE01dCFDB656a1eEf5ACd0840
+Message:  00000000000000000000000005ba149a7bd6dc1f937fa9046a9e05c05f3b18b00000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000a6ca386bc8dc2baad9c67208f0129de2244bda1b00000000000000000000000000000000000000000000000000000000000000c00000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba320000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000002268747470733a2f2f6578616d706c652e636f6d2f6e66742f6d657461646174612f310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Amount:   50000000000000000 Gas tokens
 
-Outgoing cross-chain transaction from ZetaChain to Ethereum:
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x5cfb1c21201025482909f2bc390e0ada032e2c37d0f8e1861a7e248083c8d015
-
-https://sepolia.etherscan.io/tx/0x171034238d6cfb51c2a8a8e1a023034523d579643d23d9bcbd98c70ad76b1eb9
+7001 → 11155111 ✅ PendingOutbound (transaction broadcasted to target chain)
+CCTX:     0x34656cbd3210f3e33edb6d261bfdbc800476baa85f40fc15b75f934efbbd30c9
+Tx Hash:  0xa54aea97073e6f76bf28c46290b0544b80aa1e85702284aacbedf03d5f59c322 (on chain 7001)
+Tx Hash:  0xe7c0d400bd94e5c84cb44752d1e9e05e05f73f0433f6e915e77cc7fdde47d8fd (on chain 11155111)
+Sender:   0x6335bAB2eF31B79eE01dCFDB656a1eEf5ACd0840
+Receiver: 0x166d406a3049C04bF884a4C8cfe99c5bdCebC928
+Message:  0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000a6ca386bc8dc2baad9c67208f0129de2244bda1b00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000e22dfad4b38420000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba320000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000002268747470733a2f2f6578616d706c652e636f6d2f6e66742f6d657461646174612f310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Amount:   3978993754388546 Gas tokens
+Status:   PendingOutbound, initiating outbound
+```
 
 ## Source Code
 
-https://github.com/zeta-chain/standard-contracts/tree/main/contracts/nft
+https://github.com/zeta-chain/example-contracts/tree/main/examples/nft
