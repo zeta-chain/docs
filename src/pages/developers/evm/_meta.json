@@ -12,7 +12,7 @@
     "description": "Enables message passing and ZETA transfer to and from universal apps"
   },
   "gas": {
-    "title": "Gas Fees",
+    "title": "Gas Fees & Limits",
     "description": "Learn about ZRC-20 withdraw fees, message passing fees"
   },
   "cctx": {
