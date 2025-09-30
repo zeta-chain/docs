@@ -17,18 +17,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout zeta-chain/protocol-contracts repository
+      - name: Checkout zeta-chain/protocol-contracts-evm repository
         uses: actions/checkout@v4
         with:
-          repository: zeta-chain/protocol-contracts
-          path: protocol-contracts
+          repository: zeta-chain/protocol-contracts-evm
+          path: protocol-contracts-evm
 
       - name: Update docs
         run: |
           mkdir -p src/pages/developers/protocol/
           rm -f src/pages/developers/protocol/evm.md
-          cp protocol-contracts/docs/index.md src/pages/developers/protocol/evm.md
-          rm -rf protocol-contracts
+          cp protocol-contracts-evm/docs/index.md src/pages/developers/protocol/evm.md
+          rm -rf protocol-contracts-evm
 
       - name: Check for changes
         id: check-changes
@@ -41,9 +41,9 @@ jobs:
         with:
           title: "docs(evm): update protocol contracts"
           body: |
-            This PR syncs the docs with protocol-contracts
+            This PR syncs the docs with protocol-contracts-evm
           commit-message: |
             "docs(evm): update protocol contracts"
           base: main
-          branch: docs/updates-from-protocol-contracts
+          branch: docs/updates-from-protocol-contracts-evm
         if: steps.check-changes.outputs.changed == 'true'
