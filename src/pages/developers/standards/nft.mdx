@@ -86,6 +86,10 @@ NFT_ZETACHAIN=$(npx tsx commands deploy \
 ```
 
 ```
+0x6335bAB2eF31B79eE01dCFDB656a1eEf5ACd0840
+```
+
+```
 NFT_BASE=$(npx tsx commands deploy \
   --rpc $RPC_BASE \
   --private-key $PRIVATE_KEY \
@@ -95,12 +99,20 @@ NFT_BASE=$(npx tsx commands deploy \
 ```
 
 ```
+0xB7c73Ee9B4E65458C972d64bbfAe653d0E6F389A
+```
+
+```
 NFT_ETHEREUM=$(npx tsx commands deploy \
   --rpc $RPC_ETHEREUM \
   --private-key $PRIVATE_KEY \
   --name EVMUniversalNFT \
   --gateway $GATEWAY_ETHEREUM \
   --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $NFT_ETHEREUM
+```
+
+```
+0x166d406a3049C04bF884a4C8cfe99c5bdCebC928
 ```
 
 ### Connect Contracts
