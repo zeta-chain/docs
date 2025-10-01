@@ -11,12 +11,12 @@ upgradeable](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeab
 proxy patterns, allowing developers to extend and upgrade token logic safely
 over time.
 
-## Create a New Universal Token
+## Option 1: Create a New Universal Token
 
 Create a new Universal Token project:
 
 ```
-npx zetachain@next new --project token
+npx zetachain@latest new --project token
 ```
 
 Install dependencies:
@@ -24,15 +24,16 @@ Install dependencies:
 ```
 cd token
 yarn
+forge soldeer update
 ```
 
-Compile Contracts:
+Compile contracts:
 
 ```
-npx hardhat compile --force
+forge build
 ```
 
-## Upgrade an Existing ERC-20 Project
+## Option 2: Upgrade an Existing ERC-20 Project
 
 You can upgrade your existing ERC-20 project to become a Universal Token by
 installing the official standard contracts package:
@@ -51,30 +52,54 @@ supply tracking across ZetaChain and connected EVM chains.
 
 ## Deploy on Testnet
 
+```
+RPC_ETHEREUM=$(zetachain q chains show --chain-id 11155111 -f rpc)
+RPC_BASE=$(zetachain q chains show --chain-id 84532 -f rpc)
+RPC_ZETACHAIN=$(zetachain q chains show --chain-id 7001 -f rpc)
+
+ZRC20_ETHEREUM=$(zetachain q tokens show -s ETH.ETHSEP -f zrc20)
+ZRC20_BASE=$(zetachain q tokens show -s ETH.BASESEP	-f zrc20)
+
+GATEWAY_ETHEREUM=0x0c487a766110c85d301d96e33579c5b317fa4995
+GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
+GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
+UNISWAP_ROUTER=0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe
+
+GAS_LIMIT=1000000
+```
+
+```
+PRIVATE_KEY=...
+```
+
 Deploy contracts on ZetaChain, Base and Ethereum.
 
 ```
-ZETACHAIN_TOKEN=$(npx hardhat token:deploy \
-  --network zeta_testnet \
-  --uniswap-router 0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe \
+ZETACHAIN_TOKEN=$(npx tsx commands deploy \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
   --name ZetaChainUniversalToken \
-  --json | jq -r .contractAddress) && echo $ZETACHAIN_TOKEN
+  --uniswap-router $UNISWAP_ROUTER \
+  --gateway $GATEWAY_ZETACHAIN \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $ZETACHAIN_TOKEN
 ```
 
 ```
-BASE_TOKEN=$(npx hardhat token:deploy \
-  --network base_sepolia \
-  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+BASE_TOKEN=$(npx tsx commands deploy \
+  --rpc $RPC_BASE \
+  --private-key $PRIVATE_KEY \
   --name EVMUniversalToken \
-  --json | jq -r .contractAddress) && echo $BASE_TOKEN
+  --gateway $GATEWAY_BASE \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $BASE_TOKEN
 ```
 
 ```
-ETHEREUM_TOKEN=$(npx hardhat token:deploy \
-  --network sepolia_testnet \
-  --gateway 0x0c487a766110c85d301d96e33579c5b317fa4995 \
+ETHEREUM_TOKEN=$(npx tsx commands deploy \
+  --rpc $RPC_ETHEREUM \
+  --private-key $PRIVATE_KEY \
   --name EVMUniversalToken \
-  --json | jq -r .contractAddress) && echo $ETHEREUM_TOKEN
+  --gateway $GATEWAY_ETHEREUM \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $ETHEREUM_TOKEN
 ```
 
 ### Connect Contracts
@@ -84,37 +109,22 @@ cross-chain communication. Use `setConnected` on ZetaChain to register Connected
 contracts by their ZRC-20 gas token (used to identify the chain):
 
 ```
-npx hardhat token:set-connected \
-  --contract $ZETACHAIN_TOKEN \
-  --connected $BASE_TOKEN \
-  --zrc20 $BASE_ZRC20 \
-  --network zeta_testnet \
-  --json
+cast send $ZETACHAIN_TOKEN 'setConnected(address,bytes)' $ZRC20_BASE $BASE_TOKEN --rpc-url $RPC_ZETACHAIN --private-key $PRIVATE_KEY
 ```
 
 ```
-npx hardhat token:set-connected \
-  --contract $ZETACHAIN_TOKEN \
-  --connected $ETHEREUM_TOKEN \
-  --zrc20 $ETHEREUM_ZRC20 \
-  --network zeta_testnet
+cast send $ZETACHAIN_TOKEN 'setConnected(address,bytes)' $ZRC20_ETHEREUM $ETHEREUM_TOKEN --rpc-url $RPC_ZETACHAIN --private-key $PRIVATE_KEY
 ```
 
 Then, on each connected chain, use `setUniversal` to point back to the Universal
 contract on ZetaChain:
 
 ```
-npx hardhat token:set-universal \
-  --contract $BASE_TOKEN \
-  --universal $ZETACHAIN_TOKEN \
-  --network base_sepolia
+cast send $BASE_TOKEN 'setUniversal(address)' $ZETACHAIN_TOKEN --rpc-url $RPC_BASE --private-key $PRIVATE_KEY
 ```
 
 ```
-npx hardhat token:set-universal \
-  --contract $ETHEREUM_TOKEN \
-  --universal $ZETACHAIN_TOKEN \
-  --network sepolia_testnet
+cast send $ETHEREUM_TOKEN 'setUniversal(address)' $ZETACHAIN_TOKEN --rpc-url $RPC_ETHEREUM --private-key $PRIVATE_KEY
 ```
 
 This ensures only authorized contracts can send and receive token transfers
@@ -123,13 +133,14 @@ across chains.
 ### Mint on ZetaChain
 
 ```
-npx hardhat token:mint \
+npx tsx commands mint \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
   --contract $ZETACHAIN_TOKEN \
-  --amount 10
-  --network zeta_testnet
+  --amount 10 | jq -r .mintTransactionHash
 ```
 
-https://zetachain-testnet.blockscout.com/tx/0xc9f8e3a8b3e1f1e2511fae649d510f0ce483dd1b3c481c8b01f066a0ca342458
+https://zetachain-testnet.blockscout.com/tx/0xbe550cb123e34c4bddf3b273e854837ea6f727e527bf80a752870c3f8bff0ef1
 
 ### Transfer from ZetaChain to Base
 
@@ -140,60 +151,68 @@ Use ZRC-20 Base ETH as the destination address to specify the chain to which the
 tokens will be transferred.
 
 ```
-npx hardhat token:transfer \
+npx tsx commands transfer \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
   --from $ZETACHAIN_TOKEN \
-  --to $BASE_ZRC20 \
+  --destination $ZRC20_BASE \
   --amount 10 \
-  --network zeta_testnet \
-  --gas-amount 5
+  --gas-amount 5 | jq -r .transferTransactionHash
 ```
 
 ```
-🚀 Successfully transferred token.
-📜 Contract address: 0x22a4E73909bAB067B05185879Cd7FAF335f41920
-👤 Amount: 10
-🔗 Transaction hash: 0xe8b682b0501532154b49a852853bcdc22f843e23068c88c319699975ecef6cc2
-⛽ Gas used: 500000
+zetachain q cctx --hash 0x2ced374831b7612f4f2df98f2d1f30b2fa797ddcc62df0a5883b402b9310fe7a
 ```
 
-Outgoing cross-chain transaction from ZetaChain to Base:
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xe8b682b0501532154b49a852853bcdc22f843e23068c88c319699975ecef6cc2
-
-https://sepolia.basescan.org/tx/0xd48bb35c371570e7c3769d4ebd75f157ac4ddd4f081aedac1e9d4b6a452460db
+```
+7001 → 84532 ✅ OutboundMined
+CCTX:     0x88ac99d5ce593af62f5e56e2cdeb14797e23fb890933f50d74f1c8944b91b991
+Tx Hash:  0x2ced374831b7612f4f2df98f2d1f30b2fa797ddcc62df0a5883b402b9310fe7a (on chain 7001)
+Tx Hash:  0x4c0dbfda09e0364a54be7f812a49c677739f0c3a9bc6d2e6bf0c8d5ea4a7903d (on chain 84532)
+Sender:   0xE3CA615E4Bd2b106ff51e88A04Ec39A2Afc75212
+Receiver: 0x449777033Ff53aD3B4F70C17c31110476E61D2A8
+Message:  0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba3200000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000
+```
 
 ### Transfer from Base to Ethereum
 
 Let’s move the token again — this time from Base to Ethereum.
 
 ```
-npx hardhat token:transfer \
+npx tsx commands transfer \
+  --rpc $RPC_BASE \
+  --private-key $PRIVATE_KEY \
   --from $BASE_TOKEN \
-  --network base_sepolia \
-  --to $ETHEREUM_ZRC20 \
+  --destination $ZRC20_ETHEREUM \
   --amount 10 \
-  --gas-amount 0.005
+  --gas-amount 0.005 | jq -r .transferTransactionHash
 ```
 
 ```
-🚀 Successfully transferred token to the contract.
-📜 Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
-🖼 Token Contract address: 0x7a72AE51CCfAda57B20f8C7d8b138d35E46a2D60
-🆔 Token ID: 269200511667900488584833727349313006688770271102
-🔗 Transaction hash: 0x27c3ca27da7576e8b00ceb588c9aa5e5622dcf03273d22c58660268149c445a4
-⛽ Gas used: 118428
+zetachain q cctx --hash 0x8db12522169485a44ba8490d53f734ac6b7f5da72a6decbe3ae462198a960cee
 ```
 
-Incoming cross-chain transaction from Base to ZetaChain:
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0x39d970fc742519c87e67733ffd13315dce907c07e65cf97ba4ffba2e2bf2ceed
+Tx Hash:  0x8db12522169485a44ba8490d53f734ac6b7f5da72a6decbe3ae462198a960cee (on chain 84532)
+Tx Hash:  0x180f7fecd37f9e097ae5372ec729502933aa15cd6ec078af1efb911370fb33ea (on chain 7001)
+Sender:   0x449777033Ff53aD3B4F70C17c31110476E61D2A8
+Receiver: 0xE3CA615E4Bd2b106ff51e88A04Ec39A2Afc75212
+Message:  00000000000000000000000005ba149a7bd6dc1f937fa9046a9e05c05f3b18b00000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba3200000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000
+Amount:   5000000000000000 Gas tokens
 
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xdb7b9a8ab3b7c59e0877f403a8ece258ffff2539ebbe4c19d2089f6657855374
-
-Outgoing cross-chain transaction from ZetaChain to Ethereum:
-
-https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x686f3b46bde24ca54394a9f782a4517b42e4032a5be3ec7b715d13b6be1481f4
-
-https://sepolia.etherscan.io/tx/0x14348a0acce19ae3e2bc52d1b7be71d6612a5454a0bfcda48323ace5a84781c8
+7001 → 11155111 ✅ PendingOutbound (transaction broadcasted to target chain)
+CCTX:     0xbbc4e169decc986556b079445dc5055725dff65e9ee66a48613374c1b4e64eda
+Tx Hash:  0x39d970fc742519c87e67733ffd13315dce907c07e65cf97ba4ffba2e2bf2ceed (on chain 7001)
+Tx Hash:  0x5f973954ab6c6745e770e02f4697309b3e18be60fc53764c7b6deec07cd5fe4b (on chain 11155111)
+Sender:   0xE3CA615E4Bd2b106ff51e88A04Ec39A2Afc75212
+Receiver: 0xBc1eE0E9452eC2E809FC2dBD0000A7D6095fDfC2
+Message:  0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000006ba661563e1c0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba3200000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000
+Amount:   118362341785116 Gas tokens
+Status:   PendingOutbound, initiating outbound
+```
 
 ## Source Code
 
-https://github.com/zeta-chain/standard-contracts/tree/main/contracts/token
+https://github.com/zeta-chain/example-contracts/tree/main/examples/token
