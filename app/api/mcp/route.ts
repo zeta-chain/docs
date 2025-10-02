@@ -69,66 +69,6 @@ const getMcpClientLib = async () => {
   return { Client, StreamableHTTPClientTransport } as const;
 };
 
-// Minimal server-side OAuth provider using pre-provisioned tokens from env
-class ServerOAuthProvider {
-  private _tokens?: any;
-  private _clientInfo?: any;
-  private _codeVerifier?: string;
-
-  constructor(private clientName = "ZetaChain Docs MCP") {
-    const envTokens = process.env.SMITHERY_TOKENS || process.env.SMITHERY_ACCESS_TOKEN;
-    if (envTokens) {
-      try {
-        this._tokens =
-          typeof envTokens === "string" && envTokens.trim().startsWith("{")
-            ? JSON.parse(envTokens)
-            : { access_token: envTokens };
-      } catch {
-        this._tokens = { access_token: envTokens };
-      }
-    }
-  }
-
-  get redirectUrl(): string {
-    return "https://zetachain.com/oauth/callback";
-  }
-
-  get clientMetadata() {
-    return {
-      client_name: this.clientName,
-      client_uri: "https://zetachain.com",
-      redirect_uris: [this.redirectUrl],
-      grant_types: ["authorization_code", "refresh_token"],
-      response_types: ["code"],
-      scope: "read write",
-      token_endpoint_auth_method: "none",
-    } as any;
-  }
-
-  clientInformation() {
-    return this._clientInfo;
-  }
-  async saveClientInformation(info: any) {
-    this._clientInfo = info;
-  }
-  tokens() {
-    return this._tokens;
-  }
-  async saveTokens(tokens: any) {
-    this._tokens = tokens;
-  }
-  async redirectToAuthorization(url: URL) {
-    throw new Error(`AUTH_REQUIRED:${url.toString()}`);
-  }
-  async saveCodeVerifier(v: string) {
-    this._codeVerifier = v;
-  }
-  async codeVerifier() {
-    if (!this._codeVerifier) throw new Error("No code verifier stored");
-    return this._codeVerifier;
-  }
-}
-
 const getAiSdk = async () => {
   const { generateObject } = await import("ai");
   const { createOpenAI } = await import("@ai-sdk/openai");
@@ -160,9 +100,28 @@ const connectMcp = async (serverUrl: string, apiKey?: string, profile?: string):
   }
 };
 
+// Generic type for MCP tool (we only rely on a few fields; extra fields are preserved at runtime)
+type McpTool = {
+  name: string;
+  description?: string;
+  inputSchema?: {
+    type?: string;
+    properties?: Record<
+      string,
+      {
+        type?: string;
+        description?: string;
+        enum?: string[];
+      }
+    >;
+    required?: string[];
+  };
+  [key: string]: unknown;
+};
+
 const chooseToolAndArgs = async (params: {
   instruction: string;
-  tools: Array<{ name: string; description?: string }>;
+  tools: Array<McpTool>;
   modelName: string;
   openaiApiKey?: string;
 }) => {
@@ -174,19 +133,58 @@ const chooseToolAndArgs = async (params: {
     arguments: z.record(z.any()).default({}),
   });
 
-  const toolList = params.tools.map((t) => `- ${t.name}${t.description ? `: ${t.description}` : ""}`).join("\n");
+  const toolList = params.tools
+    .map((t) => {
+      const props = t.inputSchema?.properties || {};
+      const required = t.inputSchema?.required || [];
+      const propSummaries = Object.entries(props)
+        .slice(0, 8)
+        .map(([k, v]) => `${k}${v?.type ? `(${v.type})` : ""}${v?.description ? ` - ${v.description}` : ""}`)
+        .join(", ");
+      const requiredStr = required.length ? ` | required: ${required.join(", ")}` : "";
+      const propsStr = propSummaries ? ` | props: ${propSummaries}` : "";
+      return `- ${t.name}${t.description ? `: ${t.description}` : ""}${propsStr}${requiredStr}`;
+    })
+    .join("\n");
 
   const { object } = await generateObject({
     model: openai(params.modelName) as any,
     schema,
     system:
-      "You are an expert CLI agent. Choose the best tool and minimal JSON args to execute the user's request using the available tools.",
+      "You are an expert CLI agent. Choose the best tool and return minimal JSON args strictly matching the tool's input schema (use exact key names).",
     prompt: `User instruction: "${params.instruction}"
-\nAvailable tools:\n${toolList}
-\nReturn strictly JSON for { toolName, arguments }. If nothing matches, pick the closest tool and set arguments to {}.`,
+\nAvailable tools (with schema hints):\n${toolList}
+\nReturn STRICT JSON for { toolName, arguments }.\n- toolName: one of the available tools above\n- arguments: object whose keys exactly match the chosen tool's input schema.\nIf no tool clearly matches, pick the closest tool and set arguments to {}.`,
   });
 
   return object as { toolName: string; arguments: Record<string, unknown> };
+};
+
+// Attempt to extract arguments for a specific tool using its JSON schema as guidance
+const extractArgsForTool = async (params: {
+  instruction: string;
+  tool: McpTool;
+  modelName: string;
+  openaiApiKey?: string;
+}): Promise<Record<string, unknown>> => {
+  const { generateObject, createOpenAI } = await getAiSdk();
+  const openai = createOpenAI(params.openaiApiKey ? ({ apiKey: params.openaiApiKey } as any) : ({} as any));
+
+  const argSchema = z.record(z.any());
+  const jsonSchema = params.tool.inputSchema ? JSON.stringify(params.tool.inputSchema, null, 2) : "{}";
+
+  const { object } = await generateObject({
+    model: openai(params.modelName) as any,
+    schema: argSchema,
+    system:
+      "You extract arguments for a tool call. Output ONLY a JSON object whose keys exactly match the given JSON schema. Do not include extra keys.",
+    prompt: `User instruction: "${params.instruction}"
+\nChosen tool: ${params.tool.name}
+\nInput JSON Schema:\n${jsonSchema}
+\nReturn ONLY the JSON object for the arguments, with values parsed from the instruction. Use strings for numbers unless the schema clearly requires number.`,
+  });
+
+  return (object || {}) as Record<string, unknown>;
 };
 
 export const OPTIONS = async (req: NextRequest) => {
@@ -261,23 +259,54 @@ export const POST = async (req: NextRequest) => {
     // eslint-disable-next-line no-console
     console.log("[mcp] tools", { count: tools.length });
 
-    const modelName = model?.trim() || "gpt-4o-mini";
+    const modelName = model?.trim() || "gpt-4o";
     const { toolName, arguments: toolArgs } = await chooseToolAndArgs({
       instruction: prompt,
-      tools,
+      tools: tools as any,
       modelName,
       openaiApiKey,
     });
     // eslint-disable-next-line no-console
     console.log("[mcp] selection", { toolName, argsKeys: Object.keys(toolArgs || {}) });
+    // eslint-disable-next-line no-console
+    console.log("[mcp] selection args", toolArgs || {});
 
     if (!tools.find((t) => t.name === toolName)) {
       return json(500, { error: `Model chose unknown tool: ${toolName}` }, headers);
     }
 
+    // If arguments are missing required fields, try a schema-guided extraction pass
+    let finalArgs = toolArgs || {};
+    try {
+      const selectedTool = (tools as any as McpTool[]).find((t) => t.name === toolName);
+      const required = selectedTool?.inputSchema?.required || [];
+      const isMissingRequired = required.some(
+        (k) => (finalArgs as any)[k] === undefined || (finalArgs as any)[k] === null
+      );
+      if ((Object.keys(finalArgs).length === 0 || isMissingRequired) && selectedTool) {
+        // eslint-disable-next-line no-console
+        console.log("[mcp] extracting args via schema", { toolName, required });
+        finalArgs = await extractArgsForTool({
+          instruction: prompt,
+          tool: selectedTool,
+          modelName,
+          openaiApiKey,
+        });
+        // eslint-disable-next-line no-console
+        console.log("[mcp] extracted args", { argsKeys: Object.keys(finalArgs || {}) });
+        // eslint-disable-next-line no-console
+        console.log("[mcp] extracted args detail", finalArgs || {});
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn("[mcp] arg extraction fallback failed", String(e));
+    }
+
+    // eslint-disable-next-line no-console
+    console.log("[mcp] final args", finalArgs || {});
     // eslint-disable-next-line no-console
     console.log("[mcp] calling tool", { toolName });
-    const result = await client.callTool({ name: toolName, arguments: toolArgs });
+    const result = await client.callTool({ name: toolName, arguments: finalArgs });
 
     // Best-effort friendly response shape similar to toolkit CLI
     if (typeof result === "string") {
