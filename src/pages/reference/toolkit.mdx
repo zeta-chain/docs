@@ -393,7 +393,7 @@ Configuration options including chain ID and signer keypair
 
 ###### signer
 
-`Keypair` = `...`
+`WalletAdapter` \| `Keypair` = `solanaSignerSchema`
 
 #### Returns
 
@@ -465,7 +465,7 @@ Configuration options including chain ID and signer keypair
 
 ###### signer
 
-`Keypair` = `...`
+`WalletAdapter` \| `Keypair` = `solanaSignerSchema`
 
 #### Returns
 
@@ -546,7 +546,7 @@ Configuration options including chain ID and signer keypair
 
 ###### signer
 
-`Keypair` = `...`
+`WalletAdapter` \| `Keypair` = `solanaSignerSchema`
 
 #### Returns
 
