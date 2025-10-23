@@ -15,3 +15,26 @@ updates:
       - dependency-name: "@zetachain/addresses"
       - dependency-name: "@zetachain/toolkit"
       - dependency-name: "@zetachain/ui-toolkit"
+
+  # Grouped security updates for all npm dependencies
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/packages/zeta-app-contracts"
+      - "/packages/zevm-app-contracts"
+    commit-message:
+      prefix: "dependabot-sec: "
+    labels:
+      - "dependencies"
+      - "security"
+    # Disable normal version updates for this block
+    open-pull-requests-limit: 0
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        # Include all non-breaking update types
+        update-types:
+          - "minor"
+          - "patch"
