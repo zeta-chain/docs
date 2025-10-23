@@ -44,7 +44,7 @@
     "axios": "1.7.4",
     "bech32": "2.0.0",
     "chroma-js": "2.1.0",
-    "clsx": "1.2.1",
+    "clsx": "2.1.1",
     "concurrently": "8.2.2",
     "contentful": "11.7.3",
     "cors": "2.8.5",
