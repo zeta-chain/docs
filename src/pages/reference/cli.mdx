@@ -57,6 +57,39 @@ Query cross-chain balances:
 zetachain query balances
 ```
 
+## 🤖 MCP Server Installation
+
+The ZetaChain CLI can be used as an MCP (Model Context Protocol) server, allowing AI assistants like Claude Code and Cursor to execute ZetaChain commands.
+
+### Local Installation (Recommended)
+
+Install locally for full access to your filesystem, accounts, and localnet:
+
+```bash
+npm install -g zetachain
+zetachain mcp install --client claude    # for Claude Code
+# or
+zetachain mcp install --client cursor    # for Cursor
+```
+
+Then restart your AI editor to activate the MCP server.
+
+**Check installation status:**
+```bash
+zetachain mcp list
+```
+
+**Remove:**
+```bash
+zetachain mcp remove --client claude
+```
+
+### Cloud Installation (Smithery)
+
+For quick setup without local installation, visit [Smithery](https://smithery.ai/server/@zeta-chain/cli) and click "One-Click Install".
+
+⚠️ **Note**: The cloud version runs on remote servers and cannot access your local files, accounts, or localnet.
+
 ## 🧭 CLI Reference
 
 For full command documentation:
@@ -1241,6 +1274,64 @@ Options:
 
 ```
 
+## zetachain mcp
+
+```
+Usage: zetachain mcp [options] [command]
+
+MCP server management commands
+
+Options:
+  -h, --help         display help for command
+
+Commands:
+  install [options]  Install ZetaChain MCP server for your AI editor
+  remove [options]   Remove ZetaChain MCP server from your AI editor (removes
+                     from all projects if applicable)
+  list               List MCP server installation status for all supported
+                     clients
+
+```
+
+## zetachain mcp install
+
+```
+Usage: zetachain mcp install [options]
+
+Install ZetaChain MCP server for your AI editor
+
+Options:
+  -c, --client <name>  AI client to install for (choices: "claude", "cursor")
+  -h, --help           display help for command
+
+```
+
+## zetachain mcp remove
+
+```
+Usage: zetachain mcp remove [options]
+
+Remove ZetaChain MCP server from your AI editor (removes from all projects if
+applicable)
+
+Options:
+  -c, --client <name>  AI client to remove from (choices: "claude", "cursor")
+  -h, --help           display help for command
+
+```
+
+## zetachain mcp list
+
+```
+Usage: zetachain mcp list [options]
+
+List MCP server installation status for all supported clients
+
+Options:
+  -h, --help  display help for command
+
+```
+
 ## zetachain docs
 
 ```
@@ -1249,6 +1340,7 @@ Usage: zetachain docs [options]
 Display help information for all available commands and their subcommands
 
 Options:
+  --json      Output documentation as JSON (tools schema)
   -h, --help  display help for command
 
 ```
