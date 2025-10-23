@@ -5,36 +5,48 @@ updates:
       - "/"
       - "/packages/zeta-app-contracts"
       - "/packages/zevm-app-contracts"
+
+    # VERSION UPDATES (scheduled)
     schedule:
       interval: "daily"
     commit-message:
       prefix: "dependabot: "
-    labels:
-      - "dependencies"
-    allow:
-      - dependency-name: "@zetachain/addresses"
-      - dependency-name: "@zetachain/toolkit"
-      - dependency-name: "@zetachain/ui-toolkit"
+    labels: ["dependencies"]
+    open-pull-requests-limit: 2   # limits *version* PRs; security PRs ignore this
 
-  # Grouped security updates for all npm dependencies
-  - package-ecosystem: "npm"
-    directories:
-      - "/"
-      - "/packages/zeta-app-contracts"
-      - "/packages/zevm-app-contracts"
-    commit-message:
-      prefix: "dependabot-sec: "
-    labels:
-      - "dependencies"
-      - "security"
-    # Disable normal version updates for this block
-    open-pull-requests-limit: 0
     groups:
-      security-updates:
-        applies-to: security-updates
+      # 1) ZetaChain packages together
+      zetachain-version:
+        patterns:
+          - "@zetachain/addresses"
+          - "@zetachain/toolkit"
+          - "@zetachain/ui-toolkit"
+
+      # 2) Everything else in one PR (exclude ZetaChain deps to avoid overlap)
+      everything-else-version:
         patterns:
           - "*"
-        # Include all non-breaking update types
+        exclude-patterns:
+          - "@zetachain/addresses"
+          - "@zetachain/toolkit"
+          - "@zetachain/ui-toolkit"
         update-types:
           - "minor"
           - "patch"
+
+      # SECURITY UPDATES (event-driven; schedule is ignored)
+      zetachain-security:
+        applies-to: security-updates
+        patterns:
+          - "@zetachain/addresses"
+          - "@zetachain/toolkit"
+          - "@zetachain/ui-toolkit"
+
+      everything-else-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@zetachain/addresses"
+          - "@zetachain/toolkit"
+          - "@zetachain/ui-toolkit"
