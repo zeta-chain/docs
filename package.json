@@ -41,7 +41,7 @@
     "@zetachain/addresses": "0.0.13",
     "@zetachain/toolkit": "^16.1.0",
     "@zetachain/ui-toolkit": "1.0.3",
-    "axios": "1.7.4",
+    "axios": "1.12.0",
     "bech32": "2.0.0",
     "chroma-js": "2.1.0",
     "clsx": "1.2.1",
