@@ -39,7 +39,7 @@
     "@upstash/ratelimit": "2.0.6",
     "@vercel/kv": "2.0.0",
     "@zetachain/addresses": "0.0.13",
-    "@zetachain/toolkit": "^16.1.0",
+    "@zetachain/toolkit": "^16.2.0",
     "@zetachain/ui-toolkit": "1.0.3",
     "axios": "1.12.2",
     "bech32": "2.0.0",
