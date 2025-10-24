@@ -19,7 +19,8 @@
     "graphql-codegen:watch": "graphql-codegen --config ./codegen.ts --watch",
     "graphql-codegen": "graphql-codegen --config ./codegen.ts",
     "remove-codegen": "rimraf 'src/generated/*.types.*'",
-    "postinstall": "yarn fix-tailwind-stub"
+    "postinstall": "yarn fix-tailwind-stub",
+    "prebuild": "yarn fix-tailwind-stub"
   },
   "dependencies": {
     "@emotion/cache": "11.14.0",
