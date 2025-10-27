@@ -3,6 +3,8 @@ title: Contract Registry
 description: Discover and query protocol contract addresses across chains using ZetaChain's on-chain registry.
 ---
 
+import { ContractRegistryChains } from "~/components/Docs";
+
 ## What you can do
 
 The Contract Registry is the single source of truth for protocol contract
@@ -52,3 +54,5 @@ Read Uniswap V2 Router on ZetaChain testnet (chain ID `7001`):
 (bool active, bytes memory uniswapRouterBytes) = registry.getContractInfo(7001, "uniswapV2Router02");
 address uniswapRouter = address(uint160(bytes20(uniswapRouterBytes)));
 ```
+
+<ContractRegistryChains />

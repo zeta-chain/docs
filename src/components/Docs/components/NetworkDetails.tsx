@@ -6,7 +6,7 @@ import { NetworkType } from "~/lib/app.types";
 type NetworkData = Array<{ name: string; value: string }>;
 
 // Static data for the tables
-const networkDetails: Record<NetworkType, NetworkData> = {
+export const networkDetails: Record<NetworkType, NetworkData> = {
   testnet: [
     { name: "Chain ID (EVM)", value: "7001" },
     { name: "Chain ID (Cosmos)", value: "athens_7001-1" },
