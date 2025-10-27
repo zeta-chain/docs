@@ -4,33 +4,10 @@ import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/sha
 import { NetworkType } from "~/lib/app.types";
 
 import { ethers } from "ethers";
+import CONTRACT_REGISTRY from "@zetachain/protocol-contracts/abi/Registry.sol/Registry.json";
 import { networkDetails } from "./NetworkDetails";
 
-// Contract registry address (same on mainnet and testnet per request)
 const CONTRACT_REGISTRY_ADDRESS = "0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394";
-
-// Minimal ABI for getAllChains that returns an array of tuples
-const CONTRACT_REGISTRY_ABI = [
-  {
-    inputs: [],
-    name: "getAllChains",
-    outputs: [
-      {
-        components: [
-          { internalType: "bool", name: "active", type: "bool" },
-          { internalType: "uint256", name: "chainId", type: "uint256" },
-          { internalType: "address", name: "gasZRC20", type: "address" },
-          { internalType: "bytes", name: "registry", type: "bytes" },
-        ],
-        internalType: "struct ChainsInfo[]",
-        name: "chainsInfo",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
 
 type ChainInfo = {
   active: boolean;
@@ -82,7 +59,7 @@ export const ContractRegistryChains = () => {
       try {
         const rpcUrl = getEvmRpcByNetwork(activeTab.networkType);
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-        const contract = new ethers.Contract(CONTRACT_REGISTRY_ADDRESS, CONTRACT_REGISTRY_ABI, provider);
+        const contract = new ethers.Contract(CONTRACT_REGISTRY_ADDRESS, CONTRACT_REGISTRY.abi, provider);
         const chains: ChainInfo[] = await contract.getAllChains();
 
         const rows: DisplayRow[] = chains
@@ -139,14 +116,7 @@ export const ContractRegistryChains = () => {
             </tbody>
           </table>
 
-          {error ? (
-            <p className="text-red-500 mt-4">{error}</p>
-          ) : (
-            <p className="mt-4">
-              Source:{" "}
-              <span className="text-[#00A5C6] dark:text-[#B0FF61]">{getEvmRpcByNetwork(activeTab.networkType)}</span>
-            </p>
-          )}
+          {error ? <p className="text-red-500 mt-4">{error}</p> : null}
         </div>
       )}
     </div>
