@@ -68,6 +68,7 @@ export const ContractRegistryChains = () => {
             chainId: c.chainId.toString(),
             registryAddress: formatRegistryBytesToAddress(c.registry),
           }))
+          .filter((row) => !!row.registryAddress)
           .sort((a, b) => Number(a.chainId) - Number(b.chainId));
 
         if (!isMounted) return;
