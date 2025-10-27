@@ -88,10 +88,13 @@ function onCall(
 
 ### Making outgoing calls
 
-To call a contract on a connected chain from your Universal App, you must first
-approve the Gateway to spend the gas token:
+To call a contract on a connected chain from your Universal App, first quote the
+destination gas fee for your intended gas limit, pull that fee from the caller,
+and approve the Gateway to spend it:
 
 ```solidity
+(, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(callOptions.gasLimit);
+IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee);
 IZRC20(zrc20).approve(address(gateway), gasFee);
 ```
 
@@ -267,7 +270,6 @@ your connected EVM testnet (for example, Base Sepolia) and the Gateway addresses
 for each chain.
 
 ```bash
-GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
 GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
 
 RPC_ZETACHAIN=https://zetachain-athens-evm.blockpi.network/v1/rpc/public
@@ -281,8 +283,7 @@ UNIVERSAL=$(forge create Universal \
   --rpc-url $RPC_ZETACHAIN \
   --private-key $PRIVATE_KEY \
   --broadcast \
-  --json \
-  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+  --json | jq -r .deployedTo) && echo $UNIVERSAL
 ```
 
 ### Deploy Connected to Base Sepolia
@@ -451,10 +452,9 @@ from the localnet registry:
 
 ```bash
 RPC=http://localhost:8545
-ZRC20_ETHEREUM=$(jq -r '."11155112".chainInfo.gasZRC20' ~/.zetachain/localnet/registry.json) && echo $ZRC20_ETHEREUM
+ZRC20_ETHEREUM=$(jq -r '."11155112".zrc20Tokens[] | select(.coinType == "gas" and .originChainId == "11155112") | .address' ~/.zetachain/localnet/registry.json) && echo $ZRC20_ETHEREUM
 PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
 GATEWAY_ETHEREUM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ETHEREUM
-GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
 ```
 
 Deploy the Universal App:
@@ -464,8 +464,7 @@ UNIVERSAL=$(forge create Universal \
   --rpc-url $RPC \
   --private-key $PRIVATE_KEY \
   --broadcast \
-  --json \
-  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+  --json | jq -r .deployedTo) && echo $UNIVERSAL
 ```
 
 Deploy the Connected contract:

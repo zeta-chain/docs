@@ -57,22 +57,10 @@ A Universal App is a contract that implements the `UniversalContract` interface.
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import "@zetachain/protocol-contracts/contracts/zevm/GatewayZEVM.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
 
 contract Universal is UniversalContract {
-    GatewayZEVM public immutable gateway;
-
     event HelloEvent(string, string);
-    error Unauthorized();
-
-    modifier onlyGateway() {
-        if (msg.sender != address(gateway)) revert Unauthorized();
-        _;
-    }
-
-    constructor(address payable gatewayAddress) {
-        gateway = GatewayZEVM(gatewayAddress);
-    }
 
     function onCall(
         MessageContext calldata context,
@@ -85,10 +73,6 @@ contract Universal is UniversalContract {
     }
 }
 ```
-
-The constructor takes ZetaChain’s Gateway address and stores it in a state
-variable. The Gateway is used for making outbound contract calls and token
-withdrawals.
 
 A universal contract must implement the `onCall` function. This function is
 triggered when the contract receives a call from a connected chain via the
@@ -109,7 +93,8 @@ In this example, `onCall` decodes the message into a string and emits an event.
 
 `onCall` should only be called by the Gateway to ensure that it is only called
 as a response to a call on a connected chain and that you can trust the values
-of the function parameters.
+of the function parameters. This is enforced by the `onlyGateway` modifier,
+which is inherited from `UniversalContract`.
 
 ## Option 1: Deploy on Localnet
 
@@ -160,39 +145,13 @@ The `forge build` command tells Foundry to compile all Solidity smart contracts
 within your project, ensuring you're working with the latest compiled versions.
 Successful compilation will generate bytecode for your contracts.
 
-To deploy and interact with contracts on the ZetaChain localnet, you'll need the
-address of the ZetaChain Gateway contract. This contract acts as the entry point
-for cross-chain interactions on ZetaChain.
-
-- While your localnet is still running in its dedicated terminal, carefully
-  examine its output.
-- Copy the Gateway contract address from the localnet terminal output. Look for
-  the row labeled `gateway` under the `ZETACHAIN` section. It will typically
-  appear in a format similar to this:
-
-```
-| gateway │ '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6' |
-```
-
-Copy only the hexadecimal address (e.g.,
-`0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6`). Do not include the single quotes
-or any other surrounding text.
-
-Alternatively, run the following command to get the Gateway address
-programmatically:
-
-```
-GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
-```
-
 Fetch a private key with pre-funded tokens on the connected chain:
 
 ```
 PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
 ```
 
-Deploy the universal contract and provide the Gateway address in the
-constructor:
+Deploy the universal contract:
 
 ```
 UNIVERSAL=$(forge create Universal \
@@ -200,8 +159,7 @@ UNIVERSAL=$(forge create Universal \
   --private-key $PRIVATE_KEY \
   --evm-version paris \
   --broadcast \
-  --json \
-  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+  --json | jq -r .deployedTo) && echo $UNIVERSAL
 ```
 
 ### Make a Call to the Universal App
@@ -263,16 +221,14 @@ string.
 
 ### Deploy the Contract on ZetaChain
 
-Deploy the contract to ZetaChain’s testnet using the Gateway address from the
-[Contract Addresses page](/reference/network/contracts/):
+Deploy the contract to ZetaChain’s testnet:
 
 ```
 UNIVERSAL=$(forge create Universal \
   --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
   --private-key $PRIVATE_KEY \
   --broadcast \
-  --json \
-  --constructor-args 0x6c533f7fe93fae114d0954697069df33c9b74fd7 | jq -r .deployedTo)
+  --json | jq -r .deployedTo)
 ```
 
 ### Call a Universal Contract from Base
