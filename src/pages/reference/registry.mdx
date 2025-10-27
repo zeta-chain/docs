@@ -1,6 +1,6 @@
 ---
 title: Contract Registry
-description: Discover and query protocol contract addresses across chains using ZetaChain's on-chain registry.
+description: Query protocol contract addresses using ZetaChain's on-chain contract registry.
 ---
 
 import { ContractRegistryChains } from "~/components/Docs";
@@ -27,6 +27,9 @@ Get a specific contract by type and chain ID (example: Ethereum Sepolia
 zetachain query contracts show --type gateway --chain-id 11155111
 ```
 
+See the full table of protocol contract addresses on the [contract addresses
+page](/reference/network/contracts).
+
 ## Use in Universal Contracts
 
 The registry returns whether an entry is active and an ABI-encoded payload you
@@ -45,6 +48,10 @@ Read Uniswap V2 Router on ZetaChain testnet (chain ID `7001`):
 (bool active, bytes memory uniswapRouterBytes) = registry.getContractInfo(7001, "uniswapV2Router02");
 address uniswapRouter = address(uint160(bytes20(uniswapRouterBytes)));
 ```
+
+All universal contracts inherit a `registry` reference from the abstract
+universal contract, so you can call `registry.getContractInfo(...)` directly
+without manual address wiring.
 
 ## Deployment Addresses
 
@@ -68,3 +75,17 @@ contracts on connected chains.
 Addresses of the contract registry contracts:
 
 <ContractRegistryChains />
+
+## Access Control
+
+The Contract Registry is maintained by the ZetaChain core team.
+
+You can verify the on-chain roles directly on the contract by querying `admin`
+and `registryManager` addresses.
+
+## Source
+
+- Core registry contract source code:
+  [CoreRegistry.sol](https://github.com/zeta-chain/protocol-contracts-evm/blob/develop/contracts/zevm/CoreRegistry.sol)
+- Contract addresses as JSON fetched automatically from the registry:
+  [zeta-chain/contract-addresses](https://github.com/zeta-chain/contract-addresses)
