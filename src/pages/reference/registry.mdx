@@ -12,16 +12,7 @@ addresses, ZRC-20 tokens, and chain configuration used by ZetaChain and all
 connected chains. You can use it to find canonical addresses for system
 contracts like `gateway`, `erc20Custody`, ZRC-20, and more
 
-## Address
-
-The Contract Registry is deployed on ZetaChain under the same address on
-mainnet, testnet and localnet:
-
-```bash
-0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394
-```
-
-## Query with the ZetaChain CLI
+## Query from the CLI
 
 List all registered contracts:
 
@@ -36,7 +27,7 @@ Get a specific contract by type and chain ID (example: Ethereum Sepolia
 zetachain query contracts show --type gateway --chain-id 11155111
 ```
 
-## Use from universal contracts
+## Use in Universal Contracts
 
 The registry returns whether an entry is active and an ABI-encoded payload you
 can decode.
@@ -54,5 +45,26 @@ Read Uniswap V2 Router on ZetaChain testnet (chain ID `7001`):
 (bool active, bytes memory uniswapRouterBytes) = registry.getContractInfo(7001, "uniswapV2Router02");
 address uniswapRouter = address(uint160(bytes20(uniswapRouterBytes)));
 ```
+
+## Deployment Addresses
+
+The registry is deployed on ZetaChain and on some connected chains. It is
+currently available on EVM-connected chains; deployments to additional chain
+types are planned.
+
+The ZetaChain address is the same on mainnet, testnet, and localnet:
+
+```bash
+0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394
+```
+
+The registry deployed on ZetaChain is the canonical source of truth for protocol
+contract addresses. Registries on connected chains are mirrors for local reads.
+
+Implementation note: the Contract Registry is a universal app. When contracts
+are added or updated on ZetaChain, that information is propagated to registry
+contracts on connected chains.
+
+Addresses of the contract registry contracts:
 
 <ContractRegistryChains />
