@@ -1,10 +1,10 @@
+import CONTRACT_REGISTRY from "@zetachain/protocol-contracts/abi/Registry.sol/Registry.json";
+import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 
 import { LoadingTable, NetworkTypeTabs, networkTypeTabs } from "~/components/shared";
 import { NetworkType } from "~/lib/app.types";
 
-import { ethers } from "ethers";
-import CONTRACT_REGISTRY from "@zetachain/protocol-contracts/abi/Registry.sol/Registry.json";
 import { networkDetails } from "./NetworkDetails";
 
 const CONTRACT_REGISTRY_ADDRESS = "0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394";
