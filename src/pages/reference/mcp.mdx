@@ -5,9 +5,9 @@ securely connect to external tools and data sources through local or remote
 servers.
 
 The ZetaChain MCP server extends your AI coding environment, such as Cursor or
-Claude, with direct access to on-chain data and CLI-powered actions. This means
-you can query balances, estimate cross-chain fees, execute contract calls, and
-track transactions across chains, all without leaving your editor or chat
+Claude Code, with direct access to on-chain data and CLI-powered actions. This
+means you can query balances, estimate cross-chain fees, execute contract calls,
+and track transactions across chains, all without leaving your editor or chat
 interface.
 
 ## Install the ZetaChain CLI
@@ -21,7 +21,20 @@ npm install -g zetachain@latest
 This includes everything needed to run the MCP server locally (recommended for
 best performance and security).
 
-## Connect MCP to Cursor or Claude
+Note: MCP support is available starting in `zetachain` v7.1.1. Check your
+version:
+
+```bash
+zetachain --version
+```
+
+If your version is older than v7.1.1, update to the latest release:
+
+```bash
+npm install -g zetachain@latest
+```
+
+## Connect MCP to Cursor or Claude Code
 
 Install the ZetaChain MCP integration for your preferred AI client:
 
@@ -33,6 +46,9 @@ zetachain mcp install --client claude
 
 Once installed, your AI tool will be able to access ZetaChain data and perform
 on-chain operations directly through the MCP interface.
+
+Note: The `--client claude` option refers to the Claude Code client. Claude
+Desktop is not currently supported.
 
 ## Verify Installation
 

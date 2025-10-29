@@ -37,7 +37,7 @@
   },
   "mcp": {
     "title": "MCP",
-    "description": "Add ZetaChain MCP server to Cursor or Claude"
+    "description": "Add ZetaChain MCP server to Cursor or Claude Code"
   },
   "tools": {
     "title": "More Tools",
