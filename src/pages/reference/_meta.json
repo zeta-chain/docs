@@ -35,6 +35,10 @@
     "title": "Explorers",
     "description": "Block explorers for ZetaChain mainnet and testnet"
   },
+  "mcp": {
+    "title": "MCP",
+    "description": "Add ZetaChain MCP server to Cursor or Claude Code"
+  },
   "tools": {
     "title": "More Tools",
     "description": "More useful tools and resources"
