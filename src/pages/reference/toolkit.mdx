@@ -120,7 +120,7 @@ Configuration options including signer and optional gateway address
 
 ###### signer
 
-`AbstractSigner`\<`null` \| `Provider`\> = `...`
+`AbstractSigner`\<`Provider` \| `null`\> = `...`
 
 ###### txOptions?
 
@@ -208,7 +208,7 @@ Configuration options including signer and optional gateway address
 
 ###### signer
 
-`AbstractSigner`\<`null` \| `Provider`\> = `...`
+`AbstractSigner`\<`Provider` \| `null`\> = `...`
 
 ###### txOptions?
 
@@ -305,7 +305,7 @@ Configuration options including signer and optional gateway address
 
 ###### signer
 
-`AbstractSigner`\<`null` \| `Provider`\> = `...`
+`AbstractSigner`\<`Provider` \| `null`\> = `...`
 
 ###### txOptions?
 
@@ -393,7 +393,7 @@ Configuration options including chain ID and signer keypair
 
 ###### signer
 
-`Keypair` = `...`
+`WalletAdapter` \| `Keypair` = `solanaSignerSchema`
 
 #### Returns
 
@@ -465,7 +465,7 @@ Configuration options including chain ID and signer keypair
 
 ###### signer
 
-`Keypair` = `...`
+`WalletAdapter` \| `Keypair` = `solanaSignerSchema`
 
 #### Returns
 
@@ -546,7 +546,7 @@ Configuration options including chain ID and signer keypair
 
 ###### signer
 
-`Keypair` = `...`
+`WalletAdapter` \| `Keypair` = `solanaSignerSchema`
 
 #### Returns
 
@@ -590,7 +590,7 @@ Configuration options including chain ID, gas limit, gateway settings, and signe
 
 ###### chainId
 
-`"103"` \| `"105"` \| `"104"` = `...`
+`"105"` \| `"103"` \| `"104"` = `...`
 
 ###### gasLimit?
 
@@ -659,7 +659,7 @@ Configuration options including chain ID, gas limit, gateway settings, and signe
 
 ###### chainId
 
-`"103"` \| `"105"` \| `"104"` = `...`
+`"105"` \| `"103"` \| `"104"` = `...`
 
 ###### gasLimit?
 
