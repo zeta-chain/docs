@@ -590,7 +590,7 @@ Configuration options including chain ID, gas limit, gateway settings, and signe
 
 ###### chainId
 
-`"103"` \| `"101"` \| `"104"` = `...`
+`"103"` \| `"105"` \| `"104"` = `...`
 
 ###### gasLimit?
 
@@ -659,7 +659,7 @@ Configuration options including chain ID, gas limit, gateway settings, and signe
 
 ###### chainId
 
-`"103"` \| `"101"` \| `"104"` = `...`
+`"103"` \| `"105"` \| `"104"` = `...`
 
 ###### gasLimit?
 

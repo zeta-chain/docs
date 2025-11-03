@@ -32,8 +32,8 @@ The Swap contract performs the following steps:
 
 3. Queries the withdrawal gas fee required to send the target token back to the
    destination chain.
-4. Swaps a portion of the incoming tokens for ZRC-20 gas tokens to cover the
-   withdrawal fee using Uniswap v2 pools.
+4. If withdrawing to a connected chain, swaps a portion of the incoming tokens
+   for ZRC-20 gas tokens to cover the withdrawal fee using Uniswap v2 pools.
 5. Swaps the remaining balance into the target token.
 6. Withdraws the swapped tokens to the recipient on the destination chain.
 
@@ -41,30 +41,20 @@ This approach allows users to initiate complex multi-chain operations with a
 single transaction from any supported chain, abstracting away the complexity of
 liquidity routing, gas payments, and execution across chains.
 
+> Note: This tutorial uses Uniswap v2 pools on ZetaChain. These pools are
+> primarily used by ZetaChain to swap small amounts of tokens, for example, to
+> obtain gas fees for a revert in a cross-chain transaction. They may not have
+> sufficient liquidity for larger swaps. For real-world usage, consider using
+> pools maintained by active DEXes such as [Beam](https://docs.beamdex.xyz/) or
+> [Zuno](https://docs.zunodex.xyz/), or any other DEX deployed on ZetaChain.
+
 ## Prerequisites
 
-Before you begin, make sure your development environment includes the following
-tools:
+Before you begin, make sure you've completed the following tutorials:
 
-- [Node.js](https://nodejs.org/en) (v18 or later): Required for running scripts
-  and managing project dependencies.
-- [Yarn](https://yarnpkg.com/): A package manager for installing project
-  dependencies. You may use `npm` if preferred.
-- [Git](https://git-scm.com/): Used to clone repositories and track changes.
-- [jq](https://jqlang.org/): A lightweight command-line tool for parsing and
-  querying JSON data. It’s especially useful for extracting values from localnet
-  outputs.
-- [Foundry](https://getfoundry.sh/): A fast, portable toolkit for Ethereum
-  application development. You’ll use `forge` and `cast` to compile and deploy
-  contracts.
-- [ZetaChain CLI](/reference/cli): The command-line interface for interacting
-  with ZetaChain’s localnet and connected chain gateways.
-
-To install the CLI globally:
-
-```bash
-npm install -g zetachain@latest
-```
+- [Introduction to Universal Apps](/start/app/)
+- [Getting Started with ZetaChain](/developers/tutorials/intro)
+- [First Universal App](/developers/tutorials/hello)
 
 ## Setting Up Your Environment
 
@@ -103,7 +93,7 @@ to perform token swaps across blockchains with a single cross-chain call. Tokens
 are received as ZRC-20s, optionally swapped using Uniswap v2 liquidity, and
 withdrawn back to a connected chain.
 
-### Universal App entrypoint: on_call
+### Universal App entrypoint: onCall
 
 The contract is deployed on ZetaChain and implements `UniversalContract`,
 exposing a single entrypoint. Cross-chain deliveries are executed only via the
@@ -154,6 +144,10 @@ gateway.withdraw(
   revertOptions                // failure handling
 );
 ```
+
+If the destination gas token (`gasZRC20`) is the same as the target token, the
+contract approves a single combined allowance of `out + gasFee` for the Gateway
+instead of two separate approvals.
 
 ### Funding destination execution from the user’s input
 
@@ -270,6 +264,9 @@ SwapHelperLib.swapExactTokensForTokens(
 );
 ```
 
+Note: If `inputToken == gasZRC20`, the contract uses `gasFee` directly (no swap
+for gas is required) and only swaps the remaining balance to the target token.
+
 You’re free to replace uniswapRouter and the helper calls with any DEX interface
 or custom routing logic—only the ZRC-20 token flow and the Gateway withdraw
 semantics are assumed by the rest of the contract.
@@ -279,7 +276,7 @@ semantics are assumed by the rest of the contract.
 To deploy the Swap contract to ZetaChain testnet, run the following command:
 
 ```bash
-UNIVERSAL=$(npx ts-node commands/index.ts deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
+UNIVERSAL=$(npx tsx commands deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
 ```
 
 This deploys the precompiled contract using the specified private key and
@@ -459,7 +456,7 @@ PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo
 Deploy the contract:
 
 ```bash
-UNIVERSAL=$(npx ts-node commands/index.ts deploy \
+UNIVERSAL=$(npx tsx commands/index.ts deploy \
   --private-key $PRIVATE_KEY \
   --rpc http://localhost:8545 \
   --gateway $GATEWAY_ZETACHAIN \

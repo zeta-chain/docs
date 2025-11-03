@@ -21,17 +21,23 @@
     "readTime": "30 min",
     "description": "TypeScript SDK for building universal apps"
   },
-  "universalkit": {
-    "title": "UniversalKit",
-    "description": "A set of ready to use React components that lets you build user interfaces for universal apps on ZetaChain",
-    "readType": "Beginner",
-    "readTime": "30 min"
+  "registry": {
+    "title": "Contract Registry",
+    "description": "Registry of protocol contracts deployed on ZetaChain and connected chains"
   },
   "faucet": {
     "title": "Faucet",
     "description": "A guide to get Testnet ZETA through the Faucet",
     "readTime": "5 min",
     "readType": "Beginner"
+  },
+  "explorers": {
+    "title": "Explorers",
+    "description": "Block explorers for ZetaChain mainnet and testnet"
+  },
+  "mcp": {
+    "title": "MCP",
+    "description": "Add ZetaChain MCP server to Cursor or Claude Code"
   },
   "tools": {
     "title": "More Tools",

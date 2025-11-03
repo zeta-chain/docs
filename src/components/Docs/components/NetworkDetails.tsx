@@ -6,7 +6,7 @@ import { NetworkType } from "~/lib/app.types";
 type NetworkData = Array<{ name: string; value: string }>;
 
 // Static data for the tables
-const networkDetails: Record<NetworkType, NetworkData> = {
+export const networkDetails: Record<NetworkType, NetworkData> = {
   testnet: [
     { name: "Chain ID (EVM)", value: "7001" },
     { name: "Chain ID (Cosmos)", value: "athens_7001-1" },
@@ -15,7 +15,7 @@ const networkDetails: Record<NetworkType, NetworkData> = {
     { name: "Decimals", value: "18" },
     { name: "HD Path", value: "m/44'/60'/0'/0/0" },
     { name: "Bech32 prefix", value: "zeta" },
-    { name: "Explorer", value: "https://athens.explorer.zetachain.com" },
+    { name: "Explorer", value: "https://testnet.zetascan.com" },
     {
       name: "EVM RPC",
       value: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
@@ -29,7 +29,7 @@ const networkDetails: Record<NetworkType, NetworkData> = {
     { name: "Decimals", value: "18" },
     { name: "HD Path", value: "m/44'/60'/0'/0/0" },
     { name: "Bech32 prefix", value: "zeta" },
-    { name: "Explorer", value: "https://explorer.zetachain.com" },
+    { name: "Explorer", value: "https://zetascan.com" },
     {
       name: "EVM RPC",
       value: "https://zetachain-evm.blockpi.network/v1/rpc/public",

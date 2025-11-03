@@ -49,6 +49,10 @@ The receiver `bytes` should be:
 The `amount` specifies the quantity to withdraw, and `zrc20` is the ZRC-20
 address of the token being withdrawn.
 
+Note: Some connected chains enforce a minimum withdrawal amount. For example,
+withdrawing ZRC-20 SOL to Solana requires a minimum of 1,000,000 (lamports) to
+satisfy rent-exemption requirements.
+
 The `revertOptions.revertMessage` must not exceed 1024 bytes in length.
 
 You don't need to specify the destination chain since each ZRC-20 token is tied
@@ -158,7 +162,7 @@ Gateway.
   width="100%"
   height="450"
   src="https://embed.figma.com/board/RQ152Ha21syhRT8iKGXz3h/Incoming--Revert?node-id=0-1&embed-host=share"
-  allowfullscreen
+  allowFullScreen
 ></iframe>
 
 1. A contract on a connected chain calls `depositAndCall` or `call` on the
@@ -187,7 +191,7 @@ Revert Behavior:
   width="100%"
   height="450"
   src="https://embed.figma.com/board/4VGffjhDTeZMP3FFxxODpI/Outgoing--Revert?node-id=0-1&embed-host=share"
-  allowfullscreen
+  allowFullScreen
 ></iframe>
 
 This scenario occurs when a universal contract on ZetaChain calls

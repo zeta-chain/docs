@@ -1,0 +1,185 @@
+ZetaChain is a proof-of-stake blockchain built with the Cosmos SDK, secured by
+validators who stake the native ZETA token. Delegators (regular users) can
+participate in securing the network by staking their ZETA with validators and,
+in return, earn rewards. Because ZetaChain is also an EVM environment, smart
+contracts can access Cosmos staking functionality directly through a special
+staking precompile. This allows contracts, scripts, and frontends to delegate,
+undelegate, claim rewards, and more, all using familiar EVM tooling.
+
+In this tutorial, we’ll use Foundry (`cast`) and curl to interact with the
+staking precompile. The same functions can also be called from Solidity
+contracts or web frontends.
+
+- Precompile address: `0x0000000000000000000000000000000000000800`
+- Documentation: [Staking
+  Precompile](https://evm.cosmos.network/v0.4.x/documentation/smart-contracts/precompiles/staking)
+- Interface:
+  [StakingI.sol](https://github.com/cosmos/evm/blob/v0.4.0/precompiles/staking/StakingI.sol)
+
+### Prerequisites
+
+- [Foundry](https://getfoundry.sh/) (includes `cast`)
+- `jq` for JSON processing
+- A funded testnet wallet private key with ZETA
+
+### Quick environment setup
+
+```bash
+export RPC_URL="https://zetachain-athens-evm.blockpi.network/v1/rpc/public"
+export PRIVATE_KEY="YOUR_PRIVATE_KEY_HEX"
+
+cast wallet address $PRIVATE_KEY
+cast balance --rpc-url "$RPC_URL" $(cast wallet address $PRIVATE_KEY)
+
+export STAKING_PRECOMPILE=0x0000000000000000000000000000000000000800
+```
+
+## Listing Validators
+
+Before delegating, you need to know which validators are available on ZetaChain.
+Each validator has an operator address (`zetavaloper...`) that you’ll delegate
+to.
+
+The Cosmos SDK exposes a REST API (LCD) that lists validators. For bonded
+validators (actively participating in consensus):
+
+```bash
+curl -s \
+  "https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=1000" \
+| jq -r '.validators[] | [ .operator_address, (.description.moniker) ] | @tsv'
+```
+
+Example output:
+
+```
+zetavaloper1qumrwnz9x2emzd5yjylp8pf9w2wh3my0gag27y    LiveRaveN
+zetavaloper1p3emgemv8q0fmtw70kfzwecmcvyd9ztqlzudwn    RockX
+zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5    validator1-us-west-2
+zetavaloper1xkddnhcdy5j4auzefjqkt3kp56t6vq7sm5xlga    BlockPI
+...
+```
+
+This is the easiest way to fetch validator operator addresses for staking.
+
+You can also call the precompile’s `validators` function directly from a
+contract or frontend if you prefer to fetch the data inside the EVM.
+
+Validators are also available on [ZetaChain
+explorers](https://testnet.zetachain.exploreme.pro/validators).
+
+## Delegating
+
+Delegation sends your native ZETA to a validator to help secure the network and
+earn staking rewards. With the staking precompile, you can do this straight from
+EVM tools.
+
+- `amount` is in wei (1 ZETA = `1e18` wei).
+- Send the same amount in `--value`, because delegation consumes native ZETA.
+
+```bash
+cast send $STAKING_PRECOMPILE \
+  "delegate(address,string,uint256)" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  1000000000000000000 \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+This transaction bonds 1 ZETA to the validator.
+
+### Verify your delegation
+
+You can check how much ZETA you’ve delegated to a validator using the
+`delegation` function. It returns `(uint256 shares, (string denom, uint256 amount))`.
+
+```bash
+cast call $STAKING_PRECOMPILE \
+  "delegation(address,string)(uint256,(string,uint256))" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  --rpc-url $RPC_URL
+```
+
+Example output:
+
+```
+(1000000000000000000, (azeta, 1000000000000000000))
+```
+
+- shares: staking shares in the validator’s pool
+- balance: your delegated amount in wei (denom is `azeta`)
+
+## Undelegating
+
+Undelegation starts the unbonding period: your staked ZETA stops earning rewards
+and becomes withdrawable only after the unbonding time elapses. You can
+undelegate partially or fully.
+
+- `amount` is in wei (1 ZETA = `1e18` wei).
+- Use the same validator operator address you delegated to.
+- Keep the `--value` equal to the `amount` for this precompile call pattern.
+
+```bash
+cast send $STAKING_PRECOMPILE \
+  "undelegate(address,string,uint256)" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  1000000000000000000 \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+This submits an undelegation of 1 ZETA from that validator.
+
+### Verify the change
+
+Your active delegation to that validator should decrease by the undelegated
+amount:
+
+```bash
+cast call $STAKING_PRECOMPILE \
+  "delegation(address,string)(uint256,(string,uint256))" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  --rpc-url $RPC_URL
+```
+
+Example (after undelegating 1 ZETA):
+
+```
+(0, (azeta, 0))
+```
+
+or, if partially undelegated, a lower balance than before.
+
+### Notes
+
+- Unbonding period applies. The undelegated amount is locked until the unbonding
+  time completes. After that, it becomes liquid ZETA in your account.
+- You can submit multiple undelegations (they create separate unbonding
+  entries).
+- Trying to undelegate more than your active delegation will revert.
+
+## Conclusion
+
+By using the staking precompile, you can interact with ZetaChain’s
+proof-of-stake system directly from the EVM. This means you don’t need separate
+Cosmos tooling to delegate, undelegate, or query validator data, everything can
+be done with the same `cast` commands, Solidity contracts, or frontend apps you
+already use.
+
+You can also build universal contracts that handle incoming calls from connected
+chains and stake ZETA on behalf of users. This opens the door to powerful
+cross-chain apps such as:
+
+- Protocols that automatically stake rewards or idle balances from multiple
+  chains
+- Yield strategies that combine cross-chain liquidity with staking
+- Apps that give users a single interface to manage delegations without leaving
+  their home chain
+
+Staking is one of the simplest but most important features for securing the
+network and earning rewards. From here, you can explore more advanced precompile
+functions such as redelegation, querying unbonding entries, and reward
+distribution.

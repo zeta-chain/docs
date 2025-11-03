@@ -15,8 +15,8 @@ type ContractAddressData = {
 type ContractAddressesByChain = Record<string, ContractAddressData[]>;
 
 const addressesUrl: Record<NetworkType, string> = {
-  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.testnet.json",
-  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts/main/data/addresses.mainnet.json",
+  testnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts-evm/main/data/addresses.testnet.json",
+  mainnet: "https://raw.githubusercontent.com/zeta-chain/protocol-contracts-evm/main/data/addresses.mainnet.json",
 };
 
 const groupDataByChain = (data: ContractAddressData[]) =>
