@@ -147,6 +147,18 @@ rm Cargo.lock
 anchor build
 ```
 
+Generate a new program keypair:
+
+```
+solana-keygen new -o target/deploy/connected-keypair.json
+```
+
+Update the program ID in the code:
+
+```
+anchor keys sync
+```
+
 Deploy the program:
 
 ```
@@ -162,10 +174,16 @@ successfully deployed, such as:
 D7FLXZPthgJewjp4jsGBLNSCTdDyhB6GEmWddyqTYLZc
 ```
 
+Initialize the program:
+
+```
+npx ts-node ./scripts/initialize.ts
+```
+
 ### Withdraw SOL and Call the Solana Program
 
 ```
-PAYLOAD=$(npx zetachain solana encode \
+PAYLOAD=$(zetachain solana encode \
   --connected $PROGRAM_ID \
   --data hello \
   --gateway ZETAjseVjuFsxdRxo6MmTCvqFwb3ZHUx56Co3vCmGis) && echo $PAYLOAD
@@ -175,7 +193,7 @@ Make a call to the ZetaChain Gateway to withdraw SOL and call a program on
 Solana:
 
 ```bash
-npx zetachain z withdraw-and-call \
+zetachain z withdraw-and-call \
   --amount 0.001 \
   --receiver $PROGRAM_ID \
   --data $PAYLOAD \
