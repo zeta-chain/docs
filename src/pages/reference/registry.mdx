@@ -1,0 +1,92 @@
+---
+title: Contract Registry
+description: Query protocol contract addresses using ZetaChain's on-chain contract registry.
+---
+
+import { ContractRegistryChains } from "~/components/Docs";
+
+## What you can do
+
+The Contract Registry is the single source of truth for protocol contract
+addresses, ZRC-20 tokens, and chain configuration used by ZetaChain and all
+connected chains. You can use it to find canonical addresses for system
+contracts like `gateway`, `erc20Custody`, ZRC-20, and more
+
+## Query from the CLI
+
+List all registered contracts:
+
+```bash
+zetachain query contracts list
+```
+
+Get a specific contract by type and chain ID (example: Ethereum Sepolia
+`11155111` gateway):
+
+```bash
+zetachain query contracts show --type gateway --chain-id 11155111
+```
+
+See the full table of protocol contract addresses on the [contract addresses
+page](/reference/network/contracts).
+
+## Use in Universal Contracts
+
+The registry returns whether an entry is active and an ABI-encoded payload you
+can decode.
+
+Read the Gateway address on Ethereum Sepolia (chain ID `11155111`):
+
+```solidity
+(bool active, bytes memory gatewayAddressBytes) = registry.getContractInfo(11155111, "gateway");
+address gateway = address(uint160(bytes20(gatewayAddressBytes)));
+```
+
+Read Uniswap V2 Router on ZetaChain testnet (chain ID `7001`):
+
+```solidity
+(bool active, bytes memory uniswapRouterBytes) = registry.getContractInfo(7001, "uniswapV2Router02");
+address uniswapRouter = address(uint160(bytes20(uniswapRouterBytes)));
+```
+
+All universal contracts inherit a `registry` reference from the abstract
+universal contract, so you can call `registry.getContractInfo(...)` directly
+without manual address wiring.
+
+## Deployment Addresses
+
+The registry is deployed on ZetaChain and on some connected chains. It is
+currently available on EVM-connected chains; deployments to additional chain
+types are planned.
+
+The registry contract address on ZetaChain is the same on mainnet, testnet, and
+localnet:
+
+```bash
+0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394
+```
+
+The registry deployed on ZetaChain is the canonical source of truth for protocol
+contract addresses. Registries on connected chains are mirrors for local reads.
+
+Implementation note: the Contract Registry is a universal app. When contracts
+are added or updated on ZetaChain, that information is propagated to registry
+contracts on connected chains.
+
+Addresses of the contract registry contracts:
+
+<ContractRegistryChains />
+
+## Access Control
+
+The Contract Registry is maintained by the ZetaChain core team.
+
+You can verify the on-chain roles directly on the contract by querying `admin`
+and `registryManager` addresses.
+
+## Source
+
+- Core registry contract source code:
+  [CoreRegistry.sol](https://github.com/zeta-chain/protocol-contracts-evm/blob/develop/contracts/zevm/CoreRegistry.sol)
+- Contract addresses as JSON fetched automatically from the registry:
+  [zeta-chain/contract-addresses](https://github.com/zeta-chain/contract-addresses)

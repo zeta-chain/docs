@@ -59,12 +59,11 @@ RPC_BASE=$(zetachain q chains show --chain-id 84532 -f rpc)
 RPC_ZETACHAIN=$(zetachain q chains show --chain-id 7001 -f rpc)
 
 ZRC20_ETHEREUM=$(zetachain q tokens show -s ETH.ETHSEP -f zrc20)
-ZRC20_BASE=$(zetachain q tokens show -s ETH.BASESEP	-f zrc20)
+ZRC20_BASE=$(zetachain q tokens show -s ETH.BASESEP -f zrc20)
 
 GATEWAY_ETHEREUM=0x0c487a766110c85d301d96e33579c5b317fa4995
 GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
 GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
-UNISWAP_ROUTER=0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe
 
 GAS_LIMIT=1000000
 ```
@@ -80,8 +79,6 @@ NFT_ZETACHAIN=$(npx tsx commands deploy \
   --rpc $RPC_ZETACHAIN \
   --private-key $PRIVATE_KEY \
   --name ZetaChainUniversalNFT \
-  --uniswap-router $UNISWAP_ROUTER \
-  --gateway $GATEWAY_ZETACHAIN \
   --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $NFT_ZETACHAIN
 ```
 

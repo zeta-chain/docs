@@ -1,0 +1,94 @@
+# Model Context Protocol (MCP)
+
+Model Context Protocol (MCP) is an open standard that allows AI assistants to
+securely connect to external tools and data sources through local or remote
+servers.
+
+The ZetaChain MCP server extends your AI coding environment, such as Cursor or
+Claude Code, with direct access to on-chain data and CLI-powered actions. This
+means you can query balances, estimate cross-chain fees, execute contract calls,
+and track transactions across chains, all without leaving your editor or chat
+interface.
+
+## Install the ZetaChain CLI
+
+Install the latest version of the ZetaChain CLI globally:
+
+```bash
+npm install -g zetachain@latest
+```
+
+This includes everything needed to run the MCP server locally (recommended for
+best performance and security).
+
+Note: MCP support is available starting in `zetachain` v7.1.1. Check your
+version:
+
+```bash
+zetachain --version
+```
+
+If your version is older than v7.1.1, update to the latest release:
+
+```bash
+npm install -g zetachain@latest
+```
+
+## Connect MCP to Cursor or Claude Code
+
+Install the ZetaChain MCP integration for your preferred AI client:
+
+```bash
+zetachain mcp install --client cursor
+# or
+zetachain mcp install --client claude
+```
+
+Once installed, your AI tool will be able to access ZetaChain data and perform
+on-chain operations directly through the MCP interface.
+
+Note: The `--client claude` option refers to the Claude Code client. Claude
+Desktop is not currently supported.
+
+## Verify Installation
+
+List all available MCP integrations to confirm that ZetaChain is active:
+
+```bash
+zetachain mcp list
+```
+
+You should see an entry for the ZetaChain MCP server.
+
+## Test the Integration
+
+After verifying installation, try a simple prompt in your AI editor:
+
+> “Query all chains connected to ZetaChain.”
+
+Your editor should automatically run:
+
+```bash
+zetachain query chains
+```
+
+and display a table of all connected chains. If you see this output, the
+ZetaChain MCP server is working correctly.
+
+## Remove the Integration
+
+If you ever need to remove the MCP integration:
+
+```bash
+zetachain mcp remove --client cursor
+# or
+zetachain mcp remove --client claude
+```
+
+## Alternative: Run via Smithery
+
+If you don’t want to run the MCP server locally, you can use the hosted version
+on Smithery. This is ideal for quick trials or environments where local setup
+isn’t possible.
+
+👉 [ZetaChain MCP on Smithery](https://smithery.ai/server/@zeta-chain/cli)

@@ -1,6 +1,6 @@
 export const globalLinks = {
   discordLink: "https://discord.gg/zetachain",
-  twitterLink: "https://twitter.com/zetablockchain",
+  twitterLink: "https://x.com/zetachain",
   telegramLink: "https://t.me/zetachainofficial",
   blogUrl: "https://zetachain.com/blog",
   marketingSiteUrl: "https://zetachain.com",

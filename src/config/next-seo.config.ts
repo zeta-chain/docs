@@ -22,7 +22,7 @@ export const nextSeoProps: NextSeoProps = {
     ],
   },
   twitter: {
-    handle: "@zetablockchain",
+    handle: "@zetachain",
     cardType: "summary_large_image",
   },
 };
