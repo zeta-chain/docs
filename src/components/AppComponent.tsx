@@ -1,11 +1,11 @@
-import { CacheProvider, EmotionCache } from "@emotion/react";
-import { ThemeProvider } from "@mui/material/styles";
-import { compose } from "@reduxjs/toolkit";
+import React from "react";
 import Link from "next/link";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Script from "next/script";
-import React from "react";
+import { compose } from "@reduxjs/toolkit";
+import { CacheProvider, EmotionCache } from "@emotion/react";
+import { ThemeProvider } from "@mui/material/styles";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { ClientOnlyPortal } from "~/components/shared/components/ClientOnlyPortal";
@@ -40,15 +40,14 @@ const LanguageSwitcher: React.FC = () => {
 
   const isChinese = pathname === "/zh" || pathname.startsWith("/zh/");
 
-  const englishPathname = isChinese ? pathname.replace(/^\/zh/, "") || "/" : pathname;
-  const chinesePathname =
-    pathname === "/"
-      ? "/zh"
-      : isChinese
-      ? pathname
-      : pathname.startsWith("/zh/")
-      ? pathname
-      : `/zh${pathname}`;
+  let englishPathname = pathname;
+  let chinesePathname = pathname;
+
+  if (isChinese) {
+    englishPathname = pathname.replace(/^\/zh/, "") || "/";
+  } else {
+    chinesePathname = pathname === "/" ? "/zh" : `/zh${pathname}`;
+  }
 
   const targetPathname = isChinese ? englishPathname : chinesePathname;
 
@@ -62,7 +61,12 @@ const LanguageSwitcher: React.FC = () => {
     "inline-flex items-center justify-center rounded-full border border-grey-200 dark:border-grey-600 px-3 py-1.5 text-sm font-medium text-grey-500 hover:text-black hover:border-grey-300 dark:text-grey-200 dark:hover:text-white transition-colors";
 
   const renderLink = (additionalClasses?: string) => (
-    <Link key={additionalClasses ?? "default"} href={target} prefetch={false} className={`${linkClasses} ${additionalClasses ?? ""}`}>
+    <Link
+      key={additionalClasses ?? "default"}
+      href={target}
+      prefetch={false}
+      className={`${linkClasses} ${additionalClasses ?? ""}`}
+    >
       {label}
     </Link>
   );
@@ -73,9 +77,7 @@ const LanguageSwitcher: React.FC = () => {
         <div className="hidden sm:flex items-center gap-3 ml-4">{renderLink()}</div>
       </ClientOnlyPortal>
 
-      <ClientOnlyPortal selector="#docs-mobile-language-switcher">
-        {renderLink("sm:hidden")}
-      </ClientOnlyPortal>
+      <ClientOnlyPortal selector="#docs-mobile-language-switcher">{renderLink("sm:hidden")}</ClientOnlyPortal>
     </>
   );
 };
