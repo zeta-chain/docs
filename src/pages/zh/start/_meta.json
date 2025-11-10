@@ -1,0 +1,14 @@
+{
+  "index": {
+    "title": "快速开始"
+  },
+  "zetachain": {
+    "title": "什么是 ZetaChain？"
+  },
+  "build": {
+    "title": "为什么在 ZetaChain 上构建？"
+  },
+  "app": {
+    "title": "全链应用"
+  }
+}

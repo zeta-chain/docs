@@ -4,14 +4,20 @@
   },
   "zetachain": {
     "title": "What is ZetaChain?",
-    "description": "Universal Blockchain with native access to any chain, making crypto as accessible, diverse, and connected as the internet."
+    "frontMatter": {
+      "description": "Universal Blockchain with native access to any chain, making crypto as accessible, diverse, and connected as the internet."
+    }
   },
   "build": {
     "title": "Why Build on ZetaChain?",
-    "description": "Chain orchestration, cross-chain native token transfers, gasless execution environment."
+    "frontMatter": {
+      "description": "Chain orchestration, cross-chain native token transfers, gasless execution environment."
+    }
   },
   "app": {
     "title": "Universal Apps",
-    "description": "Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more."
+    "frontMatter": {
+      "description": "Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more."
+    }
   }
 }

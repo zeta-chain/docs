@@ -1,50 +1,74 @@
 {
   "index": {
     "title": "Services & Providers",
-    "description": "Oracles, subgraphs, data providers, account abstraction and more"
+    "frontMatter": {
+      "description": "Oracles, subgraphs, data providers, account abstraction and more"
+    }
   },
   "wallets": {
     "title": "Wallets",
-    "description": "Supported EVM, Bitcoin and Cosmos wallets"
+    "frontMatter": {
+      "description": "Supported EVM, Bitcoin and Cosmos wallets"
+    }
   },
   "the-graph": {
     "title": "The Graph",
-    "description": "Subgraphs, Decentralized indexing protocol"
+    "frontMatter": {
+      "description": "Subgraphs, Decentralized indexing protocol"
+    }
   },
   "alchemy": {
     "title": "Alchemy",
-    "description": "Node API and Subgraphs"
+    "frontMatter": {
+      "description": "Node API and Subgraphs"
+    }
   },
   "goldsky": {
     "title": "Goldsky",
-    "description": "Subgraph indexer"
+    "frontMatter": {
+      "description": "Subgraph indexer"
+    }
   },
   "pyth": {
     "title": "Pyth",
-    "description": "Price and VRF Oracle"
+    "frontMatter": {
+      "description": "Price and VRF Oracle"
+    }
   },
   "particle": {
     "title": "Particle Network",
-    "description": "Account Abstraction"
+    "frontMatter": {
+      "description": "Account Abstraction"
+    }
   },
   "envio": {
     "title": "Envio",
-    "description": "Real-time data indexer"
+    "frontMatter": {
+      "description": "Real-time data indexer"
+    }
   },
   "subquery": {
     "title": "SubQuery",
-    "description": "Open-source, flexible, multi-chain data indexer"
+    "frontMatter": {
+      "description": "Open-source, flexible, multi-chain data indexer"
+    }
   },
   "goldrush": {
     "title": "GoldRush",
-    "description": "Historical blockchain data API"
+    "frontMatter": {
+      "description": "Historical blockchain data API"
+    }
   },
   "space-id": {
     "title": "Web3 Name SDK",
-    "description": "SPACE ID Web3 Name SDK"
+    "frontMatter": {
+      "description": "SPACE ID Web3 Name SDK"
+    }
   },
   "onfinality": {
     "title": "OnFinality",
-    "description": "Subgraph and SubQuery indexer"
+    "frontMatter": {
+      "description": "Subgraph and SubQuery indexer"
+    }
   }
 }

@@ -1,30 +1,44 @@
 {
   "overview": {
     "title": "Architecture",
-    "description": "Overview of the architecture of ZetaChain"
+    "frontMatter": {
+      "description": "Overview of the architecture of ZetaChain"
+    }
   },
   "observers": {
     "title": "Observer-Signer Validators",
-    "description": "List of currently active observer-signer validators"
+    "frontMatter": {
+      "description": "List of currently active observer-signer validators"
+    }
   },
   "privileged": {
     "title": "Privileged Actions",
-    "description": "Administrative actions that can only be executed by dedicated groups"
+    "frontMatter": {
+      "description": "Administrative actions that can only be executed by dedicated groups"
+    }
   },
   "rewards": {
     "title": "Staking Rewards",
-    "description": "How staking rewards are calculated"
+    "frontMatter": {
+      "description": "How staking rewards are calculated"
+    }
   },
   "whitelisting": {
     "title": "Whitelisting ERC-20",
-    "description": "How to whitelist an ERC-20 as a supported ZRC-20"
+    "frontMatter": {
+      "description": "How to whitelist an ERC-20 as a supported ZRC-20"
+    }
   },
   "modules": {
     "title": "Modules",
-    "description": "ZetaChain's Cosmos SDK modules"
+    "frontMatter": {
+      "description": "ZetaChain's Cosmos SDK modules"
+    }
   },
   "zetacored": {
     "title": "ZetaChain Node CLI",
-    "description": "Command-line interface of the ZetaChain node binary"
+    "frontMatter": {
+      "description": "Command-line interface of the ZetaChain node binary"
+    }
   }
 }

@@ -1,0 +1,43 @@
+---
+title: 代币质押
+---
+
+import Image from "next/image";
+
+import { basePath } from "~/lib/app.constants";
+
+质押 ZETA 是参与 ZetaChain 网络的重要方式。通过质押可提升网络安全并获取奖励。本指南介绍如何使用 Keplr 进行质押。
+
+首先打开 Keplr 扩展，并切换到 “Staked” 界面：
+
+<Image src={`${basePath}/img/docs/keplr-staking.png`} width={400} height={670} alt="Keplr staking" />
+
+点击 “Stake with Keplr Dashboard”，浏览器会打开新页面，在搜索框输入 “ZetaChain”：
+
+![Keplr Staking Dashboard](/img/docs/keplr-staking-dashboard.png)
+
+在结果中选择 “ZetaChain” 进入验证人列表：
+
+![Keplr Staking Validators](/img/docs/keplr-staking-validators.png)
+
+选定验证人后点击名称，右侧会显示基本信息：
+
+![Keplr Validator Overview](/img/docs/keplr-validator-overview.png)
+
+点击 “Stake” 进入质押界面，输入质押数量后再次点击 “Stake” 确认：
+
+<Image src={`${basePath}/img/docs/keplr-staking-confirm.png`} width={400} height={670} alt="Keplr staking confirm" />
+
+核对交易信息并点击 “Approve” 签名、广播交易：
+
+<Image
+  src={`${basePath}/img/docs/keplr-staking-approve.png`}
+  width={400}
+  height={670}
+  alt="Keplr extension - Confirm Transaction"
+/>
+
+返回 Keplr 的 Staked 界面，即可看到已质押的 ZETA 数量与累计奖励：
+
+<Image src={`${basePath}/img/docs/keplr-staking-result.png`} width={400} height={670} alt="Keplr staking result" />
+

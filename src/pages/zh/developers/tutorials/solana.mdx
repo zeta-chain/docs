@@ -1,0 +1,163 @@
+使用 ZetaChain 与 Solana 构建全链应用非常简单。你可以直接从 Solana 存入 SOL 与 SPL-20 代币到 ZetaChain 的账户或智能合约，ZetaChain 上的全链合约可以处理这些存入，并执行由 Solana 发起的合约调用。
+
+本教程将引导你：
+
+- 使用 localnet 搭建本地开发环境
+- 在 ZetaChain 部署全链合约
+- 从 Solana 向 ZetaChain 存入代币（SOL 与 SPL-20）
+- 执行 deposit-and-call 交易，在存入代币的同时调用全链应用
+- 将代币提现回 Solana，并在提现过程中可选调用 Solana 程序
+
+与 Solana 的交互由 Solana Gateway 程序处理，详见[文档说明](/developers/chains/solana)。
+
+## 前置条件
+
+开始前请确保已安装并配置：
+
+- [`solana` CLI](https://solana.com/docs/intro/installation)
+
+## 克隆示例项目
+
+创建项目并安装依赖：
+
+```bash
+npx zetachain@latest new --project call
+cd call
+yarn
+```
+
+## 启动 Localnet
+
+运行以下命令启动包含 ZetaChain 与 Solana 的本地开发环境：
+
+```bash
+yarn zetachain localnet start
+```
+
+请保持该终端运行。
+
+## 编译并部署示例全链合约
+
+在新终端窗口中编译并部署全链合约：
+
+```bash
+npx hardhat compile --force
+npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+```
+
+执行后会输出合约部署成功的提示：
+
+```
+🚀 Successfully deployed "Universal" contract on localhost.
+📜 Contract address: 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
+```
+
+请记录合约地址（此示例为 `0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7`），后续会用到。
+
+## 存入 SOL
+
+从 Solana 向 ZetaChain 存入 SOL：
+
+```
+npx hardhat localnet:solana-deposit \
+  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
+  --amount 0.1
+```
+
+- `--receiver`：ZetaChain 上的全链合约地址
+- `--amount`：欲存入的 SOL 数量
+
+## 存入并调用
+
+在存入代币的同时调用已部署的全链合约：
+
+```bash
+npx hardhat localnet:solana-deposit-and-call \
+  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
+  --amount 0.1 \
+  --types '["string"]' hello
+```
+
+该命令会在存入代币的同时向合约传入字符串参数 `"hello"`。
+
+## 提现至 Solana
+
+将代币从 ZetaChain 提现回 Solana：
+
+```bash
+npx hardhat zetachain-withdraw \
+  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --receiver DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd \
+  --network localhost \
+  --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 \
+  --amount 0.1
+```
+
+- `--gateway-zeta-chain`：ZetaChain Gateway 地址
+- `--receiver`：接收提现代币的 Solana 钱包地址
+- `--zrc20`：目标提现代币在 ZetaChain 上的 ZRC-20 地址
+- `--amount`：提现数量
+
+## 提现并调用 Solana 程序
+
+除了单纯提现外，还可以在提现过程中调用 Solana 程序，实现更复杂的操作，例如在收款时自动执行合约逻辑、质押或兑换。
+
+项目 `solana` 目录中提供了示例程序，包含可由 ZetaChain 全链应用在提现时调用的 `on_call` 函数。
+
+以下步骤展示如何构建示例程序，并通过 ZetaChain Gateway 执行 “withdraw and call”。
+
+### 构建并配置示例 Solana 程序
+
+设置 SPL-20 USDC 地址，可在 `localnet` 输出表格中找到：
+
+```bash
+USDC_SPL=3Kx5SY7SwzdUZSorLVSpPgxBL8DZFiu8mg4FWduu2tQp
+```
+
+```bash
+cd solana && anchor build && npx ts-node setup/main.ts "$USDC_SPL" && cd -
+```
+
+完成后会输出类似信息，表示程序部署成功：
+
+```
+Connected program deployment output: Program Id: 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy
+```
+
+### 提现 SOL 并调用 Solana 程序
+
+通过 ZetaChain Gateway 提现 SOL 并调用 Solana 程序：
+
+```bash
+npx hardhat zetachain-withdraw-and-call \
+  --receiver 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy \
+  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 \
+  --amount 0.01 \
+  --network localhost \
+  --types '["bytes"]' $(npx ts-node solana/setup/encodeCallArgs.ts "sol" "$USDC_SPL")
+```
+
+- `--receiver`：需要调用的 Solana 程序 ID
+- `--types '["bytes"]'`：表示合约调用参数为字节数组（即编码后的 Solana 调用数据）
+- 引号中的命令会生成编码后的账户与数据
+- `--zrc20`：ZetaChain 上 SOL 的 ZRC-20 地址
+
+### 提现 SPL-20 并调用 Solana 程序
+
+将 ZRC-20 形式的 SPL-20 USDC 提现同时调用 Solana 程序：
+
+```bash
+npx hardhat zetachain-withdraw-and-call \
+  --receiver 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy \
+  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+  --zrc20 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb \
+  --amount 0.01 \
+  --network localhost \
+  --types '["bytes"]' $(npx ts-node solana/setup/encodeCallArgs.ts "spl" "$USDC_SPL")
+```
+
+- `--zrc20`：ZetaChain 上 SPL-20 USDC 的 ZRC-20 地址
+
+通过本教程，你已学会在 ZetaChain 部署全链合约、从 Solana 存入 SOL 与 SPL-20、在存入时调用合约、将资产提现回 Solana，并在提现时触发 Solana 程序，为跨链交互提供更多扩展玩法。
+

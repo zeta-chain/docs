@@ -1,0 +1,105 @@
+---
+title: 全链应用
+---
+
+import { Alert } from "~/components/shared";
+
+## 概述
+
+全链应用是部署在 ZetaChain 上、并与以太坊、BNB、比特币等其他区块链原生互联的智能合约。
+
+与常规合约不同，全链应用能够接收来自任意已连接链的合约调用、消息与代币转移；同时也可以向这些链发起合约调用并完成代币转移。这些能力让全链应用可以编排跨越多条链的复杂多步骤交易。
+
+例如，比特币用户可以通过全链应用向以太坊上的收款地址发送 USDC；以太坊用户可以在 ZetaChain 上购买 NFT，并将其发送到自己在 BNB 链上的账户。
+
+全链应用部署在 ZetaChain 的通用 EVM 上，该 EVM 在原生 EVM 的基础上扩展了全链互操作能力。这意味着你现有的合约可以直接在 ZetaChain 上运行，通过适当改造即可获得强大的全链功能。
+
+下面是一个全链应用示例：
+
+```solidity
+pragma solidity 0.8.26;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
+
+contract UniversalApp is UniversalContract {
+    function onCall(
+        MessageContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // ...
+    }
+}
+```
+
+## 调用全链应用
+
+用户可以通过连接链上的 **Gateway 合约** 与全链应用交互。每条连接链都有一个 Gateway 合约，向用户提供向全链应用存入代币并发起调用的方法。用户在调用全链应用时可以同时传递数据和代币。
+
+例如，下图展示了一位以太坊用户向全链应用发送 1 ETH 和消息 “hello”的过程：
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/Tz0eeQMlUDAigpSdWYPi0F/Intro-1?node-id=0-1&embed-host=share"
+  allowFullScreen
+></iframe>
+
+一次对全链应用的调用会触发 `onCall` 方法。
+
+全链应用将接收：
+
+- 一条消息（本例中为 `"hello"`），其中包含任意数据。消息可以包含收款人地址、代币地址、需要铸造的 NFT 属性等。
+- 以 ZRC-20 表示的代币（本例中为 1 枚 ZRC-20 ETH）。
+
+每条连接链上的原生 Gas 代币与受支持的 ERC-20 代币，在 ZetaChain 上都有对应的 ZRC-20 代币。ZRC-20 与 ERC-20 兼容，可在无许可的情况下被转回（提取）至其原始链（例如 ZetaChain 上的 ZRC-20 ETH 可兑换为以太坊上的 ETH）。
+
+`onCall` 还可以访问额外的上下文信息，例如原始发送者地址与链 ID。
+
+全链应用同样可以主动向已连接的链发起代币转移和合约调用。
+
+以下示例展示了全链应用的行为：
+
+- 从以太坊接收 6 枚 ETH 和 “I want BNB”（表示目标代币的字节数据）
+- 在 ZetaChain 上使用去中心化交易所将 6 枚 ZRC-20 ETH 兑换为 ZRC-20 BNB
+- 调用 Gateway 合约，提取 ZRC-20 BNB 并在 BNB 链上调用某个合约
+
+当然，一次全链应用调用可以触发对多条链的调用。
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/3eA0Lo6hqPrh40WFaRKATf/Intro-2?node-id=0-1&embed-host=share"
+  allowFullScreen
+></iframe>
+
+通过全链应用，跨越多条区块链的复杂交易序列与价值转移可以由用户签名的一笔交易触发。
+
+## 比特币支持
+
+全链应用完全兼容比特币。同一个全链应用合约可以接收来自任意连接链的调用。
+
+用户只需向 **Gateway 地址** 发送 BTC 与数据，即可在比特币网络上调用全链应用。用户仅需使用自己选择的钱包签名一笔交易即可完成调用。全链应用具备 Gas 抽象能力，因此终端用户无需在比特币之外的链上创建账户，也无需获取其他链的 Gas 代币。
+
+## Gas 抽象
+
+来自连接链、发往全链应用的调用除了与 Gateway 合约交互的初始 Gas 成本外，不会产生额外的 Gas 消耗。
+
+全链应用向连接链发起的调用（例如合约调用与代币提现）需要消耗 Gas。通用 EVM 提供了查询 Gas 的工具，每个全链应用都需要确保合约持有足量的对应 ZRC-20 Gas 代币来支付费用。
+
+在实践中，全链应用会将接收到的一部分 ZRC-20 代币兑换成目标链所需的 ZRC-20 Gas 代币。当执行跨链调用或提现时，将扣除相应数量的 ZRC-20 Gas 代币以支付目标链上的 Gas 费用。
+
+对于终端用户而言，这一机制屏蔽了跨链 Gas 的复杂性。只要用户输入的代币数量充足（无论是哪种代币），Gas 费用就能被覆盖。
+
+## 小结
+
+- 全链应用：
+  - 可以接收来自连接链用户或合约的合约调用与代币
+  - 可以向连接链发起合约调用与代币转移
+  - 可以自动处理跨链交易的 Gas
+  - 与 EVM 链（如以太坊、BNB、Polygon）、比特币、Solana、TON、Sui 完全兼容，后续将支持 Cosmos（通过 IBC）及更多链
+- 原生 Gas 与受支持的 ERC-20 代币在 ZetaChain 上都有对应的 ZRC-20 代币，且可无许可地提回其原始链。
+

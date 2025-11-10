@@ -1,0 +1,23 @@
+{
+  "index": {
+    "title": "ZetaChain 文档"
+  },
+  "start": {
+    "title": "快速开始"
+  },
+  "developers": {
+    "title": "开发构建"
+  },
+  "reference": {
+    "title": "开发工具"
+  },
+  "nodes": {
+    "title": "运行节点"
+  },
+  "users": {
+    "title": "使用我们的产品"
+  },
+  "about": {
+    "title": "关于 ZetaChain"
+  }
+}

@@ -1,0 +1,24 @@
+---
+title: 开发构建
+description: ZetaChain 是一条面向全链应用的区块链，覆盖以太坊、Cosmos、比特币等任意区块链。
+heroImgUrl: /img/pages/build.svg
+heroImgWidth: 688
+---
+
+import { WorkWithUs } from "~/components/Home";
+
+import { GetSupport } from "~/components/Support";
+
+import { BugBounty, CurrentPageNavigationSections } from "~/components/shared";
+
+<div className="flex flex-col gap-20 sm:gap-[120px]">
+  <CurrentPageNavigationSections
+    injectedSection={{
+      index: 2,
+      component: <WorkWithUs />,
+    }}
+  />
+  <BugBounty />
+  <GetSupport />
+</div>
+

@@ -1,0 +1,212 @@
+与 ZetaChain 全链应用进行交互时，Sui 区块链同样扮演关键角色。本教程展示如何在一次交易中将代币提现至 Sui，并同时调用 Sui 合约，从而实现无缝跨链操作与强大的 DeFi 流程。
+
+你将学会：
+
+- 搭建包含 ZetaChain 与 Sui 的 localnet 环境
+- 部署并配置可响应 ZetaChain 调用的 Sui 合约
+- 执行 `withdrawAndCall()`，即同时发送代币并触发 Sui 上的合约逻辑
+
+## 前置条件
+
+开始前请确保已安装并配置以下工具：
+
+- [Sui CLI](https://docs.sui.io/references/cli)：用于启动本地 Sui 节点并与之交互
+- [Foundry](https://getfoundry.sh/)：借助 `cast` 编码 ABI 载荷
+- [jq](https://stedolan.github.io/jq/)：解析 Sui CLI 的 JSON 输出
+
+## 合约概览
+
+示例合约演示如何在 ZetaChain 与 Sui 之间处理跨链交互。`connected` 模块负责：
+
+- 通过 `on_call` 接收来自 ZetaChain 的代币
+- 使用模拟的 Cetus DEX 实现代币兑换
+- 将兑换后的代币发送至指定接收地址
+
+该 Sui 合约使用 `0x2::coin` 与自定义的 `token::TOKEN` 类型表示转移的资产。
+
+## 克隆示例项目
+
+首先克隆示例合约仓库并安装依赖：
+
+```bash
+npx zetachain@next new --project call
+cd call
+yarn
+```
+
+## 启动 Localnet
+
+启动包含 ZetaChain 与 Sui 的本地开发环境：
+
+```bash
+npx zetachain localnet start
+```
+
+保持终端打开。启动成功后会输出包含 Gateway 模块与对象 ID 的表格。
+
+## 在 Sui 部署合约
+
+进入 Sui 合约目录并部署：
+
+```bash
+cd sui
+```
+
+```bash
+sui move build --force
+```
+
+从水龙头获取测试 SUI：
+
+```
+sui client faucet
+```
+
+发布合约包：
+
+```
+PUBLISHED=$(sui client publish --skip-dependency-verification --json)
+```
+
+提取发布的包 ID：
+
+```
+PACKAGE=$(echo $PUBLISHED | jq -r '.objectChanges[] | select(.type == "published") | .packageId') && echo $PACKAGE
+```
+
+## 设置池子
+
+部署完成后，需要初始化池子、铸造代币并注入初始流动性。
+
+获取 Treasury Cap：
+
+```bash
+TREASURY=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "0x2::coin::TreasuryCap<\($pkg)::token::TOKEN>") | .objectId') && echo $TREASURY
+```
+
+获取池子 ID：
+
+```
+POOL=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Pool<0x2::sui::SUI, \($pkg)::token::TOKEN>") | .objectId') && echo $POOL
+```
+
+铸造代币：
+
+```
+RECIPIENT=$(sui client active-address) && echo $RECIPIENT
+```
+
+```
+sui client call \
+  --package "$PACKAGE" \
+  --module token \
+  --function mint_and_transfer \
+  --args "$TREASURY" 1000000 "$RECIPIENT"
+```
+
+获取铸造后的代币对象 ID：
+
+```
+TOKEN=$(sui client objects --json | jq -r --arg pkg "$PACKAGE" '.[].data | select(.type == "0x2::coin::Coin<\($pkg)::token::TOKEN>") | .objectId') && echo $TOKEN
+```
+
+将代币存入池子：
+
+```
+sui client call \
+  --package "$PACKAGE" \
+  --module cetusmock \
+  --function deposit \
+  --type-args "0x2::sui::SUI" "$PACKAGE::token::TOKEN" \
+  --args "$POOL" "$TOKEN"
+```
+
+## 向 Gateway 存入 SUI
+
+跨链操作前，需要向 ZetaChain Gateway 存入 SUI。先获取 Sui 代币 ID：
+
+```
+COIN=$(sui client gas --json | jq -r '.[0].gasCoinId') && echo $COIN
+```
+
+示例地址：
+
+```
+ETH_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+GATEWAY_PACKAGE=0xa3ce10f68ed22d2cbbc31eaa709ee15e2e30348bfc6ff97b7d128d03b679c5c2
+GATEWAY_OBJECT=0xe925d4059435083b70bc504ce912202214edd06f693bdc3f9573a996292780c7
+```
+
+使用 localnet 输出中的 Gateway 地址执行存入：
+
+```
+sui client call \
+  --package "$GATEWAY_PACKAGE" \
+  --module gateway \
+  --function deposit \
+  --type-args 0x2::sui::SUI \
+  --args "$GATEWAY_OBJECT" "$COIN" "$ETH_ADDRESS"
+```
+
+> **注意**：请将 `GATEWAY_PACKAGE`、`GATEWAY_OBJECT` 替换为实际 localnet 输出中的值。
+
+## 准备 Withdraw and Call
+
+接下来执行 withdraw and call，将代币提现至 Sui 并同时调用 Sui 合约。
+
+获取所需合约 ID：
+
+```bash
+CONFIG=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::GlobalConfig") | .objectId') && echo $CONFIG
+```
+
+```
+CLOCK=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Clock") | .objectId') && echo $CLOCK
+```
+
+```
+PARTNER=$(echo $PUBLISHED | jq -r --arg pkg "$PACKAGE" '.objectChanges[] | select(.type == "created" and .objectType == "\($pkg)::cetusmock::Partner") | .objectId') && echo $PARTNER
+```
+
+准备载荷：
+
+```
+MESSAGE=$RECIPIENT
+```
+
+```
+TOKEN_TYPE="$PACKAGE::token::TOKEN" && echo $TOKEN_TYPE
+```
+
+```
+PAYLOAD=$(npx ts-node ./setup/encodeCallArgs.ts "$TOKEN_TYPE" "$CONFIG,$POOL,$PARTNER,$CLOCK" "$MESSAGE") && echo $PAYLOAD
+```
+
+## 执行 Withdraw and Call
+
+首先授权 Gateway 消耗 ZRC-20 Sui：
+
+```
+cast send 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 "approve(address,uint256)" 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6 1000000000000000000000000 --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
+
+然后提现并调用：
+
+```
+cast send 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6 "withdrawAndCall(bytes,uint256,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
+  "$PACKAGE" \
+  "1000000" \
+  "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891" \
+  "$PAYLOAD" \
+  "(10000,false)" \
+  "(0xB0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,true,0xC0b86991c6218b36c1d19D4a2e9Eb0cE3606eB49,0xdeadbeef,50000)" \
+  --private-key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+```
+
+该交易会：
+
+1. 将代币从 ZetaChain 提现至 Sui
+2. 同时调用指定 Sui 合约并传入参数
+
+此流程展示了如何将资产提现与合约调用结合，实现 ZetaChain 与 Sui 之间复杂的跨链 DeFi 交互。***
+

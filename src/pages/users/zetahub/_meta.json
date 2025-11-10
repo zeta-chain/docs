@@ -1,34 +1,50 @@
 {
   "create-wallet": {
     "title": "Add ZetaChain to your Wallet",
-    "description": "How to add the ZetaChain network to your wallet."
+    "frontMatter": {
+      "description": "How to add the ZetaChain network to your wallet."
+    }
   },
   "connect-wallet": {
     "title": "Connect a Wallet in ZetaHub",
-    "description": "How to connect your wallet and use it in ZetaHub."
+    "frontMatter": {
+      "description": "How to connect your wallet and use it in ZetaHub."
+    }
   },
   "get-zeta": {
     "title": "Get ZETA",
-    "description": "How to get ZETA tokens."
+    "frontMatter": {
+      "description": "How to get ZETA tokens."
+    }
   },
   "pool": {
     "title": "Pool ZETA",
-    "description": "Add tokens to liquidity pools on ZetaChain, earn fees, view pool details, and manage your positions."
+    "frontMatter": {
+      "description": "Add tokens to liquidity pools on ZetaChain, earn fees, view pool details, and manage your positions."
+    }
   },
   "stake": {
     "title": "Delegate/Stake ZETA",
-    "description": "Explore ZetaChain validators and delegate ZETA."
+    "frontMatter": {
+      "description": "Explore ZetaChain validators and delegate ZETA."
+    }
   },
   "enroll-zeta-xp": {
     "title": "Enroll in Zeta XP",
-    "description": "Enroll in the XP program to earn experience points by engaging with the ZetaChain ecosystem, level up through various tiers, and unlock rewards and perks for consistent participation."
+    "frontMatter": {
+      "description": "Enroll in the XP program to earn experience points by engaging with the ZetaChain ecosystem, level up through various tiers, and unlock rewards and perks for consistent participation."
+    }
   },
   "earn-zeta-xp": {
     "title": "Earn Zeta XP",
-    "description": "Participate in activities to earn XP, including staking, trading, and engaging with apps across DeFi, Gaming, Social, NFTs, and more."
+    "frontMatter": {
+      "description": "Participate in activities to earn XP, including staking, trading, and engaging with apps across DeFi, Gaming, Social, NFTs, and more."
+    }
   },
   "send": {
     "title": "Send Assets",
-    "description": "The Send page allows you to move your assets in and out of the ZetaChain network."
+    "frontMatter": {
+      "description": "The Send page allows you to move your assets in and out of the ZetaChain network."
+    }
   }
 }

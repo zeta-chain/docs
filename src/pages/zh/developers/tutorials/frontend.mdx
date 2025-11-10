@@ -1,0 +1,230 @@
+在本教程中，你将为 **Hello World 全链应用** 添加一个基于 React 的前端。该应用会连接 EVM 测试网钱包，通过 ZetaChain Gateway 发送跨链调用，并追踪在 ZetaChain 上的执行结果。
+
+你将学习如何：
+
+- 在 React 中引入并使用 ZetaChain Toolkit (`evmCall`)
+- 配置网络与合约地址
+- 从连接的 EVM 链向 ZetaChain 上的 Hello 合约发送消息
+- 轮询 ZetaChain 获取跨链交易状态（CCTX），并展示源链与目标链的区块浏览器链接
+
+![Web App](/img/docs/frontend.png)
+
+## 应用功能概览
+
+Hello 前端提供一个简单 UI 展示完整跨链流程：
+
+1. 连接受支持的 EVM 测试网钱包（如 Arbitrum Sepolia）。
+2. 使用 `evmCall` 通过 ZetaChain Gateway 向部署在 ZetaChain 的 Hello 合约发送消息。
+3. 跟踪交易：保存源链交易哈希，轮询 ZetaChain 的跨链执行（CCTX），并展示双链区块浏览器链接。
+
+## 前置条件
+
+在开始之前，请先完成以下教程：
+
+- [全链应用简介](/start/app/)
+- [ZetaChain 入门](/developers/tutorials/intro)
+- [第一个全链应用](/developers/tutorials/hello)
+
+## 环境准备
+
+如果你已经完成“第一个全链应用”教程，并拥有 Hello 项目，只需进入前端目录并安装依赖：
+
+```bash
+cd hello/frontend
+yarn
+```
+
+若尚未创建项目，可执行：
+
+```bash
+npx zetachain@latest new --project hello
+cd hello/frontend
+yarn
+```
+
+## 工作原理
+
+前端通过引入辅助函数、连接钱包、构造调用参数并轮询跨链结果来与 ZetaChain 集成。以下是关键步骤。
+
+### 引入 Toolkit
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+import { evmCall } from "@zetachain/toolkit/chains/evm";
+import { ethers, ZeroAddress } from "ethers";
+```
+
+ZetaChain Toolkit 提供用于发送跨链交易的 `evmCall` 函数。应用同样使用 `ethers` 进行钱包与交易管理，并使用 `ZeroAddress` 配置回退选项。
+
+### 从钱包获取 Signer
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const ethersProvider = new ethers.BrowserProvider(selectedProvider.provider);
+const signer = (await ethersProvider.getSigner()) as ethers.AbstractSigner;
+```
+
+应用通过 [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) 标准连接钱包。Signer 用于授权并发送跨链调用。
+
+### 指定 Hello 合约地址
+
+```ts filename="frontend/src/constants/contracts.ts"
+export const HELLO_UNIVERSAL_CONTRACT_ADDRESS = "0x61a184EB30D29eD0395d1ADF38CC7d2F966c4A82";
+```
+
+将该地址替换为你在 ZetaChain 测试网上部署的 Hello 合约地址，作为跨链调用的 `receiver`。
+
+### 构建调用参数
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const evmCallParams = {
+  receiver: helloUniversalContractAddress,
+  types: ["string"],
+  values: [stringValue],
+  revertOptions: {
+    callOnRevert: false,
+    revertAddress: ZeroAddress,
+    revertMessage: "",
+    abortAddress: ZeroAddress,
+    onRevertGasLimit: 1000000,
+  },
+};
+
+const evmCallOptions = {
+  signer,
+  txOptions: {
+    gasLimit: 1000000,
+  },
+};
+```
+
+上述代码定义了载荷与执行选项：
+
+- `receiver`：ZetaChain 上的 Hello 合约。
+- `types` / `values`：传入 `onCall` 的 ABI 编码参数（此处为单个 `string`）。
+- `revertOptions`：可选的回退逻辑配置。
+- `txOptions`：交易参数（如 Gas 上限）。
+
+### 发送跨链调用
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const result = await evmCall(evmCallParams, evmCallOptions);
+await result.wait();
+
+setConnectedChainTxHash(result.hash);
+```
+
+调用通过 Gateway 发出。`result.hash` 为源链交易哈希，应用会保存以便展示区块浏览器链接并跟踪跨链状态。
+
+### 配置网络与浏览器
+
+```ts filename="frontend/src/constants/chains.ts"
+export const SUPPORTED_CHAINS = [
+  {
+    explorerUrl: "https://sepolia.arbiscan.io/tx/",
+    name: "Arbitrum Sepolia",
+    chainId: 421614,
+    icon: "/logos/arbitrum-logo.svg",
+    colorHex: "#28446A",
+  },
+];
+
+export const ZETACHAIN_ATHENS_BLOCKSCOUT_EXPLORER_URL = "https://zetachain-testnet.blockscout.com/tx/";
+```
+
+应用维护受支持网络及其浏览器链接，发送调用后即可展示源链与 ZetaChain 的对应交易。
+
+### 轮询跨链状态
+
+```ts filename="frontend/src/MessageFlowCard.tsx"
+const response = await fetch(`${CCTX_POLLING_URL}/${connectedChainTxHash}`);
+if (response.ok) {
+  const data = (await response.json()) as CrossChainTxResponse;
+  const txHash = data.CrossChainTxs?.[0]?.outbound_params?.[0]?.hash;
+  if (txHash) setZetachainTxHash(txHash);
+}
+```
+
+应用定期向 ZetaChain 公共 API 发起请求，使用源链交易哈希进行查询。一旦 ZetaChain 完成处理，响应会包含目标链交易哈希，并显示在 UI 中。
+
+## UI 端到端流程
+
+前端引导用户完成一个完整的跨链流程：
+
+1. **连接钱包**：应用检测兼容 EIP-6963 的钱包，并通过 `WalletProvider` 连接，以便签名交易。
+2. **选择网络**：用户从预设的 `SUPPORTED_CHAINS` 中选择源链，每条链包含名称、ID 与浏览器链接。
+3. **输入消息**：输入纯文本字符串，应用会限制字节长度以确保编码后可安全发送。
+4. **发送调用**：点击 **Send** 时执行 `evmCall`，将 ZetaChain 上的 Hello 合约作为接收者，并保存源链交易哈希。
+5. **跟踪结果**：UI 立即展示源链交易，同时开始轮询 CCTX，一旦获取到，在界面上展示源链与 ZetaChain 的浏览器链接。
+
+## 安装与运行
+
+在前端目录安装依赖并启动开发服务器：
+
+```bash
+cd hello/frontend
+yarn
+yarn dev
+```
+
+默认情况下，Vite 开发服务器会运行在 `http://localhost:5173`。
+
+## 钱包
+
+前端默认使用基于 [Dynamic](https://www.dynamic.xyz/) 的 `@zetachain/wallet`，支持 EVM、Solana、Sui、比特币。你也可以一键切换到仅支持 EVM 的 EIP-6963 钱包。
+
+- 默认：`USE_DYNAMIC_WALLET = true`
+- EIP-6963：将 `USE_DYNAMIC_WALLET` 设为 `false`
+
+```ts filename="frontend/src/constants/wallets.ts"
+export const USE_DYNAMIC_WALLET = true;
+```
+
+根组件会根据该标志决定是否包裹在 EIP-6963 Provider 中：
+
+```ts filename="frontend/src/main.tsx"
+{
+  USE_DYNAMIC_WALLET ? (
+    <App />
+  ) : (
+    <Eip6963WalletProvider>
+      <App />
+    </Eip6963WalletProvider>
+  );
+}
+```
+
+无论使用哪种钱包模式，EVM 链都会提供 Signer，因此发送 `evmCall`、跟踪 CCTX 与展示浏览器链接的流程完全相同。
+
+### 配置合约地址（可选）
+
+默认情况下，应用指向预设的 Hello 合约地址：
+
+```ts filename="frontend/src/constants/contracts.ts"
+export const HELLO_UNIVERSAL_CONTRACT_ADDRESS = "0x61a184EB30D29eD0395d1ADF38CC7d2F966c4A82";
+```
+
+如果你在 ZetaChain 测试网部署了自己的 Hello 合约，请将其替换为你的地址；否则可使用默认地址进行测试。
+
+### 常见问题
+
+- **网络不匹配**：切换到受支持且已连接的 EVM 测试网。
+- **接收者无效**：确认 ZetaChain Hello 合约地址正确且已部署。
+- **Toolkit/ethers 打包问题**：保持 `vite.config.ts` 中 `optimizeDeps` 与 `resolve.dedupe/alias` 设置。
+- **CCTX 未找到**：跨链执行可能需要时间，应用默认每 15 秒轮询一次。
+
+## 总结
+
+通过该前端，你已经完成 Hello World 全链应用的端到端体验：
+
+- 在 ZetaChain 上部署并响应跨链调用的合约。
+- 一个 React 前端，连接钱包，借助 Gateway 发送消息，并跟踪 ZetaChain 上的执行。
+
+这一示例展示了 **构建全链应用的核心模式**：接受任意连接链的调用，在 ZetaChain 上处理，并向用户提供跨链可见性。
+
+接下来，你可以扩展应用以：
+
+- 接受更丰富的载荷（数字、地址、结构体等）
+- 在全链合约里执行更复杂的状态变更
+- 构建更高级的 UI 以管理跨链资产与操作
+
+借助 ZetaChain 的工具与 API，你可以轻松将该示例扩展为真实的全链应用。
+
