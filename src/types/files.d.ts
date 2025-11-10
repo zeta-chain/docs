@@ -14,8 +14,5 @@ declare module "@zetachain/toolkit/query" {
     rpc: string;
   };
 
-  export function getFees(
-    params: { gasLimit: number },
-    networkConfig: ZetachainNetworkConfig
-  ): Promise<unknown>;
+  export function getFees(params: { gasLimit: number }, networkConfig: ZetachainNetworkConfig): Promise<unknown>;
 }

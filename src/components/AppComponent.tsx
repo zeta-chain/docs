@@ -1,11 +1,12 @@
 import React from "react";
+
+import { CacheProvider, EmotionCache } from "@emotion/react";
+import { ThemeProvider } from "@mui/material/styles";
+import { compose } from "@reduxjs/toolkit";
 import Link from "next/link";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Script from "next/script";
-import { compose } from "@reduxjs/toolkit";
-import { CacheProvider, EmotionCache } from "@emotion/react";
-import { ThemeProvider } from "@mui/material/styles";
 
 import { HeadProgressBar, Layout } from "~/components/shared";
 import { ClientOnlyPortal } from "~/components/shared/components/ClientOnlyPortal";
