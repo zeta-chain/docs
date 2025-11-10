@@ -1,10 +1,9 @@
 import React from "react";
-
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import { ThemeProvider } from "@mui/material/styles";
 import { compose } from "@reduxjs/toolkit";
-import Link from "next/link";
 import type { AppProps } from "next/app";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
 
