@@ -70,25 +70,121 @@ manage assets on any or all connected chains, or some combination thereof.
 No, ZetaChain is an L1 smart-contract-enabled blockchain that has chain-agnostic
 interoperability built in. It is not a sidechain, rollup, or bridge.
 
-### How does ZetaChain compare to other solutions?
+### How does ZetaChain compare to LayerZero?
 
-ZetaChain is, at the time of writing, unique in its support for chain-agnostic
-omnichain dApps. No other blockchain enables fully interoperable smart
-contracts. This feature allows an unbounded platform to build omnichain and
-cross-chain applications that function as if everything lived on a single chain.
-Although some systems like Cosmos offer interoperability within the IBC
-ecosystem, ZetaChain brings seamless interoperability to all chains, including
-non-smart-contract chains like Bitcoin and Dogecoin. As a blockchain and smart
-contract platform, ZetaChain provides a fully public, transparent, decentralized
-interoperability solution that supports both omnichain messaging and smart
-contracts. Developers on ZetaChain only need to implement their dApp logic,
-while ZetaChain handles the transaction of data and value across chains in a
-trust-minimized way. Rather than outsourcing security to third-party oracle and
-relay like LayerZero to transfer data/value across chains -- which requires full
-trust from the users in the applications and relayer + oracle -- ZetaChain
-provides a simpler and more robust trust model to transact across chains where a
-developer and user alike need only trust the network for the delivery of their
-data and value.
+ZetaChain is a full Layer 1 blockchain with native cross-chain capabilities
+built into its consensus layer, while LayerZero is a messaging protocol that
+connects existing blockchains through external verifiers and executors.
+
+Key differences:
+
+- Architecture: ZetaChain operates as a hub-and-spoke with its own validators
+  using Proof-of-Stake consensus. LayerZero acts as lightweight messaging
+  middleware between chains.
+- Security: ZetaChain uses validator consensus with Byzantine Fault Tolerance
+  and Threshold Signature Schemes (TSS). LayerZero relies on customizable
+  Decentralized Verifier Networks (DVNs) and Executors that you choose.
+- Bitcoin support: ZetaChain natively supports Bitcoin and non-smart-contract
+  chains through its validator observation system. LayerZero requires smart
+  contracts on both chains, so Bitcoin isn't supported.
+- Developer experience: With ZetaChain, you deploy one Universal Smart Contract
+  that can interact with any connected chain. With LayerZero, you deploy
+  separate contracts on each chain and handle message passing between them.
+
+Why choose ZetaChain: For developers building omnichain applications that
+require Bitcoin integration, gas abstraction, or complex multi-chain logic,
+ZetaChain offers a fundamentally simpler approach. Deploy once on ZetaChain's
+EVM and orchestrate atomic cross-chain interactions—including native Bitcoin
+transactions—from a single contract with automatic rollback handling.
+LayerZero's customizable security model works well for simple EVM-to-EVM token
+bridging, but ZetaChain's unified execution layer eliminates the complexity of
+deploying and synchronizing contracts across multiple chains, while uniquely
+enabling Bitcoin-native DeFi without bridges or wrappers.
+
+### How does ZetaChain compare to Axelar?
+
+ZetaChain is a Layer 1 blockchain with native cross-chain execution built into
+its consensus layer, while Axelar is a messaging and token-routing network that
+connects blockchains through General Message Passing (GMP) and gateway
+contracts.
+
+Key differences:
+
+- Architecture: ZetaChain executes cross-chain logic natively on its own
+  blockchain through Universal Smart Contracts, enabling true atomic
+  composability. Axelar routes messages between chains where application logic
+  runs separately on each source/destination chain, requiring manual state
+  synchronization and coordination.
+- Security: Both use PoS validator networks, but ZetaChain validators directly
+  control external chain addresses via TSS with full on-chain consensus. Axelar
+  relies on gateway contracts to verify attestations, adding an extra trust
+  layer at each destination.
+- Bitcoin support: ZetaChain offers genuine native Bitcoin integration through
+  validator-run full nodes and TSS—no bridges, no wrappers, no intermediaries.
+  Axelar requires intermediary layers like Stacks and Babylon partnerships,
+  which don't provide direct Bitcoin protocol interaction.
+- Developer experience: ZetaChain dramatically simplifies development—deploy one
+  Universal Smart Contract that orchestrates atomic cross-chain logic from a
+  single location with automatic rollback on failure. Axelar requires deploying
+  separate contracts on each chain, managing asynchronous message passing, and
+  manually handling state synchronization and retries.
+- Gas handling: ZetaChain's ZRC-20 gas abstraction provides a unified fee model
+  across all chains, dramatically improving UX. Axelar's Gas Service requires
+  prepayment management and still consumes gas on multiple chains.
+- Deployment complexity: ZetaChain offers single-deployment omnichain apps with
+  built-in composability. Axelar requires multiple deployments across chains
+  with fragmented state and asynchronous coordination overhead.
+
+Why choose ZetaChain: For developers building the next generation of omnichain
+applications, ZetaChain's unified execution model delivers superior simplicity,
+true atomic composability, and native Bitcoin access without intermediaries.
+Unlike Axelar's messaging middleware approach that requires multi-chain
+coordination, ZetaChain provides a purpose-built execution layer where you can
+orchestrate across all chains—including Bitcoin—with the ease of single-chain
+development.
+
+### How does ZetaChain compare to Wormhole?
+
+ZetaChain is a Layer 1 blockchain with native cross-chain execution built into
+its consensus layer, while Wormhole is a messaging middleware network that
+connects blockchains through off-chain Guardian attestations.
+
+Key differences:
+
+- Architecture: ZetaChain operates as a purpose-built Layer 1 with its own
+  Proof-of-Stake validators using CometBFT consensus. Wormhole acts as messaging
+  middleware where 19 permissioned Guardians sign Verified Action Approvals
+  (VAAs) off-chain.
+- Security: ZetaChain uses on-chain Byzantine Fault Tolerant consensus with
+  cryptoeconomic staking and slashing—validators have real capital at risk.
+  Wormhole relies on a Proof-of-Authority model where 13 of 19 Guardians must
+  sign messages, based on reputation rather than economic stake.
+- Bitcoin support: ZetaChain natively supports Bitcoin through direct validator
+  observation and TSS signing—no Layer 2s or intermediaries required. Wormhole
+  integrates Bitcoin indirectly through Stacks Layer 2, meaning assets must
+  first exist on Stacks before bridging, adding an additional trust layer.
+- Developer experience: With ZetaChain, you deploy one Universal Smart Contract
+  that orchestrates atomic cross-chain logic with unified state and automatic
+  revert handling. With Wormhole, you deploy separate contracts on each chain
+  and manually coordinate asynchronous message passing with state reconciliation
+  across multiple instances.
+- Consensus model: ZetaChain achieves cryptographic finality through on-chain
+  consensus where two-thirds of validators must agree. Wormhole uses off-chain
+  Guardian signatures with a fixed permissioned validator set controlled through
+  governance.
+
+Why choose ZetaChain: For developers building omnichain applications that
+require native Bitcoin support, atomic cross-chain execution, or unified state
+management, ZetaChain provides fundamentally stronger infrastructure. Its
+single-deployment model eliminates the complexity of coordinating contracts
+across chains, while cryptoeconomic security through staking and slashing
+creates real financial consequences for misbehavior. Most critically,
+ZetaChain's direct Bitcoin integration enables true Bitcoin-powered DeFi without
+Layer 2 intermediaries, while Wormhole requires assets to first exist on Stacks
+L2 before bridging. ZetaChain delivers purpose-built blockchain infrastructure
+for the omnichain future with mathematically proven Byzantine Fault Tolerance,
+versus Wormhole's off-chain messaging layer secured by a small permissioned
+Guardian set.
 
 ### Is ZetaChain a bridge? How is it different from a bridge?
 
@@ -129,19 +225,22 @@ Check out the validator docs [here](/nodes/start-here/requirements).
 
 ## Testnet and Mainnet
 
-### When will mainnet be released?
+### Is ZetaChain mainnet live?
 
-We will be releasing a full schedule for the launch of our testnet and ZetaChain
-mainnet soon. Stay tuned on our Twitter, Discord, and Telegram for updates. The
-current testnet is live, and you can develop dApps with that.
+Yes, ZetaChain mainnet is live and fully operational. You can build and deploy
+Universal Apps to production today. Mainnet supports cross-chain transactions
+across multiple connected blockchains including Ethereum, Bitcoin, BNB Chain,
+Polygon, Base, Sui, TON, and others. For development and testing, use our
+testnet environment which mirrors mainnet functionality or Localnet environment
+for faster development.
 
 ### How do I get ZETA?
 
 You can request testnet ZETA in the faucet channel on our Discord server or use
 the faucet on the command line, learn more in the [faucet
-docs](/reference/faucet). This testnet ZETA does not and will
-never have any monetary value. It is solely for testing purposes, so that people
-can experience the use and power of ZetaChain.
+docs](/reference/faucet). This testnet ZETA does not and will never have any
+monetary value. It is solely for testing purposes, so that people can experience
+the use and power of ZetaChain.
 
 ### Does testnet ZETA have any value?
 
