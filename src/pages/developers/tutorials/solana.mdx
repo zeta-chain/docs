@@ -3,8 +3,8 @@ deposit SOL and SPL-20 tokens directly from Solana into accounts or smart
 contracts on ZetaChain. Universal contracts on ZetaChain can handle these
 deposits and execute contract calls initiated from the Solana blockchain.
 
-- In this tutorial, you'll:
-- Set up a local development environment using localnet.
+In this tutorial, you'll:
+
 - Deploy a universal contract on ZetaChain.
 - Deposit tokens (SOL and SPL-20) from Solana to ZetaChain.
 - Execute deposit-and-call transactions, depositing tokens and calling a
@@ -31,59 +31,63 @@ cd call
 yarn
 ```
 
-## Launch Localnet
-
-This command brings up the local development environment with ZetaChain and
-Solana:
+## Compile and Deploy an Example Universal Contract
 
 ```bash
-yarn zetachain localnet start
+GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
+ZRC20_SOL=0xADF73ebA3Ebaa7254E859549A44c74eF7cff7501
+RPC_ZETACHAIN=https://zetachain-athens-evm.blockpi.network/v1/rpc/public
 ```
-
-Leave this running in one terminal window.
-
-## Compile and Deploy an Example Universal Contract
 
 In a new terminal window, compile and deploy the universal contract:
 
 ```bash
-npx hardhat compile --force
-npx hardhat deploy --name Universal --network localhost --gateway 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+UNIVERSAL=$(forge create Universal \
+  --rpc-url $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --evm-version paris \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
 ```
-
-You will see a confirmation with your contract address:
-
-```
-🚀 Successfully deployed "Universal" contract on localhost.
-📜 Contract address: 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7
-```
-
-Keep track of the contract address for later (in this example,
-`0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7`).
 
 ## Deposit
 
 Deposit SOL tokens from Solana to ZetaChain:
 
 ```
-npx hardhat localnet:solana-deposit \
-  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
-  --amount 0.1
+npx zetachain solana deposit \
+  --recipient $UNIVERSAL \
+  --private-key $PRIVATE_KEY_SOLANA \
+  --amount 0.01 \
+  --chain-id 902
 ```
 
---receiver: Universal contract address on ZetaChain.
+## Call
 
---amount: Amount of SOL to deposit.
+Call the deployed universal contract:
+
+```bash
+npx zetachain solana call \
+  --recipient $UNIVERSAL \
+  --private-key $PRIVATE_KEY_SOLANA \
+  --chain-id 901 \
+  --types string \
+  --values hello
+```
 
 ## Deposit and Call
 
 Deposit tokens and simultaneously call the deployed universal contract:
 
 ```bash
-npx hardhat localnet:solana-deposit-and-call \
-  --receiver 0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7 \
-  --amount 0.1 \
-  --types '["string"]' hello
+npx zetachain solana deposit-and-call \
+  --recipient $UNIVERSAL \
+  --private-key $PRIVATE_KEY_SOLANA \
+  --amount 0.01 \
+  --chain-id 901 \
+  --types string \
+  --values hello
 ```
 
 This command deposits tokens and triggers the universal contract function with
@@ -94,12 +98,13 @@ the argument "hello".
 Withdraw tokens from ZetaChain back to Solana:
 
 ```bash
-npx hardhat zetachain-withdraw \
-  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
+npx zetachain z withdraw \
   --receiver DrexsvCMH9WWjgnjVbx1iFf3YZcKadupFmxnZLfSyotd \
-  --network localhost \
-  --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 \
-  --amount 0.1
+  --zrc20 $ZRC20_SOL \
+  --amount 0.1 \
+  --rpc $RPC_ZETACHAIN \
+  --gateway $GATEWAY_ZETACHAIN \
+  --private-key $PRIVATE_KEY
 ```
 
 - `--gateway-zeta-chain`: Address of the ZetaChain gateway.
@@ -126,64 +131,74 @@ and using the ZetaChain Gateway to perform a "withdraw and call".
 
 ### Build and Set Up the Example Solana Program
 
-Set the SPL-20 USDC address. You can find this address in a table in the output
-of `localnet`:
-
 ```bash
-USDC_SPL=3Kx5SY7SwzdUZSorLVSpPgxBL8DZFiu8mg4FWduu2tQp
+cd solana
 ```
 
-```bash
-cd solana && anchor build && npx ts-node setup/main.ts "$USDC_SPL" && cd -
+```
+anchor build
+```
+
+If the build fails, run:
+
+```
+rustup update
+rm Cargo.lock
+anchor build
+```
+
+Generate a new program keypair:
+
+```
+solana-keygen new -o target/deploy/connected-keypair.json
+```
+
+Update the program ID in the code:
+
+```
+anchor keys sync
+```
+
+Deploy the program:
+
+```
+PROGRAM_ID=$(solana program deploy target/deploy/connected.so \
+  --url devnet \
+  --output json| jq -r .programId) && echo $PROGRAM_ID
 ```
 
 After running this, you should see output indicating that the program was
 successfully deployed, such as:
 
 ```
-Connected program deployment output: Program Id: 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy
+D7FLXZPthgJewjp4jsGBLNSCTdDyhB6GEmWddyqTYLZc
+```
+
+Initialize the program:
+
+```
+npx ts-node ./scripts/initialize.ts
 ```
 
 ### Withdraw SOL and Call the Solana Program
+
+```
+PAYLOAD=$(zetachain solana encode \
+  --connected $PROGRAM_ID \
+  --data hello \
+  --gateway ZETAjseVjuFsxdRxo6MmTCvqFwb3ZHUx56Co3vCmGis) && echo $PAYLOAD
+```
 
 Make a call to the ZetaChain Gateway to withdraw SOL and call a program on
 Solana:
 
 ```bash
-npx hardhat zetachain-withdraw-and-call \
-  --receiver 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy \
-  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
-  --zrc20 0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891 \
-  --amount 0.01 \
-  --network localhost \
-  --types '["bytes"]' $(npx ts-node solana/setup/encodeCallArgs.ts "sol" "$USDC_SPL")
+zetachain z withdraw-and-call \
+  --amount 0.001 \
+  --receiver $PROGRAM_ID \
+  --data $PAYLOAD \
+  --private-key $PRIVATE_KEY \
+  --rpc $RPC_ZETACHAIN \
+  --zrc20 $ZRC20_SOL \
+  --gateway $GATEWAY_ZETACHAIN
 ```
-
-- `--receiver`: The Solana program ID you want to call.
-- `--types '["bytes"]'`: Specifies that the contract call argument is a bytes
-  array (the encoded Solana call data).
-- `"$ENCODED_ACCOUNTS_AND_DATA"`: The encoded Solana program call arguments we
-  generated in the previous step.
-- `--zrc20`: ZRC-20 address of SOL on ZetaChain.
-
-### Withdraw SPL-20 and Call the Solana Program
-
-Make a call to the ZetaChain Gateway to withdraw ZRC-20 SPL-20 USDC and call a
-program on Solana:
-
-```bash
-npx hardhat zetachain-withdraw-and-call \
-  --receiver 9BjVGjn28E58LgSi547JYEpqpgRoo1TErkbyXiRSNDQy \
-  --gateway-zeta-chain 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 \
-  --zrc20 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb \
-  --amount 0.01 \
-  --network localhost \
-  --types '["bytes"]' $(npx ts-node solana/setup/encodeCallArgs.ts "spl" "$USDC_SPL")
-```
-
-- `--zrc20`: ZRC-20 address of SPL-20 USDC on ZetaChain.
-
-In this tutorial you’ve learned how to deploy a universal contract on ZetaChain,
-deposit SOL and SPL-20 tokens from Solana, call contracts during deposits,
-withdraw assets back to Solana, and even trigger Solana programs upon
-withdrawal.
