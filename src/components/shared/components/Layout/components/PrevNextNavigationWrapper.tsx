@@ -5,6 +5,7 @@ import { PropsWithChildren, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { usePrevious } from "react-use";
 
+import { useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directories/directories.selectors";
 import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
@@ -22,6 +23,7 @@ type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
  */
 export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps> = ({ children }) => {
   const { route } = useRouter();
+  const normalizedRoute = useNormalizedRoute();
 
   const prevRoute = usePrevious(route);
 
@@ -74,7 +76,7 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
     };
   }, [flatDirectories, directoriesByRoute, route, prevRoute]);
 
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
 
   const isSubCategoryPage = useMemo(
     () => directoriesByRoute[route]?.frontMatter?.pageType === "sub-category",

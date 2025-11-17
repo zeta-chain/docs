@@ -1,8 +1,9 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren } from "react";
 
 import { useSetDirectoriesState } from "~/hooks/useSetDirectoriesState";
+import { useIsHomePage } from "~/hooks/useIsHomePage";
 
 import { getGitHubEditUrl } from "../../../../../lib/github-edit-url";
 import { Hero } from "../../Hero";
@@ -18,8 +19,7 @@ type MainContentWrapperProps = PropsWithChildren<{}>;
 export const MainContentWrapper: React.FC<MainContentWrapperProps> = ({ children }) => {
   useSetDirectoriesState();
   const { route } = useRouter();
-
-  const isHomePage = useMemo(() => route === "/", [route]);
+  const isHomePage = useIsHomePage();
 
   return (
     <>

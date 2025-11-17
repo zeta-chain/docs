@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { NavigationSectionVariant } from "~/lib/helpers/nextra";
 
 import { mainNavRoutes } from "../../Layout";
@@ -28,8 +28,8 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
   lastItemEmbellishment,
 }) => {
   const { upXl } = useCurrentBreakpoint();
-  const { route } = useRouter();
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const normalizedRoute = useNormalizedRoute();
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
 
   if (variant === "fancy" && upXl) {
     return (

@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
+import { useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
 import { mainNavRoutes } from "../../Layout";
@@ -12,11 +13,12 @@ type TableOfContentsWrapperProps = PropsWithChildren<{}>;
 
 export const TableOfContentsWrapper: React.FC<TableOfContentsWrapperProps> = ({ children }) => {
   const { route } = useRouter();
+  const normalizedRoute = useNormalizedRoute();
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
   const [headings, setHeadings] = useState<Heading[]>([]);
 
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
   const isSubCategoryPage = useMemo(
     () => directoriesByRoute[route]?.frontMatter?.pageType === "sub-category",
     [directoriesByRoute, route]
