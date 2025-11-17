@@ -1,0 +1,49 @@
+---
+title: Gas 费用
+---
+
+import { Fees } from "~/components/Docs";
+
+## 调用全链应用
+
+通过 Gateway 从连接链在 ZetaChain 上调用全链应用时，费用与普通交易一致，使用源链的原生 Gas 代币支付。不会产生额外费用；当调用来自连接链时，可将 ZetaChain 上执行全链应用视为“免 Gas”。
+
+例如，从以太坊向 ZetaChain 存入 ETH 时，所需费用以 ETH 支付，符合以太坊的常规 Gas 计费方式。关于以太坊 Gas 的更多信息，请参阅[官方文档](https://ethereum.org/en/developers/docs/gas/)。
+
+直接调用 ZetaChain EVM 上的合约（非跨链调用）时，用户需为每笔交易提供 Gas。ZetaChain EVM 采用 [Cosmos EVM](https://evm.cosmos.network/protocol/concepts/gas-and-fees) 实现的 Gas 市场机制，并遵循以太坊的 EIP-1559 费用模型，以保障网络安全、防止垃圾交易。
+
+## 出站调用与提现
+
+ZetaChain 上的全链应用可主动向连接链合约发起调用，或将 ZRC-20 代币提现回连接链。这类操作需要支付“提现 Gas 费用（withdraw gas fee）”，该费用基于目标链的 Gas 上限计算。
+
+在全链应用向连接链合约发起调用前，应根据预期 Gas 上限查询提现 Gas 费用：
+
+```solidity
+(address gasZRC20, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(gasLimit);
+```
+
+- `gasZRC20`：目标链的 Gas 代币地址。例如，以太坊的 USDC 与 ETH 都使用 ZRC-20 ETH 作为 Gas 代币。
+- `gasFee`：在指定 Gas 上限下所需的费用，便于准确估算成本。
+
+在将 ZRC-20 代币提现至连接链前，可查询提现 Gas 费用：
+
+```solidity
+(address gasZRC20, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
+```
+
+提现至连接链会触发代币转移，无需显式指定 Gas 上限。
+
+务必查询最新费用、授权 Gateway 可支配所需金额，并确保 Gas ZRC-20 余额充足；若 Gateway 无法将费用转移至自身，操作将失败。
+
+## 当前费用
+
+下表展示了默认 Gas 上限为 500,000 时的提现 Gas 费用，费用以目标链的原生 Gas 代币表示。
+
+<Fees />
+
+如需计算其他 Gas 上限下的费用，可使用 `query fees` 命令：
+
+```
+npx zetachain query fees
+```
+

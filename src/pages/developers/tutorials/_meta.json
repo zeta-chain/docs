@@ -1,52 +1,72 @@
 {
   "intro": {
     "title": "Getting Started",
-    "readTime": "10 min",
-    "description": "Learn more about universal apps"
+    "frontMatter": {
+      "readTime": "10 min",
+      "description": "Learn more about universal apps"
+    }
   },
   "hello": {
     "title": "First Universal Contract",
-    "readTime": "10 min",
-    "description": "Build your first universal contract"
+    "frontMatter": {
+      "readTime": "10 min",
+      "description": "Build your first universal contract"
+    }
   },
   "frontend": {
     "title": "Build a Web App",
-    "readTime": "10 min",
-    "description": "Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution"
+    "frontMatter": {
+      "readTime": "10 min",
+      "description": "Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution"
+    }
   },
   "swap": {
     "title": "Swap",
-    "readTime": "30 min",
-    "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
+    "frontMatter": {
+      "readTime": "30 min",
+      "description": "Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin"
+    }
   },
   "messaging": {
     "title": "Messaging",
-    "readTime": "30 min",
-    "description": "Learn how to make cross-chain calls between contracts on EVM chains"
+    "frontMatter": {
+      "readTime": "30 min",
+      "description": "Learn how to make cross-chain calls between contracts on EVM chains"
+    }
   },
   "call": {
     "title": "Calls to/from EVM",
-    "readTime": "30 min",
-    "description": "Learn the fundamentals of message passing and cross-chain contract calls"
+    "frontMatter": {
+      "readTime": "30 min",
+      "description": "Learn the fundamentals of message passing and cross-chain contract calls"
+    }
   },
   "solana": {
     "title": "Calls to/from Solana",
-    "readTime": "60 min",
-    "description": "Deposit assets and call universal apps from Solana, make outgoing calls to Solana"
+    "frontMatter": {
+      "readTime": "60 min",
+      "description": "Deposit assets and call universal apps from Solana, make outgoing calls to Solana"
+    }
   },
   "sui": {
     "title": "Calls from Sui",
-    "readTime": "60 min",
-    "description": "Deposit assets and call universal apps from Sui"
+    "frontMatter": {
+      "readTime": "60 min",
+      "description": "Deposit assets and call universal apps from Sui"
+    }
   },
   "sui-withdraw-and-call": {
     "title": "Calls to Sui",
-    "readTime": "60 min",
-    "description": "Withdraw assets and call contracts on Sui"
+    "frontMatter": {
+      "readTime": "60 min",
+      "description": "Withdraw assets and call contracts on Sui"
+    }
   },
   "staking": {
     "title": "Staking",
-    "readTime": "10 min",
-    "description": "Delegate and undelegate ZETA from EVM"
+    "frontMatter": {
+      "readTime": "10 min",
+      "description": "Delegate and undelegate ZETA from EVM"
+    }
   }
 }

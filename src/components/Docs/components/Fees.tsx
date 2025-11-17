@@ -1,5 +1,4 @@
 /* eslint-disable react/no-array-index-key */
-// @ts-ignore
 import { getFees } from "@zetachain/toolkit/query";
 import { useEffect, useMemo, useState } from "react";
 

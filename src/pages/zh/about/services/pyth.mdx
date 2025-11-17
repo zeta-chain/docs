@@ -1,0 +1,48 @@
+---
+title: Pyth 价格预言机
+---
+
+import { Alert } from "~/components/shared";
+
+## 概述
+
+[Pyth Network](https://docs.pyth.network/) 是一套价格预言机，为广泛资产提供高频、低延迟的价格馈送，可与 Chainlink 相媲美。它专为需要高精度与高可靠性的高频交易系统及其他应用而设计。
+
+Pyth 已部署至 ZetaChain，可提供加密货币、法币、股票等多种资产的价格。
+
+Pyth 合约地址：
+
+| 网络 | 地址 |
+| :--- | :--- |
+| Mainnet Beta | [0x2880aB155794e7179c9eE2e38200202908C17B43](https://zetachain.blockscout.com/address/0x2880aB155794e7179c9eE2e38200202908C17B43) |
+| Testnet | [0x0708325268dF9F66270F1401206434524814508b](https://zetachain-athens-3.blockscout.com/address/0x0708325268dF9F66270F1401206434524814508b) |
+
+来源：https://docs.pyth.network/price-feeds/contract-addresses/evm
+
+Pyth Network 是无需许可的系统，任何人都可向预言机提交价格。系统通过去中心化共识机制确保价格准确可靠。
+
+ZetaChain 贡献者团队运行着向 Pyth 预言机提交价格的调度器，定期更新资产价格，确保馈送数据最新、准确。
+
+<Alert variant="warning">
+  ZetaChain 的 Pyth 调度器以公共服务形式提供，旨在提升开发体验、便于测试 dApp。若你构建的是生产级应用，建议**自行运行调度器**。更多信息请参阅 [Pyth 文档](https://docs.pyth.network/price-feeds/schedule-price-updates/using-scheduler)。
+</Alert>
+
+当前支持的资产：BTC、BNB、MATIC、ETH、USDC、ZETA、USDT。
+
+价格馈送 ID： https://pyth.network/developers/price-feed-ids
+
+## Pyth Entropy
+
+[Pyth Entropy](https://docs.pyth.network/entropy) 允许开发者在链上快速生成安全的随机数。其快速响应能力适用于构建 NFT 铸造、链游等需要流畅用户体验的应用。Entropy 还提供强有力的安全保障，确保用户与开发者都能信任结果的随机性。
+
+Pyth Entropy 目前已在 ZetaChain 提供服务。关于如何通过 Entropy 生成随机数，请[查看指南](https://docs.pyth.network/entropy/generate-random-numbers)。
+
+Pyth Entropy 合约地址：
+
+| 网络 | 地址 |
+| :--- | :--- |
+| Mainnet Beta | [0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320](https://zetachain.blockscout.com/address/0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320) |
+| Testnet | [0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF](https://zetachain-athens-3.blockscout.com/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF) |
+
+可通过此[示例](https://docs.pyth.network/entropy/create-your-first-entropy-app) 创建首个基于 Entropy 的应用。***
+

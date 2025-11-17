@@ -101,5 +101,11 @@ module.exports = {
         "no-param-reassign": OFF,
       },
     },
+    {
+      files: ["src/components/AppComponent.tsx"],
+      rules: {
+        "simple-import-sort/imports": OFF,
+      },
+    },
   ],
 };

@@ -1,14 +1,20 @@
 {
   "overview": {
     "title": "Overview",
-    "description": "A set of standards that enable cross-chain interoperability for NFTs and fungible tokens"
+    "frontMatter": {
+      "description": "A set of standards that enable cross-chain interoperability for NFTs and fungible tokens"
+    }
   },
   "nft": {
     "title": "Universal NFT",
-    "description": "The Universal NFT standard enables non-fungible tokens (ERC-721 NFT) to be minted on any chain and seamlessly transferred between connected chains."
+    "frontMatter": {
+      "description": "The Universal NFT standard enables non-fungible tokens (ERC-721 NFT) to be minted on any chain and seamlessly transferred between connected chains."
+    }
   },
   "token": {
     "title": "Universal Token",
-    "description": "The Universal Token standard enables ERC-20 fungible tokens to be minted on any chain and seamlessly transferred between connected chains."
+    "frontMatter": {
+      "description": "The Universal Token standard enables ERC-20 fungible tokens to be minted on any chain and seamlessly transferred between connected chains."
+    }
   }
 }

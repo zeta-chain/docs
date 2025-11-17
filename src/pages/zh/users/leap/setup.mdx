@@ -1,0 +1,28 @@
+---
+title: 钱包配置
+---
+
+import Image from "next/image";
+
+import { basePath } from "~/lib/app.constants";
+
+Leap 是一款多链跨平台的浏览器扩展钱包，支持账户管理、代币转账、质押与治理等功能。
+
+访问 [Leap 官网](https://www.leapwallet.io/) 并按指引安装扩展。
+
+安装完成后，根据向导创建账户，可新建、导入或连接硬件钱包。
+
+![Welcome to Leap](/img/docs/leap-wallet.png)
+
+将 ZetaChain 添加到 Leap：
+
+- 打开 https://developers.leapwallet.io/chain-store
+- 搜索 “ZetaChain”
+- 点击 “Add”
+
+![Chain Store](/img/docs/leap-chains.png)
+
+回到 Leap 扩展，即可看到 ZetaChain 余额：
+
+<Image src={`${basePath}/img/docs/leap-balances.png`} width={400} height={597} alt="Leap extension" />
+

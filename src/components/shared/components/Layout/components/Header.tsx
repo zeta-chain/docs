@@ -64,11 +64,14 @@ export const Header: React.FC<{
             <IconZetaDocsLogo className="text-green-700 dark:text-grey-50" />
           </Link>
 
-          <MobileMenuButton
-            className="mt-1.5 text-black dark:text-grey-50"
-            isOpen={isLeftDrawerOpen}
-            toggle={toggleDrawerOpen}
-          />
+          <div className="flex items-center gap-3">
+            <div id="docs-mobile-language-switcher" className="flex" />
+            <MobileMenuButton
+              className="mt-1.5 text-black dark:text-grey-50"
+              isOpen={isLeftDrawerOpen}
+              toggle={toggleDrawerOpen}
+            />
+          </div>
         </div>
       </Toolbar>
     </>

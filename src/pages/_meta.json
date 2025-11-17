@@ -1,32 +1,46 @@
 {
   "index": {
     "title": "ZetaChain Documentation",
-    "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    "frontMatter": {
+      "description": "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+    }
   },
   "start": {
     "title": "Get Started",
-    "description": "Start building on ZetaChain."
+    "frontMatter": {
+      "description": "Start building on ZetaChain."
+    }
   },
   "developers": {
     "title": "Build",
-    "description": "Learn how to build on ZetaChain."
+    "frontMatter": {
+      "description": "Learn how to build on ZetaChain."
+    }
   },
   "reference": {
     "title": "Tools",
-    "description": "Useful articles to help get you up and running."
+    "frontMatter": {
+      "description": "Useful articles to help get you up and running."
+    }
   },
   "nodes": {
     "title": "Run a Node",
-    "description": "Setup and run a ZetaChain node.",
-    "variant": "fancy",
-    "navImgUrl": "/img/pages/operate.svg"
+    "frontMatter": {
+      "description": "Setup and run a ZetaChain node.",
+      "variant": "fancy",
+      "navImgUrl": "/img/pages/operate.svg"
+    }
   },
   "users": {
     "title": "Using our Products",
-    "description": "Start using our many products."
+    "frontMatter": {
+      "description": "Start using our many products."
+    }
   },
   "about": {
     "title": "About",
-    "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain."
+    "frontMatter": {
+      "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain."
+    }
   }
 }

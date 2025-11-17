@@ -1,14 +1,20 @@
 {
   "index": {
     "title": "Run a Node",
-    "description": "Become an important part of the ZetaChain network by running a node. It’s easy to get started on Testnet or Mainnet"
+    "frontMatter": {
+      "description": "Become an important part of the ZetaChain network by running a node. It’s easy to get started on Testnet or Mainnet"
+    }
   },
   "start-here": {
     "title": "Start Here",
-    "description": "These docs will provide you with all the necessary steps to successfully set up your node"
+    "frontMatter": {
+      "description": "These docs will provide you with all the necessary steps to successfully set up your node"
+    }
   },
   "validate": {
     "title": "Validate",
-    "description": "Start validating transactions for the chain."
+    "frontMatter": {
+      "description": "Start validating transactions for the chain."
+    }
   }
 }

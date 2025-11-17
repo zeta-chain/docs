@@ -1,20 +1,28 @@
 {
   "index": {
     "title": "About",
-    "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain.",
-    "readTime": "10 min"
+    "frontMatter": {
+      "description": "All about ZetaChain, the foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain.",
+      "readTime": "10 min"
+    }
   },
   "token-utility": {
     "title": "About ZETA Token",
-    "description": "Understand more about the token underpinning ZetaChain",
-    "readTime": "5 min"
+    "frontMatter": {
+      "description": "Understand more about the token underpinning ZetaChain",
+      "readTime": "5 min"
+    }
   },
   "services": {
     "title": "Apps & Services",
-    "description": "Discover useful developer-focused applications and services to enhance your development process on ZetaChain."
+    "frontMatter": {
+      "description": "Discover useful developer-focused applications and services to enhance your development process on ZetaChain."
+    }
   },
   "info": {
     "title": "More Info",
-    "description": "More information about ZetaChain."
+    "frontMatter": {
+      "description": "More information about ZetaChain."
+    }
   }
 }

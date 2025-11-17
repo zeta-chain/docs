@@ -55,46 +55,47 @@ export const Hero: React.FC = () => {
     if (!currentDirectory) return {};
 
     const { frontMatter, meta } = currentDirectory;
+    const metaFrontMatter = (meta?.frontMatter as Record<string, unknown>) || {};
 
     const title = frontMatter?.title ? String(frontMatter.title) : meta?.title ? String(meta.title) : undefined;
 
-    const description = frontMatter?.description
-      ? String(frontMatter.description)
-      : meta?.description
-      ? String(meta.description)
-      : undefined;
+    const description =
+      frontMatter?.description ??
+      (metaFrontMatter.description as string | undefined) ??
+      (meta?.description ? String(meta.description) : undefined);
+    const formattedDescription = description ? String(description) : undefined;
 
-    const readTime = frontMatter?.readTime
-      ? String(frontMatter.readTime)
-      : meta?.readTime
-      ? String(meta.readTime)
-      : undefined;
+    const readTimeValue =
+      frontMatter?.readTime ??
+      (metaFrontMatter.readTime as string | undefined) ??
+      (meta?.readTime ? String(meta.readTime) : undefined);
+    const formattedReadTime = readTimeValue ? String(readTimeValue) : undefined;
 
-    const readType = frontMatter?.readType
-      ? String(frontMatter.readType)
-      : meta?.readType
-      ? String(meta.readType)
-      : undefined;
+    const readTypeValue =
+      frontMatter?.readType ??
+      (metaFrontMatter.readType as string | undefined) ??
+      (meta?.readType ? String(meta.readType) : undefined);
+    const formattedReadType = readTypeValue ? String(readTypeValue) : undefined;
 
-    const imgUrl = frontMatter?.heroImgUrl
-      ? String(frontMatter.heroImgUrl)
-      : meta?.heroImgUrl
-      ? String(meta.heroImgUrl)
-      : undefined;
+    const heroImgUrl =
+      frontMatter?.heroImgUrl ??
+      (metaFrontMatter.heroImgUrl as string | undefined) ??
+      (meta?.heroImgUrl ? String(meta.heroImgUrl) : undefined);
+    const formattedImgUrl = heroImgUrl ? String(heroImgUrl) : undefined;
 
-    const imgWidth = frontMatter?.heroImgWidth
-      ? Number(frontMatter.heroImgWidth)
-      : meta?.heroImgWidth
-      ? Number(meta.heroImgWidth)
-      : undefined;
+    const heroImgWidth =
+      frontMatter?.heroImgWidth ??
+      (metaFrontMatter.heroImgWidth as number | undefined) ??
+      (meta?.heroImgWidth ? Number(meta.heroImgWidth) : undefined);
+    const formattedImgWidth = heroImgWidth ? Number(heroImgWidth) : undefined;
 
     return {
       title,
-      description,
-      readTime,
-      readType,
-      imgUrl,
-      imgWidth,
+      description: formattedDescription,
+      readTime: formattedReadTime,
+      readType: formattedReadType,
+      imgUrl: formattedImgUrl,
+      imgWidth: formattedImgWidth,
     };
   }, [currentDirectory]);
 

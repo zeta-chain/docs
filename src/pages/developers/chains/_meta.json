@@ -1,34 +1,50 @@
 {
   "list": {
     "title": "List of Chains",
-    "description": ""
+    "frontMatter": {
+      "description": ""
+    }
   },
   "functionality": {
     "title": "Functionality",
-    "description": "State of ZetaChain Functionality"
+    "frontMatter": {
+      "description": "State of ZetaChain Functionality"
+    }
   },
   "zetachain": {
     "title": "ZetaChain",
-    "description": "Make calls from universal apps and withdraw tokens to connected chains"
+    "frontMatter": {
+      "description": "Make calls from universal apps and withdraw tokens to connected chains"
+    }
   },
   "evm": {
     "title": "EVM Blockchains",
-    "description": "Make calls to universal apps and deposit tokens from Ethereum, BNB, Polygon, Base and more"
+    "frontMatter": {
+      "description": "Make calls to universal apps and deposit tokens from Ethereum, BNB, Polygon, Base and more"
+    }
   },
   "solana": {
     "title": "Solana",
-    "description": "Make calls to universal apps and deposit from Solana"
+    "frontMatter": {
+      "description": "Make calls to universal apps and deposit from Solana"
+    }
   },
   "ton": {
     "title": "Ton",
-    "description": "Make calls to universal apps and deposit from TON"
+    "frontMatter": {
+      "description": "Make calls to universal apps and deposit from TON"
+    }
   },
   "sui": {
     "title": "Sui",
-    "description": "Make calls to universal apps and deposit tokens from Sui"
+    "frontMatter": {
+      "description": "Make calls to universal apps and deposit tokens from Sui"
+    }
   },
   "bitcoin": {
     "title": "Bitcoin",
-    "description": "Make calls to universal apps and deposit BTC from Bitcoin"
+    "frontMatter": {
+      "description": "Make calls to universal apps and deposit BTC from Bitcoin"
+    }
   }
 }

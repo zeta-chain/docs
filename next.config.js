@@ -57,7 +57,7 @@ const baseNextConfig = {
         protocol: "https",
         hostname: "images.ctfassets.net", // contentful images
         port: "",
-        pathname: "/jmvpciyouqsr/**", // production space id
+        pathname: "/**",
       },
       {
         protocol: "http",

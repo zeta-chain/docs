@@ -1,22 +1,66 @@
 import { startCase, toLower } from "lodash-es";
 import { Page } from "nextra";
 
+const getMetaFrontMatter = (page: Page) => {
+  const meta = page.meta as Record<string, any> | undefined;
+  if (!meta) return undefined;
+
+  const frontMatter = meta.frontMatter as Record<string, any> | undefined;
+  return { meta, frontMatter };
+};
+
 export const getPageTitle = (page: Page) =>
   page.meta?.title ? String(page.meta.title) : startCase(toLower(page.name));
 
-export const getPageDescription = (page: Page) => (page.meta?.description ? String(page.meta.description) : undefined);
+export const getPageDescription = (page: Page) => {
+  const refs = getMetaFrontMatter(page);
+  if (!refs) return undefined;
 
-export const getPageReadTime = (page: Page) => (page.meta?.readTime ? String(page.meta.readTime) : undefined);
+  const { meta, frontMatter } = refs;
+  if (meta.description) return String(meta.description);
+  if (frontMatter?.description) return String(frontMatter.description);
+  return undefined;
+};
 
-export const getPageReadType = (page: Page) => (page.meta?.readType ? String(page.meta.readType) : undefined);
+export const getPageReadTime = (page: Page) => {
+  const refs = getMetaFrontMatter(page);
+  if (!refs) return undefined;
+
+  const { meta, frontMatter } = refs;
+  if (meta.readTime) return String(meta.readTime);
+  if (frontMatter?.readTime) return String(frontMatter.readTime);
+  return undefined;
+};
+
+export const getPageReadType = (page: Page) => {
+  const refs = getMetaFrontMatter(page);
+  if (!refs) return undefined;
+
+  const { meta, frontMatter } = refs;
+  if (meta.readType) return String(meta.readType);
+  if (frontMatter?.readType) return String(frontMatter.readType);
+  return undefined;
+};
 
 export type NavigationSectionVariant = "default" | "fancy";
 
-export const getPageNavigationSectionVariant = (page: Page): NavigationSectionVariant =>
-  page.meta?.variant && page.meta?.variant === "fancy" ? "fancy" : "default";
+export const getPageNavigationSectionVariant = (page: Page): NavigationSectionVariant => {
+  const refs = getMetaFrontMatter(page);
+  if (!refs) return "default";
 
-export const getPageNavigationSectionImage = (page: Page) =>
-  page.meta?.navImgUrl ? String(page.meta.navImgUrl) : undefined;
+  const { meta, frontMatter } = refs;
+  const variant = meta.variant ?? frontMatter?.variant;
+  return variant === "fancy" ? "fancy" : "default";
+};
+
+export const getPageNavigationSectionImage = (page: Page) => {
+  const refs = getMetaFrontMatter(page);
+  if (!refs) return undefined;
+
+  const { meta, frontMatter } = refs;
+  const navImgUrl = meta.navImgUrl ?? frontMatter?.navImgUrl;
+  return navImgUrl ? String(navImgUrl) : undefined;
+};
 
 export const getRecursivelyInnerMdxPages = ({ pages, maxPages }: { pages: Page[]; maxPages: number }): Page[] => {
   const mdxPages: Page[] = [];

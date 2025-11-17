@@ -1,18 +1,24 @@
 {
   "bounty": {
     "title": "Bug Bounty Program",
-    "description": "Contribute to ZetaChain by finding and reporting bugs.",
-    "readTime": "5 min",
-    "readType": "Beginner"
+    "frontMatter": {
+      "description": "Contribute to ZetaChain by finding and reporting bugs.",
+      "readTime": "5 min",
+      "readType": "Beginner"
+    }
   },
   "glossary": {
     "title": "Glossary",
-    "description": "Common terms used with ZetaChain.",
-    "readTime": "5 min"
+    "frontMatter": {
+      "description": "Common terms used with ZetaChain.",
+      "readTime": "5 min"
+    }
   },
   "faq": {
     "title": "FAQs",
-    "description": "Frequently asked questions about building on Zetachain.",
-    "readTime": "5 min"
+    "frontMatter": {
+      "description": "Frequently asked questions about building on Zetachain.",
+      "readTime": "5 min"
+    }
   }
 }
