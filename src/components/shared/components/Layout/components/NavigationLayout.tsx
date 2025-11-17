@@ -3,6 +3,8 @@ import List from "@mui/material/List";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { Page } from "nextra";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -24,13 +26,75 @@ type NavigationLayoutProps = PropsWithChildren<{
 
 export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
   const { upSm } = useCurrentBreakpoint();
+  const { locale, defaultLocale } = useRouter();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
 
   const closeMobileDrawer = useCallback(() => !upSm && setIsLeftDrawerOpen(false), [upSm, setIsLeftDrawerOpen]);
 
   const pages = useSelector(selectPages);
-  const navPages = useMemo(() => pages.filter((page) => page.kind === "Folder"), [pages]);
+  const selectPreferredLocalePage = useCallback(
+    (current: Page, candidate: Page) => {
+      if (current.kind === "Folder" || candidate.kind === "Folder") return current;
+
+      const normalizeLocale = (value?: string) => value ?? defaultLocale ?? null;
+      const currentLocale = normalizeLocale(current.locale);
+      const candidateLocale = normalizeLocale(candidate.locale);
+
+      if (locale) {
+        if (candidateLocale === locale && currentLocale !== locale) return candidate;
+        if (currentLocale === locale && candidateLocale !== locale) return current;
+      }
+
+      if (defaultLocale) {
+        if (candidateLocale === defaultLocale && currentLocale !== defaultLocale) return candidate;
+        if (currentLocale === defaultLocale && candidateLocale !== defaultLocale) return current;
+      }
+
+      if (!currentLocale && candidateLocale) return candidate;
+
+      return current;
+    },
+    [locale, defaultLocale]
+  );
+
+  const navPages = useMemo(() => {
+    const filterFolderChildren = (folder: Page & { kind: "Folder" }): Page & { kind: "Folder" } => {
+      const filteredChildren: Page[] = [];
+      const routeIndex = new Map<string, number>();
+
+      folder.children.forEach((child) => {
+        if (child.kind === "Folder") {
+          const filteredFolder = filterFolderChildren(child);
+          if (filteredFolder.children.length) {
+            filteredChildren.push(filteredFolder);
+          }
+          return;
+        }
+
+        const existingIndex = routeIndex.get(child.route);
+
+        if (existingIndex === undefined) {
+          filteredChildren.push(child);
+          routeIndex.set(child.route, filteredChildren.length - 1);
+          return;
+        }
+
+        const existingChild = filteredChildren[existingIndex];
+        const preferredChild = selectPreferredLocalePage(existingChild, child);
+        filteredChildren[existingIndex] = preferredChild;
+      });
+
+      return {
+        ...folder,
+        children: filteredChildren,
+      };
+    };
+
+    return pages
+      .filter((page): page is Page & { kind: "Folder" } => page.kind === "Folder")
+      .map((folder) => filterFolderChildren(folder));
+  }, [pages, selectPreferredLocalePage]);
 
   // To prevent a flash of the drawer on first render given that useCurrentBreakpoint has an issue always returning false for the first render for upLg and others
   useEffect(() => {

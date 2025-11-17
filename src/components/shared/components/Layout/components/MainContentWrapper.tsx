@@ -2,8 +2,8 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
 
-import { useSetDirectoriesState } from "~/hooks/useSetDirectoriesState";
 import { useIsHomePage } from "~/hooks/useIsHomePage";
+import { useSetDirectoriesState } from "~/hooks/useSetDirectoriesState";
 
 import { getGitHubEditUrl } from "../../../../../lib/github-edit-url";
 import { Hero } from "../../Hero";
