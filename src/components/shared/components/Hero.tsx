@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import tw, { styled } from "twin.macro";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { useIsHomePage, useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
@@ -40,12 +41,13 @@ export const StyledHero = styled.div`
 export const Hero: React.FC = () => {
   const { route } = useRouter();
   const { upLg } = useCurrentBreakpoint();
+  const normalizedRoute = useNormalizedRoute();
 
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
   const currentDirectory = useMemo(() => directoriesByRoute[route], [directoriesByRoute, route]);
 
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
-  const isHomePage = useMemo(() => ["/"].includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
+  const isHomePage = useIsHomePage();
   const isSubCategoryPage = useMemo(
     () => currentDirectory?.frontMatter?.pageType === "sub-category",
     [currentDirectory]

@@ -93,7 +93,6 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   chat: {
     icon: null,
   },
-
   // Configure App Head component
   head: <AppHead />,
 
@@ -146,6 +145,10 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     component: null,
     text: `© ${new Date().getFullYear()} Meta Protocol, Inc`,
   },
+  i18n: [
+    { locale: "en-US", text: "English" },
+    { locale: "zh-CN", text: "中文" },
+  ],
 };
 
 export default nextraDocsThemeConfig;
