@@ -1,0 +1,87 @@
+---
+title: 向验证人委托
+---
+
+## 前置条件
+
+请先安装 `zetacored` CLI，参考[安装 CLI 指南](/zh/users/cli/setup)。
+
+## 委托 ZETA
+
+ZetaChain 是权益证明（PoS）区块链，验证人负责出块并维护网络安全。将你的 ZETA 委托给验证人即可参与网络并获取奖励。
+
+验证人列表可在 [Ping Pub](https://ping.pub/zetachain/staking) 或其他[浏览器](/about/services/)查看。
+
+根据佣金、在线率、投票权等因素选择验证人。通常不建议把全部投票权集中给最高票验证人，以保持网络的去中心化。
+
+从区块浏览器复制目标验证人的运营者地址（前缀为 `zetavaloper`）。
+
+随后查询[账户余额](/zh/users/cli/balances)，确定要质押的数量。
+
+在委托前需了解：质押的 ZETA 会被锁定一段时间内不可转移。锁定时长由网络参数决定，可通过 API 查询：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/staking/v1beta1/params
+
+使用下列命令完成委托：
+
+```
+zetacored tx staking delegate zetavaloper167ns6zwczl9asjs47jwv3uhtkxfjcvx3fg3d4a 1000000000000000azeta --node https://zetachain-athens.blockpi.network:443/rpc/v1/public --from alice --chain-id athens_7001-1
+```
+
+- `zetavaloper167ns6zwczl9asjs47jwv3uhtkxfjcvx3fg3d4a`：验证人运营者地址
+- `1000000000000000azeta`：委托数量（示例为 0.001 ZETA）
+- `--node https://zetachain-athens.blockpi.network:443/rpc/v1/public`：Tendermint RPC URL
+- `--from alice`：账户名称（参见[账户管理](/zh/users/cli/account)）
+- `--chain-id athens_7001-1`：ZetaChain 测试网链 ID
+
+终端会提示确认交易：
+
+```
+auth_info:
+  fee:
+    amount: []
+    gas_limit: "200000"
+    granter: ""
+    payer: ""
+  signer_infos: []
+  tip: null
+body:
+  extension_options: []
+  memo: ""
+  messages:
+    - "@type": /cosmos.staking.v1beta1.MsgDelegate
+      amount:
+        amount: "1000"
+        denom: azeta
+      delegator_address: zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+      validator_address: zetavaloper167ns6zwczl9asjs47jwv3uhtkxfjcvx3fg3d4a
+  non_critical_extension_options: []
+  timeout_height: "0"
+signatures: []
+confirm transaction before signing and broadcasting [y/N]: y
+```
+
+输入 `y` 并回车确认。
+
+```
+code: 0
+codespace: ""
+data: ""
+events: []
+gas_used: "0"
+gas_wanted: "0"
+height: "0"
+info: ""
+logs: []
+raw_log: '[]'
+timestamp: ""
+tx: null
+txhash: C86E7C0E98A16CA0EB63800DF6CBB80D492201E17AB57229790DCF3403B59D02
+```
+
+交易成功。可再次查询余额验证扣款情况。
+
+同时可以在浏览器中通过交易哈希确认：
+
+https://ping.pub/zetachain/tx/C86E7C0E98A16CA0EB63800DF6CBB80D492201E17AB57229790DCF3403B59D02
+

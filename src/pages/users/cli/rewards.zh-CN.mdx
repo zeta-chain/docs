@@ -1,0 +1,56 @@
+---
+title: 提取奖励
+---
+
+## 前置条件
+
+请先安装 `zetacored` CLI，参考[安装 CLI 指南](/zh/users/cli/setup)。
+
+## 计算奖励
+
+使用以下命令查看已获取的奖励：
+
+```
+zetacored q distribution rewards $(zetacored keys show alice -a) --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+该命令会按验证人列出奖励：
+
+```
+rewards:
+  - reward:
+      - amount: "674201594136.000000000000000000"
+        denom: azeta
+    validator_address: zetavaloper1qumrwnz9x2emzd5yjylp8pf9w2wh3my0gag27y
+  ...
+total:
+  - amount: "340229851340085.779488644156297676"
+    denom: azeta
+```
+
+## 提取奖励
+
+要从所有验证人处提取奖励，执行：
+
+```
+zetacored tx distribution withdraw-all-rewards --gas 5000000 --from alice --chain-id athens_7001-1 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+由于该交易可能包含多条消息（每个验证人一条），需要手动设置 Gas。例如此处使用 `--gas 5000000`，实际值请视网络状况调整。
+
+确认交易并提取奖励：
+
+```
+auth_info:
+  fee:
+    amount: []
+    gas_limit: "5000000"
+    granter: ""
+    payer: ""
+  signer_infos: []
+  tip: null
+body:
+  ...
+confirm transaction before signing and broadcasting [y/N]: y
+```
+
