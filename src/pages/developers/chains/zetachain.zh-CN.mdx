@@ -1,0 +1,228 @@
+要从全链应用向连接链上的合约发起调用或提取代币，请使用 ZetaChain Gateway。
+
+ZetaChain Gateway 支持：
+
+- 将 ZRC-20 代币提取为连接链上的原生 Gas 代币或 ERC-20 代币。
+- 在提取代币的同时，对连接链上的合约发起调用。
+- 单纯对连接链上的合约发起调用。
+
+注意：目前不支持提取 ZETA 代币，调用会触发 `ZETANotSupported()` 回退。
+
+## 提取 ZRC-20 代币
+
+若要将 ZRC-20 代币提取到连接链上的 EOA 或合约，可调用 Gateway 合约的 `withdraw` 函数：
+
+```solidity
+function withdraw(bytes memory receiver, uint256 amount, address zrc20, RevertOptions calldata revertOptions) external;
+```
+
+`receiver` 可以是连接链上的外部拥有账户（EOA）或智能合约。即便接收方是具备标准 `receive` 函数的合约，`withdraw` 也不会触发合约调用；如果需要在提取后调用连接链合约，请改用 `withdrawAndCall`。
+
+`receiver` 类型为 `bytes`，以兼容不同链的地址格式（例如比特币的 Bech32）。当向 EVM 链提取时，需要将 `address` 转换为 `bytes`。
+
+当向非 EVM 链提取时，请确保将 `receiver` 地址按**字符串**编码为 `bytes`，即将地址作为字符串逐字转换为字节。
+
+例如，若 Solana 上的接收地址为：
+
+```
+GBwCxLUt5qn12aCD4uVKMWnoXPn2DoH126p8FrFmGNUy
+```
+
+对应的 `bytes` 表示为：
+
+```
+0x47427743784c557435716e31326143443475564b4d576e6f58506e32446f4831323670384672466d474e5579
+```
+
+`amount` 指定提取数量；`zrc20` 为待提取代币的 ZRC-20 地址。
+
+注意：某些连接链对提取金额设有最低限制。例如，将 ZRC-20 SOL 提取回 Solana 时，最少需 1,000,000（lamports）以满足免租金要求。
+
+`revertOptions.revertMessage` 长度不得超过 1024 字节。
+
+无需指定目标链，因为每个 ZRC-20 代币都绑定其存入的链，只能提取回原链。例如，要将 ZRC-20 USDC.ETH 提取到 BNB 链，必须先将其兑换为 ZRC-20 USDC.BNB。
+
+## 提取 ZRC-20 并调用连接链合约
+
+如需在提取 ZRC-20 的同时调用连接链上的合约，请使用 `withdrawAndCall`：
+
+```solidity
+function withdrawAndCall(bytes memory receiver, uint256 amount, address zrc20, bytes calldata message, CallOptions calldata callOptions, RevertOptions calldata revertOptions) external;
+```
+
+该函数会根据 `zrc20` 所指向的链提取代币并调用合约。例如，提取 ZRC-20 ETH 时，将调用以太坊上的目标合约。
+
+`message` 与 `revertOptions.revertMessage` 的总长度不得超过 1024 字节。
+
+## 调用连接链合约
+
+若仅需调用连接链合约（不提取代币），可使用 `call` 函数：
+
+```solidity
+function call(bytes memory receiver, address zrc20, bytes calldata message, CallOptions calldata callOptions, RevertOptions calldata revertOptions) external;
+```
+
+此处 `zrc20` 表示目标链 Gas 代币的 ZRC-20 地址，用于标识目标链。例如调用以太坊合约时需使用 ZRC-20 ETH 地址。
+
+`message` 与 `revertOptions.revertMessage` 总长度同样不得超过 1024 字节。
+
+## 调用参数（CallOptions）
+
+`CallOptions` 用于配置对连接链合约的调用细节，`call` 与 `withdrawAndCall` 均会使用：
+
+```solidity
+struct CallOptions {
+    uint256 gasLimit;
+    bool isArbitraryCall;
+}
+```
+
+- **`gasLimit`**：跨链合约调用可消耗的最大 Gas。若实际消耗超出该值，交易将回退。
+- **`isArbitraryCall`**：决定调用类型是“任意调用”（`true`）还是“认证调用”（`false`）。
+
+任意调用可以执行连接链上任意函数，但不会保留原始调用者身份，即目标合约中的 `msg.sender` 为 Gateway 地址，而非源全链合约。适用于无需调用者身份的场景（如代币兑换）。
+
+认证调用只会触发连接链合约中的 `onCall` 函数。协议通过 `onCall` 接收的 `context.sender`（源全链合约地址）实现鉴权，目标合约可据此验证并信任调用方，拒绝未经授权的调用。
+
+## `message` 参数格式
+
+对于任意调用（`isArbitraryCall` 为 `true`），`withdrawAndCall` 与 `call` 的 `message` 参数需包含目标函数的编码选择器和参数：
+
+- **函数选择器**：函数签名的 Keccak-256 哈希前 4 个字节。
+- **参数**：按以太坊 ABI 规则编码的剩余字节。
+
+例如：
+
+```
+0xa777d0dc00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000005616c696365000000000000000000000000000000000000000000000000000000
+```
+
+- **函数选择器**：`0xa777d0dc` 对应 `hello(string)`。
+- **参数**：余下数据表示字符串参数 `alice` 的十六进制编码（`616c696365`）。
+
+对于认证调用，`message` 仅包含 ABI 编码的参数（无需函数选择器，因为调用会路由至指定的 `onCall`）。
+
+## 回退交易（Revert Transactions）
+
+当跨链交易（CCTX）失败时，ZetaChain 会依据 `RevertOptions` 结构体决定如何处理。行为取决于交易方向——是连接链到 ZetaChain，还是 ZetaChain 到连接链。
+
+### 连接链 → ZetaChain（入向）
+
+该场景发生在连接链上的合约通过 Gateway 的 `depositAndCall` 或 `call` 向 ZetaChain 发送代币或消息时。
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/RQ152Ha21syhRT8iKGXz3h/Incoming--Revert?node-id=0-1&embed-host=share"
+  allowFullScreen
+></iframe>
+
+1. 连接链合约调用 Gateway 的 `depositAndCall` 或 `call`。
+2. Gateway 将调用转发至 ZetaChain 的**全链合约**。
+3. 若 `onCall` 函数回退，协议启动回退流程。
+
+回退行为：
+
+- 若原始调用携带的 `amount` **足以覆盖回退所需 Gas**：
+
+  - ZetaChain 会兑换部分金额为连接链对应的 Gas 代币（ZRC-20）。
+  - 协议将剩余代币与回退消息发送至连接链上的 `revertAddress`。
+  - 若 `callOnRevert` 为 `true`，Gateway 会调用 `onRevert`。
+
+- 若 `amount` **不足**或为零（例如无资产调用），Gateway 会在 ZetaChain 上调用 `onAbort`（目标为 `abortAddress`）。
+
+### ZetaChain → 连接链（出向）
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/4VGffjhDTeZMP3FFxxODpI/Outgoing--Revert?node-id=0-1&embed-host=share"
+  allowFullScreen
+></iframe>
+
+该场景发生在 ZetaChain 上的全链合约通过 `withdrawAndCall` 或 `call` 与连接链合约交互时。
+
+流程：
+
+1. 全链合约在 ZetaChain 上通过 `withdrawAndCall` 或 `call` 发起调用。
+2. Gateway 将消息和/或代币转发至连接链目标合约。
+3. 若目标合约回退，ZetaChain 启动回退流程。
+
+回退行为：
+
+- 若 `callOnRevert` 为 `true`：
+
+  - Gateway 会在 ZetaChain 上调用 `revertAddress` 的 `onRevert`。
+  - 剩余 ZRC-20 代币会连同回退上下文一并传递。
+  - 若 `onRevert` 自身回退，Gateway 会将 ZRC-20 代币转给 `abortAddress` 并调用其 `onAbort`。
+
+- 若 `callOnRevert` 为 `false`：
+
+  - Gateway 仅将代币转给 `revertAddress`，不执行任何函数。
+
+`RevertOptions` 结构体定义了跨链交易（CCTX）回退时资产的处理方式。
+
+### `RevertOptions` 结构体
+
+```solidity
+struct RevertOptions {
+    address revertAddress;
+    bool callOnRevert;
+    address abortAddress;
+    bytes revertMessage;
+    uint256 onRevertGasLimit;
+}
+```
+
+- `revertAddress`：接收代币或回退逻辑的地址。若为零地址，代币会退回原调用者。
+- `callOnRevert`：指定 Gateway 是否调用 `onRevert`。
+- `abortAddress`：在 `onCall` 回退（无资产调用）或回退执行失败（有资产调用）时的处理地址。
+- `revertMessage`：传递给 `onRevert` 与 `onAbort` 的消息。
+- `onRevertGasLimit`：`onRevert` 可用的最大 Gas，用于确定所需代币数量。
+
+### `onRevert`
+
+```solidity
+struct RevertContext {
+    address asset;
+    uint64 amount;
+    bytes revertMessage;
+}
+
+interface Revertable {
+    function onRevert(RevertContext calldata revertContext) external;
+}
+```
+
+- 在连接链上，`asset` 为最初存入的 ERC-20（或原生 Gas 代币对应的零地址）。
+- 在 ZetaChain 上，`asset` 为原始调用中提取的 ZRC-20。
+
+### `onAbort`
+
+```solidity
+struct AbortContext {
+    bytes sender;
+    address asset;
+    uint256 amount;
+    bool outgoing;
+    uint256 chainID;
+    bytes revertMessage;
+}
+
+interface Abortable {
+    function onAbort(AbortContext calldata abortContext) external;
+}
+```
+
+- 当回退执行失败时，ZetaChain 会作为兜底调用。
+- 适用于入向与出向交易。
+
+### 总结
+
+| 方向                 | 触发条件                               | 回退路径                                      | 回退失败的兜底措施          |
+| -------------------- | -------------------------------------- | --------------------------------------------- | --------------------------- |
+| 连接链 → ZetaChain   | 全链合约的 `onCall()` 回退             | 若资金充足，在连接链调用 `onRevert()`         | 在 ZetaChain 调用 `onAbort()` |
+| ZetaChain → 连接链   | 连接链目标合约回退                     | 若 `callOnRevert` 为真，在 ZetaChain 调用 `onRevert()` | 在 ZetaChain 调用 `onAbort()` |
+

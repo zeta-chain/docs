@@ -1,0 +1,104 @@
+若要从以太坊、BNB、Polygon 等 EVM 兼容链与全链应用交互，请使用 EVM Gateway。
+
+EVM Gateway 支持：
+
+- 向 ZetaChain 的帐号或全链应用存入 Gas 代币。
+- 存入受支持的 ERC-20 代币（包括 ZETA）。
+- 存入 Gas 代币并调用全链应用。
+- 存入受支持的 ERC-20 并调用全链应用。
+- 仅调用全链应用。
+
+## 存入 Gas 代币
+
+若要将代币存入 EOA 或全链合约，可调用 Gateway 合约的 `deposit` 函数：
+
+```solidity
+deposit(address receiver, RevertOptions calldata revertOptions) external payable;
+```
+
+`deposit` 为 payable，可接受原生 Gas 代币（如以太坊上的 ETH），并将其发送至 ZetaChain 上的 `receiver`。
+
+`receiver` 可以是 ZetaChain 上的外部账户或全链应用地址。即便接收方是具备标准 `receive` 函数的合约，`deposit` 也不会触发合约调用；若需要存入并调用全链应用，请改用 `depositAndCall`。
+
+存入处理完成后，接收方会获得对应代币的 [ZRC-20 版本](/developers/evm/zrc20)，例如 ZRC-20 ETH。
+
+## 存入 ERC-20 代币
+
+`deposit` 也可以将受支持的 ERC-20 代币发送给 ZetaChain 上的 EOA 或全链应用：
+
+```solidity
+deposit(address receiver, uint256 amount, address asset, RevertOptions calldata revertOptions) external;
+```
+
+仅可存入[受支持的 ERC-20 资产](/developers/evm/zrc20)。接收方会获得该代币的 ZRC-20 版本（例如 ZRC-20 USDC.ETH）。
+
+其中 `amount` 指定数量，`asset` 为存入的 ERC-20 代币地址。
+
+## 存入 Gas 代币并调用全链应用
+
+若要在存入代币的同时调用全链应用，请使用 `depositAndCall`：
+
+```solidity
+depositAndCall(address receiver, bytes calldata payload, RevertOptions calldata revertOptions) external payable;
+```
+
+跨链交易完成后，将执行目标全链应用合约的 `onCall` 函数。
+
+`receiver` 必须是全链应用合约地址。
+
+```solidity
+pragma solidity 0.8.26;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
+
+contract UniversalApp is UniversalContract {
+    function onCall(
+        MessageContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // ...
+    }
+}
+```
+
+`onCall` 函数中的参数含义如下：
+
+- `message`：即 `payload` 的内容。
+- `amount`：存入的代币数量。
+- `zrc20`：存入代币的 ZRC-20 地址（例如 ZRC-20 ETH 合约地址）。
+- `context`：
+  - `context.sender`：连接链上的发送者地址（调用 Gateway 的 EOA 或合约）。
+  - `context.chainID`：发起调用的连接链 ID。
+
+调用全链应用时，`payload` 将作为 `message` 传入 `onCall`。无需在 `payload` 中包含函数选择器，因为连接链端只能调用 `onCall`。
+
+## 存入 ERC-20 并调用全链应用
+
+`depositAndCall` 也可用于发送 ERC-20 代币并调用全链应用：
+
+```solidity
+depositAndCall(address receiver, uint256 amount, address asset, bytes calldata payload, RevertOptions calldata revertOptions) external;
+```
+
+此处 `amount` 为数量，`asset` 为存入的 ERC-20 代币地址。
+
+当前协议版本一次仅支持存入一种 ERC-20 资产。
+
+## 调用全链应用
+
+若无需存入代币，仅需调用全链应用，可使用 `call` 函数：
+
+```solidity
+call(address receiver, bytes calldata payload, RevertOptions calldata revertOptions) external;
+```
+
+`call` 会调用目标全链合约 `receiver` 的 `onCall` 函数，并将 `payload` 作为 `message` 传入。
+
+`call` 不支持回退处理；若将 `revertOptions.callOnRevert` 设为 `true`，交易会失败。这是因为回退时需要在 ZetaChain 支付 Gas，而 `call` 不会转移任何资产。如需处理回退，请改用 `depositAndCall` 并确保存入足够的代币以覆盖潜在 Gas 费用。
+
+## 回退交易
+
+关于 `RevertOptions` 的更多信息，请参阅 [ZetaChain “回退交易” 文档](/developers/chains/zetachain#revert-transactions)。
+

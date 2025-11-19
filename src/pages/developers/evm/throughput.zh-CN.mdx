@@ -1,0 +1,21 @@
+ZetaChain 通过两套机制管理流动性吞吐并确保交易安全：
+
+- 入站交易的流动性上限
+- 出站交易的速率限制
+
+在交易量高企时，这两套机制可维护网络稳定性与可靠性。通过为入站交易设定流动性上限、为出站交易实施速率限制，ZetaChain 能够控制代币流入与流出的节奏，防止滥用，降低潜在的流动性冲击，并在不牺牲性能或安全性的前提下承载高负载。
+
+## 入站交易：流动性上限
+
+对于从连接链流入 ZetaChain 的交易，协议使用流动性上限机制。ZetaChain 为每种受支持代币预定义可存入的最大数量（上限）。当达到上限时，后续尝试继续向 ZetaChain 存入该代币的交易将被回退。每个受支持代币拥有独立上限，超出部分均会回退。
+
+当前支持代币的流动性上限可通过链上 API 查询：[测试网](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins) 与 [主网测试阶段](https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/fungible/foreign_coins) 均提供接口。
+
+## 出站交易：速率限制器
+
+对于自 ZetaChain 流向连接链的交易，协议启用速率限制器。该机制确保在指定的滑动窗口（以 ZetaChain 区块数计）内提取的代币总量不超过预先设定的全局上限。速率限制器在以区块数定义的滑动窗口内运行，并设置以 ZETA 计价的每区块全局速率。窗口内所有代币的提现总量不得超过“速率 × 窗口区块数”。
+
+每个 ZRC-20 代币都定义了向 ZETA 的换算比例。例如，若某 ZRC-20 代币 XYZ 的换算比例为 2，则提取 10 枚 XYZ 会按 20 ZETA 计入限额。当前速率限制器参数可通过速率限制器标志端点查询：[测试网](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/rateLimiterFlags) 与 [主网测试阶段](https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/crosschain/rateLimiterFlags) 均可获取。
+
+通过上述机制，ZetaChain 能够高效管理流动性、防止滥用，并在高交易量场景下保持网络稳定。
+

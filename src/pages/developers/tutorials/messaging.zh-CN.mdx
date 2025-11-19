@@ -1,0 +1,336 @@
+本教程演示如何使用 ZetaChain 的消息基础设施，在两条 EVM 链上的合约间发送跨链消息。
+
+与部署在 ZetaChain 上的全链应用不同，此模式允许你将所有合约逻辑留在已有的连接 EVM 链上。ZetaChain 仅负责在它们之间路由消息，无需在 ZetaChain 部署任何合约。
+
+> 为什么使用该模式？相比直接在 ZetaChain 部署全链应用，此方式可让全部业务逻辑保留在你熟悉的连接 EVM 链上。ZetaChain 只负责传输载荷，并不部署合约代码。
+
+完成本教程后，你将：
+
+- 在两个 EVM 测试网（Base 与 Ethereum Sepolia）部署消息传递合约
+- 建立它们之间的跨链通信
+- 从一条链向另一条链发送消息与代币数量
+- 跟踪跨链交易从源链到目标链的状态
+
+<div className="mt-8" style={{ width: "100%", height: "auto", aspectRatio: "16 / 9" }}>
+  <iframe
+    width="100%"
+    height="100%"
+    src="https://www.youtube.com/embed/UrAMdR807JQ"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+  ></iframe>
+</div>
+
+## 创建项目
+
+使用 `messaging` 模板创建新项目：
+
+```
+npx zetachain new --project messaging
+```
+
+安装 TypeScript 与 Foundry 依赖：
+
+```
+cd messaging
+yarn
+forge soldeer update
+```
+
+编译合约：
+
+```
+forge build
+```
+
+为了让脚本读取，建议将私钥保存为环境变量：
+
+```
+PRIVATE_KEY=...
+```
+
+## Messaging 合约
+
+要启用跨链消息传递，合约需继承 ZetaChain 的 `Messaging` 基类并实现必要函数。
+
+从 ZetaChain 标准合约包引入 `Messaging.sol`：
+
+```solidity
+import "@zetachain/standard-contracts/contracts/messaging/contracts/Messaging.sol";
+```
+
+在合约中继承 `Messaging`：
+
+```solidity
+contract Example is Messaging { ... }
+```
+
+在构造函数中按要求初始化参数：
+
+```solidity
+constructor(
+    address payable _gateway,
+    address owner,
+    address _router
+) Messaging(_gateway, owner, _router) {}
+```
+
+`Messaging` 基类会提供对 Gateway 与 Router 的访问，并确保合约正确接入 ZetaChain 的跨链消息系统。
+
+你需要实现三个核心内部函数，用于处理消息投递与回退：
+
+#### onMessageReceive
+
+当跨链消息成功到达目标链时会自动触发：
+
+```solidity
+function onMessageReceive(
+    bytes memory data,
+    bytes memory sender,
+    uint256 amount,
+    bytes memory asset
+) internal override {
+    //...
+}
+```
+
+在此解码消息，执行状态更新、触发下游调用或处理接收到的代币。
+
+#### onMessageRevert
+
+当目标合约的 `onMessageReceive` 执行失败（如 calldata 无效或逻辑回退）时触发：
+
+```solidity
+function onMessageRevert(
+    bytes memory data,
+    bytes memory sender,
+    uint256 amount,
+    bytes memory asset
+) internal override {
+    //...
+}
+```
+
+#### onRevert
+
+当消息在路由过程中未抵达目标链时触发，执行于源链：
+
+```solidity
+function onRevert(RevertContext calldata context)
+    external
+    payable
+    override
+    onlyGateway
+{
+    if (context.sender != router) revert Unauthorized();
+    //...
+}
+```
+
+可在此执行退款、补偿逻辑或发出通知。
+
+### 发送消息
+
+要发起跨链消息，合约需调用 EVM Gateway 的 `depositAndCall`，该函数会将消息与可选代币交给 ZetaChain 的消息层进行路由。
+
+根据是否发送原生 Gas（如 ETH）或 ERC-20，有两种形式：
+
+发送带 ETH 的消息：
+
+```solidity
+gateway.depositAndCall{value: msg.value}(
+    router,
+    message,
+    revertOptions
+);
+```
+
+发送受支持的 ERC-20：
+
+```solidity
+gateway.depositAndCall(
+    router,
+    amount,
+    asset,
+    message,
+    revertOptions
+);
+```
+
+其中 `asset` 为要发送的 ERC-20 地址，必须已被 ZetaChain 支持。
+
+### 消息载荷结构
+
+`message` 参数是单个 `bytes`，需按 Universal Router 可识别的结构进行 ABI 编码：
+
+```solidity
+abi.encode(
+    receiver,       // bytes：目标链合约地址
+    targetToken,    // address：目标链需接收的代币对应的 ZRC-20
+    data,           // bytes：消息载荷（如 ABI 编码的 "hello"）
+    gasLimit,       // uint256：目标链执行所需 Gas
+    revertOptions   // struct：失败时的回退策略
+)
+```
+
+例如将字符串 `"hello"` 发送到 Ethereum Sepolia 的合约：
+
+```solidity
+bytes memory data = abi.encode("hello");
+bytes memory message = abi.encode(
+    abi.encodePacked(receiver),
+    targetToken,
+    data,
+    300_000,
+    revertOptions
+);
+```
+
+随后将 `message` 传入 `depositAndCall()`，经过 ZetaChain 路由至目标链，并在目标合约的 `onMessageReceive()` 中解码使用。
+
+### Universal Router 介绍
+
+当你调用 `gateway.depositAndCall(...)` 发送跨链消息时，具体的路由与执行逻辑由 **Universal Router** 合约在 ZetaChain 上完成。它是所有跨链消息的入口，负责：
+
+- 解析源链传来的消息载荷
+- 将部分代币换成目标链 Gas 代币用于支付执行费用，将剩余部分换成目标链指定代币交给目标合约
+- 将消息与代币转发至目标合约
+- 在目标调用失败时进行回退处理
+
+所有继承 Messaging 基类的合约共享同一个 Universal Router，这让开发体验更一致，无需重复实现。你只需专注于编码载荷并调用 Gateway，其余细节由 ZetaChain 代劳。
+
+> 🔧 进阶：若需要更多自定义（如调整代币交换方式、改用自定义 Router 或变更消息处理逻辑），可部署自定义 Router，并在 Messaging 构造函数中传入对应地址。
+
+## 部署消息合约
+
+部署到 Base Sepolia：
+
+```
+MESSAGING_BASE=$(./commands/index.ts deploy --rpc https://sepolia.base.org --private-key $PRIVATE_KEY | jq -r .contractAddress)
+```
+
+部署到 Ethereum Sepolia：
+
+```
+MESSAGING_ETHEREUM=$(./commands/index.ts deploy --rpc https://sepolia.drpc.org --private-key $PRIVATE_KEY | jq -r .contractAddress)
+```
+
+## 互联合约
+
+在跨链通信前，两份合约需显式彼此信任，以防恶意合约伪造跨链消息。此步骤将为两个合约建立双向链接。
+
+每个合约需知晓：
+
+- 远程合约地址
+- 远程链 ID
+
+通过合约的 `setConnected()` 函数完成配置。ZetaChain 仅向已登记的可信合约传递消息。
+
+⚠️ 若跳过此步骤或填写错误地址/链 ID，目标链会拒绝消息。
+
+```
+./commands/index.ts connect \
+  --contract $MESSAGING_BASE \
+  --target-contract $MESSAGING_ETHEREUM \
+  --rpc https://sepolia.base.org \
+  --target-chain-id 11155111 \
+  --private-key $PRIVATE_KEY
+```
+
+```
+./commands/index.ts connect \
+  --contract $MESSAGING_ETHEREUM \
+  --target-contract $MESSAGING_BASE \
+  --rpc https://sepolia.drpc.org \
+  --target-chain-id 84532 \
+  --private-key $PRIVATE_KEY
+```
+
+完成双向连接后，双方即可互发消息。
+
+## 发送跨链消息
+
+一切部署就绪后，可从一条链向另一条链发送消息。
+
+以下示例将字符串 `"hello"` 从 Base Sepolia 的合约发送至 Ethereum Sepolia 的合约：
+
+```
+./commands/index.ts message \
+  --rpc https://sepolia.base.org \
+  --private-key $PRIVATE_KEY \
+  --contract $MESSAGING_BASE \
+  --target-contract $MESSAGING_ETHEREUM \
+  --types string \
+  --values hello \
+  --target-token 0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0 \
+  --amount 0.005
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--rpc https://sepolia.base.org` | 源链（Base Sepolia）的 RPC，交易由此发出 |
+| `--private-key $PRIVATE_KEY` | 源链上用于签名与支付的账户，需持有发送代币 |
+| `--contract $MESSAGING_BASE` | 源链已部署的消息合约地址 |
+| `--target-contract $MESSAGING_ETHEREUM` | 目标链合约地址 |
+| `--types string` | 消息的 ABI 类型，可为单一类型或元组 |
+| `--values hello` | 实际发送的值，即字符串 `"hello"` |
+| `--target-token 0x...` | ZetaChain 上代表目标链代币的 ZRC-20 地址 |
+| `--amount 0.005` | 总发送数量，其中一部分用于支付目标链 Gas，其余转给目标合约 |
+
+### 数量如何处理
+
+使用 `--amount` 发送跨链消息时，你不仅转移代币，还预付目标链的 Gas：
+
+1. 在源链提供代币（如 Base ETH），可以是原生资产或受支持的 ERC-20。
+2. 通过 `--target-token` 指定 ZetaChain 上代表目标链代币的 ZRC-20。
+3. ZetaChain 会自动：
+   - 将部分金额兑换成目标链的 Gas 代币（ZRC-20 形式），用于支付执行成本。
+   - 将剩余金额兑换成目标合约所需的目标代币，并转入目标合约。
+
+这样你无需持有目标链原生代币，即可完成跨链调用。
+
+```json
+{
+  "contractAddress": "0xee2E8dfefd723e879CAa30A1DaD94046Fa3D24D4",
+  "targetContract": "0x7c9BbA0630c9452F726bc15D0a73cdF769438efE",
+  "targetToken": "0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0",
+  "message": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000",
+  "transactionHash": "0x939e230dd504efdf1fce31202a5980b4d0376430ddf535d080666256353c02c3",
+  "amount": "0.005"
+}
+```
+
+## 跟踪跨链交易
+
+使用上述交易哈希查询跨链状态：
+
+```
+npx zetachain query cctx --hash 0x939e230dd504efdf1fce31202a5980b4d0376430ddf535d080666256353c02c3
+```
+
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0xd88d92d0b9b0a2fde416bf6383e430b51de48114b0b03e7cc34e7f8d8df15cb7
+Tx Hash:  0x939e230dd504efdf1fce31202a5980b4d0376430ddf535d080666256353c02c3 (on chain 84532)
+Tx Hash:  0x8c368f6a3cfc55950b5d2b0d98c63d1904a79300490ec7d1c258505f372054e3 (on chain 7001)
+Sender:   0xee2E8dfefd723e879CAa30A1DaD94046Fa3D24D4
+Receiver: 0x5BD35697D4a62DE429247cbBDCc5c47F70477775
+Message:  ...
+
+7001 → 11155111 ✅ OutboundMined
+CCTX:     0x8952c9f95dfb5673a9fbfa2196842b750f5530f4931a55088b1276599328fd64
+Tx Hash:  0xd88d92d0b9b0a2fde416bf6383e430b51de48114b0b03e7cc34e7f8d8df15cb7 (on chain 7001)
+Tx Hash:  0xf30e4414087e8b5c81e257e8a97ac9105dde37cbbd6bb33a1691c4a30585507e (on chain 11155111)
+Sender:   0x5BD35697D4a62DE429247cbBDCc5c47F70477775
+Receiver: 0x7c9BbA0630c9452F726bc15D0a73cdF769438efE
+Message:  ...
+```
+
+这表明消息已经从 Base Sepolia 经过 ZetaChain 成功抵达 Ethereum Sepolia。
+
+可在 Etherscan 验证目标链交易：
+
+https://sepolia.etherscan.io/tx/0xf30e4414087e8b5c81e257e8a97ac9105dde37cbbd6bb33a1691c4a30585507e
+

@@ -1,0 +1,478 @@
+在本教程中，你将构建一个 ZetaChain 全链应用，使其能够：
+
+- 处理来自连接 EVM 链的入站调用
+- 向连接 EVM 链上的合约发起出站调用
+- 使用回退机制优雅处理失败
+
+你将部署两个合约：
+
+- **Universal App**：部署在 ZetaChain，处理跨链调用，可向连接链回发调用并可选携带代币。
+- **Connected Contract**：部署在连接的 EVM 链，可调用 Universal App，并接收其回调。
+
+该模式展示了 ZetaChain 与连接链之间双向通信的核心流程：
+
+- 入站调用：连接链 → ZetaChain
+- 出站调用：ZetaChain → 连接链
+- 可选的双向代币转移
+- 回退处理以在失败时平稳恢复
+
+完成后，你将拥有一个最小可用的双向合约调用示例，支持可选代币流转与健壮的错误处理。
+
+## 前置条件
+
+请先完成以下教程：
+
+- [全链应用简介](/start/app/)
+- [ZetaChain 入门](/developers/tutorials/intro)
+- [第一个全链应用](/developers/tutorials/hello)
+
+## 环境初始化
+
+使用 `call` 模板创建项目：
+
+```bash
+zetachain new --project call
+cd call
+```
+
+安装依赖：
+
+```bash
+yarn
+```
+
+拉取 Solidity 依赖并编译合约：
+
+```bash
+forge soldeer update
+forge build
+```
+
+现在可以开始编写 Universal App 与 Connected Contract 的核心逻辑。接下来我们先解析 Universal App 如何处理入站调用并向连接链发起出站调用。
+
+## Universal App
+
+Universal App 部署在 ZetaChain，实现 `UniversalContract` 接口。它通过 Gateway 接收来自连接链的调用，也可以（带或不带代币）向连接链发起调用。
+
+### 处理入站调用
+
+当连接链调用 Universal App 时，Gateway 会触发 `onCall`。在此解码消息并执行你的业务逻辑：
+
+```solidity
+function onCall(
+    MessageContext calldata context,
+    address zrc20,
+    uint256 amount,
+    bytes calldata message
+) external override onlyGateway {
+    string memory name = abi.decode(message, (string));
+    emit HelloEvent("Hello on ZetaChain", name);
+}
+```
+
+- `context`：包含来源链与发送者信息
+- `zrc20`：源链 Gas 资产（或转入代币）的 ZRC-20 地址
+- `amount`：转入的代币数量
+- `message`：源链编码的任意载荷
+
+### 发起出站调用
+
+若要从 Universal App 调用连接链合约，首先根据目标链的 Gas 上限报价手续费，向调用方收取后批准 Gateway：
+
+```solidity
+(, uint256 gasFee) = IZRC20(zrc20).withdrawGasFeeWithGasLimit(callOptions.gasLimit);
+IZRC20(zrc20).transferFrom(msg.sender, address(this), gasFee);
+IZRC20(zrc20).approve(address(gateway), gasFee);
+```
+
+然后通过 `gateway.call` 发送跨链请求：
+
+```solidity
+gateway.call(
+    receiver,      // bytes：连接链合约地址
+    zrc20,         // 目标链 Gas 对应的 ZRC-20
+    message,       // 目标合约的 calldata
+    callOptions,   // Gas 上限、调用类型
+    revertOptions  // 回退处理配置
+);
+```
+
+### 同步提取代币并调用
+
+如果希望在一次交易中既提取代币又调用目标链合约，可使用：
+
+```solidity
+gateway.withdrawAndCall(
+    receiver,
+    amount,
+    zrc20,
+    message,
+    callOptions,
+    revertOptions
+);
+```
+
+该流程会在 ZetaChain 销毁相应 ZRC-20，并在目标链释放对应原生资产或 ERC-20，同时执行合约调用。
+
+## Connected Contract
+
+Connected 合约部署在连接的 EVM 链，通过 EVM Gateway 与 ZetaChain 上的 Universal App 交互。
+
+实际上，你也可以直接从 EOA 调用 Gateway 发起跨链调用，这里使用合约仅为示例，展示如何在链上工作流中嵌入跨链逻辑。
+
+### 调用 Universal App（EVM → ZetaChain）
+
+向 Universal App 发送任意 calldata：
+
+```solidity
+gateway.call(
+  receiver,     // address：ZetaChain 上 Universal App 的 EVM 地址
+  message,      // bytes：传入 Universal onCall 的 ABI 编码载荷
+  revertOptions // 执行失败时的回退处理
+);
+```
+
+跨链交易完成后，目标 Universal App 的 `onCall` 会收到该载荷。
+
+### 存入代币
+
+向 ZetaChain 的地址/合约存入原生 Gas：
+
+```solidity
+gateway.deposit{value: msg.value}(receiver, revertOptions);
+```
+
+存入受支持的 ERC-20：
+
+```solidity
+IERC20(asset).transferFrom(msg.sender, address(this), amount);
+IERC20(asset).approve(address(gateway), amount);
+gateway.deposit(receiver, amount, asset, revertOptions);
+```
+
+`deposit` 仅将代币转给 ZetaChain 上的 `receiver`（EOA 或合约），不执行任何逻辑，代币以 ZRC-20 形式到账。
+
+### 存入并调用
+
+在一次交易中发送价值并在 ZetaChain 执行逻辑。
+
+原生 Gas：
+
+```solidity
+gateway.depositAndCall{value: msg.value}(
+  receiver,
+  message,
+  revertOptions
+);
+```
+
+ERC-20：
+
+```solidity
+IERC20(asset).transferFrom(msg.sender, address(this), amount);
+IERC20(asset).approve(address(gateway), amount);
+gateway.depositAndCall(
+  receiver,
+  amount,
+  asset,
+  message,
+  revertOptions
+);
+```
+
+跨链交易完成后，目标 Universal App 的 `onCall` 会在收到代币与载荷的同一执行中运行。
+
+## 回退处理
+
+跨链调用可能因为目标链 Gas 不足、目标合约不存在函数、或逻辑回退等原因失败。通过传入 `RevertOptions` 结构体，可以优雅应对这些情况。
+
+当调用失败时，Gateway 会调用发起方合约的 `onRevert`，并携带 `RevertContext` 说明原因。
+
+### 示例：Universal App 的 onRevert
+
+```solidity
+function onRevert(RevertContext calldata revertContext)
+    external
+    onlyGateway
+{
+    emit RevertEvent("Revert on ZetaChain", revertContext);
+}
+```
+
+你可以利用该钩子：
+
+- 触发事件供链下监控
+- 向原始发送者退款
+- 重试或执行补偿逻辑
+
+### 传递 RevertOptions
+
+在调用或 `withdrawAndCall` 时，传入 `RevertOptions` 可配置：
+
+- 回退地址（接收退款）
+- 是否调用 `onRevert`
+- 自定义回退消息
+- 回退调用的 Gas 限额
+
+出站调用示例：
+
+```solidity
+gateway.call(
+    receiver,
+    zrc20,
+    message,
+    callOptions,
+    RevertOptions({
+        revertAddress: msg.sender,
+        callOnRevert: true,
+        abortAddress: address(0),
+        revertMessage: abi.encode("refund"),
+        onRevertGasLimit: 500_000
+    })
+);
+```
+
+## 方案一：部署到测试网
+
+部署前需要准备：
+
+- 拥有资金的私钥（ZetaChain 测试网与连接 EVM 测试网，如 Base Sepolia）
+- 两条链的 Gateway 地址
+
+```bash
+GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
+
+RPC_ZETACHAIN=https://zetachain-athens-evm.blockpi.network/v1/rpc/public
+RPC_BASE=https://sepolia.base.org
+```
+
+### 部署 Universal 至 ZetaChain 测试网
+
+```bash
+UNIVERSAL=$(forge create Universal \
+  --rpc-url $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json | jq -r .deployedTo) && echo $UNIVERSAL
+```
+
+### 部署 Connected 至 Base Sepolia
+
+```bash
+CONNECTED=$(forge create Connected \
+  --rpc-url $RPC_BASE \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_BASE | jq -r .deployedTo) && echo $CONNECTED
+```
+
+### 调用 Universal App
+
+在 Base Sepolia 上调用 Connected 合约，它会通过 Gateway 转发至 ZetaChain 上的 Universal App。跨链交易完成后，`onCall` 会执行。
+
+```bash
+cast send $CONNECTED \
+  --rpc-url $RPC_BASE \
+  --private-key $PRIVATE_KEY \
+  --json \
+  "call(address,bytes,(address,bool,address,bytes,uint256))" \
+  $UNIVERSAL \
+  $(cast abi-encode "f(string)" "hello") \
+  "(0x0000000000000000000000000000000000000000,false,$UNIVERSAL,0x,0)" | jq -r '.transactionHash'
+```
+
+第三个参数即 RevertOptions 结构：
+
+```
+(revertAddress, callOnRevert, abortAddress, revertMessage, onRevertGasLimit)
+```
+
+- `revertAddress`：失败时退款地址。对于无代币转移的 `call`，使用零地址。
+- `callOnRevert`：Gateway 的 `call` 不支持回退调用，因此必须为 `false`。
+- `abortAddress`：交付失败时的中止地址。使用 Universal 合约地址，以便触发 `onAbort`。
+- `revertMessage`：回退时返回的任意字节。
+- `onRevertGasLimit`：`callOnRevert` 为 `false` 时设为 `0`。
+
+也可使用命令：
+
+```bash
+npx tsx ./commands connected call \
+  --rpc $RPC_BASE \
+  --contract $CONNECTED \
+  --private-key $PRIVATE_KEY \
+  --receiver $UNIVERSAL \
+  --types string \
+  --values hello \
+  --name Connected
+```
+
+广播交易后，可使用 ZetaChain CLI 追踪跨链流程：
+
+```bash
+zetachain query cctx --hash $HASH
+```
+
+该命令会展示 CCTX 全生命周期，包括当前状态、源/目标链事件以及错误或回退详情，是确认跨链调用成功最便捷的方式。
+
+## 从 Universal App 发起出站调用
+
+Universal App 可主动向连接 EVM 链的合约发起调用。应用会使用目标链 Gas 对应的 ZRC-20 代币支付费用，然后调用 Gateway。
+
+首先根据目标 Gas 上限报价费用：
+
+```bash
+GAS_LIMIT=500000
+ZRC20_BASE=0x236b0DE675cC8F46AE186897fCCeFe3370C9eDeD
+
+GAS_FEE=$(cast call --json $ZRC20_BASE \
+  "withdrawGasFeeWithGasLimit(uint256)(address,uint256)" \
+  $GAS_LIMIT \
+  --rpc-url $RPC_ZETACHAIN | jq -r '.[1]') && echo $GAS_FEE
+```
+
+批准 Universal App 支付该费用：
+
+```bash
+cast send $ZRC20_BASE \
+  "approve(address,uint256)" \
+  $UNIVERSAL \
+  $GAS_FEE \
+  --rpc-url $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY
+```
+
+发起跨链调用：
+
+```bash
+cast send --json \
+  --rpc-url $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  $UNIVERSAL \
+  "call(bytes,address,bytes,(uint256,bool),(address,bool,address,bytes,uint256))" \
+  $(cast abi-encode "f(bytes)" $CONNECTED) \
+  $ZRC20_BASE \
+  $(cast abi-encode "f(string)" "hello") \
+  "($GAS_LIMIT,false)" \
+  "($UNIVERSAL,false,$UNIVERSAL,0x,0)" | jq -r '.transactionHash'
+```
+
+- `$GAS_LIMIT` 必须与 `withdrawGasFeeWithGasLimit` 中使用的值一致。
+- `isArbitraryCall` 控制调用类型：`false` 表示认证消息，`true` 表示任意函数调用载荷。
+
+回退配置说明：
+
+- `revertAddress`：使用 Universal 合约地址，若出站调用失败，将回退交易发送回该合约。
+- `callOnRevert`：设为 `true`。从 ZetaChain 向外的调用支持回退调用，因为从连接链到 ZetaChain 的交易不需再支付 Gas。
+- `abortAddress`：同样设为 Universal 合约地址，以便处理无法回退的情况。
+- `revertMessage`：示例中留空。
+- `onRevertGasLimit`：设为 0，因回退调用到 ZetaChain 不产生 Gas 费用。
+
+也可使用命令：
+
+```
+npx tsx ./commands universal call \
+  --rpc $RPC_ZETACHAIN \
+  --contract $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --receiver $CONNECTED \
+  --types string \
+  --values hello \
+  --name Universal \
+  --zrc20 $ZRC20_BASE
+```
+
+## 方案二：部署到 Localnet
+
+Localnet 允许你在本机部署并测试两个合约，同时运行本地 ZetaChain 与连接的 EVM 链，迭代速度更快，无需等待测试网确认或申请水龙头。
+
+```bash
+npx zetachain localnet start
+```
+
+该命令会启动带预置账户的 Anvil，并部署本地 ZetaChain 核心合约。部署信息保存在 `~/.zetachain/localnet/`。
+
+从 Localnet 注册表中获取 RPC、预置私钥与相关合约地址：
+
+```bash
+RPC=http://localhost:8545
+ZRC20_ETHEREUM=$(jq -r '."11155112".zrc20Tokens[] | select(.coinType == "gas" and .originChainId == "11155112") | .address' ~/.zetachain/localnet/registry.json) && echo $ZRC20_ETHEREUM
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+GATEWAY_ETHEREUM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ETHEREUM
+```
+
+部署 Universal App：
+
+```bash
+UNIVERSAL=$(forge create Universal \
+  --rpc-url $RPC \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json | jq -r .deployedTo) && echo $UNIVERSAL
+```
+
+部署 Connected 合约：
+
+```bash
+CONNECTED=$(forge create Connected \
+  --rpc-url $RPC \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ETHEREUM | jq -r .deployedTo) && echo $CONNECTED
+```
+
+模拟连接链向 Universal App 发送消息：
+
+```bash
+npx tsx ./commands connected call \
+  --rpc $RPC \
+  --contract $CONNECTED \
+  --private-key $PRIVATE_KEY \
+  --receiver $UNIVERSAL \
+  --types string \
+  --values hello \
+  --name Connected
+```
+
+本地跨链交易完成后，Universal App 的 `onCall` 会执行。
+
+再模拟 ZetaChain → 连接链的调用：
+
+```bash
+npx tsx ./commands universal call \
+  --rpc $RPC \
+  --contract $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --receiver $CONNECTED \
+  --types string \
+  --values hello \
+  --name Universal \
+  --zrc20 $ZRC20_ETHEREUM
+```
+
+该命令将：
+
+1. 报价目标链所需 Gas 费用（以 `$ZRC20_ETHEREUM` 表示）
+2. 批准 Universal App 支付该费用
+3. 通过 Gateway 发送跨链调用
+
+## 总结
+
+你已经构建并测试了一个展示双向合约通信核心机制的全链应用。通过部署 ZetaChain 上的 Universal App 与连接链上的 Connected 合约，你学会了：
+
+- 如何通过 Gateway 接收并处理来自连接链的调用
+- 如何从 ZetaChain 向连接链回发调用
+- 如何利用回退机制在失败时保障跨链逻辑稳定
+- 如何在测试网或完全本地环境中运行相同流程以加速迭代
+
+这一模式是构建真正全链 dApp 的基础：不再局限于单链，而是能够在同一处协调多链逻辑、资产与数据。
+
+接下来你可以：
+
+- 接入更多连接链，扩展应用的覆盖面
+- 拓展合约逻辑，支持兑换、质押、NFT 转移等复杂流程
+- 将 Universal App 整合至更大的协议，统一多链流动性与用户体验
+
+借助 ZetaChain，这些模式在接入任何区块链时都保持一致，使你的应用从第一天起即具备跨链、可拓展的能力。现在就将这个最小示例打造成真正的跨链功能吧！
+

@@ -1,0 +1,32 @@
+{
+  "index": {
+    "title": "概览"
+  },
+  "gateway": {
+    "title": "Gateway"
+  },
+  "connector": {
+    "title": "连接器合约"
+  },
+  "gas": {
+    "title": "Gas 费用"
+  },
+  "cctx": {
+    "title": "跨链交易"
+  },
+  "zeta": {
+    "title": "ZETA"
+  },
+  "zrc20": {
+    "title": "ZRC-20"
+  },
+  "erc20": {
+    "title": "ERC-20"
+  },
+  "addresses": {
+    "title": "账户地址"
+  },
+  "throughput": {
+    "title": "流动性吞吐"
+  }
+}

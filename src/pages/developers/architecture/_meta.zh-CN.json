@@ -1,0 +1,23 @@
+{
+  "overview": {
+    "title": "架构概览"
+  },
+  "observers": {
+    "title": "观察者-签名者验证者"
+  },
+  "privileged": {
+    "title": "特权操作"
+  },
+  "rewards": {
+    "title": "质押奖励"
+  },
+  "whitelisting": {
+    "title": "ERC-20 白名单"
+  },
+  "modules": {
+    "title": "模块"
+  },
+  "zetacored": {
+    "title": "ZetaChain 节点 CLI"
+  }
+}

@@ -1,0 +1,57 @@
+若要从 TON 与全链应用交互，请使用 TON Gateway。
+
+TON Gateway 支持：
+
+- 将 TON 存入 ZetaChain 的帐号或全链应用
+- 存入 TON 并调用全链应用
+- 从 ZetaChain 提取 TON
+
+## 存入 TON
+
+若要将 TON 存入 EOA 或全链合约，请向 Gateway 合约发送如下结构的内部消息：
+
+```func
+op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits)
+```
+
+存入操作的 `op_code` 为 `101`。`query_id` 预留供未来使用，目前设置为 `0`。
+
+`evm_recipient` 指定 ZetaChain 上接收 TON 的地址，可以是外部账户或全链应用地址。
+
+以下示例展示了如何在 TypeScript 中构造存入消息：
+
+```typescript
+const opDeposit = 101;
+const body = beginCell().storeUint(opDeposit, 32).storeUint(0, 64).storeUint(zevmRecipient, 160).endCell();
+```
+
+存入完成后，接收方会获得该 TON 的 [ZRC-20 版本](/developers/evm/zrc20)。
+
+## 存入 TON 并调用全链应用
+
+若要存入 TON 并调用全链应用合约，请向 Gateway 合约发送如下结构的内部消息：
+
+```func
+op_code:uint32 query_id:uint64 evm_recipient:slice (160 bits) call_data:cell
+```
+
+`depositAndCall` 的 `op_code` 为 `102`；`query_id` 仍设置为 `0`。请注意 `call_data` 需使用大多数 TON 库支持的 ["snake data"](https://docs.ton.org/v3/guidelines/dapps/asset-processing/nft-processing/metadata-parsing#snake-data-encoding) 格式编码。
+
+`evm_recipient` 必须是全链应用合约地址。
+
+`call_data` 单元（cell）包含将传递给全链应用 `onCall` 函数的载荷。
+
+以下示例展示了如何在 TypeScript 中构造存入并调用的消息：
+
+```typescript
+const opDepositAndCall = 102;
+const body = beginCell()
+  .storeUint(opDepositAndCall, 32)
+  .storeUint(0, 64)
+  .storeUint(zevmRecipient, 160)
+  .storeRef(callDataCell) // callDataCell 需为包含载荷的 cell
+  .endCell();
+```
+
+跨链交易处理完成后，将执行目标全链应用合约的 `onCall` 函数。
+

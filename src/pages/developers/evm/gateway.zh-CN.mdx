@@ -1,0 +1,56 @@
+Gateway 是一个接口，为连接链合约与 ZetaChain 上的全链应用提供统一的交互入口。
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="800"
+  height="450"
+  src="https://embed.figma.com/design/mYXNTORUuvGVaQ01SF7h9Y/Gateway-for-Universal-Apps?node-id=0-1&embed-host=share&footer=false"
+  allowFullScreen
+></iframe>
+
+## 连接链上的 Gateway
+
+连接链（如以太坊、Solana、比特币）上的 Gateway 负责入站交易：将连接链上的合约调用与代币转移路由至 ZetaChain 的全链应用。
+
+Gateway 的具体实现取决于连接链：
+
+- EVM 链：Gateway 智能合约
+- Solana：Gateway 程序
+- 比特币：由观察者-签名者验证者网络管理的 TSS MPC Gateway 地址
+
+每条链仅部署一个 Gateway，所有全链应用均通过该 Gateway 交互。
+
+Gateway 支持以下功能：
+
+- 将原生 Gas 代币存入 ZetaChain 的全链应用或账户
+- 将受支持的 ERC-20 代币（包括 ZETA）存入全链应用或账户
+- 存入原生 Gas 代币的同时向全链应用传递任意数据并调用合约
+- 存入受支持的 ERC-20 代币的同时向全链应用传递任意数据并调用合约
+- 在不存入代币的情况下，向全链应用传递任意数据并调用合约
+
+[具体支持能力](/developers/chains/functionality) 取决于每条连接链。例如，比特币只能以原生 BTC 形式存入；Solana 可以存入 SOL，随后也会支持 SPL 代币。
+
+当前每次仅支持向全链应用存入一种资产，未来协议更新将加入多资产存入。
+
+了解更多连接链 Gateway 细节：
+[EVM](/developers/chains/evm)、[Solana](/developers/chains/solana)、[Bitcoin](/developers/chains/bitcoin)。
+
+## ZetaChain 上的 Gateway
+
+ZetaChain 上的 Gateway 负责出站交易：从全链应用向连接链合约发起调用并提取代币。
+
+Gateway 支持以下功能：
+
+- 将 ZRC-20 代币提取为连接链上的原生 Gas 代币或 ERC-20
+- 将 ZETA 代币提取到连接链
+- 在提取代币的同时调用连接链合约
+- 在不提取代币的情况下调用连接链合约
+
+当前每次仅支持从全链应用提取一种资产，未来协议更新将加入多资产提取。
+
+了解更多 [ZetaChain Gateway](/developers/chains/zetachain) 的信息。
+
+## 回退处理
+
+Gateway 在跨链操作中提供灵活的回退机制。如果目标链上的 Gateway 调用失败，可按配置在源链调用指定合约完成退款，或直接将代币返还给外部账户（EOA）而不触发任何合约调用。
+
