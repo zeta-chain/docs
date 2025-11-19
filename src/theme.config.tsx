@@ -1,4 +1,4 @@
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, LocaleSwitch } from "nextra-theme-docs";
 
 import {
   AppHead,
@@ -21,6 +21,10 @@ import { defaultBaseUrl, nextSeoProps } from "~/config/next-seo.config";
 const nextraDocsThemeConfig: DocsThemeConfig = {
   docsRepositoryBase: "https://github.com/zeta-chain/docs",
 
+  i18n: [
+    { locale: "en-US", text: "English" },
+    { locale: "zh-CN", text: "简体中文" },
+  ],
   // Remove logo from the navbar
   logo: null,
 

@@ -28,9 +28,9 @@ const baseNextConfig = {
     serverSourceMaps: false,
   },
   i18n: {
-    locales: ["en", "zh-CN"],
-    defaultLocale: "en",
-    localeDetection: true,
+    locales: ["en-US", "zh-CN"],
+    defaultLocale: "en-US",
+    localeDetection: false,
   },
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
@@ -63,6 +63,12 @@ const baseNextConfig = {
         hostname: "images.ctfassets.net", // contentful images
         port: "",
         pathname: "/jmvpciyouqsr/**", // production space id
+      },
+      {
+        protocol: "https",
+        hostname: "images.ctfassets.net",
+        port: "",
+        pathname: "/ouogysw2n3om/**", // add new space id for testing
       },
       {
         protocol: "http",
