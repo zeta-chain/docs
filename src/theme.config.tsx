@@ -28,6 +28,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   navbar: {
     extraContent: (
       <>
+        <LocaleSwitch />
         <ThemeToggle className="hidden sm:flex" />
         <a
           href="https://github.com/zeta-chain"

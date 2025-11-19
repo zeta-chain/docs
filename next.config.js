@@ -27,6 +27,11 @@ const baseNextConfig = {
      */
     serverSourceMaps: false,
   },
+  i18n: {
+    locales: ["en", "zh-CN"],
+    defaultLocale: "en",
+    localeDetection: true,
+  },
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   // This is required to support PostHog trailing slash API requests
