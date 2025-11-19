@@ -1,0 +1,27 @@
+---
+title: "账户抽象：Particle Network"
+---
+
+## 概述
+
+Particle Network 提供一套完整工具与服务，旨在提升 ZetaChain 上去中心化应用（dApp）的用户体验。
+
+Particle Network 技术栈原生支持 [ERC-4337 账户抽象](https://eips.ethereum.org/EIPS/eip-4337)，让开发者能够从用户初次接入到最终的用户操作构造与赞助，全程使用智能账户。
+
+Particle Network 还提供 Wallet as a Service（WaaS），作为浏览器扩展钱包的替代方案，允许用户通过传统 Web 应用常见的方式创建非托管账户，例如社交登录或邮箱/密码。WaaS 被嵌入到 Web 应用中，用户无需安装额外软件即可与 dApp 交互。
+
+Particle Network 技术栈的主要组件包括：
+
+- [Wallet as a Service](https://particlenetwork.readme.io/docs/understanding-wallet-as-a-service)（WaaS）。用户可通过社交登录或邮箱/密码进入 dApp。在“传统” WaaS 模式中，登录后会生成外部账户（EOA）。若结合账户抽象，则该 EOA 仅作中间层，最终为用户分配用于交互的智能账户。
+- 账户抽象（AA）
+  - [Bundler](https://particlenetwork.readme.io/docs/bundler)：Particle Network 在 AA 技术栈中提供开源 Bundler，用于构建并发送所有 `userOperation`。
+  - [Paymaster](https://particlenetwork.readme.io/docs/paymaster)：与 Bundler 配套，Particle Network 也提供 Paymaster，用于多链 Gas 赞助。
+
+Particle Network 技术栈具备模块化特性，开发者可按需选用组件。
+
+## 下一步
+
+想进一步了解如何使用 Particle Network WaaS 在 ZetaChain 上构建 dApp，推荐阅读下列教程，示例展示了如何在基于 React 的 Web 应用中集成钱包：
+
+https://particlenetwork.readme.io/docs/leveraging-particle-network-on-zetachain***
+
