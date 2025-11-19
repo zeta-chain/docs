@@ -1,0 +1,14 @@
+{
+  "details": {
+    "title": "网络详情"
+  },
+  "api": {
+    "title": "RPC / API 端点"
+  },
+  "contracts": {
+    "title": "合约地址"
+  },
+  "openapi": {
+    "title": "ZetaChain HTTP API"
+  }
+}
