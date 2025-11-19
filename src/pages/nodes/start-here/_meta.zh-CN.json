@@ -1,0 +1,14 @@
+{
+  "requirements": {
+    "title": "技术要求"
+  },
+  "setup": {
+    "title": "节点部署"
+  },
+  "syncing": {
+    "title": "节点同步"
+  },
+  "validator": {
+    "title": "创建核心验证人"
+  }
+}
