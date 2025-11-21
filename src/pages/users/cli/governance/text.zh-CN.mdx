@@ -1,0 +1,36 @@
+---
+title: 文本提案
+---
+
+文本提案是一种提交给社区讨论与投票的治理动作。与直接修改链参数或协议设置的升级／参数变更提案不同，文本提案不会立即影响链上协议，而是用于提出想法、指南或建议，须经社区共识后再进一步实施。
+
+创建 `proposal.json`：
+
+```json filename="proposal.json"
+{
+  "messages": [
+    {
+      "@type": "/cosmos.gov.v1.MsgExecLegacyContent",
+      "authority": "zeta10d07y265gmmuvt4z0w9aw880jnsr700jvxasvr",
+      "content": {
+        "@type": "/cosmos.gov.v1beta1.TextProposal",
+        "title": "Important Proposal",
+        "description": "Description of the proposal"
+      }
+    }
+  ],
+  "deposit": "1000000azeta",
+  "metadata": "https://example.org/metadata.json"
+}
+```
+
+提案文件包含消息数组、元数据 URL 及押金金额。
+
+- `messages`：待提交的消息数组。治理模块 v1 没有专门的文本提案消息类型，为兼容部分浏览器，通常使用 `MsgExecLegacyContent` 包裹 `/cosmos.gov.v1beta1.TextProposal`。
+- `authority`：执行提案的地址。请使用治理模块地址。
+- `content`：提案详情，包括标题与描述。
+- `deposit`：随提案一同提交的押金额度。若低于最低押金，提案将进入 “存款期”，等待在最大存款期内补足剩余押金；若等于或高于最低押金，则直接进入投票期。
+- `metadata`：指向 JSON 文件的链接，用于存放提案详细说明。
+
+文本提案在去中心化治理中至关重要，提供结构化、民主化的方式来讨论并决定网络未来的发展方向。
+

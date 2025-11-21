@@ -1,0 +1,391 @@
+---
+title: 在 Google Compute Engine 上部署核心验证人
+---
+
+本指南介绍如何在 Google Compute Engine（GCE）上快速部署 ZetaChain 验证人，帮助工程师迅速搭建节点，后续可根据自身需求扩展。
+
+## 概览
+
+准备如下资源：
+
+- 独立的服务账号
+- 一台 GCE 虚拟机
+- 建议：用于缓存关键文件的 Cloud Storage 存储桶
+- 建议：两个 Secret Manager 密钥，分别存放 keyring 密码与助记词
+
+### 服务账号
+
+服务账号需在项目中具备以下权限：
+
+- roles/storage.objectAdmin
+- roles/secretmanager.secretAccessor
+- roles/secretmanager.viewer
+- roles/secretmanager.secretVersionManager
+
+推荐使用专用服务账号，而非默认账号，以提升安全性。
+
+### GCE 实例
+
+示例配置：
+
+- n2-standard-4（4 核、16GB RAM）
+- Ubuntu 24.04
+- 20 GB 启动盘（“平衡型”持久磁盘）
+- 2 块 NVMe 磁盘（稍后组建 RAID）
+- 将[服务账号](https://cloud.google.com/compute/docs/access/service-accounts) 指定为验证人账号
+- 将服务账号访问范围设为允许访问所有 Cloud API
+- 设置 `enable-oslogin` 元数据为 `true`，启用 [OS Login](https://cloud.google.com/compute/docs/oslogin/set-up-oslogin)
+- 启用 [Shielded VM](https://cloud.google.com/compute/shielded-vm/docs/modifying-shielded-vm)
+
+以下 Terraform 配置可供参考（需按实际情况调整）。其中的 cloud-init 模板将使用如下值：
+
+- **chain_id：** athens_7001-1
+- **network：** athens3
+- **snapshot_host：** https://testnet-fullnode.snapshots.zetachain.com/
+- **snapshot：** fullnode-snapshot-v20-H7341468-2024-10-22_20-03.tar
+- **protocol_version：** v22
+- **node_version：** v22.0.0
+
+```
+locals {
+  moniker = "cw3-${var.env}-${var.zetachain_node_type}"
+  static_labels = {
+    chain-id = var.zetachain.chain_id
+    # 标记节点类型，便于同行发现。
+    node-type = var.zetachain_node_type
+  }
+  variable_labels = var.ops_agent_policy != "" ? map("goog-ops-agent-policy", var.ops_agent_policy) : {}
+}
+
+resource "google_compute_instance" "zetachain_node" {
+ name         = var.name
+ project      = var.project
+ machine_type = "n2-standard-4"
+ zone         = var.zone
+
+ boot_disk {
+   initialize_params {
+     image = "projects/ubuntu-os-cloud/global/images/ubuntu-2404-noble-amd64-v20241004"
+     size  = "20"
+     type  = "pd-standard"
+   }
+ }
+
+ // 两块本地 NVME 磁盘
+ scratch_disk {
+   interface = "NVME"
+ }
+ scratch_disk {
+   interface = "NVME"
+ }
+
+ service_account {
+   email = var.service_account
+   scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+ }
+
+ network_interface {
+   network = var.network
+
+   access_config {
+     // 临时公网 IP
+   }
+ }
+
+ labels = merge(local.variable_labels, local.static_labels)
+
+ metadata = {
+   user-data = templatefile(
+     "${path.module}/files/cloud-config.yaml.tmpl",
+     {
+       gcs_bucket_snapshots    = var.gcs_bucket_snapshots
+       gcs_bucket_static       = var.gcs_bucket_static
+       zetachain_chain_id      = var.zetachain.chain_id
+       zetachain_network       = var.zetachain.network
+       zetachain_snapshot_host = var.zetachain.snapshot_host
+       zetachain_snapshot      = var.zetachain.snapshot
+       zetachain_version       = var.zetachain.protocol_version
+       zetacored_version       = var.zetachain.node_version
+       moniker                 = jsonencode(local.moniker)
+     }
+   )
+
+   enable-oslogin = "TRUE"
+   chain-id = var.zetachain.chain_id
+ }
+
+ shielded_instance_config {
+   enable_secure_boot          = true
+   enable_integrity_monitoring = true
+ }
+}
+```
+
+我们使用 cloud-init 自动化节点初始化，具体内容如下。
+
+### Cloud Storage
+
+将二进制与快照缓存到 Cloud Storage，可避免依赖外部资源，并在恢复时缩短复制时间。建议使用[双区域](https://cloud.google.com/storage/docs/locations) 存储桶，并包含实例所在区域。
+
+### Secrets
+
+建议使用 Secret Manager 备份验证人助记词与 keyring 密码，以便恢复或自动化访问。
+
+## Cloud Init
+
+[cloud-init](https://cloud-init.io/) 负责安装链上软件，验证人密钥创建与质押仍需人工完成。
+
+初始化包含以下脚本（由 cloud-init 写入并执行）：
+
+1. 配置磁盘阵列
+2. 安装 Go
+3. 构建并安装 Cosmovisor
+4. 设置 ZetaChain 所需的系统限制
+5. 安装 zetacored
+6. 配置 zetacored 节点
+
+cloud-init 还会写入 `zetacored` 的 systemd 服务文件，并创建 `zetachain` 用户以运行节点软件。
+
+```
+#cloud-config
+
+package_update: true
+package_upgrade: true
+packages:
+- curl
+- git
+- jq
+- lz4
+- build-essential
+- unzip
+- mdadm
+
+users:
+ - name: zetachain
+   gecos: Zetachain
+   lock_passwd: true
+
+write_files:
+- path: /etc/systemd/system/zetacored.service
+ permissions: 0644
+ owner: root
+ content: |
+   [Unit]
+   Description=zetacored (running under Cosmovisor)
+   After=multi-user.target
+   StartLimitIntervalSec=0
+   [Install]
+   WantedBy=multi-user.target
+   [Service]
+   User=zetachain
+   ExecStart=/usr/local/bin/cosmovisor run start --home /var/lib/zetacored/ --log_format json  --moniker ${moniker}
+   Restart=on-failure
+   RestartSec=3
+   WorkingDirectory=/var/lib/zetacored/cosmovisor
+   Environment="DAEMON_NAME=zetacored"
+   Environment="DAEMON_HOME=/var/lib/zetacored"
+   Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+   Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+   Environment="DAEMON_DATA_BACKUP_DIR=/var/lib/zetacored"
+   Environment="UNSAFE_SKIP_BACKUP=true"
+   Type=simple
+   LimitNOFILE=262144
+
+- path: /usr/local/bin/setup-disk-array.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+   mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/nvme0n1 /dev/nvme0n2
+   mkfs.ext4 /dev/md0
+   mkdir -p /var/lib/zetacored
+   UUID=`sudo blkid -o value -s UUID /dev/md0`
+   echo "UUID=$UUID /var/lib/zetacored ext4 defaults 0 0" >> /etc/fstab
+   systemctl daemon-reload
+   mount /var/lib/zetacored
+
+- path: /usr/local/bin/configure-system-limits.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+   echo "* hard nproc  262144" >> /etc/security/limits.conf
+   echo "* soft nproc  262144" >> /etc/security/limits.conf
+   echo "* hard nofile 262144" >> /etc/security/limits.conf
+   echo "* soft nofile 262144" >> /etc/security/limits.conf
+   echo "fs.file-max=262144" >> /etc/sysctl.conf
+
+- path: /usr/local/bin/configure-zetacored.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+   CONFIG_TOML="/var/lib/zetacored/config/config.toml"
+   APP_TOML="/var/lib/zetacored/config/app.toml"
+
+   fetch_config () {
+     gsutil cp gs://${gcs_bucket_static}/network-config/${zetachain_network}/$1 /var/lib/zetacored/config/$1
+     if [ $? -eq 1 ]; then
+       wget https://raw.githubusercontent.com/zeta-chain/network-config/main/${zetachain_network}/$1 -O /var/lib/zetacored/config/$1
+       gsutil cp /var/lib/zetacored/config/$1 gs://${gcs_bucket_static}/network-config/${zetachain_network}/$1
+     fi
+   }
+
+   /usr/local/bin/zetacored init --home /var/lib/zetacored ${moniker} --chain-id ${zetachain_chain_id}
+
+   fetch_config app.toml
+   fetch_config client.toml
+  fetch_config config.toml
+   fetch_config genesis.json
+
+   external_address=$(wget -qO- eth0.me)
+   sed -i.bak -e "s/^moniker *=.*/moniker = \"${moniker}\"/" $CONFIG_TOML
+   sed -i.bak -e "s/^external_address *=.*/external_address = \"$external_address:26656\"/" $CONFIG_TOML
+
+   mkdir -p /var/lib/zetacored/cosmovisor/genesis/bin
+   mkdir -p /var/lib/zetacored/cosmovisor/upgrades
+   cp /usr/local/bin/zetacored /var/lib/zetacored/cosmovisor/genesis/bin/zetacored
+
+   gsutil cp gs://${gcs_bucket_static}/snapshot/${zetachain_network}/${zetachain_snapshot} /var/lib/zetacored/snapshot.tar
+   if [ $? -eq 1 ]; then
+     wget ${zetachain_snapshot_host}${zetachain_snapshot} -O /var/lib/zetacored/snapshot.tar
+     gsutil cp /var/lib/zetacored/snapshot.tar gs://${gcs_bucket_static}/snapshot/${zetachain_network}/${zetachain_snapshot}
+   fi
+
+   tar -xf /var/lib/zetacored/snapshot.tar -C /var/lib/zetacored
+   rm /var/lib/zetacored/snapshot.tar
+
+   /var/lib/zetacored/cosmovisor/genesis/bin/zetacored --home /var/lib/zetacored config keyring-backend file
+
+   chown -R zetachain:zetachain /var/lib/zetacored/config /var/lib/zetacored/cosmovisor /var/lib/zetacored/data
+
+   systemctl enable zetacored.service
+   systemctl start zetacored.service
+
+- path: /usr/local/bin/install-zetacored.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+   gsutil cp gs://${gcs_bucket_static}/binaries/${zetacored_version}/zetacored-linux-amd64 /usr/local/bin/zetacored
+   if [ $? -eq 1 ]; then
+     wget https://github.com/zeta-chain/node/releases/download/${zetacored_version}/zetacored-linux-amd64 -O /usr/local/bin/zetacored
+     gsutil cp /usr/local/bin/zetacored gs://${gcs_bucket_static}/binaries/${zetacored_version}/zetacored-linux-amd64
+   fi
+
+   mkdir -p /var/lib/zetacored/cosmovisor/genesis/bin
+   mkdir -p /var/lib/zetacored/cosmovisor/upgrades/${zetachain_version}/bin
+   cp /usr/local/bin/zetacored /var/lib/zetacored/cosmovisor/genesis/bin/zetacored
+   cp /usr/local/bin/zetacored /var/lib/zetacored/cosmovisor/upgrades/${zetachain_version}/bin/zetacored
+
+   chmod a+x /usr/local/bin/zetacored
+
+- path: /usr/local/bin/install-go.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+   GO_VERSION="1.20"
+   curl -L -O "https://golang.org/dl/go$GO_VERSION.linux-amd64.tar.gz"
+   sudo rm -rf /usr/local/go
+   sudo tar -C /usr/local -xzf "go$GO_VERSION.linux-amd64.tar.gz"
+   rm "go$GO_VERSION.linux-amd64.tar.gz"
+
+- path: /usr/local/bin/install-cosmovisor.sh
+ permissions: "0744"
+ content: |
+   #!/bin/bash
+   /usr/local/go/bin/go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
+   cp ~/go/bin/cosmovisor /usr/local/bin/
+
+runcmd:
+- sudo /usr/local/bin/setup-disk-array.sh
+- sudo /usr/local/bin/install-go.sh
+- sudo /usr/local/bin/install-cosmovisor.sh
+- sudo /usr/local/bin/configure-system-limits.sh
+- sudo /usr/local/bin/install-zetacored.sh
+- sudo /usr/local/bin/configure-zetacored.sh
+```
+
+## 验证人配置
+
+节点上线后仍需手动配置验证人。在部署前，务必通过日志高度与浏览器（如 [ZetaScan](https://zetascan.com/)）比较，确认节点已完全同步。
+
+关键步骤包括：
+
+1. 确认节点已同步
+2. 创建密钥
+3. 将助记词备份至 Secret Manager
+4. 将资金转入验证人钱包
+5. 链上质押创建验证人
+
+### 确认节点同步
+
+查看日志：
+
+```
+sudo -u zetachain journalctl -f -u zetacored.service
+```
+
+日志中应出现高度信息，例如：
+
+```
+Nov 06 22:32:53 athens3-us-south1-b-validator cosmovisor[485856]: {"level":"info","module":"server","server":"node","module":"state","height":7559702,"num_txs":4,"app_hash":"00A3F5A42D9D8C10D84447A6D085DFEB7D5CB9F62FB0A842F859C8529B2C3168","time":"2024-11-06T22:32:53Z","message":"committed state"}
+```
+
+### 创建/恢复密钥
+
+运行：
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored keys add operator --algo secp256k1
+```
+
+系统会提示输入 keyring 密码，并输出公钥与助记词。
+
+### 备份助记词
+
+使用 `umask 077` 确保新文件无多余权限，将助记词写入文件，再通过 gcloud 上传至 Secret Manager：
+
+```
+gcloud secrets versions add my-secret \
+            --data-file=seed_phrase.txt
+```
+
+### 转入资金
+
+查看新建密钥列表：
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored keys list
+```
+
+向该地址转入资金，并通过以下命令检查余额：
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored query bank balances $(/var/lib/zetacored/cosmovisor/current/bin/zetacored keys show operator -a)
+```
+
+### 质押创建验证人
+
+需提取 ED25519 公钥（与账户公钥不同），示例命令：
+
+```
+sudo -u mantrachain mantrachaind --home /var/lib/mantrachain tendermint show-validator | jq .key
+```
+
+随后发送创建交易，替换 `\<KEY\>` 与 `\<MONIKER\>`，并按需调整金额与链 ID：
+
+```
+sudo /var/lib/zetacored/cosmovisor/current/bin/zetacored --home /var/lib/zetacored tx staking create-validator \
+  --amount=1000000000000000000azeta \
+  --pubkey="{\"@type\":\"/cosmos.crypto.ed25519.PubKey\",\"key\":\"<KEY>\"}" \
+  --moniker="<MONIKER>" \
+  --chain-id=athens_7001-1 \
+  --commission-rate="1.00" \
+  --commission-max-rate="1.00" \
+  --commission-max-change-rate="0.01" \
+  --min-self-delegation="1000000" \
+  --gas="auto" \
+  --gas-adjustment=1.15 \
+  --gas-prices="1.0azeta" \
+  --from=operator
+```
+
+系统会要求输入 keyring 密码并确认交易，成功后验证人即在链上创建完成。***
+

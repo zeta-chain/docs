@@ -1,0 +1,217 @@
+---
+title: 节点部署
+description: 本指南演示如何部署 ZetaChain 主网 Beta 节点。如需部署测试网节点，请遵循相同步骤，只需将部分参数（如链 ID、种子节点等）替换为对应表格中的值。
+---
+
+import { Alert } from "~/components/shared";
+
+## 安装 ZetaChain 节点二进制
+
+首先下载二进制文件并赋予可执行权限。请将 `VERSION` 替换为最新的 [治理软件升级提案](/reference/tools/proposals) 中指定版本，同时根据需要修改平台后缀（如 `-linux-amd64`）。
+
+```
+sudo wget https://github.com/zeta-chain/node/releases/download/VERSION/zetacored-linux-amd64 -O /usr/local/bin/zetacored &&\
+sudo chmod a+x /usr/local/bin/zetacored
+```
+
+关于版本的更多信息，请查看 [GitHub Releases](https://github.com/zeta-chain/node/releases)。
+
+验证 `zetacored` 版本：
+
+```
+zetacored version
+```
+
+## 创建非 root 用户
+
+建议使用普通用户运行 ZetaChain 二进制，而非 root。
+
+```bash
+sudo useradd -m -s /bin/bash zetachain
+```
+
+## 初始化数据目录
+
+| 网络 | 链 ID |
+| ---- | ----- |
+| 主网 | zetachain_7000-1 |
+| 测试网 | athens_7001-1 |
+
+```
+sudo -u zetachain zetacored init MONIKER --chain-id zetachain_7000-1
+```
+
+将 `MONIKER` 替换为节点名称。默认初始化路径为 `$HOME/.zetacored`，可通过 `--home` 自定义。
+
+## 获取配置文件
+
+| 网络 | 配置文件 |
+| ---- | -------- |
+| 主网 | https://github.com/zeta-chain/network-config/tree/main/mainnet |
+| 测试网 | https://github.com/zeta-chain/network-config/tree/main/athens3 |
+
+将配置文件下载到数据目录：
+
+```
+sudo -u zetachain wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/genesis.json -O /home/zetachain/.zetacored/config/genesis.json &&\
+sudo -u zetachain wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/client.toml -O /home/zetachain/.zetacored/config/client.toml &&\
+sudo -u zetachain wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/config.toml -O /home/zetachain/.zetacored/config/config.toml &&\
+sudo -u zetachain wget https://raw.githubusercontent.com/zeta-chain/network-config/main/mainnet/app.toml -O /home/zetachain/.zetacored/config/app.toml
+```
+
+## 修改配置
+
+虽然下载的配置已包含通用参数，但仍需根据节点情况做少量调整。
+
+若机器拥有公网 IPv4 地址，可运行：
+
+```
+curl -4 icanhazip.com
+```
+
+如果有 IPv6 地址，也可以使用。
+
+将节点 `moniker` 与外部地址替换为正确值：
+
+```text filename="~/.zetacored/config/config.toml"
+moniker = "{MONIKER}"
+external_address = "{YOUR_EXTERNAL_IP_ADDRESS_HERE}:26656"
+```
+
+## 设置文件与进程限制
+
+为更好地管理节点资源，建议调整最大文件描述符（nofile）与进程数（nproc）。
+
+编辑 `/etc/security/limits.conf`：
+
+```
+*       soft    nproc   262144
+*       hard    nproc   262144
+*       soft    nofile  262144
+*       hard    nofile  262144
+```
+
+编辑 `/etc/sysctl.conf`：
+
+```
+fs.file-max=262144
+```
+
+## 安装 Cosmovisor
+
+来自 [Cosmos 文档](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor)：
+
+> cosmovisor 是 Cosmos SDK 应用的进程管理器，可在链升级时自动切换应用二进制。它会轮询升级高度创建的 upgrade-info.json 文件，并自动下载新二进制、停止旧进程、切换并重启节点。
+
+### 源码安装
+
+```bash
+go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.7.1
+mv $(go env GOPATH)/bin/cosmovisor /usr/local/bin/cosmovisor
+```
+
+### 预编译二进制
+
+从 [cosmovisor v1.7.1 发布页](https://github.com/cosmos/cosmos-sdk/releases/tag/cosmovisor%2Fv1.7.1) 下载对应平台的压缩包。例如：
+
+```bash
+wget https://github.com/cosmos/cosmos-sdk/releases/download/cosmovisor%2Fv1.7.1/cosmovisor-v1.7.1-linux-amd64.tar.gz
+tar xf cosmovisor-v1.7.1-linux-amd64.tar.gz &&\
+chmod a+x cosmovisor &&\
+sudo mv cosmovisor /usr/local/bin
+```
+
+## 配置 Cosmovisor
+
+### 创建 `cosmovisor` 目录
+
+```bash
+sudo -u zetachain mkdir -p /home/zetachain/.zetacored/cosmovisor/genesis/bin &&\
+sudo -u zetachain mkdir -p /home/zetachain/.zetacored/cosmovisor/upgrades
+```
+
+### 安装当前 `zetacored` 二进制
+
+将 [部署阶段](./setup) 获取的 `zetacored` 二进制放入 `/home/zetachain/.zetacored/cosmovisor/genesis/bin`：
+
+```bash
+sudo -u zetachain cp /usr/local/bin/zetacored /home/zetachain/.zetacored/cosmovisor/genesis/bin
+```
+
+## 配置 `zetacored` systemd 服务
+
+### 创建 systemd 单元
+
+创建本地 systemd 单元目录：
+
+```bash
+sudo mkdir -p /usr/local/lib/systemd/system/
+```
+
+创建 `/usr/local/lib/systemd/system/zetacored.service`：
+
+```bash
+cat <<EOF | sudo tee /usr/local/lib/systemd/system/zetacored.service
+[Unit]
+Description=zetacored (running under cosmovisor)
+After=multi-user.target
+StartLimitIntervalSec=0
+[Install]
+WantedBy=multi-user.target
+[Service]
+WorkingDirectory=/home/zetachain/.zetacored/cosmovisor
+Environment="DAEMON_HOME=/home/zetachain/.zetacored"
+Environment="DAEMON_NAME=zetacored"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="DAEMON_DATA_BACKUP_DIR=/home/zetachain/.zetacored"
+Environment="UNSAFE_SKIP_BACKUP=true"
+Type=simple
+Restart=always
+RestartSec=10
+User=zetachain
+LimitNOFILE=262144
+ExecStart=cosmovisor run start --home /home/zetachain/.zetacored/ --log_format json
+EOF
+```
+
+<Alert variant="danger">
+  在此示例中，我们设置了 `DAEMON_ALLOW_DOWNLOAD_BINARIES=true`，意味着 `cosmovisor` 会自动下载升级提案指定的新二进制。如果 GitHub API 故障，下载会失败。建议保持该功能开启，但在升级前预加载并校验新二进制，以降低风险。如已预加载，将不会触发下载。更多内容请查看 [cosmovisor 自动下载说明](https://docs.cosmos.network/v0.47/build/tooling/cosmovisor#auto-download)。
+</Alert>
+
+运行 `sudo systemctl daemon-reload` 以加载服务。
+
+运行 `sudo systemctl enable zetacored` 以设置开机自启，你应看到如下信息：
+
+```
+Created symlink /etc/systemd/system/multi-user.target.wants/zetacored.service → /usr/local/lib/systemd/system/zetacored.service.
+```
+
+## 下一步
+
+### 升级准备
+
+关注 Discord 上的 [#testnet-announcements](https://discord.com/channels/858516330432299008/1088945250124435486) 与 [#mainnet-announcements](https://discord.com/channels/858516330432299008/1210655572798476338) 获取升级提案通知。
+
+为升级做准备时，请从 GitHub Release 下载新二进制并放入 cosmovisor 升级目录，目录名称需与升级名称一致。升级名称**不是** GitHub 发布名称，可在 [治理升级提案页面](/reference/tools/proposals) 查阅。示例：
+
+| 升级名称 | `zetacored` 路径 | git tag |
+| -------- | ---------------- | ------- |
+| `v26` | `~/.zetacored/cosmovisor/upgrades/v26/bin/zetacored` | `v26.0.0` |
+| `v27` | `~/.zetacored/cosmovisor/upgrades/v27/bin/zetacored` | `v27.0.1` |
+
+安装完成后请：
+
+- 校验校验和
+- 运行 `zetacored version` 确认二进制可执行
+
+### 监控
+
+生产环境建议监控节点资源（CPU、内存、磁盘及 IO），以便及时发现性能下降。
+
+`zetacored` 会生成日志，可用于定位错误并排查问题。若按上述步骤配置为 Systemd 服务，可使用 `journalctl -eu zetacored` 查看日志。
+
+### 指标
+
+Prometheus 默认在 **26660** 端口提供指标，可由 Prometheus Collector 拉取。更多信息请参考 [Cosmos SDK Telemetry 文档](https://docs.cosmos.network/v0.50/learn/advanced/telemetry)。***
+

@@ -1,0 +1,82 @@
+# Model Context Protocol (MCP)
+
+Model Context Protocol（MCP）是一项开放标准，可让 AI 助手通过本地或远程服务器安全地连接外部工具与数据源。
+
+ZetaChain MCP 服务器可扩展你的 AI 编码环境（如 Cursor 或 Claude Code），让其直接访问链上数据并执行 CLI 动作。你可以在编辑器或聊天界面内查询余额、估算跨链费用、执行合约调用、追踪跨链交易等，无需跳出当前工作区。
+
+## 安装 ZetaChain CLI
+
+全局安装最新版本的 ZetaChain CLI：
+
+```bash
+npm install -g zetachain@latest
+```
+
+此安装包包含本地运行 MCP 服务器所需的一切（推荐本地运行以获得最佳性能与安全性）。
+
+注意：MCP 支持从 `zetachain` v7.1.1 起提供。可通过以下命令检查版本：
+
+```bash
+zetachain --version
+```
+
+如果版本低于 v7.1.1，请升级至最新版本：
+
+```bash
+npm install -g zetachain@latest
+```
+
+## 将 MCP 接入 Cursor 或 Claude Code
+
+为你使用的 AI 客户端安装 ZetaChain MCP 集成：
+
+```bash
+zetachain mcp install --client cursor
+# 或
+zetachain mcp install --client claude
+```
+
+安装完成后，AI 工具即可通过 MCP 接口访问 ZetaChain 数据并执行链上操作。
+
+注意：`--client claude` 指的是 Claude Code 客户端，目前不支持 Claude Desktop。
+
+## 验证安装
+
+列出所有可用 MCP 集成，确认 ZetaChain 已启用：
+
+```bash
+zetachain mcp list
+```
+
+输出中应出现 ZetaChain MCP 服务器的条目。
+
+## 测试集成
+
+完成安装后，可在 AI 编辑器中尝试以下提示：
+
+> “Query all chains connected to ZetaChain.”
+
+编辑器会自动执行：
+
+```bash
+zetachain query chains
+```
+
+并展示所有已连接链的列表。如果看到该输出，说明 ZetaChain MCP 服务器工作正常。
+
+## 移除集成
+
+如需移除 MCP 集成：
+
+```bash
+zetachain mcp remove --client cursor
+# 或
+zetachain mcp remove --client claude
+```
+
+## 备选方案：通过 Smithery 运行
+
+若不想在本地运行 MCP 服务器，可使用 Smithery 提供的托管版本，适合快速试用或无法进行本地配置的环境。
+
+👉 [ZetaChain MCP on Smithery](https://smithery.ai/server/@zeta-chain/cli)
+

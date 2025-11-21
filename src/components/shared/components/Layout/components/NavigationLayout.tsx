@@ -86,10 +86,17 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                             <List className="w-full">
                               {navSection.children
                                 .filter((page) => page.route !== item.url)
+                                // ✅ 添加去重逻辑：使用 Map 去重，只保留每个 route 的第一个页面
+                                .reduce((acc, page) => {
+                                  if (!acc.find((p) => p.route === page.route)) {
+                                    acc.push(page);
+                                  }
+                                  return acc;
+                                }, [] as typeof navSection.children)
                                 .map((page) => (
                                   <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
                                     <NavigationAccordionLink
-                                      key={page.route}
+                                      // ✅ 移除重复的 key（已经在 div 上有 key 了）
                                       page={page}
                                       onClick={closeMobileDrawer}
                                       isTopLevelPage

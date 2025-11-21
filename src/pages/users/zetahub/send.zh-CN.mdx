@@ -1,0 +1,26 @@
+---
+title: 发送资产
+---
+
+import Image from "next/image";
+
+import { basePath } from "~/lib/app.constants";
+
+“Send” 页面可在 ZetaChain 网络内外转移资产。既可以在同一钱包的不同链间转移 ZETA 与其他 ZRC-20 资产，也可发送至外部地址。
+
+确保钱包已连接，选择要发送的资产与数量，再选择来源链和目标链。过程中可能需要在钱包内切换网络。
+
+点击发送前，可预览转账金额、相关费用及扣除网络费后的到账数量。
+
+![Send ZETA](/img/docs/zetahub/send-1.png)
+
+默认情况下，资产在你自己的钱包内流转；若需发送到外部地址，可点击绿色钱包图标，输入自定义收件地址。
+
+![Send BTC](/img/docs/zetahub/send-2.png)
+
+若从比特币网络存入资产，需要安装 XDEFI 钱包。在网络选择器中选择 Bitcoin 后，系统会提示登录 XDEFI；如未注册需先创建账户。
+
+<Image src={`${basePath}/img/docs/zetahub/send-3.png`} width={400} height={524} alt="XDEFI Wallet login" />
+
+登录且余额充足后，即可完成交易。
+

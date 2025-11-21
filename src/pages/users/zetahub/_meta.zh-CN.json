@@ -1,0 +1,26 @@
+{
+  "create-wallet": {
+    "title": "在钱包中添加 ZetaChain"
+  },
+  "connect-wallet": {
+    "title": "在 ZetaHub 连接钱包"
+  },
+  "get-zeta": {
+    "title": "获取 ZETA"
+  },
+  "pool": {
+    "title": "提供流动性"
+  },
+  "stake": {
+    "title": "委托 / 质押 ZETA"
+  },
+  "enroll-zeta-xp": {
+    "title": "报名 Zeta XP"
+  },
+  "earn-zeta-xp": {
+    "title": "赚取 Zeta XP"
+  },
+  "send": {
+    "title": "发送资产"
+  }
+}

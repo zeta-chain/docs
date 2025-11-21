@@ -81,3 +81,15 @@ html.dark .initial-overlay {
 html.light .initial-overlay {
   background-color: #fff;
 }
+
+/* Fix LocaleSwitch dropdown z-index - ensure it's above other elements */
+[role="listbox"][id^="headlessui-listbox-options"] {
+  z-index: 9999 !important;
+}
+
+/* Ensure LocaleSwitch dropdown is visible when opened */
+[role="listbox"][id^="headlessui-listbox-options"][aria-expanded="true"],
+[role="listbox"][id^="headlessui-listbox-options"]:not([aria-expanded="false"]) {
+  z-index: 9999 !important;
+  opacity: 1 !important;
+}

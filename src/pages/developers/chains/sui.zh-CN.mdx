@@ -1,0 +1,77 @@
+# Sui Gateway
+
+若要从 Sui 链与全链应用交互，请使用 Sui Gateway。
+
+有关使用 Sui Gateway 的分步示例，请参阅 [Sui 教程](/developers/tutorials/sui/)。
+
+Sui Gateway 支持：
+
+- 将原生 SUI 及其他代币存入 ZetaChain 的帐号或全链应用
+- 存入代币的同时调用全链应用
+
+## 存入代币
+
+若要将代币存入 ZetaChain 上的 EOA 或全链合约，可调用 `deposit` 函数：
+
+```move
+public entry fun deposit<T>(
+    gateway: &mut Gateway,
+    coins: Coin<T>,
+    receiver: String,
+    ctx: &mut TxContext,
+)
+```
+
+`deposit` 接受任何已列入白名单的代币类型 `T`（包含原生 SUI），并将其发送至 ZetaChain 上的 `receiver`。
+
+`receiver` 参数须为合法的 EVM 风格地址（带 `0x` 前缀的十六进制字符串），可对应 ZetaChain 上的外部账户或全链应用地址。即使接收方是全链应用合约，`deposit` 也不会触发合约调用；如需存入并调用应用，请使用 `deposit_and_call`。
+
+存入完成后，接收方会在 ZetaChain 获得该代币的 ZRC-20 版本。
+
+## 存入代币并调用全链应用
+
+若要存入代币并调用全链应用合约，请使用 `deposit_and_call`：
+
+```move
+public entry fun deposit_and_call<T>(
+    gateway: &mut Gateway,
+    coins: Coin<T>,
+    receiver: String,
+    payload: vector<u8>,
+    ctx: &mut TxContext,
+)
+```
+
+`receiver` 必须是 ZetaChain 上全链应用合约地址；`payload` 将传递给该应用的 `onCall` 函数。
+
+载荷最大为 1024 字节，超出将导致交易失败。
+
+## 管理函数
+
+Sui Gateway 提供多项需要特殊能力对象的管理函数：
+
+- `whitelist<T>`：为新的代币类型启用存入（需 `WhitelistCap`）
+- `withdraw<T>`：由 TSS 地址在将代币自 ZetaChain 提取回 Sui 时调用。仅 TSS 节点持有特定能力对象（`WithdrawCap`）。`nonce` 参数可防止重放攻击，确保每笔提取只处理一次。
+- `unwhitelist<T>`：禁用某种代币类型的存入（需 `AdminCap`）
+- `pause`：暂时禁用所有存入（需 `AdminCap`）
+- `unpause`：重新启用存入（需 `AdminCap`）
+- `issue_withdraw_and_whitelist_cap`：轮换 TSS 能力对象（需 `AdminCap`）
+
+## 事件
+
+Gateway 会发出以下事件，便于监控：
+
+- `DepositEvent`：成功存入代币时触发
+- `DepositAndCallEvent`：存入代币并调用合约时触发
+- `WithdrawEvent`：提取代币时触发
+- `NonceIncreaseEvent`：提取 nonce 增加时触发
+
+## 只读函数
+
+Gateway 提供若干只读接口：
+
+- `nonce()`：返回当前提取 nonce
+- `vault_balance<T>()`：返回 Gateway 中特定代币类型的余额
+- `is_whitelisted<T>()`：检查代币类型是否已启用存入
+- `is_paused()`：检查存入功能当前是否暂停
+

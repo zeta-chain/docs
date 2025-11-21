@@ -1,0 +1,103 @@
+---
+title: 添加账户
+---
+
+import { Alert } from "~/components/shared";
+
+## 前置条件
+
+请先安装 `zetacored` CLI，参考[安装 CLI 指南](/zh/users/cli/setup)。
+
+<Alert variant="danger">
+  本教程使用的是测试用 keyring，不具备安全性。请勿在存放真实资产的账户中使用。
+</Alert>
+
+在使用 CLI 操作 ZetaChain 前，需要先添加账户。
+
+## 创建新账户
+
+新建账户：
+
+```
+zetacored keys add alice
+```
+
+其中 `alice` 为账户名称。
+
+```
+- address: zeta10r4ygmwhd5jyrfrve72u3vz0ujdr8lvatw0gw9
+  name: alice
+  pubkey: '{"@type":"/ethermint.crypto.v1.ethsecp256k1.PubKey","key":"A4pXWBWe/MK8gRhBCuOgeVZu33IaMX08TYTznbHiUg5R"}'
+  type: local
+
+
+**重要**：请妥善保存以下助记词，这是找回账户的唯一方式。
+
+fade sunset wink lonely seek glass load group shove scan tape shop rather connect enhance absurd illness patch void save skirt fee code mushroom
+```
+
+在本教程中，我们将以 `alice` 作为示例账户名称。当命令需要地址时，会使用 `$(zetacored keys show alice -a)` 获取指定密钥的地址。请在实际使用时将 `alice` 替换为你自己的账户名。
+
+## 导入现有账户
+
+如果你已有账户，可通过助记词导入：
+
+```
+zetacored keys add bob --recover
+```
+
+终端会提示输入助记词：
+
+```
+> Enter your bip39 mnemonic
+man promote grunt cube venture shaft fix scorpion payment tobacco bunker cannon sugar funny time lake foster believe raccoon then shadow price hour weekend
+
+- address: zeta130c4smfsmdncp0vgqc8nh64dn80q3tkz3hjj4n
+  name: bob
+  pubkey: '{"@type":"/ethermint.crypto.v1.ethsecp256k1.PubKey","key":"AlwIbpaOnvauaiRXTGZgyzRBqexCUUvwzACG+j4KzceW"}'
+  type: local
+```
+
+以上助记词仅用于示例，请勿使用。
+
+## 查看账户列表
+
+列出所有账户：
+
+```
+zetacored keys list
+```
+
+```
+- address: zeta10r4ygmwhd5jyrfrve72u3vz0ujdr8lvatw0gw9
+  name: alice
+  pubkey: '{"@type":"/ethermint.crypto.v1.ethsecp256k1.PubKey","key":"A4pXWBWe/MK8gRhBCuOgeVZu33IaMX08TYTznbHiUg5R"}'
+  type: local
+- address: zeta130c4smfsmdncp0vgqc8nh64dn80q3tkz3hjj4n
+  name: bob
+  pubkey: '{"@type":"/ethermint.crypto.v1.ethsecp256k1.PubKey","key":"AlwIbpaOnvauaiRXTGZgyzRBqexCUUvwzACG+j4KzceW"}'
+  type: local
+```
+
+## 地址格式转换
+
+ZetaChain 支持两种地址格式：
+
+- bech32（如 `zeta***`）
+- 十六进制（如 `0x***`）
+
+可通过 `debug addr` 命令在两种格式间转换：
+
+```
+zetacored debug addr zeta10r4ygmwhd5jyrfrve72u3vz0ujdr8lvatw0gw9
+```
+
+```
+Address: [120 234 68 109 215 109 36 65 164 108 207 149 200 176 79 228 154 51 253 157]
+Address (hex): 78EA446DD76D2441A46CCF95C8B04FE49A33FD9D
+Bech32 Acc: zeta10r4ygmwhd5jyrfrve72u3vz0ujdr8lvatw0gw9
+Bech32 Val: zetavaloper10r4ygmwhd5jyrfrve72u3vz0ujdr8lva0wh5rn
+```
+
+同一个账户可以用 bech32 或十六进制地址表示，不需要在 `zeta***` 与 `0x***` 地址之间“转账”，因为它们本质上指向同一账户与余额。
+

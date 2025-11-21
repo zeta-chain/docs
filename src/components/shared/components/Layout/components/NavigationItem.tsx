@@ -1,4 +1,5 @@
 import { ListItem } from "@mui/material";
+import { isPathStartWith, normalizePath } from "~/lib/helpers/router"; //导入工具函数
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { createElement, useMemo } from "react";
@@ -21,17 +22,30 @@ export const NavigationItem = ({ item, isOpen, withLabel = true, onClick }: Navi
 
   const router = useRouter();
 
+  // const isSelected = useMemo(() => {
+  //   if (!url) {
+  //     return false;
+  //   }
+
+  //   if (router.pathname === "/" || url === "/") {
+  //     return url === router.pathname;
+  //   }
+
+  //   return router.pathname.startsWith(url);
+  // }, [url, router.pathname]);
   const isSelected = useMemo(() => {
     if (!url) {
       return false;
     }
-
-    if (router.pathname === "/" || url === "/") {
-      return url === router.pathname;
+  
+    const currentPath = router.asPath || router.pathname;
+    
+    if (currentPath === "/" || url === "/") {
+      return normalizePath(currentPath) === normalizePath(url);
     }
-
-    return router.pathname.startsWith(url);
-  }, [url, router.pathname]);
+  
+    return isPathStartWith(currentPath, url, router);
+  }, [url, router.asPath, router.pathname, router]);
 
   return (
     <ListItem

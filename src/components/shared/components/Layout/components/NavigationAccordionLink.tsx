@@ -1,4 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
+import { isPathMatch, normalizePath } from "~/lib/helpers/router"; //导入工具函数
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,7 +7,7 @@ import { Page } from "nextra";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import tw, { styled } from "twin.macro";
 
-import { getPageTitle } from "~/lib/helpers/nextra";
+import { getPageTitle,getPageTitleWithLocale } from "~/lib/helpers/nextra";
 
 import { IconDropDown } from "../../Icons";
 
@@ -28,8 +29,18 @@ type NavigationAccordionLinkProps = PropsWithChildren<{
 
 const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, children }) => {
   const router = useRouter();
-  const isRouteInAccordion = router.pathname.includes(page.route);
+  //const isRouteInAccordion = router.pathname.includes(page.route);
+  const normalizedPathname = normalizePath(router.asPath || router.pathname);
 
+  // console.log('🔵 当前页面 meta:', {
+  //   route: page.route,
+  //   title: page.meta?.title,
+  //   locale: (page as any).locale,
+  // });
+  
+  const normalizedPageRoute = normalizePath(page.route);
+  const isRouteInAccordion = normalizedPathname.startsWith(normalizedPageRoute) || normalizedPathname === normalizedPageRoute;
+  
   const [expanded, setExpanded] = useState<string | false>(isRouteInAccordion ? page.route : false);
 
   const handleChange = (route: string) => (_event: React.SyntheticEvent, isExpanded: boolean) =>
@@ -59,7 +70,7 @@ const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, chi
             "text-grey-500 dark:text-white": expanded,
           })}
         >
-          {getPageTitle(page)}
+          {getPageTitleWithLocale(page, router.locale)}
         </div>
       </AccordionSummary>
 
@@ -70,8 +81,8 @@ const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, chi
 
 export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = ({ page, onClick, isTopLevelPage }) => {
   const router = useRouter();
-  const isRouteSelected = router.pathname === page.route;
-
+  // const isRouteSelected = router.pathname === page.route;
+  const isRouteSelected = isPathMatch(router.asPath || router.pathname, page.route, router);
   if (page.kind !== "Folder") {
     return (
       <Link
@@ -92,7 +103,7 @@ export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = (
         )}
 
         <div className="text-base leading-[130%] sm:text-xs sm:leading-[110%] whitespace-pre-wrap text-ellipsis overflow-hidden">
-          {getPageTitle(page)}
+          {getPageTitleWithLocale(page, router.locale)}
         </div>
       </Link>
     );

@@ -1,0 +1,8 @@
+import { AddressConverter } from "~/components/Docs";
+
+使用下方工具可在 bech32 与 EVM 地址之间进行转换：
+
+<AddressConverter />
+
+bech32 与 EVM 地址互转属于链下操作，可用任意编程语言实现，例如[TypeScript 示例](https://github.com/zeta-chain/docs/blob/main/src/components/Docs/components/AddressConverter/AddressConverter.utils.ts)。在 CLI 中也可以使用 [`zetacored debug addr`](/developers/architecture/zetacored#zetacored-debug-addr) 命令完成转换。
+
