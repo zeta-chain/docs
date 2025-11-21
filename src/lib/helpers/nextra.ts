@@ -1,6 +1,35 @@
 import { startCase, toLower } from "lodash-es";
 import { Page } from "nextra";
 
+import { useRouter } from "next/router";
+import { getMetaTitle } from "../data/meta-data";
+
+// 方案1：使用 hook（需要在组件中调用）
+export const useGetPageTitle = (page: Page) => {
+  const router = useRouter();
+  
+  // 如果是 Folder 类型，尝试从 meta 数据映射获取
+  if (page.kind === "Folder" && router.locale) {
+    const metaTitle = getMetaTitle(page.route, router.locale, page.name);
+    if (metaTitle) return metaTitle;
+  }
+  
+  // 回退到原来的逻辑
+  return page.meta?.title ? String(page.meta.title) : startCase(toLower(page.name));
+};
+
+// 方案2：直接传入 locale（如果需要在不使用 hook 的地方调用）
+export const getPageTitleWithLocale = (page: Page, locale?: string) => {
+  // 对于所有页面类型（Folder 和 MdxPage），都尝试从 meta 数据映射获取
+  if (locale) {
+    const metaTitle = getMetaTitle(page.route, locale, page.name);
+    if (metaTitle) return metaTitle;
+  }
+  
+  // 回退到原来的逻辑
+  return page.meta?.title ? String(page.meta.title) : startCase(toLower(page.name));
+};
+
 export const getPageTitle = (page: Page) =>
   page.meta?.title ? String(page.meta.title) : startCase(toLower(page.name));
 

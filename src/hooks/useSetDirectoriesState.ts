@@ -29,7 +29,7 @@
 //   }, [flatDirectories, directoriesByRoute]);
 // };
 import { getAllPages } from "nextra/context";
-import { useRouter } from "next/router";  // ✅ 第2行：添加这个导入
+import { useRouter } from "next/router";
 import { useEffect, useMemo } from "react";
 
 import { useAppDispatch } from "../lib/app.store";
@@ -37,10 +37,58 @@ import { setDirectories, setPages } from "../lib/directories/directories.redux";
 import { getDirectories } from "../lib/helpers/nextra";
 
 export const useSetDirectoriesState = () => {
-  const router = useRouter();  // ✅ 第10行：添加这一行获取当前 locale
-  const allPages = getAllPages();
+  const router = useRouter();  // 添加这一行获取当前 locale
+  const allPages = getAllPages();  
+  
+  // useEffect(() => {
+  //   if (allPages.length > 0) {
+  //     console.log('🔵 第一个页面对象结构:', {
+  //       route: allPages[0].route,
+  //       locale: (allPages[0] as any).locale,
+  //       name: (allPages[0] as any).name,
+  //       kind: allPages[0].kind,
+  //     });
+  //     // 打印前几个页面的详细信息
+  //     allPages.slice(0, 3).forEach((page, idx) => {
+  //       console.log(`🔵 页面 ${idx}:`, {
+  //         route: page.route,
+  //         locale: (page as any).locale,
+  //         name: (page as any).name,
+  //         kind: page.kind,
+  //       });
+  //     });
+  //   }
+  // }, [allPages]);
 
-  // ✅ 第13-48行：新增过滤逻辑（替换原来的日志代码）
+  // 从文件名或 route 中提取 locale
+  const extractLocaleFromPage = (page: typeof allPages[0]): string | null => {
+    // 方法 1: 从 page.locale 属性获取（如果存在）
+    if ('locale' in page && (page as any).locale) {
+      return (page as any).locale;
+    }
+
+    // 方法 2: 从 page.name 中提取（例如 "index.zh-CN" -> "zh-CN"）
+    if ('name' in page && (page as any).name) {
+      const name = (page as any).name as string;
+      const match = name.match(/\.(en-US|zh-CN)(\.|$)/);
+      if (match) {
+        return match[1];
+      }
+    }
+
+    // 方法 3: 从 route 中提取（例如 "/zh-CN/developers/evm" -> "zh-CN"）
+    if (page.route) {
+      const routeMatch = page.route.match(/\/(en-US|zh-CN)(\/|$)/);
+      if (routeMatch) {
+        return routeMatch[1];
+      }
+    }
+
+    // 如果没有找到 locale，返回 null（可能是默认语言或无 locale 的页面）
+    return null;
+  };
+
+  // 新增过滤逻辑（替换原来的日志代码）
   // 根据当前 locale 过滤页面，避免显示重复内容
   const filteredPages = useMemo(() => {
     if (!router.locale || !allPages.length) return allPages;
@@ -61,22 +109,39 @@ export const useSetDirectoriesState = () => {
               children: filteredChildren,
             };
           } else {
-            // 检查页面对象的 locale 属性
-            // 如果页面有 locale 属性且匹配当前 locale，保留它
-            if ('locale' in page && page.locale) {
-              return page.locale === targetLocale ? page : null;
+            // 从页面对象中提取 locale
+            const pageLocale = extractLocaleFromPage(page);
+
+            // 如果页面有明确的 locale 属性
+            if (pageLocale) {
+              // 如果匹配目标 locale，保留它
+              return pageLocale === targetLocale ? page : null;
             }
-            // 如果页面没有 locale 属性（可能是旧格式），保留它
-            return page;
+
+            // 如果页面没有 locale 属性：
+            // - 如果目标是默认语言，保留它（默认语言的页面可能没有 locale 后缀）
+            // - 如果目标不是默认语言，过滤掉它（没有 locale 后缀的页面应该只在默认语言时显示）
+            if (targetLocale === router.defaultLocale) {
+              return page;
+            }
+            
+            // 非默认语言时，没有 locale 的页面应该被过滤掉
+            return null;
           }
         })
         .filter((page): page is typeof allPages[0] => page !== null);
     };
 
     return filterByLocale(allPages, router.locale);
-  }, [allPages, router.locale]);
+  }, [allPages, router.locale, router.defaultLocale]);
 
-  // ✅ 第50行：使用 filteredPages 而不是 allPages
+  // useEffect(() => {
+  //   console.log('🔵 当前 locale:', router.locale);
+  //   console.log('🔵 所有页面数量:', allPages.length);
+  //   console.log('🔵 过滤后页面数量:', filteredPages.length);
+  //   console.log('🔵 过滤后的第一个页面:', filteredPages[0]?.route, (filteredPages[0] as any)?.locale);
+  // }, [router.locale, allPages.length, filteredPages.length]);
+  // 使用 filteredPages 而不是 allPages
   const { flatDirectories, directoriesByRoute } = useMemo(
     () => getDirectories(filteredPages),
     [filteredPages]
@@ -84,7 +149,7 @@ export const useSetDirectoriesState = () => {
 
   const dispatch = useAppDispatch();
 
-  // ✅ 第56行：使用 filteredPages 而不是 allPages
+  // 使用 filteredPages 而不是 allPages
   useEffect(() => {
     if (!filteredPages.length) return;
 
