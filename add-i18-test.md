@@ -36,3 +36,5 @@ but now have three questions in this branch.
 3. in nextra setting, `index.en-US` or `index.zh-CN` will be redirect to the father path, but the true path is the children. such as view `http://localhost:3001/zh-CN/developers/evm` is 404 not found. I am check the problem, but need some times.
 
 [2025.11.21 10:29] I solve the sidebar highlight issue, add a path compare tool `router.ts` in `src/lib/helpers`. the router.pathname is different from page.route, so need a tool to remove the prefix for locale and make a standard router format.
+
+[2025.11.21 12:56] I solve the sidebar en & zh switch, and make sure the folders and files name is true.
