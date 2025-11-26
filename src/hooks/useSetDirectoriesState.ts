@@ -1,5 +1,5 @@
-import { getAllPages } from "nextra/context";
 import { useRouter } from "next/router";
+import { getAllPages } from "nextra/context";
 import { useEffect, useMemo } from "react";
 
 import { useAppDispatch } from "../lib/app.store";
@@ -10,10 +10,7 @@ export const useSetDirectoriesState = () => {
   const { locale } = useRouter();
   const allPages = getAllPages();
 
-  const { flatDirectories, directoriesByRoute } = useMemo(
-    () => getDirectories(allPages),
-    [allPages, locale]
-  );
+  const { flatDirectories, directoriesByRoute } = useMemo(() => getDirectories(allPages), [allPages, locale]);
 
   const dispatch = useAppDispatch();
 

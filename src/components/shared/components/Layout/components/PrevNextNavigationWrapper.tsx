@@ -34,7 +34,9 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
     if (!normalizedRoute || !currentDirectory) return { prevPage: null, nextPage: null };
 
     const isPrevRouteCurrent = prevNormalizedRoute === normalizedRoute;
-    const isPrevRouteChildren = prevNormalizedRoute ? countRouteSegments(prevNormalizedRoute) > countRouteSegments(normalizedRoute) : false;
+    const isPrevRouteChildren = prevNormalizedRoute
+      ? countRouteSegments(prevNormalizedRoute) > countRouteSegments(normalizedRoute)
+      : false;
     const isPrevRouteValid = prevNormalizedRoute && !isPrevRouteCurrent && !isPrevRouteChildren;
     const prevDirectory = isPrevRouteValid ? directoriesByRoute[prevNormalizedRoute] : null;
 
