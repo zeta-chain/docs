@@ -117,8 +117,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                 <div key={items[0].url} className="flex flex-col">
                   <List className="w-full font-medium">
                     {items.map((item) => {
-                      // Use locale-aware getPagesUnderRoute for each nav section
-                      const navSectionPages = getNavSectionPages(item.url);
+                      const navSectionPages = item.url ? getNavSectionPages(item.url) : [];
 
                       return (
                         <div key={item.url}>
