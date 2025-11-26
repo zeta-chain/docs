@@ -1,8 +1,15 @@
 import { startCase, toLower } from "lodash-es";
 import { Page } from "nextra";
 
-export const getPageTitle = (page: Page) =>
-  page.meta?.title ? String(page.meta.title) : startCase(toLower(page.name));
+export const getPageTitle = (page: Page) => {
+  // Check frontMatter first (locale-specific), then meta, then fallback to name
+  const frontMatter = "frontMatter" in page ? (page as any).frontMatter : undefined;
+  if (frontMatter?.title) return String(frontMatter.title);
+  if (page.meta?.title) return String(page.meta.title);
+  // Clean up locale suffix from name for fallback
+  const baseName = page.name.replace(/\.(en-US|zh-CN)$/, "");
+  return startCase(toLower(baseName));
+};
 
 export const getPageDescription = (page: Page) => (page.meta?.description ? String(page.meta.description) : undefined);
 

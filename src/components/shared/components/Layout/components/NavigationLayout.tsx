@@ -5,11 +5,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Page } from "nextra";
+import { getPagesUnderRoute } from "nextra/context";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
-import { selectPages } from "~/lib/directories/directories.selectors";
 import { getRevealProps } from "~/lib/helpers/animations";
 
 import { Footer } from "../../Footer";
@@ -32,69 +31,47 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
 
   const closeMobileDrawer = useCallback(() => !upSm && setIsLeftDrawerOpen(false), [upSm, setIsLeftDrawerOpen]);
 
-  const pages = useSelector(selectPages);
-  const selectPreferredLocalePage = useCallback(
-    (current: Page, candidate: Page) => {
-      if (current.kind === "Folder" || candidate.kind === "Folder") return current;
+  // Use Nextra's getPagesUnderRoute for locale-aware page data
+  const getNavSectionPages = useCallback(
+    (route: string) => {
+      const pages = getPagesUnderRoute(route);
 
-      const normalizeLocale = (value?: string) => value ?? defaultLocale ?? null;
-      const currentLocale = normalizeLocale(current.locale);
-      const candidateLocale = normalizeLocale(candidate.locale);
+      // Check if page name contains locale suffix (e.g., "zetachain.zh-CN")
+      const getPageLocale = (page: Page): string | undefined => {
+        if ("locale" in page && page.locale) return page.locale as string;
+        // Check name for locale suffix
+        const nameParts = page.name.split(".");
+        if (nameParts.length > 1) {
+          const suffix = nameParts[nameParts.length - 1];
+          if (suffix === "en-US" || suffix === "zh-CN") return suffix;
+        }
+        return undefined;
+      };
 
-      if (locale) {
-        if (candidateLocale === locale && currentLocale !== locale) return candidate;
-        if (currentLocale === locale && candidateLocale !== locale) return current;
-      }
+      // Filter pages: only keep pages matching current locale, deduplicate by route
+      const routeToPage = new Map<string, Page>();
 
-      if (defaultLocale) {
-        if (candidateLocale === defaultLocale && currentLocale !== defaultLocale) return candidate;
-        if (currentLocale === defaultLocale && candidateLocale !== defaultLocale) return current;
-      }
+      pages.forEach((page) => {
+        // Skip index pages
+        if (page.name === "index" || page.name.startsWith("index.")) return;
 
-      if (!currentLocale && candidateLocale) return candidate;
+        const pageLocale = getPageLocale(page);
 
-      return current;
+        // Only process pages that match current locale (or have no locale suffix for default)
+        const isCurrentLocale = pageLocale === locale;
+        const isDefaultForNoLocale = !pageLocale && locale === defaultLocale;
+        if (!isCurrentLocale && !isDefaultForNoLocale && pageLocale) return;
+
+        const existing = routeToPage.get(page.route);
+        if (!existing) {
+          routeToPage.set(page.route, page);
+        }
+      });
+
+      return Array.from(routeToPage.values());
     },
     [locale, defaultLocale]
   );
-
-  const navPages = useMemo(() => {
-    const filterFolderChildren = (folder: Page & { kind: "Folder" }): Page & { kind: "Folder" } => {
-      const filteredChildren: Page[] = [];
-      const routeIndex = new Map<string, number>();
-
-      folder.children.forEach((child) => {
-        if (child.kind === "Folder") {
-          const filteredFolder = filterFolderChildren(child);
-          if (filteredFolder.children.length) {
-            filteredChildren.push(filteredFolder);
-          }
-          return;
-        }
-
-        const existingIndex = routeIndex.get(child.route);
-
-        if (existingIndex === undefined) {
-          filteredChildren.push(child);
-          routeIndex.set(child.route, filteredChildren.length - 1);
-          return;
-        }
-
-        const existingChild = filteredChildren[existingIndex];
-        const preferredChild = selectPreferredLocalePage(existingChild, child);
-        filteredChildren[existingIndex] = preferredChild;
-      });
-
-      return {
-        ...folder,
-        children: filteredChildren,
-      };
-    };
-
-    return pages
-      .filter((page): page is Page & { kind: "Folder" } => page.kind === "Folder")
-      .map((folder) => filterFolderChildren(folder));
-  }, [pages, selectPreferredLocalePage]);
 
   // To prevent a flash of the drawer on first render given that useCurrentBreakpoint has an issue always returning false for the first render for upLg and others
   useEffect(() => {
@@ -140,26 +117,25 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                 <div key={items[0].url} className="flex flex-col">
                   <List className="w-full font-medium">
                     {items.map((item) => {
-                      const navSection = navPages.find((page) => page.route === item.url);
+                      // Use locale-aware getPagesUnderRoute for each nav section
+                      const navSectionPages = getNavSectionPages(item.url);
 
                       return (
                         <div key={item.url}>
                           <NavigationItem item={item} isOpen={isLeftDrawerOpen} onClick={closeMobileDrawer} />
 
-                          {!!navSection && "children" in navSection && (
+                          {navSectionPages.length > 0 && (
                             <List className="w-full">
-                              {navSection.children
-                                .filter((page) => page.route !== item.url)
-                                .map((page) => (
-                                  <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
-                                    <NavigationAccordionLink
-                                      key={page.route}
-                                      page={page}
-                                      onClick={closeMobileDrawer}
-                                      isTopLevelPage
-                                    />
-                                  </div>
-                                ))}
+                              {navSectionPages.map((page) => (
+                                <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
+                                  <NavigationAccordionLink
+                                    key={page.route}
+                                    page={page}
+                                    onClick={closeMobileDrawer}
+                                    isTopLevelPage
+                                  />
+                                </div>
+                              ))}
                             </List>
                           )}
                         </div>
