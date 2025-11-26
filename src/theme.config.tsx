@@ -1,4 +1,4 @@
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, LocaleSwitch } from "nextra-theme-docs";
 
 import {
   AppHead,
@@ -28,6 +28,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   navbar: {
     extraContent: (
       <>
+        <LocaleSwitch />
         <ThemeToggle className="hidden sm:flex" />
         <a
           href="https://github.com/zeta-chain"

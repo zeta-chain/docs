@@ -17,14 +17,16 @@
 }
 
 /* Override focus styles for all input elements */
-input:focus-visible, textarea:focus-visible, select:focus-visible {
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: none !important;
   box-shadow: none !important;
 }
 
 /* Dark mode specific overrides */
-:is(html[class~="dark"]) input:focus-visible, 
-:is(html[class~="dark"]) textarea:focus-visible, 
+:is(html[class~="dark"]) input:focus-visible,
+:is(html[class~="dark"]) textarea:focus-visible,
 :is(html[class~="dark"]) select:focus-visible {
   outline: none !important;
   box-shadow: none !important;
@@ -80,4 +82,14 @@ html.dark .initial-overlay {
 
 html.light .initial-overlay {
   background-color: #fff;
+}
+
+/* Ensure locale switch dropdown is visible above all page content */
+[class*="nextra-nav-container"] {
+  z-index: 50;
+}
+
+/* Locale switch dropdown menu - override Nextra's nx-z-20 to appear above all content */
+[class*="nx-z-20"] {
+  z-index: 9999 !important;
 }
