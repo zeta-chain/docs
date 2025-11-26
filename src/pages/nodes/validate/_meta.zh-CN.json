@@ -1,0 +1,8 @@
+{
+  "validator": {
+    "title": "创建核心验证人"
+  },
+  "validator-gcp": {
+    "title": "在 Google Compute Engine 上部署核心验证人"
+  }
+}

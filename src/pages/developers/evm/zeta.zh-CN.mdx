@@ -1,0 +1,39 @@
+---
+title: ZETA
+---
+
+import { ZetaTokenTable } from "~/components/Docs";
+
+## ZetaChain 上的原生 ZETA
+
+ZetaChain 的原生代币名为 ZETA，既是质押代币，也是交易手续费的支付代币。ZetaChain 节点基于 Cosmos SDK 构建，ZETA 以 `sdk.Coin` 形式实现；`ZETA` 是易读符号，其链上计价单位为 `azeta`。
+
+1 ZETA = 10¹⁸ azeta。
+
+可通过 Cosmos HTTP API 的 [`balances` 端点](https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um) 查询账户余额：
+
+```json
+{
+  "balances": [
+    {
+      "denom": "azeta",
+      "amount": "10000000000000000000"
+    }
+  ]
+}
+```
+
+将 `azeta` 转换为 ZETA 时需除以 10¹⁸，上例中的余额为 10 ZETA。
+
+## ZetaChain 上的包装 ZETA
+
+ZETA 可在 ZetaChain 上以 [WETH9](https://github.com/zeta-chain/protocol-contracts-evm/blob/main/contracts/zevm/WZETA.sol) 形式被包装为 WZETA。包装过程会将原生代币（此处为 ZETA）锁定在合约中，并铸造等量的 WZETA。WZETA 与原生代币 1:1 锚定，可随时赎回原生 ZETA。由于 WZETA 兼容 ERC-20，可供依赖 ERC-20 交互的 dApp 使用。WZETA 主要用于 ZetaChain 内部流动性池，与连接链的原生 Gas 代币配对（例如 sETH/WZETA）。
+
+如需将原生 ZETA 包装为 WZETA，可向 `zetaToken` [ZetaChain 合约](/reference/network/contracts)发送代币或调用其 `deposit` 方法。
+
+## 连接链上的 ZETA
+
+在以太坊、Polygon、BSC 等 EVM 兼容连接链上，ZETA 以 [ERC-20 代币](https://github.com/zeta-chain/protocol-contracts-evm/blob/main/contracts/evm/Zeta.eth.sol) 形式存在。各链上 `zetaToken` 的合约地址可在[合约地址页面](/reference/network/contracts)查询。
+
+<ZetaTokenTable />
+

@@ -1,0 +1,26 @@
+---
+title: 查询余额
+---
+
+## 前置条件
+
+请先安装 `zetacored` CLI，参考[安装 CLI 指南](/zh/users/cli/setup)。
+
+## 查询余额
+
+查询 `alice` 账户余额：
+
+```
+zetacored q bank balances $(zetacored keys show alice -a) --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+使用 `--node` 指定有效的节点 RPC URL，可选择文档中标注为 “Tendermint RPC” 的[公共端点](/zh/reference/network/api)。注意需在 URL 中显式包含端口，使用 `https://` 协议时端口默认为 443（除非另行说明）。
+
+```yml
+balances:
+  - amount: "11345716912473012386685"
+    denom: azeta
+```
+
+返回的金额单位是 `azeta`（最小计量单位）。转换为 ZETA 时需除以 10¹⁸。上述示例约为 11345 ZETA。
+

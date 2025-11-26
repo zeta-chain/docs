@@ -1,0 +1,62 @@
+---
+title: RPC / API 端点
+---
+
+import { EndpointList } from "~/components/Docs";
+
+## 私有端点
+
+如果你是开发者，强烈建议通过 [AllThatNode](https://www.allthatnode.com/zetachain.dsrv)、[BlockPI](https://blockpi.io/zeta)、[InfStones](https://infstones.com/fast-api)、[Blast API](https://blastapi.io/chains/zetachain)、[dRPC](https://drpc.org/chainlist/zeta-chain)、[Alchemy](https://www.alchemy.com/zetachain) 等 RPC 提供商申请免费的私有端点。相比公共 RPC，私有端点具备更高吞吐、更少限制，体验更稳定。
+
+## 公共端点
+
+下表列出可用于钱包或前端应用与 ZetaChain 交互的公共 API 端点。公共端点不适合用于后台服务或高并发场景。
+
+<EndpointList />
+
+## EVM RPC
+
+ZetaChain 兼容 EVM。通过 EVM RPC 可连接 ZetaChain 并与 EVM 交互，读取或发送符合以太坊规范的交易。
+
+示例：查询最新区块高度
+
+```
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' https://zetachain-athens-evm.blockpi.network/v1/rpc/public
+```
+
+## Tendermint HTTP
+
+ZetaChain 基于 Tendermint Core BFT 共识引擎。Tendermint HTTP API 可用于查询区块、验证人信息、创世文件等。
+
+示例：获取创世文件
+
+https://zetachain-athens.blockpi.network/rpc/v1/public/genesis
+
+## Tendermint RPC
+
+Tendermint RPC API 提供 JSON RPC 接口，可广播交易并查询链上数据。
+
+示例：请求指定区块
+
+```
+curl --header "Content-Type: application/json" --request POST --data '{"method": "block", "params": ["3336883"], "id": 1}' https://rpc.ankr.com/zetachain_tendermint_athens_testnet
+```
+
+## Tendermint WebSocket
+
+Tendermint WebSocket API 允许通过 WebSocket 访问 JSON RPC。
+
+示例：使用 `wscat` 连接 WebSocket
+
+```
+wscat -c wss://zetachain-athens.blockpi.network/rpc/v1/public/websocket
+```
+
+## Cosmos SDK HTTP
+
+ZetaChain 基于 Cosmos SDK 构建。Cosmos SDK HTTP API 可查询链上状态并广播交易。
+
+示例：查询最新区块
+
+https://zetachain-athens.blockpi.network/lcd/v1/public//cosmos/base/tendermint/v1beta1/blocks/latest
+

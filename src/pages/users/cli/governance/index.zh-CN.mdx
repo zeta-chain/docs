@@ -1,0 +1,40 @@
+---
+title: 治理
+---
+
+import { GovParams } from "~/components/Docs";
+
+import { Alert } from "~/components/shared";
+
+## 概览
+
+ZetaChain 使用 Cosmos SDK [`gov` 治理模块](https://docs.cosmos.network/v0.50/modules/gov/) 管理网络。质押者可以发起提案并投票。本指南将通过 `zetacored` CLI 演示提案的创建流程。
+
+## 治理参数
+
+<GovParams />
+
+## 提案流程
+
+创建提案需要：
+
+- 准备 `proposal.json` 文件。内容取决于提案类型，[文本提案](/zh/users/cli/governance/text)、[参数变更提案](/zh/users/cli/governance/parameter)、[软件升级提案](/zh/users/cli/governance/upgrade) 等。
+- 将 `metadata.json` 上传至 IPFS 或 Web，并使用 `zetacored tx gov submit-proposal` 提交。详细步骤请参考[提交提案](/zh/users/cli/governance/submit)。
+
+<Alert variant="tip">
+  建议先阅读[文本提案](/zh/users/cli/governance/text)，了解提案基本结构。
+</Alert>
+
+## 提案阶段
+
+提案生命周期包括：
+
+1. **存款期**：任何用户都可向提案存入押金。若达到最小押金要求，即进入**投票期**；否则提案被标记为 “Rejected”。提案创建者可直接提供足额押金以立即进入投票。
+2. **投票期**：质押者在此阶段投票。若未达到法定人数或未通过，提案将被标记为 “Rejected”；若满足条件且执行成功，则标记为 “Passed”，执行失败则为 “Failed”。
+
+除非提案被否决（Veto）或从未进入投票阶段（押金不足），押金会退还给存入者。
+
+## 延伸阅读
+
+更多信息可参考 [`gov` 模块文档](https://docs.cosmos.network/v0.50/modules/gov/)。
+
