@@ -79,6 +79,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         // Skip index pages in sidebar (they're still accessible via route)
         if (page.name === "index" || page.name.startsWith("index.")) return;
 
+        // Skip overview pages in top-level sidebar (they're still accessible via route)
+        if (page.name === "overview" || page.name.startsWith("overview.")) return;
+
         const existing = routeToPage.get(page.route);
         if (!existing) {
           routeToPage.set(page.route, page);

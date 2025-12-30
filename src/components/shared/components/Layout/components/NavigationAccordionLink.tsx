@@ -138,6 +138,9 @@ export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = (
       // Skip index pages in sidebar (they're still accessible via route)
       if (child.name === "index" || child.name.startsWith("index.")) return;
 
+      // Skip overview pages in sidebar (they're still accessible via route)
+      if (child.name === "overview" || child.name.startsWith("overview.")) return;
+
       // Deduplicate by route
       if (!routeToChild.has(child.route)) {
         routeToChild.set(child.route, child);
