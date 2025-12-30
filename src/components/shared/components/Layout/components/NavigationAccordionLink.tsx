@@ -28,6 +28,7 @@ type NavigationAccordionLinkProps = PropsWithChildren<{
 
 const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, children }) => {
   const router = useRouter();
+  const { locale } = router;
   const isRouteInAccordion = router.pathname.includes(page.route);
 
   const [expanded, setExpanded] = useState<string | false>(isRouteInAccordion ? page.route : false);
@@ -133,6 +134,9 @@ export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = (
         // No locale - only include on default locale
         if (currentLocale !== defaultLocale) return;
       }
+
+      // Skip index pages in sidebar (they're still accessible via route)
+      if (child.name === "index" || child.name.startsWith("index.")) return;
 
       // Deduplicate by route
       if (!routeToChild.has(child.route)) {

@@ -1,3 +1,7 @@
+---
+title: 质押
+---
+
 ZetaChain 是基于 Cosmos SDK 构建的权益证明（PoS）区块链，由质押原生代币 ZETA 的验证者守护。委托者（普通用户）可以将自己的 ZETA 质押给验证者以参与网络安全，并获得奖励。由于 ZetaChain 同时提供 EVM 环境，智能合约可通过专用的 Staking 预编译直接访问 Cosmos 质押功能，使合约、脚本与前端能够使用熟悉的 EVM 工具完成委托、解绑、领取奖励等操作。
 
 本教程将使用 Foundry（`cast`）与 curl 与 staking 预编译交互。相同函数也可在 Solidity 合约或 Web 前端中调用。

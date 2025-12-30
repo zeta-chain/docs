@@ -1,12 +1,9 @@
 {
-  "index": {
+  "evm": {
     "title": "概览"
   },
   "gateway": {
-    "title": "Gateway"
-  },
-  "connector": {
-    "title": "连接器合约"
+    "title": "网关"
   },
   "gas": {
     "title": "Gas 费用"

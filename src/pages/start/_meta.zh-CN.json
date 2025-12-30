@@ -1,17 +1,14 @@
 {
-  "index": {
+  "overview": {
     "title": "快速入门"
   },
   "zetachain": {
-    "title": "什么是 ZetaChain？",
-    "description": "通用区块链为任何链提供原生访问，让加密世界像互联网一样易于获取、多样且互联。"
+    "title": "什么是 ZetaChain？"
   },
   "build": {
-    "title": "为什么要在 ZetaChain 上构建？",
-    "description": "链编排、跨链原生代币转移、免 Gas 执行环境。"
+    "title": "为什么要在 ZetaChain 上构建？"
   },
   "app": {
-    "title": "通用应用",
-    "description": "可以与多个区块链（包括 Ethereum、Bitcoin、Solana 等）无缝交互的应用。"
+    "title": "通用应用"
   }
 }

@@ -1,11 +1,7 @@
 {
-  "index": {
+  "overview": {
     "title": "Build",
     "description": "Begin your journey on ZetaChain, the decentralized blockchain and smart contract platform designed for omnichain interoperability."
-  },
-  "apps": {
-    "title": "Universal Apps",
-    "description": "Explore the basics of developing on ZetaChain."
   },
   "evm": {
     "title": "Universal EVM",

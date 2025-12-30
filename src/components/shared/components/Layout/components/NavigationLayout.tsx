@@ -53,9 +53,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
       const routeToPage = new Map<string, Page>();
 
       pages.forEach((page) => {
-        // Skip index pages
-        if (page.name === "index" || page.name.startsWith("index.")) return;
-
         // Always include folders - they are containers without locale
         if (page.kind === "Folder") {
           const existing = routeToPage.get(page.route);
@@ -78,6 +75,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
           // Page has no locale - only include on default locale
           if (currentLocale !== defaultLocale) return;
         }
+
+        // Skip index pages in sidebar (they're still accessible via route)
+        if (page.name === "index" || page.name.startsWith("index.")) return;
 
         const existing = routeToPage.get(page.route);
         if (!existing) {

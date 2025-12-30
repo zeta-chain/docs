@@ -1,9 +1,6 @@
 {
-  "index": {
+  "overview": {
     "title": "开发构建"
-  },
-  "apps": {
-    "title": "全链应用"
   },
   "evm": {
     "title": "全链 EVM"
