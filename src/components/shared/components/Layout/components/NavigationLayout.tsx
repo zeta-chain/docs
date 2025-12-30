@@ -35,6 +35,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
   const getNavSectionPages = useCallback(
     (route: string) => {
       const pages = getPagesUnderRoute(route);
+      const currentLocale = locale || defaultLocale;
 
       // Check if page name contains locale suffix (e.g., "zetachain.zh-CN")
       const getPageLocale = (page: Page): string | undefined => {
@@ -55,12 +56,28 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
         // Skip index pages
         if (page.name === "index" || page.name.startsWith("index.")) return;
 
+        // Always include folders - they are containers without locale
+        if (page.kind === "Folder") {
+          const existing = routeToPage.get(page.route);
+          if (!existing) {
+            routeToPage.set(page.route, page);
+          }
+          return;
+        }
+
         const pageLocale = getPageLocale(page);
 
-        // Only process pages that match current locale (or have no locale suffix for default)
-        const isCurrentLocale = pageLocale === locale;
-        const isDefaultForNoLocale = !pageLocale && locale === defaultLocale;
-        if (!isCurrentLocale && !isDefaultForNoLocale && pageLocale) return;
+        // In development, Nextra doesn't filter pageMap by locale, so we need to be aggressive
+        // Only include pages that either:
+        // 1. Have a locale that matches the current locale
+        // 2. Have no locale AND we're on the default locale (backwards compatibility)
+        if (pageLocale) {
+          // Page has explicit locale - must match current locale exactly
+          if (pageLocale !== currentLocale) return;
+        } else {
+          // Page has no locale - only include on default locale
+          if (currentLocale !== defaultLocale) return;
+        }
 
         const existing = routeToPage.get(page.route);
         if (!existing) {

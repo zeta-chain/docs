@@ -71,6 +71,7 @@ const NavigationAccordion: React.FC<NavigationAccordionLinkProps> = ({ page, chi
 export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = ({ page, onClick, isTopLevelPage }) => {
   const router = useRouter();
   const isRouteSelected = router.pathname === page.route;
+  const { locale, defaultLocale } = useRouter();
 
   if (page.kind !== "Folder") {
     return (
@@ -98,10 +99,54 @@ export const NavigationAccordionLink: React.FC<NavigationAccordionLinkProps> = (
     );
   }
 
+  // Filter folder children by locale (in development, Nextra includes all locales)
+  const currentLocale = locale || defaultLocale;
+  const filteredChildren = useMemo(() => {
+    const routeToChild = new Map<string, Page>();
+
+    page.children.forEach((child) => {
+      // Always include folders - they are containers without locale
+      if (child.kind === "Folder") {
+        if (!routeToChild.has(child.route)) {
+          routeToChild.set(child.route, child);
+        }
+        return;
+      }
+
+      // Extract locale from page name or use page.locale property
+      const getChildLocale = (p: Page): string | undefined => {
+        if ("locale" in p && p.locale) return p.locale as string;
+        const nameParts = p.name.split(".");
+        if (nameParts.length > 1) {
+          const suffix = nameParts[nameParts.length - 1];
+          if (suffix === "en-US" || suffix === "zh-CN") return suffix;
+        }
+        return undefined;
+      };
+
+      const childLocale = getChildLocale(child);
+
+      // Only include children matching current locale
+      if (childLocale) {
+        if (childLocale !== currentLocale) return;
+      } else {
+        // No locale - only include on default locale
+        if (currentLocale !== defaultLocale) return;
+      }
+
+      // Deduplicate by route
+      if (!routeToChild.has(child.route)) {
+        routeToChild.set(child.route, child);
+      }
+    });
+
+    return Array.from(routeToChild.values());
+  }, [page.children, currentLocale, defaultLocale]);
+
   return (
     <NavigationAccordion page={page}>
       <div className="flex flex-col">
-        {page.children.map((child) => (
+        {filteredChildren.map((child) => (
           <NavigationAccordionLink key={child.route} page={child} onClick={onClick} />
         ))}
       </div>
