@@ -114,7 +114,7 @@ export const CurrentPageNavigationSections: React.FC<CurrentPageNavigationSectio
   }, [pagesUnderRoute, locale, defaultLocale, route]);
 
   return (
-    <div className="flex flex-col gap-20 sm:gap-[120px]">
+    <div className="flex flex-col gap-20 sm:gap-[120px] w-full">
       {!!navPages.length && (
         <NavigationSection
           title={mainTitle}

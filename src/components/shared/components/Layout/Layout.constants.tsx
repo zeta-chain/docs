@@ -144,6 +144,6 @@ export const mainNavRoutes = [
   "/",
   ...[...navMainItems]
     .flat()
-    .map((item) => item.url)
+    .flatMap((item) => [item.url, item.clickUrl])
     .filter(Boolean),
 ];

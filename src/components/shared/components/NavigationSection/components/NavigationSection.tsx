@@ -85,11 +85,11 @@ export const NavigationSection: React.FC<NavigationSectionProps> = ({
   }
 
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-10 w-full">
       {title && <SectionTitle title={title} description={description} colorClass={colorClass} link={link} />}
 
       <div
-        className={clsx("grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-8", {
+        className={clsx("grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-8 w-full", {
           "sm:grid-cols-1 lg:grid-cols-3": navItems.length === 1,
           "lg:grid-cols-3": navItems.length % 3 === 0,
           "lg:grid-cols-4": navItems.length % 4 === 0,
