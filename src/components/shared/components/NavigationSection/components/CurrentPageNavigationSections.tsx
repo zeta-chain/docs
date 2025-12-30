@@ -42,9 +42,7 @@ export const CurrentPageNavigationSections: React.FC<CurrentPageNavigationSectio
   // Get parent route if current route is a page (not ending in /)
   // For example: /developers/overview -> /developers
   // Note: route doesn't include locale prefix, so we use it directly
-  const parentRoute = route.includes('/') && !route.endsWith('/')
-    ? route.substring(0, route.lastIndexOf('/'))
-    : route;
+  const parentRoute = route.includes("/") && !route.endsWith("/") ? route.substring(0, route.lastIndexOf("/")) : route;
 
   const pagesUnderRoute = getPagesUnderRoute(parentRoute);
 
@@ -98,7 +96,8 @@ export const CurrentPageNavigationSections: React.FC<CurrentPageNavigationSectio
      * @description Folder-less group pages, without the index (current page) that will be rendered first
      */
     const navPages = uniquePages.filter(
-      (page) => page.kind === "MdxPage" && page.name !== "index" && !page.name.startsWith("index.") && page.route !== route
+      (page) =>
+        page.kind === "MdxPage" && page.name !== "index" && !page.name.startsWith("index.") && page.route !== route
     );
 
     /**

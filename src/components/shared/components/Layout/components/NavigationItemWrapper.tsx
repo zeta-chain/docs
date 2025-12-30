@@ -41,7 +41,13 @@ export const NavigationItemWrapper = ({ children, item, onClick }: NavigationIte
   // External link, we want an anchor tag with correct target and rel
   if (isExternalLink) {
     return (
-      <a href={navigationUrl} target="_blank" rel="noopener noreferrer" onClick={onClick} className="hover:!text-green-100">
+      <a
+        href={navigationUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClick}
+        className="hover:!text-green-100"
+      >
         <ListItemButton className={className}>{children}</ListItemButton>
       </a>
     );
