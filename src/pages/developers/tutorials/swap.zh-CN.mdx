@@ -1,0 +1,398 @@
+---
+title: 跨链兑换
+---
+
+## 简介
+
+本教程将带你构建一个 ZetaChain 全链应用，实现无缝的跨链代币兑换。用户可从连接链发送原生 Gas 代币或 ERC-20，并在另一条链上接收不同的代币，整个过程在一笔交易中完成。例如，用户可直接将以太坊上的 USDC 兑换为比特币上的 BTC，而无需使用跨链桥或中心化交易所。
+
+你将学会：
+
+- 创建可在多链间执行代币兑换的全链应用
+- 将其部署到 ZetaChain
+- 从连接的 EVM 链触发跨链兑换
+
+兑换逻辑由部署在 ZetaChain 上的智能合约实现，符合 `UniversalContract` 接口。通过 Gateway，该合约可被任意连接链调用。当连接链发送代币时，会以 [ZRC-20](/developers/evm/zrc20) 形式进入 ZetaChain。ZRC-20 是外部资产在 ZetaChain 上的原生表示，既保留了原资产属性，又允许在 ZetaChain 上编程，包括跨链提现。
+
+Swap 合约执行以下步骤：
+
+1. 接收来自连接链的跨链调用及原生或 ERC-20 代币。
+2. 解码消息载荷，获取：
+   - 目标代币（ZRC-20）地址
+   - 目标链上的收款人地址
+3. 查询目标链提现该代币所需的 Gas 费用。
+4. 若需提现到连接链，使用 Uniswap v2 池将部分输入代币兑换为目标链 Gas 所需的 ZRC-20。
+5. 将剩余代币兑换为目标代币。
+6. 将兑换后的代币提现给目标链上的收款人。
+
+这种方式让用户仅需一次交易即可发起复杂的多链操作，隐藏了流动性路由、Gas 支付与跨链执行等底层细节。
+
+> 注意：本教程示例使用 ZetaChain 上的 Uniswap v2 池。这些池主要用于 ZetaChain 进行小额代币交换（例如在跨链交易回退时获取 Gas），可能没有足够流动性支持大额交易。生产环境建议使用活跃 DEX（如 [Beam](https://docs.beamdex.xyz/) 或 [Zuno](https://docs.zunodex.xyz/)）的池，或部署其他 DEX。
+
+## 前置条件
+
+请先完成以下教程：
+
+- [全链应用简介](/start/app/)
+- [ZetaChain 入门](/developers/tutorials/intro)
+- [第一个全链应用](/developers/tutorials/hello)
+
+## 环境准备
+
+使用 CLI 创建新项目：
+
+```bash
+zetachain new --project swap
+```
+
+安装依赖：
+
+```bash
+cd swap
+yarn
+```
+
+通过 Foundry 的包管理器拉取 Solidity 依赖：
+
+```bash
+forge soldeer update
+```
+
+编译合约：
+
+```bash
+forge build
+```
+
+至此，你已拥有带 Foundry 与 ZetaChain CLI 支持的开发环境，可进行本地部署与测试。
+
+## 了解 Swap 合约
+
+`Swap` 合约是部署在 ZetaChain 的全链应用，允许用户通过一次跨链调用完成代币兑换。传入的代币会以 ZRC-20 形式接收，必要时通过 Uniswap v2 进行兑换，最终可提现到连接链。
+
+### 全链入口：onCall
+
+合约部署在 ZetaChain，实现 `UniversalContract`，仅暴露一个入口函数。跨链调用只能经由 Gateway 触发，保证调用面可信且简洁。
+
+```solidity
+function onCall(
+    MessageContext calldata context,
+    address zrc20,
+    uint256 amount,
+    bytes calldata message
+) external onlyGateway
+```
+
+- `onlyGateway` 保证 `onCall` 仅由 Gateway 调用。
+- `MessageContext` 包含源链 ID（`context.chainID`）与原始调用者（`context.sender`），可视为源的权威身份。
+
+### 资产模型：ZRC-20
+
+来自连接链的资产会在 ZetaChain 表示为 ZRC-20。在 `onCall` 中，`zrc20` 为输入代币，`amount` 为接收数量。若需向其他链发送资产，合约需批准 Gateway 消耗特定 ZRC-20 数量，然后调用 `withdraw`。
+
+两个关键接口：
+
+**目标链提现 Gas 询价**：
+
+```solidity
+(address gasZRC20, uint256 gasFee) = IZRC20(targetToken).withdrawGasFee();
+```
+
+- `gasZRC20`：代表目标链 Gas 代币的 ZRC-20。
+- `gasFee`：在目标链执行所需的费用。
+
+**向连接链提现**（销毁 ZRC-20，释放对端原生资产）：
+
+```solidity
+IZRC20(gasZRC20).approve(address(gateway), gasFee);
+IZRC20(params.target).approve(address(gateway), out);
+
+gateway.withdraw(
+  abi.encodePacked(params.to), // 链无关的接收者（bytes）
+  out,                         // 提现数量
+  params.target,               // 待提现的 ZRC-20
+  revertOptions                // 失败处理
+);
+```
+
+若目标链 Gas 代币 (`gasZRC20`) 与目标代币相同，可合并批准 `out + gasFee`。
+
+### 使用用户输入筹集目标链 Gas
+
+应用会从用户输入中扣除目标链 Gas，无需用户额外准备。
+
+流程：
+
+1. 通过 `withdrawGasFee()` 获取目标链 Gas 需求。
+2. 使用 DEX 报价确认输入是否足够：
+
+   ```solidity
+   uint256 minInput = quoteMinInput(inputToken, targetToken);
+   if (amount < minInput) revert InsufficientAmount(...);
+   ```
+
+3. 若输入代币不是 `gasZRC20`，兑换足够金额以支付 Gas：
+
+   ```solidity
+   inputForGas = SwapHelperLib.swapTokensForExactTokens(
+     uniswapRouter, inputToken, gasFee, gasZRC20, amount
+   );
+   ```
+
+4. 将剩余部分兑换为目标代币：
+
+   ```solidity
+   out = SwapHelperLib.swapExactTokensForTokens(
+     uniswapRouter, inputToken, amount - inputForGas, targetToken, 0
+   );
+   ```
+
+`quoteMinInput()` 使用 Uniswap v2 的 `getAmountsIn` 估算覆盖 Gas 所需的最小输入。
+
+### 链无关地址
+
+收款人（以及事件中的发送者）以原始 `bytes` 表示，而非 `address`，因此同一合约可同时服务 EVM、比特币、Solana 等链。跨链提现时，将 `bytes` 直接传给 `gateway.withdraw` 即可。
+
+### 解码消息载荷
+
+跨链调用可携带额外参数，作为 ABI 编码的载荷。Swap 合约中载荷包含三项：
+
+```
+(address targetToken, bytes recipient, bool withdrawFlag)
+```
+
+- `targetToken`：兑换后需交付的 ZRC-20 地址。
+- `recipient`：目标链收款地址（raw bytes），适用于任意链。
+- `withdrawFlag`：`true` 表示提现至其他链；`false` 表示留在 ZetaChain。
+
+在 `onCall` 中解码：
+
+```solidity
+(address targetToken, bytes memory recipient, bool withdrawFlag) =
+    abi.decode(message, (address, bytes, bool));
+```
+
+### 回退处理：RevertOptions 与 onRevert
+
+若目标调用/转账失败，Gateway 会携带 `RevertContext` 调用 `onRevert`。合约会在 `revertMessage` 中编码原始发送者与输入代币，方便自动退款：
+
+```solidity
+function onRevert(RevertContext calldata context) external onlyGateway {
+    (bytes memory sender, address zrc20) =
+        abi.decode(context.revertMessage, (bytes, address));
+
+    (uint256 out,,) = handleGasAndSwap(
+        context.asset, context.amount, zrc20, true
+    );
+
+    gateway.withdraw(
+        sender,
+        out,
+        zrc20,
+        RevertOptions({
+            revertAddress: address(bytes20(sender)),
+            callOnRevert: false,
+            abortAddress: address(0),
+            revertMessage: "",
+            onRevertGasLimit: gasLimit
+        })
+    );
+}
+```
+
+这样就能在任意链上执行一致的退款流程。
+
+### 使用流动性池兑换
+
+全链合约可使用 ZetaChain 上的任意 DEX/AMM。本示例通过 `SwapHelperLib` 调用 Uniswap v2：
+
+```solidity
+SwapHelperLib.swapTokensForExactTokens(
+  uniswapRouter, inputToken, gasFee, gasZRC20, amount
+);
+
+SwapHelperLib.swapExactTokensForTokens(
+  uniswapRouter, inputToken, swapAmount, targetToken, 0
+);
+```
+
+若 `inputToken == gasZRC20`，则直接使用 `gasFee`，无需兑换 Gas，仅需将剩余余额兑换为目标代币。
+
+你可自由替换为其他 DEX 接口或自定义路由逻辑，只需保证 ZRC-20 资金流与 Gateway 提现语义正确。
+
+## 方案一：部署到测试网
+
+部署 Swap 合约到 ZetaChain 测试网：
+
+```bash
+UNIVERSAL=$(npx tsx commands deploy --private-key $PRIVATE_KEY | jq -r .contractAddress) && echo $UNIVERSAL
+```
+
+脚本会自动使用测试网的 Gateway 与 Uniswap Router 地址。
+
+部署成功后，`UNIVERSAL` 环境变量即为测试网上 Swap 合约地址。后续触发跨链兑换时会用到该地址。
+
+获取 EVM 发送地址：
+
+```bash
+RECIPIENT=$(cast wallet address $PRIVATE_KEY) && echo $RECIPIENT
+```
+
+查询 Ethereum Sepolia 上 ETH 对应的 ZRC-20 地址：
+
+```bash
+ZRC20_ETHEREUM_ETH=$(zetachain q tokens show --symbol sETH.SEPOLIA -f zrc20) && echo $ZRC20_ETHEREUM_ETH
+```
+
+## 从 Base 兑换到 Ethereum
+
+发起 Base → Ethereum 兑换：
+
+```bash
+npx zetachain evm deposit-and-call \
+  --chain-id 84532 \
+  --amount 0.001 \
+  --types address bytes bool \
+  --receiver $UNIVERSAL \
+  --values $ZRC20_ETHEREUM_ETH $RECIPIENT true
+```
+
+该命令会向 Base Gateway 调用 `depositAndCall`，将 0.001 ETH 包装为 Base ETH 的 ZRC-20，并携带载荷发送至 ZetaChain 上的 Swap 合约。合约在 ZetaChain 使用 Uniswap v2 将 Base ETH 兑换为 Ethereum ETH 的 ZRC-20，并提现至 Ethereum Sepolia 上的 `RECIPIENT`。
+
+整个流程在一笔跨链交易中完成，无需提前准备目标链 Gas，也不需手动使用桥或路由器。
+
+Base 交易示例：
+
+https://sepolia.basescan.org/tx/0x8def0ff44c0e45803f209bc864123a08a03e6e1fadc5ac6f28f4c17f1463aae9
+
+可通过：
+
+```
+zetachain query cctx --hash 0x8def0ff44c0e45803f209bc864123a08a03e6e1fadc5ac6f28f4c17f1463aae9
+```
+
+查看完整跨链明细，包括 Base → ZetaChain 的入站与 ZetaChain → Ethereum Sepolia 的出站交易、哈希、地址与代币数量。
+
+## 从 Solana 兑换到 Ethereum
+
+发起 Solana → Ethereum Sepolia 兑换：
+
+```bash
+npx zetachain solana deposit-and-call \
+  --recipient $UNIVERSAL \
+  --types address bytes bool \
+  --values $ZRC20_ETHEREUM_ETH $RECIPIENT true \
+  --chain-id 901 \
+  --private-key $SOLANA_PRIVATE_KEY \
+  --amount 0.01
+```
+
+该命令会在 Solana Gateway 锁定 0.01 SOL，并以 ZRC-20 SOL 形式连同载荷发送至 Swap 合约。合约再将其兑换为 Ethereum ETH 的 ZRC-20 并提现给 `RECIPIENT`。收款地址以 `bytes` 表示，让同一合约可同时处理 EVM 与非 EVM 链。
+
+Solana 交易示例：
+
+https://solana.fm/tx/28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm?cluster=devnet-solana
+
+查看跨链详情：
+
+```bash
+npx zetachain query cctx --hash 28xsic7NqafyxqDjmqfYL5f6RoHFYLrCKvjSA4UJCXyESmdCb1bVpW3dqT2QJrwV6KmfdWuHrwj8uW4txHZiXLxm
+```
+
+## 从 Bitcoin 兑换到 Ethereum
+
+同样可从比特币发起兑换。以下命令通过铭文发送 0.05 BTC：
+
+在执行前，将 `PRIVATE_KEY_BTC` 设置为你的比特币私钥。
+
+```bash
+zetachain bitcoin inscription deposit-and-call \
+  --private-key $PRIVATE_KEY_BTC \
+  --receiver $UNIVERSAL \
+  --types address bytes bool \
+  --values $ZRC20_ETHEREUM_ETH $RECIPIENT true \
+  --amount 0.05
+```
+
+比特币交易被观察并处理后，合约会在一条跨链流程中完成兑换与提现。
+
+## 方案二：部署到 Localnet
+
+查询 Uniswap Router 地址：
+
+```bash
+UNISWAP_ROUTER=$(jq -r '.["31337"].contracts[] | select(.contractType == "uniswapRouterInstance") | .address' ~/.zetachain/localnet/registry.json) && echo $UNISWAP_ROUTER
+```
+
+查询 Gateway 地址：
+
+```bash
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
+```
+
+获取 Localnet 预置私钥：
+
+```bash
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+```
+
+部署合约：
+
+```bash
+UNIVERSAL=$(npx tsx commands/index.ts deploy \
+  --private-key $PRIVATE_KEY \
+  --rpc http://localhost:8545 \
+  --gateway $GATEWAY_ZETACHAIN \
+  --uniswap-router $UNISWAP_ROUTER | jq -r .contractAddress) && echo $UNIVERSAL
+```
+
+部署完成后，`UNIVERSAL` 即为本地部署地址。
+
+### Ethereum → BNB（Localnet）
+
+先准备变量。
+
+获取 Ethereum 的 Gateway：
+
+```bash
+GATEWAY_ETHEREUM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ETHEREUM
+```
+
+查询 BNB Gas 代币对应的 ZRC-20：
+
+```bash
+ZRC20_BNB=$(jq -r '."98".chainInfo.gasZRC20' ~/.zetachain/localnet/registry.json) && echo $ZRC20_BNB
+```
+
+获取本地私钥对应地址：
+
+```bash
+RECIPIENT=$(cast wallet address $PRIVATE_KEY) && echo $RECIPIENT
+```
+
+触发兑换：
+
+```bash
+npx zetachain evm deposit-and-call \
+  --rpc http://localhost:8545 \
+  --chain-id 11155112 \
+  --gateway $GATEWAY_ETHEREUM \
+  --amount 0.001 \
+  --types address bytes bool \
+  --receiver $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --values $ZRC20_BNB $RECIPIENT true
+```
+
+这会将 0.001 ETH 从本地 Ethereum 环境发送至 ZetaChain，转换为 ZRC-20 BNB，并提现到本地 BNB 链的地址。
+
+## 总结
+
+本教程展示了如何编写实现跨链代币兑换的全链应用，部署到本地或测试环境，并从连接 EVM 链触发代币兑换。同时，你也了解了在跨链兑换中处理 Gas 费用与代币授权的机制。
+
+## 源码
+
+教程示例可在示例合约仓库中找到：
+
+https://github.com/zeta-chain/example-contracts/tree/main/examples/swap
+

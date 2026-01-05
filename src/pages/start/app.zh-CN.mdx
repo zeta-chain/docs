@@ -1,0 +1,114 @@
+---
+title: 通用应用
+---
+
+# 通用应用（Universal Apps）
+
+## 概述
+
+通用应用是部署在 ZetaChain 上、能够原生连接其他区块链（如
+Ethereum、BNB、Bitcoin）的智能合约。
+
+与普通合约不同，通用应用可以接收来自任意已连接链的合约调用、消息和代币转账。它也
+可以向其他链发起合约调用和代币转账。这些能力使通用应用能够编排跨链的多步骤复杂交
+易。
+
+例如，Bitcoin 用户可以与通用应用交互，将 USDC 发送到 Ethereum 上的收件
+人。Ethereum 用户可以在 ZetaChain 上购买 NFT 并将其发送到 BNB 链上的账户。
+
+通用应用部署在 ZetaChain 的 Universal EVM 上，它在 EVM 的基础上扩展了全链互操作
+功能。这意味着你现有的合约可以直接在 ZetaChain 上运行，只需少量修改即可获得强大
+的全链能力。
+
+以下是一个通用应用示例：
+
+```solidity
+pragma solidity 0.8.26;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
+
+contract UniversalApp is UniversalContract {
+    function onCall(
+        MessageContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        // ...
+    }
+}
+```
+
+## 调用通用应用
+
+用户可以通过已连接链上的 **Gateway 合约** 来调用通用应用。每条连接链都有一个
+Gateway，它提供向通用应用存入代币并调用其方法的接口。用户在调用时可以同时传递数
+据和代币。
+
+例如，一个 Ethereum 用户发送 1 ETH 和消息 `"hello"` 给一个通用应用：
+
+（Figma 嵌入图略）
+
+一次对通用应用的调用会触发 `onCall` 方法。
+
+通用应用会接收到：
+
+- 一条消息（例如 `"hello"`），可以包含任意数据，如收件人地址、代币地址、NFT 属性
+  等
+- ZRC-20 形式的代币（例如 1 个 ZRC-20 ETH）
+
+每种来自连接链的原生 gas 代币和受支持的 ERC-20 都在 ZetaChain 上有一个对应的
+ZRC-20。ZRC-20 是 ERC-20 兼容的，并且可以无许可地提回原链（例如 ZRC-20 ETH 可提
+回为 Ethereum 上的 ETH）。
+
+`onCall` 还可以访问上下文信息，例如原始发送者地址和链 ID。
+
+通用应用也可以向连接链发起代币转账和合约调用。
+
+例如，某通用应用会：
+
+- 接收来自 Ethereum 的 6 ETH 和消息 `"I want BNB"`（表示目标代币）
+- 使用 ZetaChain 上的 DEX 将 6 个 ZRC-20 ETH 交换成 ZRC-20 BNB
+- 然后调用 Gateway 将 ZRC-20 BNB 提回并调用 BNB 链上的合约
+
+单次调用可以触发对多条链的调用。
+
+（Figma 嵌入图略）
+
+通过通用应用，跨多链的复杂交易和价值流可以由用户的一次签名交易完成。
+
+## Bitcoin 支持
+
+通用应用完全兼容 Bitcoin。相同的通用应用合约可以接收来自任意连接链的调用。
+
+Bitcoin 用户可以向 Gateway 地址发送 BTC 和数据来调用通用应用。整个过程只需要用户
+在他们的 BTC 钱包中签一次交易。通用应用还提供 gas 抽象机制，因此用户不需要在其他
+链上创建账户或获取 gas 代币。
+
+## Gas 抽象
+
+来自连接链的调用（如从 Gateway 进入通用应用）不会产生除初始 Gateway 交互之外的额
+外 gas 成本。
+
+从通用应用发出的跨链调用（例如合约调用和提币）需要 gas。Universal EVM 提供接口查
+询 gas，通用应用需要确保合约持有足够的 ZRC-20 gas 代币（对应目标链的 gas）。
+
+通常做法是通用应用会将收到的代币的一小部分兑换成目标链的 gas 代币（ZRC-20 版
+本）。当触发提币或跨链调用时，会扣除相应数量的 ZRC-20 gas 代币来支付目标链的费
+用。
+
+对于用户而言，这套系统隐藏了跨链 gas 的复杂性。只要用户提供足够的输入代币（任何
+代币都可以），gas 都会得到覆盖。
+
+## 总结
+
+- 通用应用：
+
+  - 可以接收来自已连接链上用户和合约的调用及代币
+  - 可以向已连接链发起合约调用和代币转账
+  - 可以自动处理跨链交易的 gas
+  - 完全兼容 EVM 链（如 Ethereum、BNB、Polygon）、Bitcoin、Solana、TON、Sui 对
+    Cosmos（通过 IBC）等更多链的支持即将推出
+
+- 原生 gas 和受支持的 ERC-20 代币会以 ZRC-20 形式存在。ZRC-20 可以无许可地提回原
+  链。

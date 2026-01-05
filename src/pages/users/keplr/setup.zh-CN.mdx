@@ -1,0 +1,47 @@
+---
+title: 钱包配置
+---
+
+import Image from "next/image";
+
+import { basePath } from "~/lib/app.constants";
+
+Keplr 是 Cosmos 生态常用的浏览器扩展钱包，支持账户管理、代币转账、交易签名等功能。
+
+访问 [Keplr 官网](https://www.keplr.app/) 按指引安装扩展。
+
+安装完成后，按步骤创建账户，可选择新建、导入现有账户或连接硬件钱包。
+
+![Keplr - Connect Wallet](/img/docs/keplr-setup.png)
+
+# 添加 ZetaChain 测试网
+
+在 Keplr 中添加 ZetaChain Testnet：
+
+- 打开 https://chains.keplr.app/
+- 在搜索框输入 “ZetaChain”
+- 点击 “Add to Keplr”
+
+![Keplr](/img/docs/keplr-add-zetachain.png)
+
+完成后打开 Keplr 扩展，即可看到 ZetaChain 测试网余额：
+
+<Image src={`${basePath}/img/docs/keplr-balances.png`} width={400} height={670} alt="Keplr extension" />
+
+# 添加 ZetaChain 主网
+
+在扩展菜单中选择 “Manage Chain Visibility”：
+
+<Image src={`${basePath}/img/docs/keplr-menu.png`} width={400} height={670} alt="Keplr menu" />
+
+浏览器将跳转到链列表：
+
+- 搜索 “ZetaChain”
+- 勾选 ZetaChain 并点击 “Save”
+
+![Keplr](/img/docs/keplr-add-zetachain-mainnet.png)
+
+再次打开扩展即可查看主网余额：
+
+<Image src={`${basePath}/img/docs/keplr-balances-mainnet.png`} width={400} height={670} alt="Keplr balance" />
+

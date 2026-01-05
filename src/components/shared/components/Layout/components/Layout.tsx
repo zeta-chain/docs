@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import tw, { styled } from "twin.macro";
 
+import { useIsHomePage, useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { useScrollToPageTop } from "~/hooks/useScrollToPageTop";
 
 import { mainNavRoutes } from "../Layout.constants";
@@ -195,9 +195,9 @@ type LayoutProps = {
 };
 
 export const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ className, children }) => {
-  const { route } = useRouter();
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
-  const isHomePage = useMemo(() => route === "/", [route]);
+  const normalizedRoute = useNormalizedRoute();
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
+  const isHomePage = useIsHomePage();
 
   useScrollToPageTop();
 

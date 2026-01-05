@@ -1,0 +1,150 @@
+---
+title: 质押
+---
+
+ZetaChain 是基于 Cosmos SDK 构建的权益证明（PoS）区块链，由质押原生代币 ZETA 的验证者守护。委托者（普通用户）可以将自己的 ZETA 质押给验证者以参与网络安全，并获得奖励。由于 ZetaChain 同时提供 EVM 环境，智能合约可通过专用的 Staking 预编译直接访问 Cosmos 质押功能，使合约、脚本与前端能够使用熟悉的 EVM 工具完成委托、解绑、领取奖励等操作。
+
+本教程将使用 Foundry（`cast`）与 curl 与 staking 预编译交互。相同函数也可在 Solidity 合约或 Web 前端中调用。
+
+- 预编译地址：`0x0000000000000000000000000000000000000800`
+- 文档：[Staking Precompile](https://evm.cosmos.network/v0.4.x/documentation/smart-contracts/precompiles/staking)
+- 接口：[StakingI.sol](https://github.com/cosmos/evm/blob/v0.4.0/precompiles/staking/StakingI.sol)
+
+### 前置条件
+
+- [Foundry](https://getfoundry.sh/)（包含 `cast`）
+- 用于 JSON 处理的 `jq`
+- 持有测试网 ZETA 的私钥
+
+### 快速环境配置
+
+```bash
+export RPC_URL="https://zetachain-athens-evm.blockpi.network/v1/rpc/public"
+export PRIVATE_KEY="YOUR_PRIVATE_KEY_HEX"
+
+cast wallet address $PRIVATE_KEY
+cast balance --rpc-url "$RPC_URL" $(cast wallet address $PRIVATE_KEY)
+
+export STAKING_PRECOMPILE=0x0000000000000000000000000000000000000800
+```
+
+## 查询验证者
+
+在委托前需要了解可选的验证者。每个验证者都有一个 operator 地址（`zetavaloper...`），委托时需指定。
+
+Cosmos SDK 提供 REST API（LCD）列出验证者。获取处于 bonded 状态（参与共识）的验证者：
+
+```bash
+curl -s \
+  "https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=1000" \
+| jq -r '.validators[] | [ .operator_address, (.description.moniker) ] | @tsv'
+```
+
+示例输出：
+
+```
+zetavaloper1qumrwnz9x2emzd5yjylp8pf9w2wh3my0gag27y    LiveRaveN
+zetavaloper1p3emgemv8q0fmtw70kfzwecmcvyd9ztqlzudwn    RockX
+...
+```
+
+这是获取验证者 operator 地址的最简单方式。也可以在合约或前端中直接调用预编译的 `validators` 函数在链上读取。验证者列表也可在 [ZetaChain 浏览器](https://testnet.zetachain.exploreme.pro/validators) 查看。
+
+## 委托
+
+委托操作会将你的 ZETA 质押给验证者，获得奖励。通过 staking 预编译，可直接使用 EVM 工具完成。
+
+- `amount` 单位为 wei（1 ZETA = `1e18` wei）
+- `--value` 需与 `amount` 相同，因为委托消耗原生 ZETA
+
+```bash
+cast send $STAKING_PRECOMPILE \
+  "delegate(address,string,uint256)" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  1000000000000000000 \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+此交易向验证者质押 1 ZETA。
+
+### 验证委托情况
+
+可通过 `delegation` 函数查询委托数量，返回 `(uint256 shares, (string denom, uint256 amount))`：
+
+```bash
+cast call $STAKING_PRECOMPILE \
+  "delegation(address,string)(uint256,(string,uint256))" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  --rpc-url $RPC_URL
+```
+
+示例输出：
+
+```
+(1000000000000000000, (azeta, 1000000000000000000))
+```
+
+- shares：你在该验证者池中的份额
+- balance：委托金额（wei），denom 为 `azeta`
+
+## 解绑委托
+
+解绑会开启解锁期：解绑后的 ZETA 停止产生收益，需等解锁完成后才能取回。可以部分或全部解绑。
+
+- `amount` 仍然以 wei 表示
+- 使用委托时的同一验证者地址
+- `--value` 与 `amount` 保持一致
+
+```bash
+cast send $STAKING_PRECOMPILE \
+  "undelegate(address,string,uint256)" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  1000000000000000000 \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+该交易将从验证者解绑 1 ZETA。
+
+### 确认变动
+
+解绑后，再次查询委托余额会减少：
+
+```bash
+cast call $STAKING_PRECOMPILE \
+  "delegation(address,string)(uint256,(string,uint256))" \
+  $(cast wallet address $PRIVATE_KEY) \
+  "zetavaloper1ymnrwg9e3xr9xkw42ygzjx34dyvwvtc24ct0t5" \
+  --rpc-url $RPC_URL
+```
+
+示例（解绑 1 ZETA 后）：
+
+```
+(0, (azeta, 0))
+```
+
+若部分解绑，则显示剩余金额。
+
+### 注意事项
+
+- 解锁期内，解绑金额处于锁定状态，待期满后才会返还为可用 ZETA。
+- 可多次提交解绑，每次会生成独立的 unbonding 条目。
+- 尝试解绑超过已委托数量将失败。
+
+## 总结
+
+借助 staking 预编译，你可以在 EVM 环境中直接操作 ZetaChain 的 PoS 系统——无需使用 Cosmos 工具，即可通过 `cast`、Solidity 合约或前端应用完成委托、解绑或查询验证者信息。
+
+你还可以构建全链合约，代表连接链用户自动质押 ZETA，为以下跨链场景铺路：
+
+- 协议自动质押多链奖励或闲置资产
+- 结合跨链流动性与质押收益的策略
+- 用户无需离开主链即可管理委托的应用
+
+质押是保障网络安全并获取奖励的基础能力。接下来可进一步探索预编译提供的高级函数，例如再委托、查询解锁条目、领取奖励等。***
+

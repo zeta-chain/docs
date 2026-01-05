@@ -1,11 +1,12 @@
 import clsx from "clsx";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useConfig } from "nextra-theme-docs";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import tw, { styled } from "twin.macro";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
+import { useIsHomePage, useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute } from "~/lib/directories/directories.selectors";
 
@@ -38,25 +39,36 @@ export const StyledHero = styled.div`
  * ---
  */
 export const Hero: React.FC = () => {
-  const { route } = useRouter();
   const { upLg } = useCurrentBreakpoint();
+  const normalizedRoute = useNormalizedRoute();
+
+  // Use Nextra's useConfig for locale-aware title and frontMatter
+  const config = useConfig();
+  const nextraTitle = config.title;
+  const nextraFrontMatter = config.frontMatter || {};
 
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
-  const currentDirectory = useMemo(() => directoriesByRoute[route], [directoriesByRoute, route]);
+  const currentDirectory = useMemo(() => directoriesByRoute[normalizedRoute], [directoriesByRoute, normalizedRoute]);
 
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
-  const isHomePage = useMemo(() => ["/"].includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
+  const isHomePage = useIsHomePage();
   const isSubCategoryPage = useMemo(
-    () => currentDirectory?.frontMatter?.pageType === "sub-category",
-    [currentDirectory]
+    () => nextraFrontMatter?.pageType === "sub-category" || currentDirectory?.frontMatter?.pageType === "sub-category",
+    [nextraFrontMatter, currentDirectory]
   );
 
   const { title, description, readTime, readType, imgUrl, imgWidth } = useMemo(() => {
-    if (!currentDirectory) return {};
+    // Prefer Nextra's locale-aware frontMatter and title
+    const frontMatter = nextraFrontMatter;
+    const meta = currentDirectory?.meta;
 
-    const { frontMatter, meta } = currentDirectory;
-
-    const title = frontMatter?.title ? String(frontMatter.title) : meta?.title ? String(meta.title) : undefined;
+    const title = frontMatter?.title
+      ? String(frontMatter.title)
+      : nextraTitle
+      ? String(nextraTitle)
+      : meta?.title
+      ? String(meta.title)
+      : undefined;
 
     const description = frontMatter?.description
       ? String(frontMatter.description)
@@ -96,7 +108,7 @@ export const Hero: React.FC = () => {
       imgUrl,
       imgWidth,
     };
-  }, [currentDirectory]);
+  }, [nextraFrontMatter, nextraTitle, currentDirectory]);
 
   if (isHomePage || !title) return null;
 

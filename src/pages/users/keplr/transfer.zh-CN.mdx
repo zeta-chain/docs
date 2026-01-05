@@ -1,0 +1,31 @@
+---
+title: 代币转账
+---
+
+import Image from "next/image";
+
+import { basePath } from "~/lib/app.constants";
+
+打开 Keplr 扩展并点击 “Send”：
+
+<Image src={`${basePath}/img/docs/keplr-dashboard.png`} width={400} height={670} alt="Keplr extension" />
+
+选择要发送的资产。注意 Keplr 仅展示原生或 IBC 代币，不会显示 ZRC-20 / ERC-20。此处选择 ZETA：
+
+<Image src={`${basePath}/img/docs/keplr-assets.png`} width={400} height={670} alt="Keplr extension - Select Asset" />
+
+输入接收方地址（bech32 格式，如 `zeta***`）和转账数量。Keplr 中的数量以 ZETA 为单位，因此示例中的 “1” 代表 1 ZETA（10¹⁸ azeta）。可选填写 Memo，常用于向中心化交易所转账。
+
+点击 “Next” 查看交易详情：
+
+<Image src={`${basePath}/img/docs/keplr-send.png`} width={400} height={670} alt="Keplr extension - Send" />
+
+确认无误后点击 “Approve” 签名并广播交易：
+
+<Image
+  src={`${basePath}/img/docs/keplr-approve.png`}
+  width={400}
+  height={670}
+  alt="Keplr extension - Confirm Transaction"
+/>
+

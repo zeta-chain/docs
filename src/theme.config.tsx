@@ -1,4 +1,4 @@
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, LocaleSwitch } from "nextra-theme-docs";
 
 import {
   AppHead,
@@ -28,6 +28,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   navbar: {
     extraContent: (
       <>
+        <LocaleSwitch />
         <ThemeToggle className="hidden sm:flex" />
         <a
           href="https://github.com/zeta-chain"
@@ -93,7 +94,6 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   chat: {
     icon: null,
   },
-
   // Configure App Head component
   head: <AppHead />,
 
@@ -146,6 +146,10 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     component: null,
     text: `© ${new Date().getFullYear()} Meta Protocol, Inc`,
   },
+  i18n: [
+    { locale: "en-US", text: "English" },
+    { locale: "zh-CN", text: "中文" },
+  ],
 };
 
 export default nextraDocsThemeConfig;

@@ -3,11 +3,12 @@ import List from "@mui/material/List";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { Page } from "nextra";
+import { getPagesUnderRoute } from "nextra/context";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 
 import { useCurrentBreakpoint } from "~/hooks/useCurrentBreakpoint";
-import { selectPages } from "~/lib/directories/directories.selectors";
 import { getRevealProps } from "~/lib/helpers/animations";
 
 import { Footer } from "../../Footer";
@@ -24,13 +25,73 @@ type NavigationLayoutProps = PropsWithChildren<{
 
 export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, children }) => {
   const { upSm } = useCurrentBreakpoint();
+  const { locale, defaultLocale } = useRouter();
 
   const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true);
 
   const closeMobileDrawer = useCallback(() => !upSm && setIsLeftDrawerOpen(false), [upSm, setIsLeftDrawerOpen]);
 
-  const pages = useSelector(selectPages);
-  const navPages = useMemo(() => pages.filter((page) => page.kind === "Folder"), [pages]);
+  // Use Nextra's getPagesUnderRoute for locale-aware page data
+  const getNavSectionPages = useCallback(
+    (route: string) => {
+      const pages = getPagesUnderRoute(route);
+      const currentLocale = locale || defaultLocale;
+
+      // Check if page name contains locale suffix (e.g., "zetachain.zh-CN")
+      const getPageLocale = (page: Page): string | undefined => {
+        if ("locale" in page && page.locale) return page.locale as string;
+        // Check name for locale suffix
+        const nameParts = page.name.split(".");
+        if (nameParts.length > 1) {
+          const suffix = nameParts[nameParts.length - 1];
+          if (suffix === "en-US" || suffix === "zh-CN") return suffix;
+        }
+        return undefined;
+      };
+
+      // Filter pages: only keep pages matching current locale, deduplicate by route
+      const routeToPage = new Map<string, Page>();
+
+      pages.forEach((page) => {
+        // Always include folders - they are containers without locale
+        if (page.kind === "Folder") {
+          const existing = routeToPage.get(page.route);
+          if (!existing) {
+            routeToPage.set(page.route, page);
+          }
+          return;
+        }
+
+        const pageLocale = getPageLocale(page);
+
+        // In development, Nextra doesn't filter pageMap by locale, so we need to be aggressive
+        // Only include pages that either:
+        // 1. Have a locale that matches the current locale
+        // 2. Have no locale AND we're on the default locale (backwards compatibility)
+        if (pageLocale) {
+          // Page has explicit locale - must match current locale exactly
+          if (pageLocale !== currentLocale) return;
+        } else {
+          // Page has no locale - only include on default locale
+          if (currentLocale !== defaultLocale) return;
+        }
+
+        // Skip index pages in sidebar (they're still accessible via route)
+        if (page.name === "index" || page.name.startsWith("index.")) return;
+
+        // Skip overview pages in top-level sidebar (they're still accessible via route)
+        if (page.name === "overview" || page.name.startsWith("overview.")) return;
+
+        const existing = routeToPage.get(page.route);
+        if (!existing) {
+          routeToPage.set(page.route, page);
+        }
+      });
+
+      return Array.from(routeToPage.values());
+    },
+    [locale, defaultLocale]
+  );
 
   // To prevent a flash of the drawer on first render given that useCurrentBreakpoint has an issue always returning false for the first render for upLg and others
   useEffect(() => {
@@ -76,26 +137,24 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = ({ isMainPage, 
                 <div key={items[0].url} className="flex flex-col">
                   <List className="w-full font-medium">
                     {items.map((item) => {
-                      const navSection = navPages.find((page) => page.route === item.url);
+                      const navSectionPages = item.url ? getNavSectionPages(item.url) : [];
 
                       return (
                         <div key={item.url}>
                           <NavigationItem item={item} isOpen={isLeftDrawerOpen} onClick={closeMobileDrawer} />
 
-                          {!!navSection && "children" in navSection && (
+                          {navSectionPages.length > 0 && (
                             <List className="w-full">
-                              {navSection.children
-                                .filter((page) => page.route !== item.url)
-                                .map((page) => (
-                                  <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
-                                    <NavigationAccordionLink
-                                      key={page.route}
-                                      page={page}
-                                      onClick={closeMobileDrawer}
-                                      isTopLevelPage
-                                    />
-                                  </div>
-                                ))}
+                              {navSectionPages.map((page) => (
+                                <div key={page.route} className="px-3 pl-12 sm:pr-6 pb-3 sm:pb-2">
+                                  <NavigationAccordionLink
+                                    key={page.route}
+                                    page={page}
+                                    onClick={closeMobileDrawer}
+                                    isTopLevelPage
+                                  />
+                                </div>
+                              ))}
                             </List>
                           )}
                         </div>

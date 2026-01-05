@@ -1,0 +1,20 @@
+{
+  "overview": {
+    "title": "使用指南"
+  },
+  "zetahub": {
+    "title": "ZetaHub"
+  },
+  "pingpub": {
+    "title": "Ping Pub 浏览器"
+  },
+  "keplr": {
+    "title": "Keplr 钱包"
+  },
+  "leap": {
+    "title": "Leap 钱包"
+  },
+  "cli": {
+    "title": "节点 CLI"
+  }
+}

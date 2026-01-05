@@ -1,0 +1,76 @@
+---
+title: 合约注册表
+description: 通过 ZetaChain 链上注册表查询协议合约地址。
+---
+
+import { ContractRegistryChains } from "~/components/Docs";
+
+## 能够做什么
+
+合约注册表是协议合约地址、ZRC-20 代币与链配置的唯一可信来源，适用于 ZetaChain 及所有连接链。你可以利用它查询系统合约的标准地址，例如 `gateway`、`erc20Custody`、ZRC-20 等。
+
+## 通过 CLI 查询
+
+列出所有已注册合约：
+
+```bash
+zetachain query contracts list
+```
+
+按合约类型与链 ID 获取特定合约（示例：以太坊 Sepolia `11155111` 上的 gateway）：
+
+```bash
+zetachain query contracts show --type gateway --chain-id 11155111
+```
+
+更多协议合约地址可参考[合约地址页面](/reference/network/contracts)。
+
+## 在全链合约中使用
+
+注册表会返回条目是否生效，以及可供解码的 ABI 编码负载。
+
+读取以太坊 Sepolia（链 ID `11155111`）上的 Gateway 地址：
+
+```solidity
+(bool active, bytes memory gatewayAddressBytes) = registry.getContractInfo(11155111, "gateway");
+address gateway = address(uint160(bytes20(gatewayAddressBytes)));
+```
+
+读取 ZetaChain 测试网（链 ID `7001`）上的 Uniswap V2 Router：
+
+```solidity
+(bool active, bytes memory uniswapRouterBytes) = registry.getContractInfo(7001, "uniswapV2Router02");
+address uniswapRouter = address(uint160(bytes20(uniswapRouterBytes)));
+```
+
+所有全链合约都会从抽象基类继承 `registry` 引用，因此可直接调用 `registry.getContractInfo(...)`，无需手动配置地址。
+
+## 部署地址
+
+注册表部署在 ZetaChain 及部分连接链上，目前已覆盖所有 EVM 连接链，未来将支持更多链类型。
+
+在 ZetaChain 上的注册表地址在主网、测试网与本地网络保持一致：
+
+```bash
+0x7CCE3Eb018bf23e1FE2a32692f2C77592D110394
+```
+
+ZetaChain 上的注册表是协议合约地址的权威来源。连接链上的注册表作为镜像，便于本地读取。
+
+实现说明：合约注册表本身是一份全链应用。当在 ZetaChain 上新增或更新合约时，相关信息会同步到连接链上的注册表。
+
+各链上的注册表地址如下：
+
+<ContractRegistryChains />
+
+## 访问控制
+
+合约注册表由 ZetaChain 核心团队维护。你可以直接在链上查询 `admin` 与 `registryManager` 地址以验证角色。
+
+## 源码
+
+- 核心注册表合约源码：
+  [CoreRegistry.sol](https://github.com/zeta-chain/protocol-contracts-evm/blob/develop/contracts/zevm/CoreRegistry.sol)
+- 从注册表自动获取的 JSON 地址集合：
+  [zeta-chain/contract-addresses](https://github.com/zeta-chain/contract-addresses)
+

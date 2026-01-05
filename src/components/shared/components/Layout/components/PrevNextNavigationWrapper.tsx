@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { PropsWithChildren, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { usePrevious } from "react-use";
 
+import { useNormalizedRoute } from "~/hooks/useIsHomePage";
 import { basePath } from "~/lib/app.constants";
 import { selectDirectoriesByRoute, selectFlatDirectories } from "~/lib/directories/directories.selectors";
 import { countRouteSegments, getValidParentDirectory } from "~/lib/helpers/nextra";
@@ -21,22 +21,24 @@ type PrevNextNavigationWrapperProps = PropsWithChildren<{}>;
  * @todo Add optional "tutorial" link in the bottom Continue Learning section
  */
 export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps> = ({ children }) => {
-  const { route } = useRouter();
+  const normalizedRoute = useNormalizedRoute();
 
-  const prevRoute = usePrevious(route);
+  const prevNormalizedRoute = usePrevious(normalizedRoute);
 
   const flatDirectories = useSelector(selectFlatDirectories);
   const directoriesByRoute = useSelector(selectDirectoriesByRoute);
 
   const { prevPage, nextPage, relatedTutorial } = useMemo(() => {
-    const currentDirectory = directoriesByRoute[route];
+    const currentDirectory = directoriesByRoute[normalizedRoute];
 
-    if (!route || !currentDirectory) return { prevPage: null, nextPage: null };
+    if (!normalizedRoute || !currentDirectory) return { prevPage: null, nextPage: null };
 
-    const isPrevRouteCurrent = prevRoute === route;
-    const isPrevRouteChildren = prevRoute ? countRouteSegments(prevRoute) > countRouteSegments(route) : false;
-    const isPrevRouteValid = prevRoute && !isPrevRouteCurrent && !isPrevRouteChildren;
-    const prevDirectory = isPrevRouteValid ? directoriesByRoute[prevRoute] : null;
+    const isPrevRouteCurrent = prevNormalizedRoute === normalizedRoute;
+    const isPrevRouteChildren = prevNormalizedRoute
+      ? countRouteSegments(prevNormalizedRoute) > countRouteSegments(normalizedRoute)
+      : false;
+    const isPrevRouteValid = prevNormalizedRoute && !isPrevRouteCurrent && !isPrevRouteChildren;
+    const prevDirectory = isPrevRouteValid ? directoriesByRoute[prevNormalizedRoute] : null;
 
     const nextPage = flatDirectories[currentDirectory.index + 1] || null;
 
@@ -72,13 +74,13 @@ export const PrevNextNavigationWrapper: React.FC<PrevNextNavigationWrapperProps>
       nextPage,
       relatedTutorial,
     };
-  }, [flatDirectories, directoriesByRoute, route, prevRoute]);
+  }, [flatDirectories, directoriesByRoute, normalizedRoute, prevNormalizedRoute]);
 
-  const isMainPage = useMemo(() => mainNavRoutes.includes(route), [route]);
+  const isMainPage = useMemo(() => mainNavRoutes.includes(normalizedRoute), [normalizedRoute]);
 
   const isSubCategoryPage = useMemo(
-    () => directoriesByRoute[route]?.frontMatter?.pageType === "sub-category",
-    [directoriesByRoute, route]
+    () => directoriesByRoute[normalizedRoute]?.frontMatter?.pageType === "sub-category",
+    [directoriesByRoute, normalizedRoute]
   );
 
   const continueLearningNavItems = useMemo(() => {

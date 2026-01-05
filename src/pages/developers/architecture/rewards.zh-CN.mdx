@@ -1,0 +1,24 @@
+---
+title: 质押奖励
+---
+
+ZetaChain 是一条委托权益证明（DPoS）区块链。ZETA 代币持有者可以将代币委托给验证者参与质押。质押不仅使持有者能够参与治理，也能因维护网络安全而获得奖励。ZetaChain 使用标准的 Cosmos SDK [`staking`](https://docs.cosmos.network/main/build/modules/staking)、[`distribution`](https://docs.cosmos.network/main/build/modules/distribution) 与 [`slashing`](https://docs.cosmos.network/main/build/modules/slashing) 模块。
+
+目前，质押奖励由每个区块收取的交易费用与来自排放资金池的固定奖励共同组成。奖励会根据验证者的投票权在验证者之间分配。
+
+$$ 质押奖励 = 交易费用 + 9.62\ \text{ZETA} $$
+
+该固定数值（9.62 ZETA）在协议[源码](https://github.com/zeta-chain/node/blob/81fc485d78617b29f9676b6b53529411e5824769/x/emissions/types/keys.go#L48)中定义。
+
+排放资金池地址：
+[zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy](https://zetachain.blockpi.network/lcd/v1/public/zeta-chain/emissions/list_addresses)
+
+可通过以下 API 查询排放资金池余额：
+
+https://zetachain.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta1w43fn2ze2wyhu5hfmegr6vp52c3dgn0srdgymy
+
+- 排放资金池目前由人工注资
+- 网络当前没有通胀
+
+如需了解更多代币经济信息，请参阅文档中的 [ZETA 代币用途](/about/token-utility/distribution)。
+

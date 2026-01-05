@@ -1,0 +1,196 @@
+通用代币是完全互操作的 ERC-20 代币，可在任意已连接链上铸造与转移，无需包装或跨链桥。每个代币在所有链上都保持统一的总量与元数据，为多链 DeFi、支付与治理系统带来真正的链无关流动性。
+
+ZetaChain 上的通用代币基于标准的 [OpenZeppelin ERC-20](https://docs.openzeppelin.com/contracts/5.x/api/token/erc20) 实现，并采用 [UUPS 可升级](https://docs.openzeppelin.com/contracts/5.x/api/proxy#UUPSUpgradeable) 代理模式，使开发者可以在保障安全的前提下迭代与升级代币逻辑。
+
+## 方案一：创建新的通用代币
+
+新建通用代币项目：
+
+```
+npx zetachain@latest new --project token
+```
+
+安装依赖：
+
+```
+cd token
+yarn
+forge soldeer update
+```
+
+编译合约：
+
+```
+forge build
+```
+
+## 方案二：升级现有 ERC-20 项目
+
+你可以将现有 ERC-20 项目升级为通用代币，只需安装官方标准合约包：
+
+```bash
+yarn add @zetachain/standard-contracts
+```
+
+随后参考 [示例实现](https://github.com/zeta-chain/example-contracts/tree/main/examples/token/contracts)，留意带有通用代币专用逻辑的注释，并将相关代码整合进你的合约中。
+
+这样即可让代币支持在 ZetaChain 与已连接 EVM 链之间进行跨链铸造、转移与总量跟踪。
+
+## 部署到测试网
+
+```
+RPC_ETHEREUM=$(zetachain q chains show --chain-id 11155111 -f rpc)
+RPC_BASE=$(zetachain q chains show --chain-id 84532 -f rpc)
+RPC_ZETACHAIN=$(zetachain q chains show --chain-id 7001 -f rpc)
+
+ZRC20_ETHEREUM=$(zetachain q tokens show -s ETH.ETHSEP -f zrc20)
+ZRC20_BASE=$(zetachain q tokens show -s ETH.BASESEP -f zrc20)
+
+GATEWAY_ETHEREUM=0x0c487a766110c85d301d96e33579c5b317fa4995
+GATEWAY_BASE=0x0c487a766110c85d301d96e33579c5b317fa4995
+GATEWAY_ZETACHAIN=0x6c533f7fe93fae114d0954697069df33c9b74fd7
+
+GAS_LIMIT=1000000
+```
+
+```
+PRIVATE_KEY=...
+```
+
+在 ZetaChain、Base 与 Ethereum 上部署合约。
+
+```
+ZETACHAIN_TOKEN=$(npx tsx commands deploy \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --name ZetaChainUniversalToken \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $ZETACHAIN_TOKEN
+```
+
+```
+BASE_TOKEN=$(npx tsx commands deploy \
+  --rpc $RPC_BASE \
+  --private-key $PRIVATE_KEY \
+  --name EVMUniversalToken \
+  --gateway $GATEWAY_BASE \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $BASE_TOKEN
+```
+
+```
+ETHEREUM_TOKEN=$(npx tsx commands deploy \
+  --rpc $RPC_ETHEREUM \
+  --private-key $PRIVATE_KEY \
+  --name EVMUniversalToken \
+  --gateway $GATEWAY_ETHEREUM \
+  --gas-limit $GAS_LIMIT | jq -r .contractAddress) && echo $ETHEREUM_TOKEN
+```
+
+### 连接合约
+
+部署完成后，需要让各合约互信以支持跨链通信。在 ZetaChain 上调用 `setConnected`，按链对应的 ZRC-20 Gas 代币注册 Connected 合约：
+
+```
+cast send $ZETACHAIN_TOKEN 'setConnected(address,bytes)' $ZRC20_BASE $BASE_TOKEN --rpc-url $RPC_ZETACHAIN --private-key $PRIVATE_KEY
+```
+
+```
+cast send $ZETACHAIN_TOKEN 'setConnected(address,bytes)' $ZRC20_ETHEREUM $ETHEREUM_TOKEN --rpc-url $RPC_ZETACHAIN --private-key $PRIVATE_KEY
+```
+
+随后在每条已连接链上，调用 `setUniversal` 指回 ZetaChain 上的 Universal 合约：
+
+```
+cast send $BASE_TOKEN 'setUniversal(address)' $ZETACHAIN_TOKEN --rpc-url $RPC_BASE --private-key $PRIVATE_KEY
+```
+
+```
+cast send $ETHEREUM_TOKEN 'setUniversal(address)' $ZETACHAIN_TOKEN --rpc-url $RPC_ETHEREUM --private-key $PRIVATE_KEY
+```
+
+这样即可确保只有授权合约能跨链发送与接收代币。
+
+### 在 ZetaChain 铸造
+
+```
+npx tsx commands mint \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --contract $ZETACHAIN_TOKEN \
+  --amount 10 | jq -r .mintTransactionHash
+```
+
+https://zetachain-testnet.blockscout.com/tx/0xbe550cb123e34c4bddf3b273e854837ea6f727e527bf80a752870c3f8bff0ef1
+
+### 从 ZetaChain 转移至 Base
+
+将代币从 ZetaChain 转移到 Base。Gas 金额（以 ZETA 指定）为估算值，未使用部分会退还给用户。
+
+使用 ZRC-20 Base ETH 作为目标地址，指明代币要转移到的链。
+
+```
+npx tsx commands transfer \
+  --rpc $RPC_ZETACHAIN \
+  --private-key $PRIVATE_KEY \
+  --from $ZETACHAIN_TOKEN \
+  --destination $ZRC20_BASE \
+  --amount 10 \
+  --gas-amount 5 | jq -r .transferTransactionHash
+```
+
+```
+zetachain q cctx --hash 0x2ced374831b7612f4f2df98f2d1f30b2fa797ddcc62df0a5883b402b9310fe7a
+```
+
+```
+7001 → 84532 ✅ OutboundMined
+CCTX:     0x88ac99d5ce593af62f5e56e2cdeb14797e23fb890933f50d74f1c8944b91b991
+Tx Hash:  0x2ced374831b7612f4f2df98f2d1f30b2fa797ddcc62df0a5883b402b9310fe7a (on chain 7001)
+Tx Hash:  0x4c0dbfda09e0364a54be7f812a49c677739f0c3a9bc6d2e6bf0c8d5ea4a7903d (on chain 84532)
+Sender:   0xE3CA615E4Bd2b106ff51e88A04Ec39A2Afc75212
+Receiver: 0x449777033Ff53aD3B4F70C17c31110476E61D2A8
+Message:  0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba3200000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000
+```
+
+### 从 Base 转移至 Ethereum
+
+再将代币从 Base 转移到 Ethereum。
+
+```
+npx tsx commands transfer \
+  --rpc $RPC_BASE \
+  --private-key $PRIVATE_KEY \
+  --from $BASE_TOKEN \
+  --destination $ZRC20_ETHEREUM \
+  --amount 10 \
+  --gas-amount 0.005 | jq -r .transferTransactionHash
+```
+
+```
+zetachain q cctx --hash 0x8db12522169485a44ba8490d53f734ac6b7f5da72a6decbe3ae462198a960cee
+```
+
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0x39d970fc742519c87e67733ffd13315dce907c07e65cf97ba4ffba2e2bf2ceed
+Tx Hash:  0x8db12522169485a44ba8490d53f734ac6b7f5da72a6decbe3ae462198a960cee (on chain 84532)
+Tx Hash:  0x180f7fecd37f9e097ae5372ec729502933aa15cd6ec078af1efb911370fb33ea (on chain 7001)
+Sender:   0x449777033Ff53aD3B4F70C17c31110476E61D2A8
+Receiver: 0xE3CA615E4Bd2b106ff51e88A04Ec39A2Afc75212
+Message:  00000000000000000000000005ba149a7bd6dc1f937fa9046a9e05c05f3b18b00000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba3200000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000
+Amount:   5000000000000000 Gas tokens
+
+7001 → 11155111 ✅ PendingOutbound (transaction broadcasted to target chain)
+CCTX:     0xbbc4e169decc986556b079445dc5055725dff65e9ee66a48613374c1b4e64eda
+Tx Hash:  0x39d970fc742519c87e67733ffd13315dce907c07e65cf97ba4ffba2e2bf2ceed (on chain 7001)
+Tx Hash:  0x5f973954ab6c6745e770e02f4697309b3e18be60fc53764c7b6deec07cd5fe4b (on chain 11155111)
+Sender:   0xE3CA615E4Bd2b106ff51e88A04Ec39A2Afc75212
+Receiver: 0xBc1eE0E9452eC2E809FC2dBD0000A7D6095fDfC2
+Message:  0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba32000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000006ba661563e1c0000000000000000000000004955a3f38ff86ae92a914445099caa8ea2b9ba3200000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000
+Amount:   118362341785116 Gas tokens
+Status:   PendingOutbound, initiating outbound
+```
+
+## 源码
+
+https://github.com/zeta-chain/example-contracts/tree/main/examples/token
+
