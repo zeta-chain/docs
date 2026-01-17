@@ -33,7 +33,9 @@ export const BuildForNow = () => {
         <div className="flex flex-col md:flex-row gap-6 mt-10 order-3 md:order-2">
           <div className="basis-full md:basis-1/3 flex justify-center">
             <div className="md:max-w-[320px]">
-              <h3 className="text-[18px] font-medium text-grey-900 dark:text-grey-50 mb-2">Build once. Run everywhere.</h3>
+              <h3 className="text-[18px] font-medium text-grey-900 dark:text-grey-50 mb-2">
+                Build once. Run everywhere.
+              </h3>
               <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300">
                 Apps run across chains and models without rebuilding integrations for each ecosystem or provider.
               </p>
@@ -42,7 +44,9 @@ export const BuildForNow = () => {
 
           <div className="basis-full md:basis-1/3 flex justify-center">
             <div className="md:max-w-[320px]">
-              <h3 className="text-[18px] font-medium text-grey-900 dark:text-grey-50 mb-2">Private memory by default</h3>
+              <h3 className="text-[18px] font-medium text-grey-900 dark:text-grey-50 mb-2">
+                Private memory by default
+              </h3>
               <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300">
                 Remember context across sessions, keep it private by design, and enforce access via user-controlled
                 permissions.
@@ -52,7 +56,9 @@ export const BuildForNow = () => {
 
           <div className="basis-full md:basis-1/3 flex justify-center">
             <div className="md:max-w-[320px]">
-              <h3 className="text-[18px] font-medium text-grey-900 dark:text-grey-50 mb-2">Monetize without infrastructure</h3>
+              <h3 className="text-[18px] font-medium text-grey-900 dark:text-grey-50 mb-2">
+                Monetize without infrastructure
+              </h3>
               <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300">
                 Monetize usage, access, context, or execution globally without standing up servers, billing systems, or
                 account flows.
