@@ -46,5 +46,9 @@
   "onfinality": {
     "title": "OnFinality",
     "description": "Subgraph and SubQuery indexer"
+  },
+  "anuma": {
+    "title": "Anuma",
+    "description": "Privacy-focused multi-model AI chat platform"
   }
 }
