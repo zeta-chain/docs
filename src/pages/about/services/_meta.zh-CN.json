@@ -34,5 +34,8 @@
   },
   "onfinality": {
     "title": "OnFinality"
+  },
+  "anuma": {
+    "title": "Anuma"
   }
 }
