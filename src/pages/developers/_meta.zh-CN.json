@@ -1,0 +1,23 @@
+{
+  "overview": {
+    "title": "开发构建"
+  },
+  "evm": {
+    "title": "全链 EVM"
+  },
+  "standards": {
+    "title": "全链资产"
+  },
+  "chains": {
+    "title": "已连接链"
+  },
+  "tutorials": {
+    "title": "教程"
+  },
+  "protocol": {
+    "title": "协议合约"
+  },
+  "architecture": {
+    "title": "协议架构"
+  }
+}

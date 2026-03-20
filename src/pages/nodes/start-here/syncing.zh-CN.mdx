@@ -1,0 +1,123 @@
+---
+title: 节点同步
+---
+
+import { Alert } from "~/components/shared";
+import { NodeSnapshots } from "~/components/Docs";
+
+<Alert variant="note">
+  本指南假设你已经完成[节点部署](/nodes/start-here/setup)。
+</Alert>
+
+# 方案一：快照同步
+
+此方法会下载已备份的节点数据目录。
+
+选择网络与快照类型，将快照下载并解压至 `/home/zetachain/.zetacored`。
+
+## 下载最新全节点快照
+
+以下命令可下载并解压最新全节点快照：
+
+```bash
+# 安装 lz4
+sudo apt update && sudo apt install lz4 -y
+
+# 获取一次 JSON 响应
+SNAPSHOT_JSON=$(curl -s https://snapshots.rpc.zetachain.com/mainnet/fullnode/latest.json)
+
+# 提取链接与文件名
+SNAPSHOT_LINK=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].link')
+SNAPSHOT_FILENAME=$(echo $SNAPSHOT_JSON | jq -r '.snapshots[].filename')
+
+# 下载并解压快照
+sudo -u zetachain curl "$SNAPSHOT_LINK" -o "/home/zetachain/$SNAPSHOT_FILENAME" && \
+sudo -u zetachain lz4 -dc /home/zetachain/$SNAPSHOT_FILENAME | sudo -u zetachain tar -C /home/zetachain/.zetacored/ -xvf - && \
+sudo systemctl start zetacored
+```
+
+<NodeSnapshots apiUrl="https://snapshots.rpc.zetachain.com" />
+
+<Alert variant="warning">
+  **归档快照** 现已改为 **多分卷** 格式。你可以展开 **"Show Parts"** 分别下载，或复制提供的 **POSIX 下载脚本** 一键完成下载、合并与解压。只需点击分卷列表下方的 **“Copy to Clipboard”** 图标复制命令，并在终端执行即可。
+</Alert>
+
+<Alert variant="warning">
+  快照的数据库后端为 **pebbledb**。请确保节点使用相同后端，否则无法直接使用快照。
+</Alert>
+
+#### 其他快照来源
+
+##### 主网：
+
+- https://polkachu.com/tendermint_snapshots/zetachain
+- https://app.nodejumper.io/zetachain/sync
+- https://itrocket.net/services/mainnet/zetachain/#snap
+
+##### 测试网：
+
+- https://app.nodejumper.io/zetachain-testnet/sync
+- https://itrocket.net/services/testnet/zetachain/#snap
+
+# 方案二：KYVE 的 KSYNC
+
+以下内容介绍如何使用 KSYNC 同步 ZetaChain 主网节点。
+
+KSYNC 可直接从去中心化的 KYVE 数据湖将区块与状态同步快照导入 Cosmos 节点。借助 KSYNC，Cosmos 验证人无需等待 P2P 节点同步，也无需手动查找可信 app hash；此外还可回溯至创世高度进行状态同步。
+
+更多信息：https://docs.kyve.network/ksync
+
+### 安装 KSYNC
+
+安装最新版本：
+
+```
+go install github.com/KYVENetwork/ksync/cmd/ksync@latest
+```
+
+检查安装：
+
+```
+ksync version
+```
+
+### 配置节点
+
+在 `config.toml` 中修改以下配置：
+
+```text filename="/home/zetachain/.zetacored/config/config.toml"
+db_backend = "goleveldb"
+```
+
+当前需将数据库后端改为默认的 goleveldb，因为 KSYNC 暂不支持 ZetaChain 依赖的 pebbledb（https://github.com/BlockPILabs/cosmos-db）。
+
+### 同步节点
+
+```
+ksync state-sync --binary="/path/to/zetacored" --chain-id=zetachain_7000-1 --snapshot-pool-id=11
+```
+
+# 节点健康检查
+
+### 查询节点状态
+
+可通过状态接口确认节点同步情况：
+
+```
+curl http://localhost:26657/status | jq
+```
+
+确保 `catching_up` 为 false，同时留意 `latest_block_height` 与 `latest_block_time`。
+
+### 查看日志
+
+可通过监控日志确认节点运行情况，日志中应持续输出如下 `INF` 信息：
+
+```
+4:10AM INF executed block height=3468229 module=state num_invalid_txs=1 num_valid_txs=24 server=node
+4:10AM INF commit synced commit=436F6D6D697449447B5B3139332032323120323438203430203230
+4:10AM INF committed state app_hash=C1DDF828CB4126E8239D92FB57006D978664911BF75FDB2606804083C4F65354 height=3468229
+4:10AM INF indexed block events height=3468229 module=txindex server=node
+4:11AM INF Timed out dur=4468.382473 height=3468230 module=consensus round=0 server=node step=1
+```
+

@@ -1,0 +1,26 @@
+{
+  "list": {
+    "title": "连接链列表"
+  },
+  "functionality": {
+    "title": "功能状态"
+  },
+  "zetachain": {
+    "title": "ZetaChain"
+  },
+  "evm": {
+    "title": "EVM 区块链"
+  },
+  "solana": {
+    "title": "Solana"
+  },
+  "ton": {
+    "title": "TON"
+  },
+  "sui": {
+    "title": "Sui"
+  },
+  "bitcoin": {
+    "title": "比特币"
+  }
+}

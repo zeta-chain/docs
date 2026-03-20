@@ -1,0 +1,69 @@
+---
+title: 参数变更提案
+---
+
+import { SubspaceKeyTable } from "~/components/Docs";
+
+## 概览
+
+参数变更提案用于修改网络中某个模块的特定参数。
+
+创建 `proposal.json`：
+
+```json filename="proposal.json"
+{
+  "messages": [
+    {
+      "@type": "/cosmos.gov.v1.MsgExecLegacyContent",
+      "authority": "zeta10d07y265gmmuvt4z0w9aw880jnsr700jvxasvr",
+      "content": {
+        "@type": "/cosmos.params.v1beta1.ParameterChangeProposal",
+        "changes": [
+          {
+            "subspace": "gov",
+            "key": "votingparams",
+            "value": "{ \"voting_period\": \"86400000000000\" }"
+          }
+        ],
+        "description": "Update voting period to 24 hours",
+        "title": "Gov Param Change"
+      }
+    }
+  ],
+  "deposit": "1000000azeta",
+  "metadata": "https://example.org/metadata.json"
+}
+```
+
+此示例同样使用 `MsgExecLegacyContent` 包裹 `ParameterChangeProposal`。
+
+`changes` 数组列出了拟修改的参数，每项包含：
+
+- `subspace`：要修改的模块名称
+- `key`：参数键
+- `value`：新的参数值
+
+## 子空间与键
+
+<SubspaceKeyTable />
+
+可通过以下 API 查询当前参数值，使用上表中的 `subspace` 与 `key` 填充查询参数。
+
+示例：
+
+http://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/params/v1beta1/params?subspace=staking&key=MaxValidators
+
+返回：
+
+```json
+{
+  "param": {
+    "key": "MaxValidators",
+    "subspace": "staking",
+    "value": "100"
+  }
+}
+```
+
+由此可知 `staking` 子空间下 `MaxValidators` 当前为 100。你可以通过参数变更提案修改该值。
+

@@ -1,0 +1,23 @@
+---
+title: Build
+description: ZetaChain is a blockchain for universal omnichain apps that span across any blockchain, from Ethereum and Cosmos to Bitcoin and beyond.
+heroImgUrl: /img/pages/build.svg
+heroImgWidth: 688
+---
+
+import { WorkWithUs } from "~/components/Home";
+
+import { GetSupport } from "~/components/Support";
+
+import { BugBounty, CurrentPageNavigationSections } from "~/components/shared";
+
+<div className="flex flex-col gap-20 sm:gap-[120px] w-full">
+  <CurrentPageNavigationSections
+    injectedSection={{
+      index: 2,
+      component: <WorkWithUs />,
+    }}
+  />
+  <BugBounty />
+  <GetSupport />
+</div>

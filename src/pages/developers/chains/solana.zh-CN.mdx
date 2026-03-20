@@ -1,0 +1,180 @@
+若要从 Solana 与全链应用交互，请使用 Solana Gateway。它支持：
+
+- 将 SOL 存入 ZetaChain 的帐号或全链应用
+- 存入受支持的 SPL 代币
+- 存入 SOL 并调用全链应用
+- 存入受支持的 SPL 代币并调用全链应用
+
+## 存入 SOL
+
+若要将 SOL 存入 EOA 或全链合约，请调用 Solana Gateway 程序的 `deposit` 指令：
+
+```rust
+pub fn deposit(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20], revert_options: Option<RevertOptions>) -> Result<()>
+```
+
+该指令接收 SOL（以 lamports 计价）并发送至 ZetaChain 上的 `receiver`。注意 1 SOL = 1,000,000,000 lamports，指定 `amount` 时需转换单位。
+
+`receiver` 可以是 ZetaChain 上的外部账户或全链应用地址。即便接收方是具备标准 `receive` 函数的合约，`deposit` 也不会触发合约调用；如需存入并调用全链应用，请使用 `deposit_and_call`。
+
+存入完成后，接收方会得到该代币的 [ZRC-20 版本](/developers/evm/zrc20)，例如 ZRC-20 SOL。
+
+## 存入 SPL 代币
+
+若要将 SPL 代币存入 EOA 或全链合约，请调用 `deposit_spl_token` 指令：
+
+```rust
+pub fn deposit_spl_token(ctx: Context<DepositSplToken>, amount: u64, receiver: [u8; 20], revert_options: Option<RevertOptions>) -> Result<()>
+```
+
+仅可存入[受支持的 SPL 代币](/developers/evm/zrc20)。接收方会获得存入代币的 ZRC-20 版本（如 ZRC-20 USDC.SOL）。SPL 代币必须先通过白名单才能通过 Gateway 存入。
+
+`amount` 指定存入的 SPL 代币数量。
+
+## 存入 SOL 并调用全链应用
+
+如需存入 SOL 并调用全链应用，请使用 `deposit_and_call` 指令：
+
+```rust
+pub fn deposit_and_call(ctx: Context<Deposit>, amount: u64, receiver: [u8; 20], message: Vec<u8>, revert_options: Option<RevertOptions>) -> Result<()>
+```
+
+跨链交易处理完成后，将执行目标全链应用合约的 `onCall` 函数。
+
+`receiver` 必须是全链应用合约地址。
+
+调用全链应用时，`message` 会传递给 `onCall`。
+
+## 存入 SPL 代币并调用全链应用
+
+`deposit_spl_token_and_call` 指令可在发送 SPL 代币的同时调用全链应用：
+
+```rust
+pub fn deposit_spl_token_and_call(ctx: Context<DepositSplToken>, amount: u64, receiver: [u8; 20], message: Vec<u8>, revert_options: Option<RevertOptions>) -> Result<()>
+```
+
+其中 `amount` 为 SPL 代币数量。
+
+当前协议版本一次仅支持存入一种 SPL 代币。
+
+## 调用全链应用
+
+```rust
+pub fn call(ctx: Context<Call>, receiver: [u8; 20], message: Vec<u8>, revert_options: Option<RevertOptions>) -> Result<()>
+```
+
+在仅需在 ZetaChain 执行逻辑且无需资产转移时使用。
+
+## 回退选项
+
+Solana Gateway 支持在跨链执行失败时通过 `revert_options` 处理回退场景。所有指令（`deposit`、`deposit_spl_token`、`deposit_and_call` 等）都可传入该可选参数，以便精细控制 ZetaChain 端调用失败时的行为。
+
+`RevertOptions` 结构体定义如下：
+
+```rust
+pub struct RevertOptions {
+    pub revert_address: Pubkey,
+    pub abort_address: [u8; 20],
+    pub call_on_revert: bool,
+    pub revert_message: Vec<u8>,
+    pub on_revert_gas_limit: u64,
+}
+```
+
+### 字段说明
+
+- `revert_address`：当跨链调用在 ZetaChain 处理后失败时，接收退回代币的 Solana `Pubkey`。需根据资产类型提供有效的 SOL 或 SPL 账户。
+- `abort_address`：ZetaChain 上 20 字节的以太坊风格地址。当全链合约的 `onCall` 失败且无法回退到 Solana（例如 Gas 不足、回退路径无效或内部错误）时接收资产，作为最终兜底。若 `call_on_revert` 为 `true`，该地址也可能通过应用的 `onRevert` 接收回退消息。
+- `call_on_revert`：布尔值，决定当交易失败时是否在 Solana 端调用 `on_revert` 或在 ZetaChain 调用 `onAbort` 钩子。
+- `revert_message`：传递给 Solana 端 `on_revert` 与 ZetaChain 端 `onAbort` 的任意字节数据，可包含原始意图、失败原因或自定义信息。
+- `on_revert_gas_limit`：为 ZetaChain 回退交易分配的 Gas 上限，需确保足以执行 `onRevert` 钩子。
+
+### 注意事项
+
+- 若省略 `revert_options`，默认行为是在回退时将代币退回给发送者。
+- 为全面保护资产，建议始终设置 `abort_address`。
+
+### 实现 `on_revert`
+
+当调用 ZetaChain 上的全链合约发生回退且协议能够将交易回退至 Solana 时，Gateway 会调用你在 Solana 程序中实现的 `on_revert`，方便应用回滚状态、记录日志或补偿用户。
+
+```rust
+pub fn on_revert(
+    ctx: Context<OnRevert>,
+    amount: u64,      // 最初存入的资产数量（lamports 或 SPL）
+    sender: Pubkey,   // 在 Solana 发起存入/调用的账户
+    data: Vec<u8>,    // 通过 `revert_message` 提供的自定义数据
+) -> Result<()>
+```
+
+实现此函数可增强应用在跨链失败场景下的韧性与透明度。
+
+## 提取并调用 Solana 程序
+
+若要在 ZetaChain 的全链应用中提取 ZRC-20 代币并调用 Solana 程序，可使用 ZetaChain Gateway 的 `withdrawAndCall`。目标 Solana 程序需实现 `on_call` 函数，函数签名如下：
+
+```rust
+pub fn on_call(
+    ctx: Context<OnCall>,
+    amount: u64,
+    sender: [u8; 20],
+    data: Vec<u8>,
+) -> Result<()>
+```
+
+其中：
+
+- `amount`：提取的代币数量
+- `sender`：在 ZetaChain 发起调用的全链应用地址
+- `data`：来自全链应用的附加数据
+
+程序需同时支持 SOL 与 SPL 代币提取。若涉及 SPL，程序上下文中必须包含相应的代币账户与铸币账户。
+
+从 ZetaChain 调用 Solana 程序时，消息载荷需同时包含程序账户与传递给程序的数据。载荷采用 ABI 编码的元组，包含：
+
+1. 账户元数据数组，每个账户包含：
+   - `publicKey`：账户的 Solana 公钥
+   - `isWritable`：账户是否可被修改
+
+2. 传递给程序 `on_call` 的数据
+
+账户数组必须包含程序 `on_call` 所需的全部账户。
+
+对于 SOL 提取，账户数组需包含：
+
+- 程序 PDA（可写）
+- Gateway PDA（只读）
+- System program（只读）
+
+对于 SPL 提取，账户数组需包含：
+
+- 程序 PDA（可写）
+- 程序关联的代币账户（可写）
+- Mint 账户（只读）
+- Gateway PDA（只读）
+- Token program（只读）
+- System program（只读）
+
+`data` 字段可为程序 `on_call` 期望的任意字节。
+
+有关从全链应用调用 Solana 程序的完整示例（包括消息编码与程序实现），请参考 [ZetaChain 示例仓库中的 Solana 示例](https://github.com/zeta-chain/example-contracts/tree/main/examples/call/solana)。
+
+## 手续费
+
+每次存入将收取 2,000,000 lamports（0.002 SOL）的手续费。
+
+## 错误处理
+
+Solana Gateway 程序定义了多种错误码以覆盖不同失败场景，包括：
+
+- `SignerIsNotAuthority`：签名者无权执行该操作。
+- `DepositPaused`：当前暂停售入。
+- `NonceMismatch`：提供的 nonce 与预期不符。
+- `TSSAuthenticationFailed`：TSS 签名验证失败。
+- `DepositToAddressMismatch`：存入目标地址不匹配。
+- `MessageHashMismatch`：消息哈希验证失败。
+- `MemoLengthExceeded`：Memo 长度超出限制。
+- `SPLAtaAndMintAddressMismatch`：SPL 代币账户地址与预期不符。
+- `EmptyReceiver`：接收地址为空。
+- `InvalidInstructionData`：指令数据无效。
+

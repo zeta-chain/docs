@@ -16,18 +16,21 @@ interface NavigationItemWrapperProps {
  * depending on the item behavior
  */
 export const NavigationItemWrapper = ({ children, item, onClick }: NavigationItemWrapperProps) => {
-  const { url } = item;
+  const { url, clickUrl } = item;
+
+  // Use clickUrl for navigation if provided, otherwise fall back to url
+  const navigationUrl = clickUrl || url;
 
   const isExternalLink = useMemo(() => {
-    if (!url) return false;
+    if (!navigationUrl) return false;
 
-    return url.startsWith("https");
-  }, [url]);
+    return navigationUrl.startsWith("https");
+  }, [navigationUrl]);
 
   const className = "group px-4 sm:px-6 py-3 hover:!bg-[transparent] whitespace-nowrap";
 
   // Not a link, default to a normal button
-  if (!item.url) {
+  if (!navigationUrl) {
     return (
       <ListItemButton tabIndex={0} className={className} onClick={onClick}>
         {children}
@@ -38,7 +41,13 @@ export const NavigationItemWrapper = ({ children, item, onClick }: NavigationIte
   // External link, we want an anchor tag with correct target and rel
   if (isExternalLink) {
     return (
-      <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={onClick} className="hover:!text-green-100">
+      <a
+        href={navigationUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClick}
+        className="hover:!text-green-100"
+      >
         <ListItemButton className={className}>{children}</ListItemButton>
       </a>
     );
@@ -46,7 +55,7 @@ export const NavigationItemWrapper = ({ children, item, onClick }: NavigationIte
 
   // Internal link, we want to use next/link
   return (
-    <Link href={item.url} onClick={onClick} className="hover:!text-green-100">
+    <Link href={navigationUrl} onClick={onClick} className="hover:!text-green-100">
       <ListItemButton className={className}>{children}</ListItemButton>
     </Link>
   );

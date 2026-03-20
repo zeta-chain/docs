@@ -1,0 +1,86 @@
+---
+title: 安装 CLI
+description: ZetaChain CLI 是一款命令行工具，可用于与网络交互。
+---
+
+## 方案一：下载二进制
+
+官方会根据操作系统与 CPU 架构提供预编译二进制，可在
+[ZetaChain Node GitHub 仓库](https://github.com/zeta-chain/node/releases) 获取最新版本。
+
+将其放置到 `PATH` 中，例如：
+
+```
+/usr/local/bin/zetacored
+```
+
+## 方案二：从源码编译
+
+也可以选择从源码自行编译。
+
+### 前置条件
+
+- [Go](https://golang.org/doc/install) 1.20 或以上
+- [Git](https://git-scm.com/downloads)
+
+```
+git clone https://github.com/zeta-chain/node
+
+cd node
+
+make install
+```
+
+## 验证安装
+
+执行 `zetacored`：
+
+```
+zetacored
+```
+
+你应看到类似输出：
+
+```
+Zetacore Daemon (server)
+
+Usage:
+  <appd> [command]
+
+Available Commands:
+  add-genesis-account   Add a genesis account to genesis.json
+  add-observer-list     Add a list of observers to the observer mapper ,default path is ~/.zetacored/os_info/observer_info.json
+  addr-conversion       convert a zeta1xxx address to validator operator address zetavaloper1xxx
+  collect-gentxs        Collect genesis txs and output a genesis.json file
+  collect-observer-info collect observer info from a folder , default path is ~/.zetacored/os_info/
+
+  config                Create or query an application CLI configuration file
+  debug                 Tool for helping with debugging your application
+  export                Export state to JSON
+  gentx                 Generate a genesis tx carrying a self delegation
+  get-pubkey            Get you node account
+  help                  Help about any command
+  index-eth-tx          Index historical eth txs
+  init                  Initialize private validator, p2p, genesis, and application configuration files
+  keys                  Manage your application's keys
+  query                 Querying subcommands
+  rollback              rollback cosmos-sdk and tendermint state by one height
+  rosetta               spin up a rosetta server
+  start                 Run the full node
+  status                Query remote node for status
+  tendermint            Tendermint subcommands
+  testnet               subcommands for starting or configuring local testnets
+  tx                    Transactions subcommands
+  validate-genesis      validates the genesis file at the default location or at the location passed as an arg
+  version               Print the application binary version information
+
+Flags:
+  -h, --help                help for <appd>
+      --home string         directory for config and data (default "/Users/fadeev/.zetacored")
+      --log_format string   The logging format (json|plain) (default "plain")
+      --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic) (default "info")
+      --trace               print out full stack trace on errors
+
+Use "<appd> [command] --help" for more information about a command.
+```
+

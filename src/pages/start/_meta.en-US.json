@@ -1,0 +1,17 @@
+{
+  "overview": {
+    "title": "Get Started"
+  },
+  "zetachain": {
+    "title": "What is ZetaChain?",
+    "description": "The Universal Layer for AI and Web3 — build apps that run across chains and models, keep memory private, and monetize without infrastructure."
+  },
+  "build": {
+    "title": "Why Build on ZetaChain?",
+    "description": "Chain orchestration, cross-chain native token transfers, gasless execution environment."
+  },
+  "app": {
+    "title": "Universal Apps",
+    "description": "Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more."
+  }
+}

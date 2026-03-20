@@ -1,0 +1,99 @@
+跨链交易（CCTX）可分为两类：入站与出站。
+
+**入站交易**（连接链 → ZetaChain）在连接链上发起，并在 ZetaChain 上落地。一次入站交易包含两笔链上交易：
+
+- 入站：在连接链上发起并被观测到的交易。
+- 出站：对应交易在 ZetaChain 上广播并执行。
+
+**出站交易**（ZetaChain → 连接链）在 ZetaChain 上发起，并在连接链上落地。一次出站交易同样包含两笔交易：
+
+- 入站：在 ZetaChain 上发起并被观测到的交易。
+- 出站：对应交易在连接链上广播并执行。
+
+追踪 CCTX 时，可使用入站交易哈希查询 ZetaChain 的 Cosmos SDK HTTP API，以获取 CCTX 哈希。如果某个 CCTX 进一步触发另一笔 CCTX（例如一次入站操作触发出站），则可将第一笔 CCTX 的哈希作为入站哈希继续查询下一笔 CCTX。
+
+## 入站与出站联合流程
+
+以下示例展示了从 Ethereum Sepolia 向 ZetaChain 上的全链应用发起调用，并进一步触发 ZetaChain 向 Polygon Amoy 的出站调用。
+
+用户调用 EVM Gateway 的 `depositAndCall`，目标是 [ZetaChain 上的全链兑换合约](/developers/tutorials/swap)。该合约会将存入资产兑换为目标 ZRC-20 代币，并调用 ZetaChain Gateway 的 `withdraw`，从而在 Polygon Amoy 发起代币转账。
+
+该流程涉及两笔 CCTX：
+
+1. Ethereum Sepolia → ZetaChain 测试网
+2. ZetaChain 测试网 → Polygon Amoy
+
+Ethereum Sepolia 上的入站交易：
+
+https://sepolia.etherscan.io/tx/0x8e925fa63c69bd27a3aa8e30f4c0f1e67e5fd3fedb23339b387b51b1543e55af
+
+使用该入站交易哈希查询 CCTX 1 哈希：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x8e925fa63c69bd27a3aa8e30f4c0f1e67e5fd3fedb23339b387b51b1543e55af
+
+再将 CCTX 1 哈希（`0x542b...11da`）作为入站哈希，查询 CCTX 2：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x542b6bd80004f4013b725c2170b9ed01731b8af9dc61bfb5c0534dc2f0d511da
+
+Polygon Amoy 上的出站交易：
+
+https://amoy.polygonscan.com/tx/0x49f67ece0c0b59d58312df91342d46b14496abf2d8a52a1a5ce9f4c6136e8d75
+
+## 入站示例
+
+以下示例展示了从 Ethereum Sepolia 向 ZetaChain 上的全链应用发起调用。
+
+用户调用 EVM Gateway 的 `depositAndCall`，目标为 [全链兑换合约](/developers/tutorials/swap)。合约会将存入资产兑换成目标 ZRC-20，并转给 ZetaChain 上的收款人。
+
+该流程仅产生一笔 CCTX：Ethereum Sepolia → ZetaChain 测试网。
+
+Ethereum Sepolia 上的入站交易：
+
+https://sepolia.etherscan.io/tx/0xfacdad3d12988e1065e32b757d1bbc7e868fb8cbae51c909b3f178027d233f79
+
+CCTX 详情：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0xfacdad3d12988e1065e32b757d1bbc7e868fb8cbae51c909b3f178027d233f79
+
+若使用该 CCTX 哈希继续查询，API 会返回 HTTP 404，说明此 CCTX 未触发新的跨链交易。
+
+## 入站并终止（Abort）
+
+以下示例展示了从 Ethereum Sepolia 调用 ZetaChain 全链应用但最终被终止的情况。
+
+用户调用 EVM Gateway 的 `depositAndCall`，目标为 [全链兑换合约](/developers/tutorials/swap)。合约尝试将存入资产兑换为目标 ZRC-20，并计划向 Polygon Amoy 提现。但提供的代币数量不足以覆盖 Polygon Amoy 的提现 Gas 费用，导致交易回退；同时，剩余代币不足以支付回退至 Ethereum Sepolia 的费用，因此交易最终终止。
+
+Ethereum Sepolia 入站交易：
+
+https://sepolia.etherscan.io/tx/0x254d687404ff8f1cd481d2b25866e8c0a68c5d7fde08deaa60e61577752e1466
+
+CCTX 详情：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x254d687404ff8f1cd481d2b25866e8c0a68c5d7fde08deaa60e61577752e1466
+
+## 入站并回退（Revert）
+
+以下示例展示了从 Base Sepolia 调用 ZetaChain 全链应用并发生回退的情况。
+
+用户调用 EVM Gateway 的 `depositAndCall`，目标为 [全链兑换合约](/developers/tutorials/swap)。合约尝试将存入资产兑换为目标 ZRC-20，并计划向 Polygon Amoy 提现，但代币数量不足以支付提现 Gas 费用，导致交易回退。
+
+Base Sepolia 入站交易：
+
+https://sepolia.basescan.org/tx/0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407
+
+ZetaChain 上的 CCTX 详情：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x9fcff3ff5ec57b7198543e6a204f08447d6dd8dc54d33100e3e79f6deb8dc407
+
+回退后的 Base Sepolia 交易：
+
+https://sepolia.basescan.org/tx/0xd86a5babfb7c3297b98d05d145707010aa8f7b690af151729035c3e2d0567eae
+
+## 多个出站交易
+
+单笔交易可以触发多个 CCTX。
+
+以下示例展示了在 ZetaChain 上一次函数调用对多条链执行多个 Gateway `call`：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0x3d56898690abb98a514b0b05b799c0d61c0e305a5f962504f3b301adf01b1b34
+

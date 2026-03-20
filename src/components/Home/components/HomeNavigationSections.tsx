@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
@@ -31,6 +32,7 @@ const BG_COLOR_CLASSES = ["bg-[#00C6EE]", "bg-[#E34ED6]", "bg-[#9AEA4A]", "bg-[#
 const MAX_ARTICLE_CARDS = 5;
 
 export const HomeNavigationSections: React.FC = () => {
+  const { locale } = useRouter();
   const pages = useSelector(selectPages);
 
   const { mainFolders } = useMemo(() => {

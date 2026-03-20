@@ -1,0 +1,65 @@
+通用 NFT 与通用代币标准，使非同质化代币（ERC-721）与同质化代币（ERC-20）能够在任意链上铸造，并在已连接的链之间无缝转移。
+
+为方便起见，本文将通用 NFT 与通用代币统称为“资产”。
+
+当资产在链间转移时，会先在源链上销毁，并将资产的元数据与信息通过消息发送给目标链上的资产合约，由该合约铸造出对应资产。
+
+通用 NFT 与通用代币项目均由两个合约组成：**Universal** 与 **Connected**。
+
+Universal 合约部署在 ZetaChain，用于：
+
+- 在 ZetaChain 上铸造资产
+- 将资产从 ZetaChain 转移到已连接的链
+- 处理来自已连接链到 ZetaChain 的入站资产转移
+- 处理已连接链之间的资产转移
+
+Connected 合约部署在一个或多个已连接的 EVM 链上，用于：
+
+- 在已连接链上铸造资产
+- 将资产转移到另一条已连接链或 ZetaChain
+- 处理来自 ZetaChain 或其他已连接链的入站资产转移
+
+Universal 合约必须在 ZetaChain 上部署；Connected 合约可按需部署，以便为特定链启用资产转移。
+
+通用资产可以在任意链上铸造——无论是 ZetaChain，还是任何已连接的 EVM 链。
+
+对于通用 NFT，资产铸造后会获得一个跨所有链唯一的持久 ID。该 ID 在资产跨链流转时保持不变。
+
+资产可从 ZetaChain 转移到已连接链、从已连接链转移回 ZetaChain，也能在已连接链之间互转。ZetaChain 作为跨链交易的枢纽，所有转移都会经由它进行路由。例如，当资产从以太坊转移到 BNB 时，会触发两笔跨链交易：Ethereum → ZetaChain → BNB。这样的设计不会增加时间或成本，却能在新增链时线性扩展。
+
+跨链资产转移支持回退（revert）。如果目标链上的转移失败，资产会返还给源链上的原始发送者。
+
+资产合约只接受来自可信合约的跨链调用。每个已连接链上的合约都会存储 ZetaChain 上 Universal 合约的地址；Universal 合约则保存其他链上 Connected 合约的地址。这样可确保只有同一资产合集下的合约才可发起跨链转移。
+
+以下以通用 NFT 为例，展示整体流程：
+
+![https://excalidraw.com/#json=dQJisu_uJ0N8T6IPi2m0E,PJU63ktFfbi1WsfAXsompA](/img/docs/tutorials-nft.png)
+
+## 部署
+
+1. 在 ZetaChain 上部署 **Universal** 合约。该步骤必不可少，因为 ZetaChain 是所有跨链转移（包括已连接 EVM 链之间互转）的枢纽。
+2. 在任一受支持的 EVM 链（如 Ethereum、Base、Polygon、BNB）部署 **Connected** 合约。
+3. 在 ZetaChain 上的 Universal 合约中执行 `setConnected(zrc20, connectedAddress)`：
+   - `zrc20` 是目标 EVM 链的 [ZRC-20 合约](/developers/evm/zrc20)，用来标识该链。
+   - `connectedAddress` 是该 EVM 链上 **Connected** 合约的地址（步骤 2）。
+4. 在已连接的 EVM 链上执行
+   `ConnectedAsset.setUniversal(universalAddress)`，其中 `universalAddress` 为 ZetaChain 上 **Universal** 合约的地址（步骤 1）。
+
+至此，ZetaChain 与已连接 EVM 链上可信的资产合约已部署并互相绑定。
+
+若要支持更多 EVM 链，重复步骤 2 与步骤 3 即可。
+
+> `setConnected` 与 `setUniversal` 用于建立合约之间的信任关系。每个合约都会验证跨链调用是否来自受信任的对应方。
+
+## Gas 费用
+
+- **EVM → ZetaChain：** 不收取跨链费用。
+- **ZetaChain → EVM：** 需要支付 **ZETA** 作为跨链费用，金额基于目标链的 ZRC-20 提现费用。系统会将 ZETA 自动兑换成目标链的 ZRC-20 Gas 代币以完成执行。
+- **EVM → EVM：** 跨链费用以**源链的 Gas 代币**支付。例如，从 Ethereum 转移资产到 BNB 时，费用以 ETH 支付。ZetaChain 使用 ZRC-20 ETH 进行执行，并兑换为 ZRC-20 BNB 调用目标链。
+
+## 回退处理
+
+如果跨链转移在目标链失败（例如因为耗尽 Gas、合约拒绝或网络错误），资产会**返还给原始发送者**。
+
+当两个已连接 EVM 链之间的转移失败时，资产会回退到 **ZetaChain 上的原始发送者**，而非源链。这避免了将资产退回源链时的高昂开销，发送者随后可再次发起到同链或其他链的转移。***
+

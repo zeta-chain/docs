@@ -1,0 +1,44 @@
+---
+title: 向验证人委托
+---
+
+import { Alert } from "~/components/shared";
+
+Ping Pub 是 Cosmos 生态的区块浏览器，提供治理、质押、奖励提取等功能。
+
+https://ping.pub/zetachain
+
+![Ping Pub - Dashboard](/img/docs/ping-dashboard.png)
+
+点击右上角钱包图标连接钱包。Ping Pub 支持 [Keplr](/zh/users/keplr/setup)、[Leap](/zh/users/leap/setup)、MetaMask 及 Ledger。选择钱包后点击 “Connect”。
+
+<Alert variant="warning">
+  目前使用 MetaMask 连接 Ping Pub 可能存在问题，建议暂时使用 Keplr 或 Leap。
+</Alert>
+
+![Ping Pub - Connect Wallet](/img/docs/ping-connect.png)
+
+切换至 “Staking” 标签，可查看验证人列表及其佣金、投票权等信息。选择目标验证人并点击名称。
+
+![Ping Pub - Staking](/img/docs/ping-staking.png)
+
+在验证人详情页可查看更多信息，如是否被监禁、Self Bond 数量、地址、官网等。点击 “Delegate” 发起委托。
+
+弹出窗口中输入委托数量，注意单位为 `azeta`。若需委托 1 ZETA，请输入 `1000000000000000000`。点击 “Send” 继续。
+
+![Ping Pub - Delegate](/img/docs/ping-delegate.png)
+
+在钱包（示例使用 Keplr）中确认交易，点击 “Approve”：
+
+![Ping Pub - Approve](/img/docs/ping-keplr.png)
+
+交易广播后，包含成功提示：
+
+![Ping Pub - Confirmation](/img/docs/ping-success.png)
+
+点击 “View transaction” 查看详情：
+
+![Ping Pub - Transaction](/img/docs/ping-tx.png)
+
+返回仪表盘即可看到最新的委托信息。
+

@@ -1,0 +1,10 @@
+{
+  "setup": {
+    "title": "安装 CLI"
+  },
+  "account": "添加账户",
+  "balances": "查询余额",
+  "delegate": "向验证人委托",
+  "rewards": "提取奖励",
+  "governance": "链上治理"
+}

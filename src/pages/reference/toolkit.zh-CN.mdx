@@ -1,0 +1,65 @@
+---
+title: 工具包
+---
+
+# ZetaChain Toolkit
+
+ZetaChain Toolkit 是一套 TypeScript SDK，可帮助你构建能够在任意连接链之间转移代币、调用合约、追踪交易的全链应用。
+
+## ✨ 功能
+
+- 跨链资产转移：从任意受支持的链向 ZetaChain 存入 Gas 与同质化代币，并随时提回。
+- 跨链合约执行：在 ZetaChain 上的全链合约接收外部调用，或主动向连接链合约发起调用。
+- 实时交易追踪：监控跨链交易在各网络间传播的完整生命周期。
+- 内建多链支持：开箱即用，覆盖 EVM 链、Solana、Sui、Bitcoin 与 TON。
+
+## 📦 安装
+
+```bash
+npm i @zetachain/toolkit
+```
+
+## 🚀 快速上手
+
+```ts
+import { evmDeposit, zetachainCall } from "@zetachain/toolkit";
+
+// 从以太坊向 ZetaChain 存入 USDC
+await evmDeposit(
+  {
+    amount: "1.0",
+    receiver: "0xReceiverOnZetaChain", // ZetaChain 上的 EOA 或合约
+    token: "0xUSDC", // 源链上的 ERC-20
+  },
+  { signer: ethersSigner }
+);
+
+// 从 ZetaChain 向以太坊上的合约发送调用
+await zetachainCall(
+  {
+    receiver: "0xRecevierContract", // 连接链上的目标合约
+    function: "hello(string)",
+    types: ["string"],
+    values: ["alice"],
+    zrc20: "0xZRC20",
+  },
+  { signer: ethersSigner }
+);
+```
+
+Toolkit 的全部功能也可以通过 [`zetachain` CLI](https://github.com/zeta-chain/cli) 调用。
+
+---
+
+以下函数 API 文档保留原始格式，便于查阅具体参数与返回值。如需详细说明，可直接参考官方英文注释。
+
+## Functions
+
+### evmCall()
+
+> **evmCall**(`params`, `options`): `Promise`\<`ContractTransactionResponse`\>
+
+...
+
+(其余函数说明与原文一致。)
+

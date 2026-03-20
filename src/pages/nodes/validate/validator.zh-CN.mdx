@@ -1,0 +1,159 @@
+---
+title: 创建核心验证人
+---
+
+import { Alert } from "~/components/shared";
+
+## 概述
+
+<Alert variant="note">
+  本指南假设你已完成[节点部署](/nodes/start-here/setup)，并通过任一方式同步完节点。
+</Alert>
+
+本文为简化指南，不涵盖安全密钥管理的细节。请务必遵循业界最佳实践生成与管理密钥。超出 ZetaChain 验证人基础搭建范围的安全问题，官方无法提供支持。
+
+该流程需在运行验证人的账户下执行。若你按节点部署文档创建了 `zetachain` 用户，可通过以下命令切换：
+
+```bash
+sudo su -l zetachain
+```
+
+### 创建验证人账户
+
+创建 `operator` 账户，并妥善保存输出的助记词，后续访问账户时需要用到。
+
+```bash
+zetacored keys add operator --algo secp256k1
+```
+
+### 为验证人账户充值
+
+查询新账户余额，初始时 `balances` 应为空：
+
+```bash
+zetacored query bank balances $(zetacored keys show operator -a)
+```
+
+向验证人地址转入资金，可从个人钱包或交易所划转。务必使用 ZetaChain 的 Cosmos 网络，而非 EVM 网络。
+
+完成转账后再次检查余额：
+
+```bash
+zetacored query bank balances $(zetacored keys show operator -a)
+```
+
+### 创建验证人
+
+通过质押 **azeta** 代币创建验证人。以下示例针对 ZetaChain 主网 Beta，请根据需要调整。记下输出中的交易哈希。
+
+首先在 `~/validator.json` 中填入配置模板，并替换为你的实际信息：
+
+```text
+{
+	"pubkey": {"@type":"/cosmos.crypto.ed25519.PubKey","key":"EXAMPLE+F405Jcm2vXV+2v4fnjodh6aafuIdeoW+rUw="},
+	"amount": "1000000000000000000azeta",
+	"moniker": "myvalidator",
+	"identity": "验证人（可选）身份标识，如 UPort 或 Keybase",
+	"website": "验证人（可选）网站",
+	"security": "验证人（可选）安全联系邮箱",
+	"details": "验证人（可选）描述",
+	"commission-rate": "0.1",
+	"commission-max-rate": "0.2",
+	"commission-max-change-rate": "0.01",
+	"min-self-delegation": "1000000"
+}
+```
+
+- `amount`：计划绑定的代币数量
+- `moniker`：验证人名称
+- `commission-rate`：向委托人收取的区块奖励与手续费分成比例
+- `commission-max-rate`：最大佣金率，创建后不可修改
+- `commission-max-change-rate`：每日最大佣金增幅，创建后不可修改
+- `min-self-delegation`：验证人需保持的最低自委托 **azeta** 数量，若低于此值将被监禁并移出验证人集合
+- 佣金参数中的 `commission-max-change-rate` 表示佣金率的百分比“点”变化。例如从 1% 调整到 2% 属于增加 1 个百分点
+- `min-self-delegation` 必须是正整数，代表验证人必须始终维持的最小自委托投票权
+
+使用 `zetacored tendermint show-validator` 获取验证人公钥，并替换进 `validator.json`。
+
+最后执行创建交易，记录输出中的 txhash：
+
+```bash
+zetacored tx staking create-validator ~/validator.json \
+  --gas=10000000 \
+  --gas-prices=10000000000azeta \
+  --from=operator
+```
+
+---
+
+### 查看交易状态
+
+通过交易哈希查询日志，确认无错误。如出现错误，需排查后重新执行。
+
+```bash
+zetacored query tx <your transaction hash>
+```
+
+### 查看验证人状态
+
+查询验证人详情确认创建成功：
+
+```bash
+zetacored query staking validator $(zetacored keys show operator --bech val -a)
+```
+
+如果状态为 `status: BOND_STATUS_UNBONDED`，说明质押的 **azeta** 不足以进入活跃验证人集合。
+
+此时验证人不会签名出块，也无法获得奖励，但可以接受委托。
+
+使用以下命令追加委托，调整代币数量以满足最低质押要求。要进入前 100 名验证人（按投票权排序），截至 2025 年一季度大约需要 700 枚 ZETA。
+
+```bash
+zetacored tx staking delegate $(zetacored keys show operator --bech val -a) 2000000azeta \
+  --gas=10000000 --gas-prices=10000000000azeta --from operator
+```
+
+当累计质押达到要求后，验证人会自动进入活跃集合，状态变为 `status: BOND_STATUS_BONDED`。
+
+### 确认验证人运行状况
+
+验证人完成绑定后，可通过以下命令确认其已在验证人集合中，应返回你的验证人地址：
+
+```bash
+zetacored query tendermint-validator-set | grep $(zetacored tendermint show-address)
+```
+
+还可查看签名信息，确保 `missed_blocks_counter: "0"` 且 `index_offset` 持续增长：
+
+```bash
+zetacored query slashing signing-info $(zetacored tendermint show-validator)
+```
+
+### 备份验证人共识密钥
+
+默认情况下，验证人的共识密钥仅存储在节点本地。为防止意外数据丢失导致无法控制节点，请务必备份 `~/.zetacored/config/priv_validator_key.json`，并安全保存于节点以外的位置。
+
+### 解除监禁
+
+若验证人因长时间不同步（停机）而被监禁，可通过查询状态确认 `jailed: true`。当节点重新同步至最新高度后，执行以下命令解除监禁：
+
+```bash
+zetacored tx slashing unjail --from=operator
+```
+
+查询交易状态确保无误，并使用前文命令确认验证人已重新进入活跃集合。
+
+### 提取收益
+
+可使用以下命令提取奖励（含佣金）：
+
+```bash
+zetacored tx distribution withdraw-rewards --commission [validator_address]
+```
+
+如需将奖励发往其他地址，可配置提现地址：
+
+```bash
+zetacored tx distribution set-withdraw-addr [withdraw-addr]
+```
+

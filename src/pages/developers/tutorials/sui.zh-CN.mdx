@@ -1,0 +1,280 @@
+---
+title: 从 Sui 发起调用
+---
+
+ZetaChain 让基于 Sui 的应用能够直接与部署在 ZetaChain 上的全链智能合约交互。借助 ZetaChain 的全链互操作层，Sui 应用可以：
+
+- 将 SUI 与受支持的同质化代币存入 ZetaChain
+- 向全链合约发起跨链调用
+- 接收来自全链合约的跨链调用与代币转账
+
+本教程将教你：
+
+- 同时运行 ZetaChain 与 Sui 的本地开发环境
+- 在 ZetaChain 部署全链合约
+- 将 SUI 代币从 Sui 地址存入 ZetaChain
+- 通过跨链调用触发全链合约中的函数
+
+完成后，你将掌握如何从 Sui 转移资产、触发 ZetaChain 逻辑，无论是通过客户端钱包还是 Sui 合约。
+
+## 前置条件
+
+开始前请安装以下工具：
+
+| 工具 | 用途 |
+| --- | --- |
+| [Sui CLI](https://docs.sui.io/references/cli) | 运行本地 Sui 验证节点、管理地址与对象、部署合约 |
+| [Foundry](https://getfoundry.sh/) | 使用 `cast` 为跨链调用编码 ABI 载荷 |
+| [Node.js](https://nodejs.org/en) | 运行 ZetaChain CLI 与基于 JavaScript 的工具 |
+| [Yarn](https://yarnpkg.com/) | 安装与管理项目依赖 |
+| [jq](https://jqlang.org/) | 在脚本中解析 JSON 输出 |
+
+## 克隆示例项目
+
+使用 ZetaChain CLI 生成项目：
+
+```bash
+npx zetachain@latest new --project call
+cd call
+```
+
+该模板已包含 Sui 与 ZetaChain 合约示例。
+
+安装依赖：
+
+```bash
+yarn
+forge soldeer update
+```
+
+环境现已可用于本地开发与测试。
+
+## 启动 Localnet
+
+同时启动 ZetaChain 与 Sui 的本地环境：
+
+```bash
+yarn zetachain localnet start --chains sui
+```
+
+该命令会启动：
+
+- 本地 ZetaChain 实例
+- 本地 Sui 验证节点
+- 两条网络上的预部署 Gateway 合约
+
+请保持该终端运行。启动成功后会看到类似表格：
+
+```
+SUI
+┌──────────────────┬──────────────────────────────────────────────────────────────────────────────────┐
+│ (index)          │ Values                                                                           │
+├──────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+│ gatewayPackageId │ '0x17360c15c10bbc4ebc57e9872f2993dc4376f7f0bb78920fe5fa9ad276ac7f86'             │
+│ gatewayObjectId  │ '0x9a26d6b6f413228bb120446977a8d8003eceb490cb7afd8921494815adc0a497'             │
+│ userMnemonic     │ 'grape subway rack mean march bubble carry avoid muffin consider thing street'   │
+│ userAddress      │ '0x2fec3fafe08d2928a6b8d9a6a77590856c458d984ae090ccbd4177ac13729e65'             │
+│ tokenUSDC        │ '6b0b8d1bbc40893a7f793f52c46aeea9db9f2f710c6a623c666bff712e26c94a::token::TOKEN' │
+└──────────────────┴──────────────────────────────────────────────────────────────────────────────────┘
+```
+
+> 💡 请妥善保留 `gatewayPackageId`、`gatewayObjectId` 与 `userMnemonic`，后续步骤会用到。
+
+## 部署全链合约
+
+接下来部署 ZetaChain 上的全链合约。
+
+首先从本地环境获取 Gateway 地址与预置私钥：
+
+```bash
+GATEWAY_ZETACHAIN=$(jq -r '.["31337"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_ZETACHAIN
+```
+
+```bash
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+```
+
+编译合约：
+
+```
+forge build
+```
+
+部署 `Universal` 合约：
+
+```bash
+UNIVERSAL=$(forge create Universal \
+  --rpc-url http://localhost:8545 \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+```
+
+## 存入 ZetaChain
+
+部署完成后，即可通过 Sui Gateway 合约将 SUI 存入 ZetaChain 上的全链合约。
+
+使用以下命令从 Sui 存入代币：
+
+```bash
+npx zetachain sui deposit \
+  --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
+  --receiver $UNIVERSAL \
+  --gateway-package 0x17360c15c10bbc4ebc57e9872f2993dc4376f7f0bb78920fe5fa9ad276ac7f86 \
+  --gateway-object 0x9a26d6b6f413228bb120446977a8d8003eceb490cb7afd8921494815adc0a497 \
+  --amount 0.001 \
+  --chain-id 104
+```
+
+> 🔎 请将 `--gateway-package` 与 `--gateway-object` 替换为你本地输出中的实际值。
+
+该命令会调用 Sui Gateway 的存入函数。ZetaChain 监听到存入事件后，会铸造等量 ZRC-20 SUI，并转入全链合约。
+
+## 存入并调用
+
+此步骤在存入 SUI 的同时调用全链合约：
+
+```bash
+npx zetachain sui deposit-and-call \
+  --mnemonic "grape subway rack mean march bubble carry avoid muffin consider thing street" \
+  --receiver $UNIVERSAL \
+  --gateway-package 0x17360c15c10bbc4ebc57e9872f2993dc4376f7f0bb78920fe5fa9ad276ac7f86 \
+  --gateway-object 0x9a26d6b6f413228bb120446977a8d8003eceb490cb7afd8921494815adc0a497 \
+  --amount 0.001 \
+  --chain-id 104 \
+  --types string \
+  --values hello
+```
+
+命令会调用 Sui Gateway 的 `deposit_and_call`，将 SUI 与载荷（此处为 `"hello"`）一并发送到 ZetaChain，触发全链合约的 `onCall`。
+
+## 构建并部署 Sui 合约
+
+你还可以部署一个 Sui 合约，在链上逻辑中发起存入操作。
+
+进入 Sui 合约目录：
+
+```bash
+cd sui
+```
+
+查看 `Move.toml`：
+
+```toml filename="sui/Move.toml"
+[dependencies]
+gateway = { local = "/usr/local/share/localnet/protocol-contracts-sui" }
+```
+
+示例项目已引入 Localnet 的 Gateway 模块。若在测试网/主网使用，将引用公共地址。
+
+构建 Sui 合约：
+
+```bash
+sui move build --force
+```
+
+将包发布到本地 Sui：
+
+```bash
+SUI_CONTRACT=$(sui client publish \
+  --skip-dependency-verification \
+  --json 2>/dev/null | jq -r '.objectChanges[] | select(.type == "published") | .packageId') && echo $SUI_CONTRACT
+```
+
+## 通过水龙头获取代币
+
+你的 Sui 账户需要一些 SUI 支付交易费。通过本地水龙头获取：
+
+```bash
+sui client faucet
+```
+
+## 从 Sui 合约发起存入并调用
+
+在 Sui 中，可通过 Programmable Transaction Block（PTB）实现复杂交易：组合多步操作并作为单笔交易提交。客户端应用构建并签名 PTB，提交后由 Sui 一次性执行。
+
+项目中已有 TypeScript 命令 `commands/suiDepositAndCall.ts`，默认直接构建 ABI 载荷并调用 Sui Gateway。我们将其修改为：
+
+1. 先调用自定义的 Sui 合约并获取返回值
+2. 将返回值作为载荷传递给 Sui Gateway
+
+打开 `commands/suiDepositAndCall.ts`，修改载荷构造：
+
+```ts filename="commands/suiDepositAndCall.ts"
+// const payload = tx.pure.vector("u8", utils.arrayify(payloadABI));
+
+const payload = tx.moveCall({
+  target: `${options.connected}::connected::hello`,
+  arguments: [tx.pure.string(params.values[0] as string)],
+});
+```
+
+这会调用 `connected::hello`，返回值即作为载荷转发给 Gateway 的 `deposit_and_call`。
+
+由于 Sui 合约不便直接编码 EVM 所需数据，我们将全链合约的 `onCall` 签名改为接收 `bytes` 并按 UTF-8 解读：
+
+```solidity
+function onCall(
+    MessageContext calldata context,
+    address zrc20,
+    uint256 amount,
+    bytes calldata message
+) external override onlyGateway {
+    // string memory name = abi.decode(message, (string));
+    emit HelloEvent("Hello on ZetaChain", string(message));
+}
+```
+
+重新构建并部署合约：
+
+```bash
+forge build
+```
+
+```bash
+UNIVERSAL=$(forge create Universal \
+  --rpc-url http://localhost:8545 \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json \
+  --constructor-args $GATEWAY_ZETACHAIN | jq -r .deployedTo) && echo $UNIVERSAL
+```
+
+现在执行 PTB：调用 Sui 合约获取返回值，将其传给 Sui Gateway，再由 Gateway 调用 ZetaChain 上的全链合约：
+
+```bash
+npx tsx commands deposit-and-call \
+  --private-key suiprivkey1qrqtrevmd40vxlv3q6fcgmm09af5p8f8j67ezve0u3nhrs0psslgjnw3y5p \
+  --receiver $UNIVERSAL \
+  --gateway-package 0xc52d19fd2f0bcb94d0c285d480b6a8af515f5ec19d0cff8818fc9bf0d3731b85 \
+  --gateway-object 0xa755a1106ae7039a25c10578b6f3c5b73963055e0d6fc40e8abcebea454a6389 \
+  --amount 0.001 \
+  --chain-id 104 \
+  --types string \
+  --values alice \
+  --connected $SUI_CONTRACT
+```
+
+终端中应看到类似事件输出：
+
+```
+[ZetaChain] Event from onCall: {"_type":"log","address":"0xa6e99A4ED7498b3cdDCBB61a6A607a4925Faa1B7",...}
+```
+
+可通过解码日志验证：
+
+```bash
+cast abi-decode "data()(string,string)" \
+  0x0000000000000000000000000000000000000000000000000000000000000040...
+```
+
+预期输出：
+
+```
+"Hello on ZetaChain"
+"hello alice"
+```
+
+至此，你已完成从 Sui 合约到 ZetaChain 的跨链调用，并掌握了定制载荷与事件处理的流程。***
+

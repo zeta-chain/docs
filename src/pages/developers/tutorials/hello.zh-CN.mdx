@@ -1,0 +1,260 @@
+---
+title: 第一个全链合约
+---
+
+在本教程中，你将创建一个简单的 ZetaChain 全链应用。该应用在接收到来自连接链的跨链调用时会触发事件。
+
+<div className="mt-8" style={{ width: "100%", height: "auto", aspectRatio: "16 / 9" }}>
+  <iframe
+    width="100%"
+    height="100%"
+    src="https://www.youtube.com/embed/dJG6ACgNOlg"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+  ></iframe>
+</div>
+
+完成本教程后，你将学会：
+
+- 构建一个基础的全链应用
+- 将其部署到 ZetaChain Localnet
+- 使用连接链上的 Gateway 调用你的全链应用
+
+<iframe
+  style={{ border: "1px solid rgba(0,0,0,.1)", marginTop: "2rem", borderRadius: "0.5rem" }}
+  width="100%"
+  height="450"
+  src="https://embed.figma.com/board/4ZIdAmKA2NmzqM6bpCWmxO/Protocol-%7C-Tutorial%3A-Hello?node-id=0-1&embed-host=share"
+  allowFullScreen
+></iframe>
+
+## 前置准备
+
+开始之前，请先完成以下教程：
+
+- [全链应用简介](/start/app/)
+- [ZetaChain 入门](/developers/tutorials/intro)
+
+## 环境初始化
+
+首先使用 ZetaChain CLI 初始化项目，这会生成基础的项目结构：
+
+```bash
+npx zetachain@latest new --project hello
+cd hello
+yarn
+forge soldeer update
+```
+
+- `npx zetachain@latest new --project hello` 使用最新的 `zetachain` 包创建名为 `hello` 的项目目录。
+- `cd hello` 进入该目录。
+- `yarn`（或 `npm install`）安装 `package.json` 中声明的依赖。
+- `forge soldeer update` 同步并更新 Foundry Soldeer 管理的 Solidity 依赖，确保与你的合约兼容的最新版本。
+
+## 全链合约
+
+全链应用需要实现 `UniversalContract` 接口：
+
+```solidity filename="contracts/Universal.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
+
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/UniversalContract.sol";
+
+contract Universal is UniversalContract {
+    event HelloEvent(string, string);
+
+    function onCall(
+        MessageContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external override onlyGateway {
+        string memory name = abi.decode(message, (string));
+        emit HelloEvent("Hello: ", name);
+    }
+}
+```
+
+`onCall` 会在合约通过 Gateway 接收到来自连接链的调用时触发。参数包括：
+
+- `context`：`MessageContext` 结构体，其中
+  - `chainID`：发起跨链调用的连接链 ID
+  - `sender`：在连接链上调用 Gateway 的地址（EOA 或合约）
+  - `origin`：已弃用
+- `zrc20`：源链资产在 ZetaChain 上对应的 ZRC-20 地址
+- `amount`：转入的代币数量
+- `message`：编码后的载荷数据
+
+本示例中，`onCall` 会将消息解码为字符串并触发事件。
+
+为保证只有连接链调用才能触发 `onCall`，函数使用了继承自 `UniversalContract` 的 `onlyGateway` 修饰器，从而可信任参数。
+
+## 方案一：部署到 Localnet
+
+本节展示如何在 ZetaChain [Localnet](/reference/localnet) 部署并交互全链合约。Localnet 提供隔离、安全的测试环境，无需支付真实费用，也不会影响线上部署。
+
+> 建议使用分屏终端或两个独立终端窗口：一个专门运行 Localnet，另一个用于执行项目命令，便于持续开发。
+
+首先启动本地 ZetaChain 网络，模拟完整环境：
+
+1. 新开一个终端窗口用于运行 Localnet。
+2. 执行：
+
+```
+npx zetachain localnet start
+```
+
+等待所有组件启动后，终端会打印格式化表格，列出 ZETACHAIN、ETHEREUM、BNB 等链的关键合约地址。后续与本地网络交互需要这些地址。
+
+> **不要关闭该终端！** Localnet 必须持续运行，关闭后需重新启动。
+
+接下来编译智能合约，将 Solidity 代码转换为 EVM 可执行的字节码：
+
+1. 打开第二个终端（或在当前终端拆分窗口）。
+2. 切换至项目目录。
+3. 运行：
+
+```
+forge build
+```
+
+该命令会编译项目内所有合约，生成最新版字节码。
+
+从连接链获取已预置资金的私钥：
+
+```
+PRIVATE_KEY=$(jq -r '.private_keys[0]' ~/.zetachain/localnet/anvil.json) && echo $PRIVATE_KEY
+```
+
+部署全链合约：
+
+```
+UNIVERSAL=$(forge create Universal \
+  --rpc-url http://localhost:8545 \
+  --private-key $PRIVATE_KEY \
+  --evm-version paris \
+  --broadcast \
+  --json | jq -r .deployedTo) && echo $UNIVERSAL
+```
+
+### 调用全链应用
+
+要从连接链调用部署在 ZetaChain 的全链应用，需要向该链的 Gateway 发送交易。
+
+获取连接链的 Gateway 地址：
+
+```
+GATEWAY_EVM=$(jq -r '.["11155112"].contracts[] | select(.contractType == "gateway") | .address' ~/.zetachain/localnet/registry.json) && echo $GATEWAY_EVM
+```
+
+你也可以直接在 Localnet 启动时终端输出的表格中查找。
+
+调用 Gateway 的 `call` 方法，将消息发送至部署在 ZetaChain 的全链合约：
+
+```
+npx zetachain evm call \
+  --rpc http://localhost:8545 \
+  --gateway $GATEWAY_EVM \
+  --receiver $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --types string \
+  --values hello
+```
+
+交易处理完成后，你将在 Localnet 终端看到 `[ZetaChain]: Event from onCall` 日志。
+
+## 方案二：部署到测试网
+
+### 钱包与环境配置
+
+与 ZetaChain 交互并部署合约需要一个 EVM 兼容私钥，并在项目中安全管理。
+
+私钥用于签名交易，可通过以下方式获取：
+
+- **MetaMask**：浏览器扩展，可创建新钱包并生成私钥，务必妥善备份助记词。
+- **cast CLI**：命令行快速生成：
+
+```
+PRIVATE_KEY=$(cast wallet new --json | jq -r '.[0].private_key') && echo $PRIVATE_KEY
+```
+
+该命令使用 Foundry 的 `cast` 工具生成新钱包，`--json` 输出 JSON，再用 `jq` 提取 `private_key` 字段。
+
+### 部署合约到 ZetaChain
+
+将合约部署到 ZetaChain 测试网：
+
+```
+UNIVERSAL=$(forge create Universal \
+  --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --json | jq -r .deployedTo)
+```
+
+### 从 Base 调用全链合约
+
+本节演示如何从连接测试网（Base Sepolia）发起跨链交易，与部署在 ZetaChain 的全链应用交互。主要步骤包括：发送初始交易，以及跟踪跨链执行状态。
+
+调用 ZetaChain 上的全链应用，需要向 Base Sepolia 的 Gateway 发送交易，可使用 `npx zetachain evm call`：
+
+```
+npx zetachain evm call \
+  --chain-id 84532 \
+  --receiver $UNIVERSAL \
+  --private-key $PRIVATE_KEY \
+  --types string \
+  --values hello
+```
+
+参数说明：
+
+- `--chain-id 84532`：Base Sepolia 的链 ID，表示交易来源。
+- `--receiver $UNIVERSAL`：ZetaChain 上全链合约的地址。
+- `--private-key $PRIVATE_KEY`：Base Sepolia 上发送方的钱包私钥。
+- `--types string`：传入数据类型为字符串。
+- `--values hello`：实际传递的字符串消息。
+
+执行成功后将返回交易哈希，表示交易已在 Base Sepolia 发起：
+
+```
+Transaction hash: 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
+```
+
+可在区块浏览器中查看：
+
+https://sepolia.basescan.org/tx/0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
+
+### 跟踪跨链交易状态
+
+交易发起后，ZetaChain 协议会将其跨链输送并在目标链（ZetaChain）执行。可使用 `npx zetachain query cctx` 实时跟踪其状态：
+
+```
+npx zetachain query cctx --hash 0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc
+```
+
+- `--hash` 参数使用之前获得的 Base Sepolia 交易哈希。
+
+示例输出：
+
+```
+84532 → 7001 ✅ OutboundMined
+CCTX:     0x56f9bc09dc646b13aa713b56348e8a53ea39759146afad61e66973791b752e3bTx
+Tx Hash:  0x89308870b0863c5ae48dc783059277cbcf4296b1b343413ac543418262a4ccbc (on chain 84532)
+Tx Hash:  0x34edd96c8a7b2bd9d530de0e49bb5e8625204a77b77cc79133814e1814f79ebc (on chain 7001)
+Sender:   0x4955a3F38ff86ae92A914445099caa8eA2B9bA32
+Receiver: 0xFeb4F33d424D6685104624d985095dacab567151
+Message:  0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000
+```
+
+关键信息：
+
+- `84532 → 7001`：跨链方向从 Base Sepolia（84532）到 ZetaChain（7001），✅ 表示出站交易已成功挖出。
+- `CCTX: ...`：跨链交易的内部哈希。
+- `Tx Hash` 行分别显示源链与目标链的交易哈希。
+- `Sender` 与 `Receiver`：源链发送地址与 ZetaChain 上接收的全链合约地址。
+- `Message`：传递给全链合约的 ABI 编码载荷（“hello”）。
+

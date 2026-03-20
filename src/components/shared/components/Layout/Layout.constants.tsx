@@ -64,6 +64,7 @@ export type NavItem = {
   label: string;
   icon?: React.ComponentType<ComponentProps<"svg">>;
   url?: string;
+  clickUrl?: string; // Optional URL override for navigation (used when url is for fetching pages but clickUrl is for actual navigation)
 };
 
 export const navMainItems: NavItem[][] = [
@@ -79,6 +80,7 @@ export const navMainItems: NavItem[][] = [
       label: "Get Started",
       icon: IconCoffeeCup,
       url: "/start",
+      clickUrl: "/start/overview",
     },
   ],
   [
@@ -86,6 +88,7 @@ export const navMainItems: NavItem[][] = [
       label: "Build",
       icon: IconCode,
       url: "/developers",
+      clickUrl: "/developers/overview",
     },
   ],
   [
@@ -93,6 +96,7 @@ export const navMainItems: NavItem[][] = [
       label: "Tools",
       icon: IconTools,
       url: "/reference",
+      clickUrl: "/reference/overview",
     },
   ],
   [
@@ -100,6 +104,7 @@ export const navMainItems: NavItem[][] = [
       label: "Run a Node",
       icon: IconServer,
       url: "/nodes",
+      clickUrl: "/nodes/overview",
     },
   ],
   [
@@ -107,6 +112,7 @@ export const navMainItems: NavItem[][] = [
       label: "Use",
       icon: IconClaim,
       url: "/users",
+      clickUrl: "/users/overview",
     },
   ],
   [
@@ -114,6 +120,7 @@ export const navMainItems: NavItem[][] = [
       label: "About",
       icon: IconAbout,
       url: "/about",
+      clickUrl: "/about/overview",
     },
   ],
   [
@@ -137,6 +144,6 @@ export const mainNavRoutes = [
   "/",
   ...[...navMainItems]
     .flat()
-    .map((item) => item.url)
+    .flatMap((item) => [item.url, item.clickUrl])
     .filter(Boolean),
 ];

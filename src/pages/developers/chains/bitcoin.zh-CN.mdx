@@ -1,0 +1,220 @@
+通过 Bitcoin Gateway（一个阈值签名地址，TSS）即可从比特币网络与 ZetaChain 的全链合约交互。该地址的私钥通过 MPC 分布在 ZetaChain 验证者集合中。
+
+Bitcoin Gateway 支持以下操作：
+
+- 存入（Deposit）：将 BTC 发送至 ZetaChain 的账户或合约。
+- 调用（Call）：通过 BTC 交易触发 ZetaChain 上的智能合约。
+- 存入并调用（Deposit and Call）：存入 BTC 后立即调用合约。
+
+与 Bitcoin Gateway 交互有两种方式：
+
+| 方式         | 最大载荷      | 成本          | 回退地址        | 最适用场景                                 |
+| ------------ | ------------- | ------------- | --------------- | ------------------------------------------ |
+| 铭文（Inscription） | 400 KB\*      | 较高（2 笔交易） | 可自定义        | 结构化跨链调用、自定义逻辑                 |
+| OP_RETURN    | 60 字节\*\*   | 较低（1 笔交易） | 与发送者一致    | 简单存入、小型数据载荷                     |
+
+\* 仅受比特币交易与见证（witness）大小限制。常见载荷 1–30 KB，再大可能无法被标准节点中继。  
+\*\* 不含必需的 20 字节全链合约地址。
+
+> 📝 **使用建议**
+>
+> 对于大多数调用及“存入并调用”操作，建议使用带 ABI 编码的铭文，既能支持结构化数据、复杂合约交互，又可自定义回退逻辑。
+>
+> 对于简单存入（尤其是发往 EOA），可使用成本更低、构造更简单的 OP_RETURN。
+
+## 铭文概览 ⚡️
+
+铭文通过“提交-揭示（commit-reveal）”流程，在比特币交易中嵌入结构化元数据，实现比特币与 ZetaChain 的丰富交互。这种方式会将 ABI 数据及可选的比特币回退逻辑编码到比特币区块链。
+
+一次交互包含两笔交易：
+
+- Commit：以 Taproot 铭文输出的方式承诺载荷，但暂不公开。
+- Reveal：广播承诺数据的具体内容，包括在 ZetaChain 上执行合约所需的逻辑。
+
+**✉️ 外壳格式（Witness Script）**
+
+```
+OP_PUSHBYTES_32 <32-byte public key> OP_CHECKSIG
+OP_FALSE
+OP_IF
+    OP_PUSH 0x...
+    OP_PUSH 0x...
+OP_ENDIF
+```
+
+**🧩 载荷格式**
+
+铭文数据由 4 字节 ZetaChain 头部与 ABI/Compact 编码字段构成（具体取决于所选格式）。
+
+**头部**
+
+| 字节索引 | 描述                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------- |
+| 0        | 固定标识：`0x5a`（ASCII `'Z'`），表示 ZetaChain 铭文                                          |
+| 1        | 编码格式（低 4 位）。示例：`0x00` = ABI，`0x01` = CompactShort，`0x02` = CompactLong         |
+| 2        | 操作码（高 4 位）。示例：`0x20` 表示 Call（`0x02 << 4`）                                      |
+| 3        | 标志位掩码，指示哪些字段已设置。常用值：`0x07`（启用接收者 + 载荷 + 回退地址）               |
+
+**字段**
+
+不同编码格式对字段的编码方法不同：
+
+| 格式                      | 值        |
+| ------------------------- | --------- |
+| `EncodingFmtABI`          | `0b0000`  |
+| `EncodingFmtCompactShort` | `0b0001`  |
+| `EncodingFmtCompactLong`  | `0b0010`  |
+
+Compact 编码更节省空间，适合优化交易大小。当所有动态字段（载荷与回退地址）都小于 255 字节时可用 `CompactShort`；若任一字段可能超过此阈值，请使用 `CompactLong`。
+
+**ABI 编码**
+
+涉及结构化输入的调用使用以太坊风格的 ABI 编码，与 Solidity 合约完全兼容。可传递复杂类型（如 address、bytes、uint256[] 等），在客户端编码后嵌入铭文。
+
+- 接收地址：ZetaChain 账户或全链合约的 20 字节以太坊风格地址。
+- 载荷：可选的编码数据（如 ABI 编码的函数调用），供合约的 `onCall` 处理。
+- 回退地址（可选）：当跨链调用失败时退回资金的比特币地址。
+
+| 字段    | 内容                                         |
+| ------- | -------------------------------------------- |
+| Header  | 4 字节                                       |
+| ABI 数据 | `abi.encode(receiver, payload, revertAddress)` |
+
+注意：ABI 编码的数据应不包含 4 字节函数选择器，只需包含已打包的参数。
+
+**Compact 编码**
+
+各字段会以更紧凑的形式编码：
+
+```
+[receiver (20 bytes)] + [len][payload bytes] + [len][revert address bytes]
+```
+
+- 接收者始终是 20 字节原始地址。
+- 载荷与回退地址带有长度前缀：
+  - CompactShort：1 字节长度前缀（最多 255 字节）
+  - CompactLong：2 字节长度前缀（最多 65,535 字节）
+
+| 字段    | 内容                            |
+| ------- | ------------------------------- |
+| Header  | 4 字节                          |
+| Receiver | 20 字节                         |
+| Payload  | [len:1 或 2] + 具体字节        |
+| Revert   | [len:1 或 2] + 地址字节        |
+
+**🔁 操作类型（OpCode）**
+
+| 操作             | 代码     | 描述                                                              |
+| ---------------- | -------- | ----------------------------------------------------------------- |
+| `Deposit`        | `0b0000` | 仅包含接收者，无载荷。回退地址可选                                |
+| `DepositAndCall` | `0b0001` | 转移 BTC 并携带载荷调用 `onCall()`。必须提供回退地址             |
+| `Call`           | `0b0010` | 不转移 BTC，仅携带载荷调用 `onCall()`。回退地址可选              |
+| `Invalid`        | `0b0011` | 保留                                                               |
+
+## 铭文：Deposit
+
+- 不包含调用数据。
+- BTC 会在 ZetaChain 上铸造成对应的 ZRC-20 BTC。
+- 适用于将 BTC 转移为 ZRC-20 BTC 并发往 ZetaChain 上的 EOA。
+
+📌 **示例：**
+
+- [Commit TX](https://mempool.space/signet/tx/eaaabfe041c0784d31a5bb8db3ff255b31ae5bd4a81f918a73e39ab3d4f3cd8c)
+- [Reveal TX](https://mempool.space/signet/tx/b1934876ab53b211fc1e3168bd0b4e2df6a5d9f3bd1be6c77a88666a7c9e926e)
+- [跨链交易](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/b1934876ab53b211fc1e3168bd0b4e2df6a5d9f3bd1be6c77a88666a7c9e926e)
+
+## 铭文：Call
+
+- 编码数据包含：
+  - 合约地址（作为接收者）
+  - 调用载荷
+- 不会向合约转移 BTC，纯逻辑交互。
+- 适用于触发无需 BTC 的全链合约执行。
+
+📌 **示例：**
+
+- [Commit TX](https://mempool.space/signet/tx/6c92cb80f093176b865c1431770e43c9264074d797acabbfee244f96751aac61)
+- [Reveal TX](https://mempool.space/signet/tx/cdb52721e9787c94cda196304d9f699cc89d661c9946bac32f7bdfcf17e08eaa)
+- [跨链交易](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/cdb52721e9787c94cda196304d9f699cc89d661c9946bac32f7bdfcf17e08eaa)
+
+## 铭文：Deposit and Call
+
+- 结合上述两者：
+  - 转移 BTC
+  - 同时调用合约并传递编码参数
+- 可实现“发送 BTC 并触发兑换”“存入并铸造”等跨链组合逻辑。
+
+📌 **示例：**
+
+- [Commit TX](https://mempool.space/signet/tx/ec1d9078affd6ce20b0b57a2cdd853b9224a2a9fae9ddf759082d7a944dddab4)
+- [Reveal TX](https://mempool.space/signet/tx/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
+- [跨链交易](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/0a05ed49545204d03db88daf5bfa93cc5e9177075701a4f27a3cb97d898a45)
+
+## 何时使用铭文
+
+当满足以下需求时，优先使用铭文：
+
+- 载荷超过 60 字节（OP_RETURN 无法承载）
+- 需要编码结构化的 ABI 参数
+- 希望自定义回退地址以提升安全性
+- 触发逻辑交互，而非仅转移 BTC
+
+## 备忘录（OP_RETURN）概览 💾
+
+该方式通过在标准比特币交易中添加 `OP_RETURN` 输出，将接收者（全链合约或 EOA）与可选的短消息编码进去。
+
+要从比特币发起跨链交易，交易至少需要两个输出：
+
+1. **第一个输出**：将 BTC 发送到 Bitcoin Gateway（TSS）地址。
+2. **第二个输出**：`OP_RETURN PUSH_x [DATA]`
+
+> ⚠️ 若交易未按正确顺序包含上述两个必要输出，ZetaChain 将不会发起跨链交易。BTC 仍会发送至 Gateway 地址，但不会进行合约调用或代币铸造。
+
+## Memo：Deposit
+
+若要将 BTC 作为 ZRC-20 BTC 存入 ZetaChain 的 EOA 或全链合约：
+
+```
+[DATA] = [EOA 或合约地址（20 字节）]
+```
+
+📌 **示例：**
+
+- [交易](https://blockstream.info/testnet/tx/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f)
+- [跨链交易](https://zetachain-athens.blockpi.network/lcd/v1/public/zeta-chain/crosschain/inboundHashToCctxData/952d60fd9efc1aad4b87a8a7a6d57a972d49e084de8b5dc524e163216c11c04f)
+
+## Memo：Call
+
+若要调用 ZetaChain 上的全链合约：
+
+```
+[DATA] = [合约地址（20 字节）] + [调用载荷（最多 60 字节）]
+```
+
+这会在目标合约上执行 `onCall` 方法。
+
+> ⚠️ 若载荷超过 60 字节，请考虑改用铭文。
+
+## Memo：Deposit and Call
+
+若要存入 BTC 并调用 ZetaChain 上的全链合约：
+
+```
+[DATA] = [合约地址（20 字节）] + [调用载荷（最多 60 字节）]
+```
+
+## 手续费
+
+不同于 EVM 链，比特币上每次花费已存入的输出都需要支付费用。为此，存入方与提取方需共同承担花费成本，费用会以存入手续费的方式预先扣除。
+
+比特币存入手续费计算公式：
+
+```text
+depositFee = (txFee / txVsize) * 68 vB * 2
+```
+
+其中：
+
+- `txFee = totalInputValue - totalOutputValue`
+- `txVsize` 为比特币交易的虚拟大小（virtual size）
+

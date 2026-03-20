@@ -1,0 +1,20 @@
+{
+  "overview": {
+    "title": "代币用途"
+  },
+  "token": {
+    "title": "ZETA 代币"
+  },
+  "distribution": {
+    "title": "ZETA 分配"
+  },
+  "validators": {
+    "title": "验证人激励"
+  },
+  "gas": {
+    "title": "Gas 费用"
+  },
+  "liquidity": {
+    "title": "核心流动性池"
+  }
+}

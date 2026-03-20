@@ -1,0 +1,71 @@
+---
+title: 提案押金
+---
+
+## 概览
+
+提案若要进入投票阶段，必须满足最小押金要求。该值可在[治理参数](/zh/users/cli/governance/)中查看。如果押金不足，提案会进入“存款期”，等待在最大存款时间内补足。
+
+任何用户都可以为提案提供押金。
+
+## 查询提案
+
+根据提案 ID 查询状态，确认是否处于存款期：
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+输出示例：
+
+```yaml
+deposit_end_time: "2024-02-14T02:18:32.334547494Z"
+...
+status: PROPOSAL_STATUS_DEPOSIT_PERIOD
+total_deposit:
+  - amount: "0"
+    denom: azeta
+```
+
+总押金为 0，说明仍处于存款期，等待补足押金。
+
+## 进行押金
+
+假设当前最小押金为 `1000000azeta`，可通过以下命令完成存款：
+
+```
+zetacored tx gov deposit 58 1000000azeta --from alice --node https://zetachain-athens.blockpi.network:443/rpc/v1/public --chain-id athens_7001-1
+```
+
+交易完成后再次查询：
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+status: PROPOSAL_STATUS_VOTING_PERIOD
+total_deposit:
+  - amount: "1001000"
+    denom: azeta
+```
+
+此时提案已进入投票期，总押金满足要求。
+
+## 查询单笔押金
+
+可查看提案的具体押金记录：
+
+```
+zetacored q gov deposits 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+deposits:
+  - amount:
+      - amount: "1000000"
+        denom: azeta
+    depositor: zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+    proposal_id: "58"
+```
+

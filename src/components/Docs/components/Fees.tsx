@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-// @ts-ignore
+// @ts-expect-error - @zetachain/toolkit/query types are not available
 import { getFees } from "@zetachain/toolkit/query";
 import { useEffect, useMemo, useState } from "react";
 

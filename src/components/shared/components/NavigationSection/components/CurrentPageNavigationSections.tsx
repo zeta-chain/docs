@@ -37,28 +37,83 @@ export const CurrentPageNavigationSections: React.FC<CurrentPageNavigationSectio
   mainDescription,
   injectedSection,
 }) => {
-  const { route } = useRouter();
-  const pagesUnderRoute = getPagesUnderRoute(route);
+  const { route, locale, defaultLocale } = useRouter();
 
-  const { navPages, navFolders } = useMemo(() => {
+  // Get parent route if current route is a page (not ending in /)
+  // For example: /developers/overview -> /developers
+  // Note: route doesn't include locale prefix, so we use it directly
+  const parentRoute = route.includes("/") && !route.endsWith("/") ? route.substring(0, route.lastIndexOf("/")) : route;
+
+  const pagesUnderRoute = getPagesUnderRoute(parentRoute);
+
+  const { navPages, navFolders, filterPagesByLocale } = useMemo(() => {
+    const currentLocale = locale || defaultLocale;
+
+    // Helper to extract locale from page name
+    const getPageLocale = (page: any): string | undefined => {
+      if ("locale" in page && page.locale) return page.locale as string;
+      const nameParts = page.name.split(".");
+      if (nameParts.length > 1) {
+        const suffix = nameParts[nameParts.length - 1];
+        if (suffix === "en-US" || suffix === "zh-CN") return suffix;
+      }
+      return undefined;
+    };
+
+    // Helper to filter and deduplicate pages by locale
+    const filterPagesByLocale = (pages: any[]) => {
+      const filteredPages = pages.filter((page) => {
+        // Always include folders - they are containers without locale
+        if (page.kind === "Folder") {
+          return true;
+        }
+
+        const pageLocale = getPageLocale(page);
+
+        // Only include pages matching current locale
+        if (pageLocale) {
+          return pageLocale === currentLocale;
+        } else {
+          // No locale - only include on default locale
+          return currentLocale === defaultLocale;
+        }
+      });
+
+      // Deduplicate by route
+      const routeToPage = new Map();
+      filteredPages.forEach((page) => {
+        if (!routeToPage.has(page.route)) {
+          routeToPage.set(page.route, page);
+        }
+      });
+
+      return Array.from(routeToPage.values());
+    };
+
+    const uniquePages = filterPagesByLocale(pagesUnderRoute);
+
     /**
      * @description Folder-less group pages, without the index (current page) that will be rendered first
      */
-    const navPages = pagesUnderRoute.filter((page) => page.kind === "MdxPage" && page.name !== "index");
+    const navPages = uniquePages.filter(
+      (page) =>
+        page.kind === "MdxPage" && page.name !== "index" && !page.name.startsWith("index.") && page.route !== route
+    );
 
     /**
      * @description Folder groups with children pages
      */
-    const navFolders = pagesUnderRoute.filter((page) => page.kind === "Folder");
+    const navFolders = uniquePages.filter((page) => page.kind === "Folder");
 
     return {
       navPages,
       navFolders,
+      filterPagesByLocale,
     };
-  }, [pagesUnderRoute]);
+  }, [pagesUnderRoute, locale, defaultLocale, route]);
 
   return (
-    <div className="flex flex-col gap-20 sm:gap-[120px]">
+    <div className="flex flex-col gap-20 sm:gap-[120px] w-full">
       {!!navPages.length && (
         <NavigationSection
           title={mainTitle}
@@ -88,7 +143,7 @@ export const CurrentPageNavigationSections: React.FC<CurrentPageNavigationSectio
               colorClass={BG_COLOR_CLASSES[index % BG_COLOR_CLASSES.length]}
               navItems={
                 "children" in folder
-                  ? folder.children.map((page) => ({
+                  ? filterPagesByLocale(folder.children).map((page) => ({
                       title: getPageTitle(page),
                       description: getPageDescription(page),
                       href: page.route,

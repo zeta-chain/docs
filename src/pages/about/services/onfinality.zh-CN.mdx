@@ -1,0 +1,61 @@
+---
+title: "OnFinality"
+---
+
+## OnFinality
+[OnFinality](https://onfinality.io) 是一套区块链基础设施平台，旨在为 Web3 构建者节省时间、降低复杂度。它为大型区块链团队提供可扩展的 API 端点、节点以及业内领先的数据索引托管服务。
+
+OnFinality Indexing 现已为 ZetaChain 提供企业级的 SubQuery 与 Subgraph 托管服务，让你的关键资产——数据——始终安全无忧。
+
+本教程将演示如何运行新的 ZetaChain SubQuery 项目。若需了解几乎相同的 [Subgraph 索引流程](https://documentation.onfinality.io/support/publishing-your-subgraph-project)，请参阅链接。
+
+## 准备工作
+
+开始前请确保你已具备：
+- 针对 ZetaChain 网络的可用 SubQuery 项目
+- 项目的 GitHub 仓库或托管于 IPFS 的版本（示例使用 `QmeUwNvKGoaL211UfgEm2kbSztFCTJ2RuCXzbRRUacCaFx`）
+- OnFinality Indexing Service 账户
+
+## 创建 ZetaChain 索引项目
+
+访问 [OnFinality Indexing](https://indexing.onfinality.io/) 服务创建首个项目。需使用 GitHub 账户进行登录认证。
+
+![OnFinality Indexing sign‑in screen](/img/docs/onfinality-1.png)
+
+点击 “Create Project” 进入新建表单。选择要部署的项目类型（SubQuery），填写名称与描述。
+
+![Create Project form in OnFinality Indexing](/img/docs/onfinality-2.png)
+
+## 部署项目
+
+创建项目仅设置展示信息，必须部署版本后才会生效。部署将启动索引流程，并配置所需的查询服务以响应 GraphQL 请求。你也可以在此页面为现有项目部署新版本。
+
+新项目会显示 “Deploy your first version” 按钮。
+
+![New project page with Deploy your first version button](/img/docs/onfinality-3.png)
+
+点击后填写部署信息：
+
+![Deploy version form](/img/docs/onfinality-4.png)
+- **CID：** 填写准备阶段获取的 IPFS 部署 CID
+- **Manifest：** 从 CID 内容解析出的详情，用于校验部署是否正确
+![Manifest details derived from IPFS CID](/img/docs/onfinality-5.png)
+- **Query Version：** 选择运行 SubQuery 查询服务的版本，建议使用最新版本
+- **Advanced Settings：** 高级设置较多，可参考内置帮助说明
+![Advanced settings panel with built‑in help](/img/docs/onfinality-6.png)
+- **Network Endpoints：** 用于读取 ZetaChain 数据的 RPC 端点
+
+提交后，OnFinality 会开始索引项目。根据 ZetaChain 当前链状态与查询配置，完整同步可能需要数分钟。
+
+## 连接项目
+
+部署完成并且节点完成数据索引后，你即可通过界面显示的 GraphQL Query 端点连接项目。
+
+![GraphQL query endpoint for deployed project](/img/docs/onfinality-7.png)
+
+或者点击项目标题旁的三点图标，在 SubQuery Explorer 中查看，并使用浏览器内置的 Playground 进行查询。
+
+至此，你已具备在 ZetaChain 上构建快速、可扩展且数据丰富的 dApp 所需的一切。
+
+需要帮助？请联系 support@onfinality.io。***
+

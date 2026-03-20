@@ -1,0 +1,36 @@
+---
+title: ZetaChain 上的 ZRC-20
+---
+
+import { ForeignCoinsTable } from "~/components/Docs";
+
+ZRC-20 是集成于 ZetaChain 全链智能合约平台的代币标准。借助 ZRC-20，开发者可以在任意连接链上调度原生资产，从而轻松构建全链 DeFi 协议与应用，例如全链去中心化交易所、全链借贷、全链资产管理等——就像所有代币都在同一条链上一样。
+
+## 总览
+
+连接链的原生 Gas 代币及列入白名单的 ERC-20 代币可作为 ZRC-20 存入 ZetaChain。存入时，原生/ ERC-20 代币会被转入并锁定在 TSS 地址或 ERC-20 托管合约中，同时在 ZetaChain 上铸造等量 ZRC-20 并发送至接收地址。
+
+ZRC-20 可从 ZetaChain 提现到连接链。提现时，ZRC-20 会在 ZetaChain 上销毁，对应的原生/ ERC-20 代币由 TSS 地址或 ERC-20 托管合约转给连接链上的接收方。
+
+ZRC-20 只能由 ZetaChain 协议铸造。直接在 ZetaChain 部署的 ERC-20 不具备 ZRC-20 特性，无法从 ZetaChain 提现回连接链。
+
+来自两条连接链的“同一种” ERC-20 会在 ZetaChain 上表现为两个不同的 ZRC-20。例如，以太坊的 USDT 表示为 ZRC-20 USDT（Ethereum），BSC 的 USDT 表示为 ZRC-20 USDT（BSC）。ZetaChain 不将它们视为同一资产，但可以相互兑换。要在 ZetaChain 实现“同一” ERC-20 的跨链转移，可按以下步骤进行：将 ERC-20（链 A）存入换成 ZRC-20（链 A），再兑换成 ZRC-20（链 B），最后提现到链 B 变回 ERC-20。
+
+## 支持资产
+
+当前支持的资产列表：
+
+<ForeignCoinsTable />
+
+可通过向 ZetaChain 的 `fungible` 模块发送相应消息的交易来新增或移除资产。
+
+总体而言，ZRC-20 是对以太坊生态中 [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/) 标准的扩展，新增了管理所有连接链资产的能力。任何同质化代币（包括比特币、ETH、其他 Gas 资产及各链的 ERC-20 等价物）都可在 ZetaChain 上表示为 ZRC-20，并像 ERC-20 一样被编排调度。
+
+## 区块确认
+
+在向 ZetaChain 存入或从 ZetaChain 提现时，协议会要求连接链上的交易达到一定数量的确认才视为最终确认。不同链所需确认数不同，可在[连接链列表](/developers/chains/list)查询。
+
+## 流动性上限
+
+每个 ZRC-20 在协议中设定了可接受的总存入上限。超过上限后，从连接链存入的资产会被退回给发送者。
+

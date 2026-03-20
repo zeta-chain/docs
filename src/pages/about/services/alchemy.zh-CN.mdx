@@ -1,0 +1,90 @@
+# Alchemy
+
+Alchemy 是一套区块链开发平台，提供构建与扩展去中心化应用所需的工具与基础设施。作为面向开发者的平台，Alchemy 帮助团队无需自建区块链基础设施，就能打造可扩展且可靠的 dApp。它通过提供一系列 API 与服务，简化与区块链网络的交互流程。
+
+Alchemy 的亮点之一是 Alchemy Supernode，可为连接并构建 ZetaChain 区块链提供可靠且可扩展的方式。借此，开发者能专注于功能创新，而无需担心节点运维的复杂度。
+
+借助 Alchemy，开发者可以访问实时区块链数据、管理智能合约，并监控跨多链的 dApp 运行情况，是构建稳健、可扩展、安全应用的多面手选择。
+
+## 注册 Alchemy 账号
+
+打开 https://auth.alchemy.com/signup，注册新账号或直接登录已有账号。
+
+![](/img/docs/alchemy-0.png)
+
+## 创建新的 ZetaChain 项目
+
+在 Alchemy 控制台可查看当前账号下的全部项目。
+
+点击 “Create new app”，为项目填写名称与描述。
+
+![](/img/docs/alchemy-1.png)
+
+![](/img/docs/alchemy-1.5.png)
+
+Alchemy 中的所有应用默认即为多链。这意味着你的 dApp 创建后即可访问所有可用的 Alchemy 网络。可在 “Networks” 标签中查看全部网络及对应 API URL，并按需切换主网或测试网。
+
+![](/img/docs/alchemy-2.png)
+
+## API Key 与 RPC 端点
+
+与 Alchemy RPC 实例的交互由 API key 保护。系统会自动为你生成 API key，可在应用页面右上角复制。
+
+同一页面也列出了所有支持链的 HTTP 与 WSS RPC 端点。找到 ZetaChain 网络并记录主网 URL，稍后会用它向 ZetaChain 发送请求。
+
+![](/img/docs/alchemy-3.png)
+
+## 连接到 Alchemy
+
+如从零开始，可先创建目录并初始化 npm 项目：
+
+```
+mkdir zetachain-app
+cd zetachain-app
+npm init -y
+```
+
+使用 npm 安装 `axios`，这是一款常用的 HTTP 客户端，可用于发送 API 请求。
+
+```
+npm install axios
+```
+
+在项目目录下创建 `index.js`，粘贴以下代码，用于向 ZetaChain 网络发起请求。记得将 YOUR_API_KEY 替换为 Alchemy 控制台中的真实 API key。
+
+```ts
+const axios = require("axios");
+
+const url = `https://zetachain-mainnet.g.alchemy.com/v2/${YOUR_API_KEY}`;
+
+const payload = {
+  jsonrpc: "2.0",
+  id: 1,
+  method: "eth_blockNumber",
+  params: [],
+};
+
+axios
+  .post(url, payload)
+  .then((response) => {
+    console.log("Block Number:", parseInt(response.data.result));
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+```
+
+使用 Node.js 运行脚本：
+
+```
+node index.js
+```
+
+终端应输出 ZetaChain 当前区块高度：
+
+```
+Block Number: 3688095
+```
+
+关于 ZetaChain 支持的全部 JSON-RPC 方法，请参阅 [Alchemy 文档](https://docs.alchemy.com/reference/zetachain-api-endpoints)。***
+

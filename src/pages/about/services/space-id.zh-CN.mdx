@@ -1,0 +1,104 @@
+---
+title: SPACE ID Web3 Name SDK
+description: 解析 Web3 域名或反向解析传统地址
+---
+
+## 概述
+
+该 SDK 的核心能力包括：
+
+- 域名解析：解析域名以获取相关信息，例如关联的传统地址、各类记录（头像、IPFS 链接、社交数据等）及元数据。
+- 反向解析：支持反向地址解析，可在跨链或不同顶级域名（TLD）之间，为指定地址找出主域名，返回链级主域名（Chain Primary Name）或 TLD 主域名（TLD Primary Name）。
+
+### 关键术语
+
+**TLD Primary Name：**
+
+- 每个地址都可以为每个顶级域名设置 TLD Primary Name，即便该域名尚未在 SPACE ID 上完成验证。
+- 例如，可将 “allen.eth” 设为 .eth 的 TLD Primary Name，“allen.zeta” 对应 .zeta，“allen.bnb” 对应 .bnb。
+
+**Chain Primary Name：**
+
+- 每条链或网络下，每个地址只能拥有一个唯一的 Chain Primary Name。
+- 当同一条链上存在多个已验证的 TLD 时，仅能选择其中一个作为该链的反向解析域名。
+- 例如，可将 “allen.eth” 设为以太坊的 Chain Primary Name，而 “allen.zeta” 则作为 ZetaChain 的主域名。
+
+Web3 Name SDK 默认支持所有基于 EVM 的域名解析；反向解析会针对每条 EVM 链返回 Chain Primary Name。项目管理员可选择集成全部或部分链与 TLD，并按需定制反向解析配置，使 SDK 能灵活适配项目需求。
+
+## 快速上手
+
+开发者无需额外配置，即可使用 Web3 Name SDK 进行 Web3 域名解析或传统地址的反向解析。
+
+## 安装
+
+`npm install @web3-name-sdk/core viem@^1.20`
+
+若使用 Next.js，请在 `next.config.js` 中加入如下配置以转译 CommonJS 依赖：
+
+```typescript
+const nextConfig = {
+  transpilePackages: ["@web3-name-sdk/core"],
+};
+```
+
+### 1. 初始化客户端
+
+```typescript
+import { createWeb3Name } from "@web3-name-sdk/core";
+
+const web3Name = createWeb3Name();
+```
+
+### 2. 解析域名
+
+可通过一次请求获取域名对应的地址：
+
+```typescript
+const address = await web3name.getAddress("zeta.zeta");
+const address = await web3name.getAddress("bts_official.lens");
+const address = await web3name.getAddress("beresnev.crypto");
+const address = await web3name.getAddress("registry.zeta");
+```
+
+### 3. 解析地址
+
+方法中提供可选参数用于选择目标链或 TLD。传入链 ID 可在指定链上解析地址，并返回这些链上所有 TLD 中可用的域名。
+
+```typescript
+// 在 ZetaChain 上解析地址
+const name = await web3name.getDomainName({
+  address: "0x253a4ee0acb7c89bab7c20097200ea240119049a",
+  queryChainIdList: [7000],
+}); // 预期返回：karlyshka.zeta
+```
+
+传入 TLD 列表则可限制从特定 TLD 中获取可用的 TLD 主域名。
+
+```typescript
+// 在 .zeta TLD 中解析地址
+const name = await web3name.getDomainName({
+  address: "0x253a4ee0acb7c89bab7c20097200ea240119049a",
+  queryTldList: ["zeta"],
+}); // 预期返回：karlyshka.zeta
+```
+
+### 4. 记录
+
+通过提供域名与键名可以获取对应的文本记录。例如，下方示例返回 zeta.zeta 的头像记录：
+
+```typescript
+const record = await web3Name.getDomainRecord({
+  name: "zeta.zeta",
+  key: "avatar",
+});
+```
+
+### 5. 元数据
+
+可直接通过 SDK 获取域名元数据。
+
+```typescript
+// 请求元数据
+const metadata = await web3Name.getMetadata({ name: "public.zeta" });
+```***
+

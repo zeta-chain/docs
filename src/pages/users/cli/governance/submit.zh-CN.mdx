@@ -1,0 +1,42 @@
+---
+title: 提交提案
+---
+
+## 元数据 JSON
+
+每个提案需要关联一个 metadata JSON 文件，包含标题、摘要、作者等信息，可托管在 IPFS 或其他网站。建议包含以下字段：
+
+```json filename="metadata.json"
+{
+  "title": "Important Proposal",
+  "details": "Description of the proposal",
+  "summary": "A short summary of the proposal",
+  "authors": "ZetaChain Community",
+  "proposal_forum_url": "https://example.org/forum"
+}
+```
+
+## 提交提案
+
+准备好 `proposal.json` 并发布 `metadata.json` 后，可通过以下命令提交：
+
+```
+zetacored tx gov submit-proposal proposal.json --from alice --node https://zetachain-athens.blockpi.network:443/rpc/v1/public --chain-id athens_7001-1
+```
+
+部分提案（如软件升级）可能需要更高 Gas，可使用 `--gas 400000` 等参数自行设置。
+
+确认交易后等待返回哈希：
+
+```yaml
+txhash: C2133A95F0FDD76D618DFA70F2701E7DB6AE863C547D963E5B42B921DE3DD262
+```
+
+区块确认（约 5-7 秒）后，可查询交易状态：
+
+```
+zetacored q tx C2133A95F0FDD76D618DFA70F2701E7DB6AE863C547D963E5B42B921DE3DD262 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+若输出包含 `code: 0`，说明提案提交成功。输出中还会提供提案 ID，方便后续查询。
+

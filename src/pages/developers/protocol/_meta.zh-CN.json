@@ -1,0 +1,14 @@
+{
+  "evm": {
+    "title": "ZetaChain 与 EVM"
+  },
+  "solana": {
+    "title": "Solana"
+  },
+  "ton": {
+    "title": "TON"
+  },
+  "sui": {
+    "title": "Sui"
+  }
+}

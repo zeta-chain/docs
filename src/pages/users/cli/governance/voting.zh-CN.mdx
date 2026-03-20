@@ -1,0 +1,68 @@
+---
+title: 对提案投票
+---
+
+## 概览
+
+提案提交并满足最低押金后会进入投票期。在此阶段，网络参与者可投票决定是否通过提案。
+
+四种投票选项：
+
+- Yes
+- No
+- No with veto
+- Abstain
+
+## 查询提案状态
+
+投票前先确认提案已进入投票期：
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+status: PROPOSAL_STATUS_VOTING_PERIOD
+```
+
+## 发起投票
+
+使用 `tx gov vote` 命令，指定提案 ID 与投票选项：
+
+```
+zetacored tx gov vote 58 yes --from alice --node https://zetachain-athens.blockpi.network:443/rpc/v1/public --chain-id athens_7001-1
+```
+
+交易成功后，可查询投票记录确认：
+
+```
+zetacored q gov votes 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+votes:
+  - metadata: ""
+    options:
+      - option: VOTE_OPTION_YES
+        weight: "1.000000000000000000"
+    proposal_id: "58"
+    voter: zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+```
+
+## 查看投票结果
+
+投票结束后，可查询提案查看最终计票结果：
+
+```
+zetacored q gov proposal 58 --node https://zetachain-athens.blockpi.network:443/rpc/v1/public
+```
+
+```yaml
+final_tally_result:
+  abstain_count: "21345"
+  no_count: "453453"
+  no_with_veto_count: "678"
+  yes_count: "1230180973026531211265609"
+status: PROPOSAL_STATUS_PASSED
+```
+

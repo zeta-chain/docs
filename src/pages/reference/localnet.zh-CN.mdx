@@ -1,0 +1,82 @@
+Localnet 是 ZetaChain 的**一体化本地开发环境**，用于构建、测试与调试全链应用。它会在本机启动多条链（EVM、Solana、Sui、TON）的节点，并预部署核心协议合约、ZRC-20 代币、Uniswap v2/v3 池等组件，相当于一套“本地版 ZetaChain”，便于快速迭代。
+
+**为什么使用 Localnet？**
+
+🔄 在几秒内迭代跨链逻辑——无需再等待公共测试网确认。  
+🧪 一条命令重现复杂多链流程。  
+🐞 在 EVM 层面逐步调试每次合约调用。  
+🚀 本地验证通过后，再部署到测试网/主网更有把握。
+
+## ✨ 功能
+
+- **一键启动**：`npx zetachain@latest localnet start` 即可拉起完整环境。
+- **多链模拟**：同时支持 EVM、Solana、Sui 与 TON。
+- **预部署合约**：
+  - 全部链上的 ZetaChain Gateway 合约。
+  - 常见 ZRC-20 代币（如 `ETH`、`USDC` 等）。
+  - Uniswap v2 + v3 工厂、路由器与初始流动池。
+- **可配置**：可自定义区块时间、fork URL 等参数。
+
+## 🚀 快速开始
+
+安装依赖：
+
+| 工具 | 用途 | 安装 |
+| ---- | ---- | ---- |
+| **Node ≥ 18** | CLI 包装与脚本 | [https://nodejs.org](https://nodejs.org) |
+| **Foundry (Anvil)** | 本地 EVM | [安装指南](https://book.getfoundry.sh/getting-started/installation) |
+
+启动 Localnet：
+
+```bash
+npx zetachain@latest localnet start
+```
+
+片刻之后，你会看到类似输出：
+
+```
+ZETACHAIN
+┌──────────────────────────┬──────────────────────────────────────────────┐
+│ (index)                  │ Values                                       │
+├──────────────────────────┼──────────────────────────────────────────────┤
+│ gatewayZEVM              │ '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6' │
+│ uniswapFactoryInstance   │ '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0' │
+│ uniswapRouterInstance    │ '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9' │
+│ ...                      │                                              │
+└──────────────────────────┴──────────────────────────────────────────────┘
+```
+
+## 🧩 深入了解
+
+Localnet 背后做了什么？
+
+1. **Anvil 节点**在默认端口启动。
+2. **协议部署脚本**发布所有核心合约。
+3. **链模拟器**（Solana/Sui/TON）向 Connector 注册。
+4. **代币与流动池**被铸造并注入初始资金。
+5. 输出内置开发账户，方便直接使用。
+
+## 🧪 实用示例
+
+传入自定义 anvil 参数：
+
+```bash
+npx zetachain@latest localnet start \
+  --anvil "--block-time 1 --gas-limit 120000000" \
+  --port 9000
+```
+
+可用于模拟更快的区块时间或更高吞吐场景。
+
+仅运行精简版（仅 EVM）：
+
+```bash
+npx zetachain@latest localnet start
+```
+
+当应用无需 Solana、Sui、TON 时可选此模式，启动更快、资源占用更低。
+
+## 🛠️ 开源
+
+Localnet [已开源，代码托管在 GitHub](https://github.com/zeta-chain/localnet)。可自行克隆或贡献，了解其实现方式、定制行为，或扩展以满足研发需求。
+

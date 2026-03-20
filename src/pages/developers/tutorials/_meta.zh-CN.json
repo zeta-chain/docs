@@ -1,0 +1,32 @@
+{
+  "intro": {
+    "title": "入门指南"
+  },
+  "hello": {
+    "title": "第一个全链合约"
+  },
+  "frontend": {
+    "title": "构建 Web 应用"
+  },
+  "swap": {
+    "title": "跨链兑换"
+  },
+  "messaging": {
+    "title": "跨链消息"
+  },
+  "call": {
+    "title": "往返 EVM 的调用"
+  },
+  "solana": {
+    "title": "往返 Solana 的调用"
+  },
+  "sui": {
+    "title": "从 Sui 发起调用"
+  },
+  "sui-withdraw-and-call": {
+    "title": "调用 Sui"
+  },
+  "staking": {
+    "title": "质押"
+  }
+}

@@ -1,0 +1,112 @@
+---
+title: 入门指南
+---
+
+在 ZetaChain 上，你可以构建全链应用：这些智能合约能够跨多条区块链读取、写入并管理资产。全链应用极大降低了跨链开发复杂度，让你可以一次构建、处处运行，打造无缝的用户体验。
+
+本页面将帮助你完成环境配置、安装核心工具，并根据你的目标指引合适的教程。
+
+<div className="mt-8" style={{ width: "100%", height: "auto", aspectRatio: "16 / 9" }}>
+  <iframe
+    width="100%"
+    height="100%"
+    src="https://www.youtube.com/embed/rDVwxRMhq2w"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+  ></iframe>
+</div>
+
+## 准备工作
+
+开始之前，请确保系统已安装以下工具：
+
+- **[Node.js](https://nodejs.org/en)（建议 v21 及以上）**：用于运行 ZetaChain CLI 并管理 JavaScript 依赖。
+- **[Yarn](https://yarnpkg.com/) 或 npm**：项目依赖安装与更新的包管理器，两者任选其一。
+- **[Git](https://git-scm.com/)**：项目源码管理与协作的必备工具。
+- **[jq](https://jqlang.org/)**：轻量级命令行 JSON 处理器，便于解析 Localnet 输出与编写脚本。
+- **[Foundry](https://getfoundry.sh/)**：快速、模块化的以太坊开发工具包，用于编译合约、管理依赖并运行 Localnet。
+
+## 设置环境
+
+安装 ZetaChain CLI：
+
+```bash
+npm install -g zetachain
+```
+
+[ZetaChain CLI](/reference/cli/) 是与你的主要交互工具。你将用它来发起跨链调用、转移代币、追踪跨链交易、在多网络间管理账户、查询余额等。
+
+尝试运行：
+
+```bash
+zetachain query chains list
+```
+
+该命令会输出当前已接入 ZetaChain 的所有区块链，是验证环境是否配置成功的便捷方式。
+
+对于本地开发，推荐启动 Localnet——一个自包含环境，集成了 ZetaChain、EVM、Solana、Sui 与 TON。无需依赖公共测试网，就能以最快速度构建、测试全链应用。
+
+要运行 Localnet，请确保已安装 [Foundry](https://getfoundry.sh/)。它提供核心的 EVM 工具链，也是启动本地网络的前提。
+
+如需在 Localnet 中加入非 EVM 链，请参考 [Localnet 文档](/reference/localnet/) 中的额外先决条件。
+
+## 工具与参考资料
+
+环境就绪后，以下资源将帮助你与 ZetaChain 交互并开展开发工作。
+
+### 区块浏览器
+
+ZetaChain 同时兼具 Cosmos 链与 EVM 链的特性。你可以使用 Cosmos 浏览器查看区块、验证者与治理活动，也可以使用 EVM 浏览器追踪合约与交易。两类链接均整理在 [浏览器参考](/reference/explorers/) 中。
+
+### 水龙头
+
+在测试网部署或测试前，你需要获取代币。[水龙头页面](/reference/faucet/) 列出了所有可用水龙头，既提供 ZETA Gas，也提供连接链上的测试代币。
+
+### 网络
+
+ZetaChain 同时运行主网与测试网。本教程主要针对测试网，但你可随时切换。RPC、链 ID 等信息见 [网络参考](/developers/chains/list/)。
+
+### RPC
+
+若需连接应用、钱包或 Foundry、Hardhat 等框架，需要使用 RPC 节点。ZetaChain 主网与测试网的公共 RPC 均列于 [RPC 参考](/reference/network/api)。
+
+### 合约
+
+Gateway 等核心协议合约已部署在 ZetaChain 上，其地址汇总在 [协议合约参考](/reference/network/contracts/)。
+
+### 代币
+
+所有已列入白名单的 ZRC-20 代币及其合约地址，均可在 [代币参考](/developers/evm/zrc20/) 中查看。
+
+### MCP
+
+通过 ZetaChain 的 Model Context Protocol (MCP) 服务器，将 Cursor 或 Claude Code 与链上查询、操作相连接。详见 [MCP 参考](/reference/mcp/)。
+
+## 下一步去哪儿
+
+环境配置完成后，可直接开始构建。根据目标选择合适的路线：
+
+### 学习基础
+
+- [第一个全链合约](/developers/tutorials/hello/)（10 分钟）构建你的首个全链合约，理解 ZetaChain 开发的基础。
+- [构建 Web 应用](/developers/tutorials/frontend)（10 分钟）连接钱包、发送跨链调用，并用简单前端追踪执行状态。
+
+### 往返全链应用的调用
+
+- [EVM](/developers/tutorials/call/)（30 分钟）学习如何在 EVM 链与 ZetaChain 全链应用之间发送与接收调用。
+- [Solana](/developers/tutorials/solana/)（60 分钟）从 Solana 存入资产并调用全链应用，或向 Solana 发起出站调用。
+- [Sui](/developers/tutorials/sui/)（60 分钟）从 Sui 存入资产并调用全链应用。
+- [Sui 提现与调用](/developers/tutorials/sui-withdraw-and-call/)（60 分钟）向 Sui 提现资产并调用合约。
+
+### 跨链消息传递
+
+- [跨链消息](/developers/tutorials/messaging/)（30 分钟）直接在 EVM 网络间发起跨链调用，无需构建全链应用。
+
+### 构建真实场景应用
+
+- [全链 NFT](/developers/standards/nft/)（45 分钟）创建可在多链间无缝流转的 NFT。
+- [全链代币](/developers/standards/token/)（45 分钟）部署可跨链存在并互转的同质化代币。
+- [跨链兑换](/developers/tutorials/swap/)（30 分钟）构建兼容以太坊、Solana、比特币等链的全链兑换应用。
+

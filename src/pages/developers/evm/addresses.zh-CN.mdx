@@ -1,0 +1,56 @@
+---
+title: 账户地址
+---
+
+import { AddressConverter } from "~/components/Docs";
+
+## 概览
+
+ZetaChain 基于 Cosmos SDK 构建，并使用 Cosmos EVM 模块提供 EVM 兼容性。身兼 Cosmos 与 EVM 链意味着 ZetaChain 支持两种地址格式：[bech32 Cosmos 地址](https://docs.cosmos.network/main/build/spec/addresses/bech32) 与 [十六进制 EVM 地址](https://ethereum.org/developers/docs/accounts)。
+
+bech32 地址具备易读性，通常以链相关的前缀开头，并通过内置的错误检测能力降低抄录与输入失误的风险。ZetaChain 的 bech32 地址使用 `zeta` 前缀。
+
+EVM 地址则以 20 字节十六进制字符串表示，用于标识 EVM 上的账户。
+
+若两种地址源自同一公钥，则同一账户可同时拥有对应的 bech32 与 EVM 地址。
+
+例如，以下为一个 bech32 地址：
+
+```
+zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+```
+
+可通过 HTTP API 查询该地址的账户余额：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/bank/v1beta1/balances/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+
+同一账户的 EVM 地址为：
+
+```
+0x2cD3D070aE1BD365909dD859d29F387AA96911e1
+```
+
+同样可使用 Foundry 的 `cast` 工具查询余额：
+
+```
+cast balance 0x2cD3D070aE1BD365909dD859d29F387AA96911e1 --rpc-url https://zetachain-athens-evm.blockpi.network/v1/rpc/public
+```
+
+两种查询返回的余额相同。
+
+这意味着你可以将同一助记词导入 Cosmos 钱包与 EVM 钱包，访问同一个账户。部分钱包（如 Keplr）会同时显示 bech32 与十六进制地址。
+
+> 对于表示同一账户的 bech32 与十六进制地址，无需互相转账。
+
+## 账户类型
+
+若在 Cosmos 与 EVM 钱包中使用同一账户时遇到问题，可通过链上 API 检查账户类型：
+
+https://zetachain-athens.blockpi.network/lcd/v1/public/cosmos/auth/v1beta1/accounts/zeta19nfaqu9wr0fktyyampva98ec025kjy0phww5um
+
+为确保 Cosmos 与 EVM 兼容，账户的 `@type` 应为 `/ethermint.crypto.v1.ethsecp256k1.PubKey`。
+
+## 地址转换工具
+
+如需在 bech32 地址与 EVM 地址之间转换，可使用[地址转换器](/reference/tools/address-converter)。
+
