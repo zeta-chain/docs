@@ -1,0 +1,10 @@
+{
+  "address-converter": {
+    "title": "Address Converter",
+    "description": "Convert between EVM and Cosmos (bech32) address formats"
+  },
+  "proposals": {
+    "title": "Governance Proposals",
+    "description": "View and track ZetaChain governance proposals"
+  }
+}
