@@ -156,7 +156,7 @@ export const Hero: React.FC = () => {
         >
           <Image
             src={`${basePath}${imgUrl}`}
-            alt={imgUrl}
+            alt={title || "Hero image"}
             width={imgWidth || 570}
             height={520}
             className="w-auto lg:w-full max-h-[100px] sm:max-h-[150px] lg:max-h-[unset] !rounded-none !mt-0"

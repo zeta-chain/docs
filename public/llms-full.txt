@@ -1,0 +1,178 @@
+# ZetaChain Documentation
+
+> ZetaChain is a blockchain that connects all blockchains. Build universal apps that work across Ethereum, Bitcoin, Solana, Sui, TON, and more from a single contract. ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability.
+
+## Getting Started
+
+- [What is ZetaChain?](https://www.zetachain.com/docs/start/zetachain/): The Universal Layer for AI and Web3 — build apps that run across chains and models, keep memory private, and monetize without infrastructure.
+- [Why Build on ZetaChain?](https://www.zetachain.com/docs/start/build/): Chain orchestration, cross-chain native token transfers, gasless execution environment.
+- [Universal Apps](https://www.zetachain.com/docs/start/app/): Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more.
+
+## Developers — Universal EVM
+
+The Universal EVM is ZetaChain's smart contract platform with built-in interoperability features.
+
+- [Universal EVM Overview](https://www.zetachain.com/docs/developers/evm/evm/): Smart contract platform with built-in interoperability features, enabling the development of universal apps.
+- [Gateway](https://www.zetachain.com/docs/developers/evm/gateway/): A single point of entry for interacting with universal apps. The Gateway contract enables deposits, withdrawals, and cross-chain calls.
+- [Gas Fees](https://www.zetachain.com/docs/developers/evm/gas/): Learn about ZRC-20 withdraw fees and message passing fees.
+- [Cross-Chain Transactions](https://www.zetachain.com/docs/developers/evm/cctx/): How cross-chain transactions are processed on ZetaChain.
+- [ZETA Token](https://www.zetachain.com/docs/developers/evm/zeta/): ZETA is the native staking, gas and governance token of ZetaChain.
+- [ZRC-20 Tokens](https://www.zetachain.com/docs/developers/evm/zrc20/): Native gas and supported ERC-20 tokens from connected chains are represented as ZRC-20 on ZetaChain.
+- [ERC-20 Tokens](https://www.zetachain.com/docs/developers/evm/erc20/): ZetaChain's universal EVM supports standard ERC-20 tokens.
+- [Account Addresses](https://www.zetachain.com/docs/developers/evm/addresses/): Learn about types of account addresses, how to use and convert between EVM and Cosmos (bech32) formats.
+- [Liquidity Throughput](https://www.zetachain.com/docs/developers/evm/throughput/): Liquidity caps on tokens and rate limiting.
+
+## Developers — Universal Assets
+
+Standards that enable cross-chain interoperability for NFTs and fungible tokens.
+
+- [Universal Assets Overview](https://www.zetachain.com/docs/developers/standards/overview/): A set of standards that enable cross-chain interoperability for NFTs and fungible tokens.
+- [Universal NFT](https://www.zetachain.com/docs/developers/standards/nft/): The Universal NFT standard enables non-fungible tokens (ERC-721 NFT) to be minted on any chain and seamlessly transferred between connected chains.
+- [Universal Token](https://www.zetachain.com/docs/developers/standards/token/): The Universal Token standard enables ERC-20 fungible tokens to be minted on any chain and seamlessly transferred between connected chains.
+
+## Developers — Connected Chains
+
+Use Gateway to make calls to and from universal apps, deposit and withdraw tokens.
+
+- [List of Connected Chains](https://www.zetachain.com/docs/developers/chains/list/): Blockchains connected to ZetaChain for cross-chain transactions, including Ethereum, BNB, Polygon, Base, Solana, Bitcoin, TON, and Sui.
+- [Functionality Matrix](https://www.zetachain.com/docs/developers/chains/functionality/): State of ZetaChain functionality across connected chains.
+- [ZetaChain](https://www.zetachain.com/docs/developers/chains/zetachain/): Make calls from universal apps and withdraw tokens to connected chains.
+- [EVM Blockchains](https://www.zetachain.com/docs/developers/chains/evm/): Make calls to universal apps and deposit tokens from Ethereum, BNB, Polygon, Base and more.
+- [Solana](https://www.zetachain.com/docs/developers/chains/solana/): Make calls to universal apps and deposit from Solana.
+- [TON](https://www.zetachain.com/docs/developers/chains/ton/): Make calls to universal apps and deposit from TON.
+- [Sui](https://www.zetachain.com/docs/developers/chains/sui/): Make calls to universal apps and deposit tokens from Sui.
+- [Bitcoin](https://www.zetachain.com/docs/developers/chains/bitcoin/): Make calls to universal apps and deposit BTC from Bitcoin.
+
+## Developers — Tutorials
+
+Step-by-step guides to help you master building on ZetaChain.
+
+- [Getting Started](https://www.zetachain.com/docs/developers/tutorials/intro/): Learn more about universal apps and how to get started.
+- [First Universal Contract](https://www.zetachain.com/docs/developers/tutorials/hello/): Build your first universal contract.
+- [Build a Web App](https://www.zetachain.com/docs/developers/tutorials/frontend/): Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution.
+- [Swap Tutorial](https://www.zetachain.com/docs/developers/tutorials/swap/): Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin.
+- [Messaging Tutorial](https://www.zetachain.com/docs/developers/tutorials/messaging/): Learn how to make cross-chain calls between contracts on EVM chains.
+- [Calls to/from EVM](https://www.zetachain.com/docs/developers/tutorials/call/): Learn the fundamentals of message passing and cross-chain contract calls.
+- [Calls to/from Solana](https://www.zetachain.com/docs/developers/tutorials/solana/): Deposit assets and call universal apps from Solana, make outgoing calls to Solana.
+- [Calls from Sui](https://www.zetachain.com/docs/developers/tutorials/sui/): Deposit assets and call universal apps from Sui.
+- [Calls to Sui](https://www.zetachain.com/docs/developers/tutorials/sui-withdraw-and-call/): Withdraw assets and call contracts on Sui.
+- [Staking Tutorial](https://www.zetachain.com/docs/developers/tutorials/staking/): Delegate and undelegate ZETA from EVM.
+
+## Developers — Protocol Contracts
+
+Documentation for the protocol contracts on ZetaChain and connected chains.
+
+- [ZetaChain and EVM Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/evm/): Protocol contracts deployed on ZetaChain and EVM chains.
+- [Solana Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/solana/): Protocol contracts deployed on Solana.
+- [TON Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/ton/): Protocol contracts deployed on TON.
+- [Sui Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/sui/): Protocol contracts deployed on Sui.
+
+## Developers — Architecture
+
+In-depth look at the technical architecture of the ZetaChain protocol.
+
+- [Architecture Overview](https://www.zetachain.com/docs/developers/architecture/overview/): Overview of the architecture of ZetaChain.
+- [Observer-Signer Validators](https://www.zetachain.com/docs/developers/architecture/observers/): List of currently active observer-signer validators.
+- [Privileged Actions](https://www.zetachain.com/docs/developers/architecture/privileged/): Administrative actions that can only be executed by dedicated groups.
+- [Staking Rewards](https://www.zetachain.com/docs/developers/architecture/rewards/): How staking rewards are calculated.
+- [Whitelisting ERC-20](https://www.zetachain.com/docs/developers/architecture/whitelisting/): How to whitelist an ERC-20 as a supported ZRC-20.
+- [Cosmos SDK Modules](https://www.zetachain.com/docs/developers/architecture/modules/): ZetaChain's Cosmos SDK modules.
+- [ZetaChain Node CLI](https://www.zetachain.com/docs/developers/architecture/zetacored/): Command-line interface of the ZetaChain node binary.
+
+## Tools & Reference — Network
+
+- [Network Details](https://www.zetachain.com/docs/reference/network/details/): ZetaChain testnet and mainnet details including chain IDs, network names, and currency info.
+- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/network/api/): API endpoints that can be used to interact with ZetaChain, including EVM RPC, Cosmos REST, and Tendermint RPC.
+- [Contract Addresses](https://www.zetachain.com/docs/reference/network/contracts/): A list of protocol contract addresses for ZetaChain mainnet and testnet.
+- [ZetaChain HTTP API](https://www.zetachain.com/docs/reference/network/openapi/): Swagger documentation for the API of ZetaChain.
+
+## Tools & Reference — Developer Tools
+
+- [CLI](https://www.zetachain.com/docs/reference/cli/): Command line interface for building and interacting with universal apps.
+- [Localnet](https://www.zetachain.com/docs/reference/localnet/): Build and interact with your universal app in a local dev environment.
+- [Toolkit](https://www.zetachain.com/docs/reference/toolkit/): TypeScript SDK for building universal apps.
+- [Contract Registry](https://www.zetachain.com/docs/reference/registry/): Registry of protocol contracts deployed on ZetaChain and connected chains.
+- [Faucet](https://www.zetachain.com/docs/reference/faucet/): A guide to get testnet ZETA through the faucet.
+- [Block Explorers](https://www.zetachain.com/docs/reference/explorers/): Block explorers for ZetaChain mainnet and testnet.
+- [MCP Server](https://www.zetachain.com/docs/reference/mcp/): Add ZetaChain MCP server to Cursor or Claude Code for AI-assisted development.
+- [Address Converter](https://www.zetachain.com/docs/reference/tools/address-converter/): Convert between EVM and Cosmos (bech32) address formats.
+- [Governance Proposals](https://www.zetachain.com/docs/reference/tools/proposals/): View and track ZetaChain governance proposals.
+
+## Run a Node
+
+Become an important part of the ZetaChain network by running a node.
+
+### Getting Started
+
+- [Technical Requirements](https://www.zetachain.com/docs/nodes/start-here/requirements/): Hardware and software requirements before you start running a ZetaChain node.
+- [Setting Up a Node](https://www.zetachain.com/docs/nodes/start-here/setup/): A guide to set up a ZetaChain mainnet or testnet node.
+- [Syncing a Node](https://www.zetachain.com/docs/nodes/start-here/syncing/): Syncing a node using snapshots or KSYNC.
+- [Create a Core Validator](https://www.zetachain.com/docs/nodes/start-here/validator/): Become a core validator on the ZetaChain network.
+
+### Validation
+
+- [Create a Core Validator](https://www.zetachain.com/docs/nodes/validate/validator/): Detailed guide for becoming a core validator on ZetaChain.
+- [Validator on Google Compute Engine](https://www.zetachain.com/docs/nodes/validate/validator-gcp/): Host a core validator on Google Compute Engine.
+
+## Using ZetaChain Products
+
+### ZetaHub
+
+- [Add ZetaChain to your Wallet](https://www.zetachain.com/docs/users/zetahub/create-wallet/): How to add the ZetaChain network to your wallet.
+- [Connect a Wallet in ZetaHub](https://www.zetachain.com/docs/users/zetahub/connect-wallet/): How to connect your wallet and use it in ZetaHub.
+- [Get ZETA](https://www.zetachain.com/docs/users/zetahub/get-zeta/): How to get ZETA tokens.
+- [Pool ZETA](https://www.zetachain.com/docs/users/zetahub/pool/): Add tokens to liquidity pools on ZetaChain, earn fees, view pool details, and manage your positions.
+- [Delegate/Stake ZETA](https://www.zetachain.com/docs/users/zetahub/stake/): Explore ZetaChain validators and delegate ZETA.
+- [Enroll in Zeta XP](https://www.zetachain.com/docs/users/zetahub/enroll-zeta-xp/): Enroll in the XP program to earn experience points by engaging with the ZetaChain ecosystem.
+- [Earn Zeta XP](https://www.zetachain.com/docs/users/zetahub/earn-zeta-xp/): Participate in activities to earn XP, including staking, trading, and engaging with apps.
+- [Send Assets](https://www.zetachain.com/docs/users/zetahub/send/): Move your assets in and out of the ZetaChain network.
+
+### Wallets
+
+- [Keplr Wallet](https://www.zetachain.com/docs/users/keplr/): Setting up and using Keplr Wallet with ZetaChain.
+- [Leap Wallet](https://www.zetachain.com/docs/users/leap/): Setting up and using Leap Wallet with ZetaChain.
+- [Ping Pub Explorer](https://www.zetachain.com/docs/users/pingpub/): Using a block explorer for Cosmos-based blockchains.
+
+### Node CLI
+
+- [Installing the CLI](https://www.zetachain.com/docs/users/cli/setup/): zetacored CLI is a command line tool that allows you to interact with the ZetaChain network.
+- [Adding an Account](https://www.zetachain.com/docs/users/cli/account/): Create or recover a ZetaChain account using the CLI.
+- [Querying Balances](https://www.zetachain.com/docs/users/cli/balances/): Check token balances for a ZetaChain account.
+- [Delegating to a Validator](https://www.zetachain.com/docs/users/cli/delegate/): Stake ZETA tokens by delegating to a validator.
+- [Withdrawing Rewards](https://www.zetachain.com/docs/users/cli/rewards/): Claim staking rewards from your delegations.
+- [Governance](https://www.zetachain.com/docs/users/cli/governance/): Participate in ZetaChain governance proposals.
+
+## About ZetaChain
+
+- [About ZetaChain](https://www.zetachain.com/docs/about/overview/): The foundational, public blockchain that enables omnichain, generic smart contracts and messaging between any blockchain.
+
+### ZETA Token
+
+- [Token Utility](https://www.zetachain.com/docs/about/token-utility/overview/): How ZETA is used across components of the ZetaChain ecosystem.
+- [ZETA Token](https://www.zetachain.com/docs/about/token-utility/token/): All about the total supply of the ZETA token.
+- [ZETA Distribution](https://www.zetachain.com/docs/about/token-utility/distribution/): How the total supply of ZETA is distributed.
+- [Validator Incentives](https://www.zetachain.com/docs/about/token-utility/validators/): How validator incentives are structured for securing the network.
+- [Gas Fees](https://www.zetachain.com/docs/about/token-utility/gas/): How ZETA is used for gas fees for the network.
+- [Core Liquidity Pools](https://www.zetachain.com/docs/about/token-utility/liquidity/): All about the core liquidity pools on ZetaChain.
+
+### Apps & Services
+
+- [Services & Providers](https://www.zetachain.com/docs/about/services/): Oracles, subgraphs, data providers, account abstraction and more.
+- [Wallets](https://www.zetachain.com/docs/about/services/wallets/): Supported EVM, Bitcoin and Cosmos wallets.
+- [The Graph](https://www.zetachain.com/docs/about/services/the-graph/): Subgraphs and decentralized indexing protocol.
+- [Alchemy](https://www.zetachain.com/docs/about/services/alchemy/): Node API and subgraphs.
+- [Goldsky](https://www.zetachain.com/docs/about/services/goldsky/): Subgraph indexer.
+- [Pyth](https://www.zetachain.com/docs/about/services/pyth/): Price and VRF oracle.
+- [Particle Network](https://www.zetachain.com/docs/about/services/particle/): Account abstraction.
+- [Envio](https://www.zetachain.com/docs/about/services/envio/): Real-time data indexer.
+- [SubQuery](https://www.zetachain.com/docs/about/services/subquery/): Open-source, flexible, multi-chain data indexer.
+- [GoldRush](https://www.zetachain.com/docs/about/services/goldrush/): Historical blockchain data API.
+- [Web3 Name SDK](https://www.zetachain.com/docs/about/services/space-id/): SPACE ID Web3 Name SDK.
+- [OnFinality](https://www.zetachain.com/docs/about/services/onfinality/): Subgraph and SubQuery indexer.
+- [Anuma](https://www.zetachain.com/docs/about/services/anuma/): Privacy-focused multi-model AI chat platform.
+
+### More Info
+
+- [Bug Bounty Program](https://www.zetachain.com/docs/about/info/bounty/): Contribute to ZetaChain by finding and reporting bugs.
+- [Glossary](https://www.zetachain.com/docs/about/info/glossary/): Common terms used with ZetaChain.
+- [FAQs](https://www.zetachain.com/docs/about/info/faq/): Frequently asked questions about building on ZetaChain.

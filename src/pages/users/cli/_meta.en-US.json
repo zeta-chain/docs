@@ -3,9 +3,24 @@
     "title": "Installing the CLI",
     "description": "zetacored CLI is a command line tool that allows you to interact with the ZetaChain network."
   },
-  "account": "Adding an Account",
-  "balances": "Querying Balances",
-  "delegate": "Delegating to a Validator",
-  "rewards": "Withdrawing Rewards",
-  "governance": "Governance"
+  "account": {
+    "title": "Adding an Account",
+    "description": "Create or recover a ZetaChain account using the CLI"
+  },
+  "balances": {
+    "title": "Querying Balances",
+    "description": "Check token balances for a ZetaChain account"
+  },
+  "delegate": {
+    "title": "Delegating to a Validator",
+    "description": "Stake ZETA tokens by delegating to a validator"
+  },
+  "rewards": {
+    "title": "Withdrawing Rewards",
+    "description": "Claim staking rewards from your delegations"
+  },
+  "governance": {
+    "title": "Governance",
+    "description": "Participate in ZetaChain governance proposals"
+  }
 }

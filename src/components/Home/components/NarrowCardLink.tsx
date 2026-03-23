@@ -14,7 +14,7 @@ export const NarrowCardLink: React.FC<NarrowCardLinkProps> = ({ href, svg, title
 
   if (isExternalLink(href)) {
     return (
-      <a href={href} className={linkClassName} target="_blank" rel="nofollow noreferrer">
+      <a href={href} className={linkClassName} target="_blank" rel="noopener noreferrer">
         <NarrowCardLinkContent svg={svg} title={title} description={description} />
       </a>
     );
