@@ -40,7 +40,7 @@
     "@vercel/kv": "2.0.0",
     "@zetachain/addresses": "0.0.13",
     "@zetachain/protocol-contracts": "^14.1.0",
-    "@zetachain/toolkit": "^16.1.0",
+    "@zetachain/toolkit": "^16.3.1",
     "@zetachain/ui-toolkit": "1.0.3",
     "axios": "1.7.4",
     "bech32": "2.0.0",
