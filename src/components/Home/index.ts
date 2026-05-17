@@ -7,5 +7,4 @@ export * from "./components/HomeNavigationSections";
 export * from "./components/HomePage";
 export * from "./components/ShipFaster";
 export * from "./components/svg/DividerSvgs";
-export * from "./components/VideosSection";
 export * from "./components/WorkWithUs";

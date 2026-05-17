@@ -85,7 +85,7 @@ export const navMainItems: NavItem[][] = [
   ],
   [
     {
-      label: "Build",
+      label: "Architecture",
       icon: IconCode,
       url: "/developers",
       clickUrl: "/developers/overview",

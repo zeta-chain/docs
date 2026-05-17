@@ -1,18 +1,30 @@
 {
   "overview": {
-    "title": "Build",
-    "description": "Begin your journey on ZetaChain."
+    "title": "Architecture",
+    "description": "Take an in-depth look into the inner workings and technical architecture of ZetaChain."
   },
   "evm": {
-    "title": "EVM",
-    "description": "ZetaChain's EVM-compatible execution environment."
+    "title": "ZetaChain EVM",
+    "description": "ZetaChain's EVM-compatible execution environment built on Cosmos SDK and CometBFT."
   },
-  "tutorials": {
-    "title": "Tutorials",
-    "description": "Step-by-step guides to help you master building on ZetaChain."
+  "zeta": {
+    "title": "ZETA",
+    "description": "ZETA is the native staking, gas and governance token of ZetaChain"
   },
-  "architecture": {
-    "title": "Architecture",
-    "description": "Take an in-depth look into the inner workings and technical architecture of the ZetaChain protocol."
+  "erc20": {
+    "title": "ERC-20",
+    "description": "ZetaChain's EVM supports standard ERC-20 tokens"
+  },
+  "addresses": {
+    "title": "Account Addresses",
+    "description": "Learn about types of account address, how to use and convert between them"
+  },
+  "rewards": {
+    "title": "Staking Rewards",
+    "description": "How staking rewards are calculated"
+  },
+  "zetacored": {
+    "title": "ZetaChain Node CLI",
+    "description": "Command-line interface of the ZetaChain node binary"
   }
 }

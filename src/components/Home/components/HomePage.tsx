@@ -4,24 +4,12 @@ import { useHomePageContent } from "../hooks/useHomePageContent";
 import { BuildAnything } from "./BuildAnything";
 import { BuildForNow } from "./BuildForNow";
 import { Ecosystem } from "./Ecosystem";
-import { EngineeringBlog } from "./EngineeringBlog";
 import { HomeHero } from "./HomeHero";
-import { JoinCommunity } from "./JoinCommunity";
 import { ShipFaster } from "./ShipFaster";
-import { DividerSvg, ShortDividerSvg } from "./svg/DividerSvgs";
-import { VideosSection } from "./VideosSection";
+import { DividerSvg } from "./svg/DividerSvgs";
 
 export const HomePage: React.FC = () => {
-  const {
-    featuredEcosystemApps,
-    isLoadingFeaturedEcosystemApps,
-
-    ecosystemEvents,
-    isLoadingEcosystemEvents,
-
-    engineeringBlogPosts,
-    isLoadingEngineeringBlogPosts,
-  } = useHomePageContent();
+  const { featuredEcosystemApps, isLoadingFeaturedEcosystemApps } = useHomePageContent();
 
   return (
     <>
@@ -36,9 +24,6 @@ export const HomePage: React.FC = () => {
 
       <BuildAnything />
 
-      <ShortDividerSvg />
-      <VideosSection />
-
       <DividerSvg />
       <BuildForNow />
 
@@ -51,19 +36,6 @@ export const HomePage: React.FC = () => {
           <Ecosystem
             featuredEcosystemApps={featuredEcosystemApps}
             isLoadingFeaturedEcosystemApps={isLoadingFeaturedEcosystemApps}
-          />
-        </>
-      )}
-
-      <DividerSvg />
-      <JoinCommunity ecosystemEvents={ecosystemEvents} isLoadingEcosystemEvents={isLoadingEcosystemEvents} />
-
-      {(isLoadingEngineeringBlogPosts || engineeringBlogPosts.length > 0) && (
-        <>
-          <ShortDividerSvg />
-          <EngineeringBlog
-            engineeringBlogPosts={engineeringBlogPosts}
-            isLoadingEngineeringBlogPosts={isLoadingEngineeringBlogPosts}
           />
         </>
       )}

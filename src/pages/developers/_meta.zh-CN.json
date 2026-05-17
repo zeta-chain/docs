@@ -1,14 +1,23 @@
 {
   "overview": {
-    "title": "开发构建"
+    "title": "架构"
   },
   "evm": {
-    "title": "EVM"
+    "title": "ZetaChain EVM"
   },
-  "tutorials": {
-    "title": "教程"
+  "zeta": {
+    "title": "ZETA"
   },
-  "architecture": {
-    "title": "协议架构"
+  "erc20": {
+    "title": "ERC-20"
+  },
+  "addresses": {
+    "title": "账户地址"
+  },
+  "rewards": {
+    "title": "质押奖励"
+  },
+  "zetacored": {
+    "title": "ZetaChain 节点 CLI"
   }
 }
