@@ -3,14 +3,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
-// Enable accessing Cloudflare bindings via `next dev`. Dynamic import keeps this
-// CommonJS config compatible with the ESM-only @opennextjs/cloudflare package.
-if (process.env.NODE_ENV !== "production") {
-  import("@opennextjs/cloudflare")
-    .then(({ initOpenNextCloudflareForDev }) => initOpenNextCloudflareForDev())
-    .catch(() => {});
-}
-
 /** @type {import('nextra').NextraConfig} */
 const nextraConfig = {
   theme: "nextra-theme-docs",
