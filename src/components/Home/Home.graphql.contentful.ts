@@ -34,4 +34,3 @@ export const GetFeaturedEcosystemApps = gql`
     }
   }
 `;
-
