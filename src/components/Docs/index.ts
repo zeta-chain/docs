@@ -1,7 +1,6 @@
 export * from "./components/AddressConverter";
 export * from "./components/AdminPolicy";
 export * from "./components/ConnectedChainsList";
-export * from "./components/ContractAddresses";
 export * from "./components/ContractRegistryChains";
 export * from "./components/EndpointList";
 export * from "./components/Fees";

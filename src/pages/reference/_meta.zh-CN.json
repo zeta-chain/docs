@@ -2,8 +2,14 @@
   "overview": {
     "title": "工具"
   },
-  "network": {
-    "title": "RPC 与合约"
+  "details": {
+    "title": "网络详情"
+  },
+  "api": {
+    "title": "RPC / API 端点"
+  },
+  "openapi": {
+    "title": "ZetaChain HTTP API"
   },
   "faucet": {
     "title": "水龙头"

@@ -3,9 +3,20 @@
     "title": "Tools",
     "description": "Useful articles to help you get up and running, work with the network, APIs or simply learn key terms."
   },
-  "network": {
-    "title": "RPC & Contracts",
-    "description": "RPC/API endpoints and contract addresses"
+  "details": {
+    "title": "Network Details",
+    "description": "ZetaChain testnet and mainnet details.",
+    "readTime": "5 min"
+  },
+  "api": {
+    "title": "RPC/API Endpoints",
+    "description": "API endpoints that can be used to interact with ZetaChain.",
+    "readTime": "5 min"
+  },
+  "openapi": {
+    "title": "ZetaChain HTTP API",
+    "description": "Swagger documentation for the API of ZetaChain.",
+    "readTime": "15 min"
   },
   "faucet": {
     "title": "Faucet",

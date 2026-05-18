@@ -81,10 +81,9 @@ In-depth look at the technical architecture of the ZetaChain protocol.
 
 ## Tools & Reference — Network
 
-- [Network Details](https://www.zetachain.com/docs/reference/network/details/): ZetaChain testnet and mainnet details including chain IDs, network names, and currency info.
-- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/network/api/): API endpoints that can be used to interact with ZetaChain, including EVM RPC, Cosmos REST, and Tendermint RPC.
-- [Contract Addresses](https://www.zetachain.com/docs/reference/network/contracts/): A list of protocol contract addresses for ZetaChain mainnet and testnet.
-- [ZetaChain HTTP API](https://www.zetachain.com/docs/reference/network/openapi/): Swagger documentation for the API of ZetaChain.
+- [Network Details](https://www.zetachain.com/docs/reference/details/): ZetaChain testnet and mainnet details including chain IDs, network names, and currency info.
+- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/api/): API endpoints that can be used to interact with ZetaChain, including EVM RPC, Cosmos REST, and Tendermint RPC.
+- [ZetaChain HTTP API](https://www.zetachain.com/docs/reference/openapi/): Swagger documentation for the API of ZetaChain.
 
 ## Tools & Reference — Developer Tools
 

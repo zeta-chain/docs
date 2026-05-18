@@ -23,9 +23,8 @@
 
 ## Tools & Reference
 
-- [Network Details](https://www.zetachain.com/docs/reference/network/details/): ZetaChain testnet and mainnet details.
-- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/network/api/): API endpoints for interacting with ZetaChain.
-- [Contract Addresses](https://www.zetachain.com/docs/reference/network/contracts/): Protocol contract addresses for ZetaChain.
+- [Network Details](https://www.zetachain.com/docs/reference/details/): ZetaChain testnet and mainnet details.
+- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/api/): API endpoints for interacting with ZetaChain.
 - [CLI](https://www.zetachain.com/docs/reference/cli/): Command line interface for building and interacting with universal apps.
 - [Localnet](https://www.zetachain.com/docs/reference/localnet/): Build and interact with your universal app in a local dev environment.
 - [Toolkit](https://www.zetachain.com/docs/reference/toolkit/): TypeScript SDK for building universal apps.
