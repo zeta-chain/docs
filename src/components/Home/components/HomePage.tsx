@@ -16,7 +16,7 @@ export const HomePage: React.FC = () => {
       <NextSeo
         title={"ZetaChain Documentation"}
         description={
-          "ZetaChain is the only decentralized blockchain and smart contract platform built for omnichain interoperability."
+          "ZetaChain is a decentralized blockchain and smart contract platform built for interoperability."
         }
       />
 

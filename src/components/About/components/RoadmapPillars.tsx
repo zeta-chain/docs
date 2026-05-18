@@ -33,7 +33,7 @@ const pillars = [
       {
         title: "Approach",
         description:
-          "Develop and implement secure and efficient protocols for cross-chain interoperability. Improve framework and architecture for new chain integrations modularly.",
+          "Develop and implement secure and efficient protocols for interoperability across connected chains. Improve framework and architecture for new chain integrations modularly.",
       },
       {
         title: "Expected Outcome",
@@ -58,10 +58,10 @@ const pillars = [
         title: "Key Features",
         description: (
           <StyledUnorderedList>
-            <li>Arbitrary omnichain smart contract messaging to/from ZetaChain.</li>
+            <li>Arbitrary smart contract messaging to/from ZetaChain.</li>
             <li>ZRC-20 whitelisting automation and expanded onboarding process.</li>
-            <li>ZRC20-like NFT support for omnichain smart contracts.</li>
-            <li>BRC20/Ordinals support in omnichain smart contracts.</li>
+            <li>ZRC20-like NFT support for smart contracts.</li>
+            <li>BRC20/Ordinals support in smart contracts.</li>
             <li>Standardized interactions with connected chains beyond fungible tokens (ZRC20 model).</li>
           </StyledUnorderedList>
         ),
@@ -89,9 +89,9 @@ const pillars = [
         title: "Strategies",
         description: (
           <StyledUnorderedList>
-            <li>Shift from observation of inbound and outbound transactions to a proof-verification-based model.</li>
-            <li>Reduce reliance on the assumption of 2/3 honest observers for external events.</li>
-            <li>Improve observer/tss signer on-chain monitoring and incentives.</li>
+            <li>Shift from monitoring of inbound and outbound transactions to a proof-verification-based model.</li>
+            <li>Reduce reliance on the assumption of 2/3 honest validators for external events.</li>
+            <li>Improve TSS on-chain monitoring and incentives.</li>
             <li>Gradually increase decentralization and reduce central point of failures/control.</li>
             <li>
               Improve performance and reduce cost by utilizing zero-knowledge proof for validating external
@@ -122,7 +122,7 @@ const pillars = [
         title: "Key Areas",
         description: (
           <StyledUnorderedList>
-            <li>Higher cross-chain Transactions Per Second (TPS).</li>
+            <li>Higher Transactions Per Second (TPS) across connected chains.</li>
             <li>Lower resource consumption and storage requirements for validators.</li>
             <li>Increase awareness of network operation, error/exception handling and recovery.</li>
             <li>Performance and chaos engineering tooling to battle-test new protocol upgrades.</li>
@@ -142,7 +142,7 @@ const pillars = [
     ],
   },
   {
-    title: "Omnichain dApp Developer Tooling, SDK, and Support",
+    title: "dApp Developer Tooling, SDK, and Support",
     description: [
       {
         title: "Objective",
@@ -154,10 +154,10 @@ const pillars = [
           <StyledUnorderedList>
             <li>JavaScript/TypeScript SDKs, Telegram Bot SDK.</li>
             <li>Debugging tools.</li>
-            <li>Cross-chain transaction simulation.</li>
+            <li>Transaction simulation across connected chains.</li>
             <li>
-              Explorer/observability: especially better support for complex cross-chain dApps to expose the cross-chain
-              sub-tx in an easy to understand way.
+              Explorer/observability: especially better support for complex dApps to expose connected-chain
+              sub-transactions in an easy to understand way.
             </li>
           </StyledUnorderedList>
         ),

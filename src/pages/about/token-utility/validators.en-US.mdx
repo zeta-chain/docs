@@ -5,43 +5,12 @@ description: Validator incentives are structured such that operators are remuner
 
 ## Validator types
 
-Validators are comprised of 3 different roles: Core Validators, Observers, and
-TSS Signers. Fees from transactions and rewards are distributed to Validators in
-return for their service of processing transactions and keeping the network
-secure.
-
-> _Note: in general, Observers and TSS Signers are technically separate but will
-> be batched together for operators such that an operator is either running a
-> Core Validator or an Observer-Signer Validator. Core Validator u prerequisite
-> to being an Observer-Signer (Observer-Signers will run all 3 roles,
-> technically). Observer-Signers receive 25% of block rewards and Core
-> Validators receive the other 75%. At launch, it is planned such that the top
-> 100 Core Validators on total stake will be eligible to participate in
-> consensus. 9 validators will comprise the initial Observer-Signer set. These
-> numbers will increase over time further the decentralization of the network._
-
-Here we define the different functions of validators and their allocation of the
-validator block incentives.
-
-**Core Validators (75%)**
-
-These provide consensus for ZetaCore (ZetaChain’s base blockchain). These will
-support general PoS mechanics and delegation from users. Anyone will be able to
-run a validator to earn rewards by securing the network. Users may delegate
-stake to any existing operator, or run their own validator.
-
-**Observer Validators (12.5%)**
-
-These observe connected chains and send relevant events to the Core Validators.
-Observation will eventually become less important with further
-verification/proof development, so the portion of rewards allocated to Observers
-will eventually transition more to TSS Signers via governance-based upgrades.
-
-**TSS Signer Validators (12.5%)**
-
-When ZetaChain wants to write receiving info from Core Validators transactions
-to different chains, it uses a network of TSS Signers to write in a
-decentralized manner.
+Validators provide consensus for ZetaCore (ZetaChain’s base blockchain),
+supporting general PoS mechanics and delegation from users. Anyone can run a
+validator to earn rewards by securing the network. Fees from transactions and
+rewards are distributed to validators in return for their service of processing
+transactions and keeping the network secure. Users may delegate stake to any
+existing operator, or run their own validator.
 
 ## Validator block rewards
 
@@ -70,10 +39,6 @@ delegators/stakers, but to withdraw them, one must wait 21 days to receive them.
 ## Slashing
 
 To ensure network liveness and safety, deviation from the protocol by the
-validators will be penalized by slashing their bonded ZETA. This could include
-standard Cosmos SDK defined slash-able violations such as missed votes on
-blocks, conflicting votes on blocks, etc., for core validators. Besides that,
-for observer-signer validators, additional behaviors will be penalized by
-slashing the accompanying core validator staked ZETA. Such behaviors may include
-repeatedly failing to observe relevant external events, reporting incorrect
-events, failing to join the TSS keygen or keysign party, etc.
+validators will be penalized by slashing their bonded ZETA. This includes
+standard Cosmos SDK defined slash-able violations such as missed votes on blocks
+and conflicting votes on blocks.

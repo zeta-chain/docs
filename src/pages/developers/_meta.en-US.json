@@ -22,9 +22,5 @@
   "rewards": {
     "title": "Staking Rewards",
     "description": "How staking rewards are calculated"
-  },
-  "zetacored": {
-    "title": "ZetaChain Node CLI",
-    "description": "Command-line interface of the ZetaChain node binary"
   }
 }

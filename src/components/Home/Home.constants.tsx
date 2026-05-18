@@ -78,7 +78,7 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
     topTitle: "Universal",
     title: "Front-end",
     description:
-      "Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution",
+      "Create a web app to interact with your universal contract: connect a wallet, send universal calls, and track execution",
     readTime: "20 min",
     readType: "Beginner",
   },

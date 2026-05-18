@@ -1,36 +1,25 @@
-import { DeterministicIconArticle, IconDocs, PrimaryLink } from "../../shared";
+import { DeterministicIconArticle } from "../../shared";
 
 type KeyFeature = {
   title: string;
   description: string;
-  link?: React.ReactNode;
 };
 
 const keyFeatures: KeyFeature[] = [
   {
     title: "Chain Abstraction Framework",
     description:
-      "ZetaChain is a decentralized and public blockchain network. It is built on Cosmos SDK and Comet BFT consensus. The unique feature of ZetaChain is the Chain Abstraction Framework (CAF), which enables omnichain connectivity of the network to any blockchain. This framework is accessible through the Universal EVM, which is a synchronous environment that can be called from any chain, manage native assets on any chain, and access asynchronous arbitrary messaging to call contracts on other chains. Developing with the CAF offers the ability to build robust state management combined with multi-leg, multi-chain apps' needs, all in the familiar EVM development environment. The resulting user experience is unbounded, where the majority of apps can be used entirely from any single network while the rest of the app logic can be affordably, securely, and performantly abstracted.",
+      "ZetaChain is a decentralized and public blockchain network. It is built on Cosmos SDK and Comet BFT consensus. The unique feature of ZetaChain is the Chain Abstraction Framework (CAF), which connects the network to any blockchain. This framework is accessible through the Universal EVM, which is a synchronous environment that can be called from any chain, manage native assets on any chain, and access asynchronous arbitrary messaging to call contracts on other chains. Developing with the CAF offers the ability to build robust state management combined with multi-leg, multi-chain apps' needs, all in the familiar EVM development environment. The resulting user experience is unbounded, where the majority of apps can be used entirely from any single network while the rest of the app logic can be affordably, securely, and performantly abstracted.",
   },
   {
     title: "Hyper-connected nodes",
     description:
-      "ZetaChain's nodes have observers that monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on every connected chain. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless Chain Abstraction Framework for developers to build novel and powerful cross-chain applications.",
+      "ZetaChain's nodes monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on every connected chain. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless Chain Abstraction Framework for developers to build novel and powerful universal applications.",
   },
   {
-    title: "Omnichain smart contracts",
+    title: "Interoperable smart contracts",
     description:
       "Smart contracts deployed natively on ZetaChain can read/write to connected chains. ZetaChain is the only public blockchain to support smart contracts with this capability, enabling a new paradigm of app development.",
-  },
-  {
-    title: "Cross-chain message passing",
-    description:
-      "A developer can pass messages (data and value) between chains and layers with simple function calls. Through message passing, a dApp developer can build powerful cross-chain applications by simply implementing a few functions within their existing smart contracts. By composing messaging capabilities with Omnichain Smart Contracts, apps can abstract multi-leg cross-chain transactions in tandem with native asset movements and interactions. For example, a contract on ZetaChain could be called by a user on Bitcoin and also enact external contract calls on Ethereum and BNB Chain, and more legs thereafter — all in just one step for the user.",
-    link: (
-      <PrimaryLink href="/developers/tutorials/hello" icon={<IconDocs />}>
-        Start building dApps
-      </PrimaryLink>
-    ),
   },
   {
     title: "Managed external assets",
@@ -57,8 +46,6 @@ export const KeyFeatures: React.FC = () => {
               <p className="text-base leading-[160%] font-normal text-grey-400 dark:text-grey-300">
                 {feature.description}
               </p>
-
-              {feature.link && <div className="mt-4 md:mt-2">{feature.link}</div>}
             </div>
           </div>
         ))}

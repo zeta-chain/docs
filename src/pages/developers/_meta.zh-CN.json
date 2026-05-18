@@ -16,8 +16,5 @@
   },
   "rewards": {
     "title": "质押奖励"
-  },
-  "zetacored": {
-    "title": "ZetaChain 节点 CLI"
   }
 }
