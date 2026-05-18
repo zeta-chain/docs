@@ -5,8 +5,8 @@ export const HomeHero: React.FC = () => {
   return (
     <div className="flex flex-col justify-center mt-6 md:mt-0 px-5 md:px-[72px]">
       <h1 className="text-[48px] md:text-[72px] leading-[110%] md:leading-[100%] font-medium tracking-[-0.96px] md:tracking-[-1.44px] text-grey-900 dark:text-grey-50 text-center mb-6">
-        The Universal Layer for{" "}
-        <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline-block">AI and Web3</span>
+        The Private Memory Layer for{" "}
+        <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline-block">AI</span>
       </h1>
 
       <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300 text-center max-w-[688px] mx-auto mb-14 md:mb-[72px]">
