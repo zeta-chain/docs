@@ -10,7 +10,7 @@ export const HomeHero: React.FC = () => {
       </h1>
 
       <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300 text-center max-w-[688px] mx-auto mb-14 md:mb-[72px]">
-        Build apps that run across chains and models. Keep memory private. Monetize without infrastructure.
+        One private memory across every AI you use. Build with it on Anuma, the platform powered by ZetaChain.
       </p>
 
       <div className="flex flex-col md:flex-row md:justify-center gap-4 md:gap-6 border-b border-grey-200 dark:border-grey-600 pb-16 md:pb-20">
