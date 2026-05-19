@@ -1756,8 +1756,8 @@ export const FadeRightSvg = () => {
         <rect width="224" height="80" fill="url(#paint0_linear_3469_8712)" />
         <defs>
           <linearGradient id="paint0_linear_3469_8712" x1="224" y1="40" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0.3" stopColor="white" />
-            <stop offset="1" stopColor="white" stopOpacity="0" />
+            <stop stopColor="white" />
+            <stop offset="0.725982" stopColor="white" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
@@ -1773,8 +1773,8 @@ export const FadeRightSvg = () => {
         <rect width="224" height="80" fill="url(#paint0_linear_3469_10131)" />
         <defs>
           <linearGradient id="paint0_linear_3469_10131" x1="224" y1="40" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0.3" />
-            <stop offset="1" stopOpacity="0" />
+            <stop />
+            <stop offset="0.725982" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
@@ -1797,8 +1797,8 @@ export const FadeRightSvg = () => {
             y2="16"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0.25" stopColor="white" />
-            <stop offset="1" stopColor="white" stopOpacity="0" />
+            <stop stopColor="white" />
+            <stop offset="0.725982" stopColor="white" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>
@@ -1821,8 +1821,8 @@ export const FadeRightSvg = () => {
             y2="16"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0.25" />
-            <stop offset="1" stopOpacity="0" />
+            <stop />
+            <stop offset="0.725982" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>

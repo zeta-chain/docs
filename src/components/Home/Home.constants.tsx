@@ -1,6 +1,6 @@
 import { DeterministicIconArticle } from "../shared";
 import { BuildWithTheCliSvg, BuildWithUiSvg } from "./components/svg/HomeHeroSvgs";
-import { CliSvg, LocalnetSvg, ToolkitSvg } from "./components/svg/ShipFasterSvgs";
+import { LocalnetSvg, ToolkitSvg, ZetaChainSvg } from "./components/svg/ShipFasterSvgs";
 
 export type NarrowCardLink = {
   href: string;
@@ -77,21 +77,21 @@ export const BUILD_ANYTHING_CARDS: BuildAnythingCard[] = [
 
 export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "https://github.com/zeta-chain/cli",
-    svg: <CliSvg />,
-    title: "CLI",
-    description: "Scaffolding & more",
-  },
-  {
-    href: "https://github.com/zeta-chain/toolkit",
-    svg: <ToolkitSvg />,
-    title: "Toolkit",
-    description: "Robust tools",
-  },
-  {
-    href: "/reference/localnet/",
+    href: "/nodes/overview/",
     svg: <LocalnetSvg />,
-    title: "Localnet",
-    description: "Instant testing",
+    title: "Run a Node",
+    description: "Set up a validator or full node",
+  },
+  {
+    href: "/reference/api/",
+    svg: <ToolkitSvg />,
+    title: "RPC/API Endpoints",
+    description: "Connect to ZetaChain nodes",
+  },
+  {
+    href: "/about/overview/",
+    svg: <ZetaChainSvg />,
+    title: "About ZetaChain",
+    description: "The protocol behind Anuma",
   },
 ];

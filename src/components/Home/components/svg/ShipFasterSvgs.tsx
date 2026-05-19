@@ -102,6 +102,25 @@ export const ToolkitSvg = () => {
   );
 };
 
+export const ZetaChainSvg = () => {
+  return (
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 200 200"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-12 h-12 shrink-0"
+    >
+      <rect width="200" height="200" rx="25" fill="#005741" />
+      <path
+        d="M125.965 122.104V135.61H70.2502C71.0188 126.721 73.887 120.467 83.8059 111.673L125.965 75.7064V107.268H141.142V49.2021H54.8456V78.1457H70.0219V64.3785H115.868L73.9149 100.183L73.8145 100.278C56.2323 115.844 54.8345 128.409 54.8345 143.212V150.797H141.147V122.115H125.971L125.965 122.104Z"
+        fill="white"
+      />
+    </svg>
+  );
+};
+
 export const LocalnetSvg = () => {
   return (
     <svg
