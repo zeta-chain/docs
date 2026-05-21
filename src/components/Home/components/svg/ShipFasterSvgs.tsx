@@ -1,25 +1,3 @@
-export const CliSvg = () => {
-  return (
-    <svg
-      width="48"
-      height="49"
-      viewBox="0 0 48 49"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-12 h-12 shrink-0"
-    >
-      <rect y="0.5" width="48.0002" height="48.0002" rx="6.00003" fill="#006579" />
-      <rect x="8.00012" y="8.5" width="32" height="32" rx="4.92308" fill="#00BC8D" />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M17.6801 17.8359L23.4377 23.5935C23.9153 24.0712 23.9153 24.8456 23.4377 25.3233L17.6801 31.0808L15.9503 29.351L20.843 24.4584L15.9503 19.5657L17.6801 17.8359ZM24.6114 28.1279H31.9503V30.5742H24.6114V28.1279Z"
-        fill="#B0FF61"
-      />
-    </svg>
-  );
-};
-
 export const UniversalKitSvg = () => {
   return (
     <svg

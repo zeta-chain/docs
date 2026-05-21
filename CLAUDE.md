@@ -70,7 +70,7 @@ When adding third-party services or partners to the docs, add them to:
 
 ```bash
 yarn dev          # Dev server on port 3001
-yarn build        # Production build (requires CONTENTFUL_GRAPHQL_URL env var for codegen)
+yarn build        # Production build
 yarn typecheck    # TypeScript check
 yarn lint         # ESLint
 ```
