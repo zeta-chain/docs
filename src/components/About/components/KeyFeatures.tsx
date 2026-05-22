@@ -14,7 +14,7 @@ const keyFeatures: KeyFeature[] = [
   {
     title: "Hyper-connected nodes",
     description:
-      "ZetaChain's nodes monitor transactions on every connected chain. Through ZetaChain's TSS architecture, the network can sign and verify transactions on every connected chain. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless Chain Abstraction Framework for developers to build novel and powerful universal applications.",
+      "ZetaChain's nodes monitor, sign, and verify transactions on every connected chain. By being able to read and write to connected chains in a secure, decentralized manner, these hyper-connected nodes provide a seamless Chain Abstraction Framework for developers to build novel and powerful universal applications.",
   },
   {
     title: "Interoperable smart contracts",

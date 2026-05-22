@@ -24,9 +24,8 @@ processing fees, proportional to their bonded staking coins.
 ## Externally Managed Vault/Assets
 
 The ZetaChain validator set can manage vaults on connected chains just as an
-account on that chain can, through its TSS architecture. This functionality
-allows even non-smart-contract chains like Bitcoin to be managed by contracts on
-ZetaChain.
+account on that chain can. This functionality allows even non-smart-contract
+chains like Bitcoin to be managed by contracts on ZetaChain.
 
 ## Hyper-Connected Node
 
@@ -43,25 +42,6 @@ Blanket term for apps or concepts that span multiple blockchains.
 When a destination transaction fails (insufficient funds sent, unforeseen
 changes on the destination, etc.) ZetaChain is capable of reverting the
 transaction and returning funds to the sender on the source chain.
-
-## TSS
-
-Threshold Signature Scheme. To avoid any single point of failure, ZetaChain uses
-state-of-the-art multi-party threshold signature scheme (TSS). To the outside
-world, the ZetaChain validators collectively possess a single ECDSA/EdDSA
-private key, public key, and address, and the signature signed by ZetaChain can
-be verified efficiently and natively by standard ECDSA/EdDSA verification
-procedure by the connected blockchains. Internally, the private key is generated
-without a dealer, and the private key is distributed in all the validators. At
-no time is a single entity or a minority of validators able to piece together
-the private key and sign messages on behalf of the whole network. The key
-generation and signing procedures are done by Multi-Party Computation (MPC)
-which reveal no secret of any participating node. Because ZetaChain can hold a
-TSS key and address, ZetaChain can support smart contracts that can manage
-native vaults/pools on connected chains including Bitcoin. This effectively adds
-smart contract capabilities to the Bitcoin network, and potentially other
-non-smart contract blockchains. The TSS employed by ZetaChain gives the
-performance and convenience of hot wallet with cold wallet level security.
 
 ## ZRC-20
 

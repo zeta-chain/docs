@@ -42,7 +42,7 @@ const pillars = [
       {
         title: "Challenges",
         description:
-          "Cryptography (TSS for signature schemes other than ECDSA secp256k1 curve), heterogeneous blockchain model/parameters/interaction methods, potential problems with source of information that may not be efficiently/robustly available from standard full-node, speed and cost of considerations in relation to spam deterrence.",
+          "Cryptography, heterogeneous blockchain model/parameters/interaction methods, potential problems with source of information that may not be efficiently/robustly available from standard full-node, speed and cost of considerations in relation to spam deterrence.",
       },
     ],
   },
@@ -91,7 +91,6 @@ const pillars = [
           <StyledUnorderedList>
             <li>Shift from monitoring of inbound and outbound transactions to a proof-verification-based model.</li>
             <li>Reduce reliance on the assumption of 2/3 honest validators for external events.</li>
-            <li>Improve TSS on-chain monitoring and incentives.</li>
             <li>Gradually increase decentralization and reduce central point of failures/control.</li>
             <li>
               Improve performance and reduce cost by utilizing zero-knowledge proof for validating external
@@ -187,7 +186,6 @@ const pillars = [
               Cosmos EVM: Enhance compatibility with Ethereum tooling, efficiency, and interoperability with EVM and
               Cosmos modules.
             </li>
-            <li>TSS-lib & Go-TSS: Improve security, performance, and support for new signature schemes and chains.</li>
           </StyledUnorderedList>
         ),
       },
