@@ -14,12 +14,6 @@
   "stake": {
     "title": "委托 / 质押 ZETA"
   },
-  "enroll-zeta-xp": {
-    "title": "报名 Zeta XP"
-  },
-  "earn-zeta-xp": {
-    "title": "赚取 Zeta XP"
-  },
   "send": {
     "title": "发送资产"
   }
