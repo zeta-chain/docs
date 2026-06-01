@@ -1,5 +1,5 @@
 import { DeterministicIconArticle } from "../shared";
-import { BuildWithTheCliSvg, BuildWithUiSvg } from "./components/svg/HomeHeroSvgs";
+import { BuildWithTheCliSvg } from "./components/svg/HomeHeroSvgs";
 import { LocalnetSvg, ToolkitSvg, ZetaChainSvg } from "./components/svg/ShipFasterSvgs";
 
 export type NarrowCardLink = {
@@ -11,16 +11,10 @@ export type NarrowCardLink = {
 
 export const HERO_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "https://dashboard.anuma.ai/login",
+    href: "https://docs.anuma.ai/",
     svg: <BuildWithTheCliSvg />,
     title: "Build on Anuma",
     description: "Create your first AI app",
-  },
-  {
-    href: "https://docs.anuma.ai",
-    svg: <BuildWithUiSvg />,
-    title: "Anuma Docs",
-    description: "Learn the platform",
   },
 ];
 
