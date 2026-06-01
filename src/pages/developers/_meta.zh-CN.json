@@ -1,23 +1,20 @@
 {
   "overview": {
-    "title": "开发构建"
+    "title": "架构"
   },
   "evm": {
-    "title": "全链 EVM"
+    "title": "ZetaChain EVM"
   },
-  "standards": {
-    "title": "全链资产"
+  "zeta": {
+    "title": "ZETA"
   },
-  "chains": {
-    "title": "已连接链"
+  "erc20": {
+    "title": "ERC-20"
   },
-  "tutorials": {
-    "title": "教程"
+  "addresses": {
+    "title": "账户地址"
   },
-  "protocol": {
-    "title": "协议合约"
-  },
-  "architecture": {
-    "title": "协议架构"
+  "rewards": {
+    "title": "质押奖励"
   }
 }

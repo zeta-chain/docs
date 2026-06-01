@@ -1,25 +1,3 @@
-export const CliSvg = () => {
-  return (
-    <svg
-      width="48"
-      height="49"
-      viewBox="0 0 48 49"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-12 h-12 shrink-0"
-    >
-      <rect y="0.5" width="48.0002" height="48.0002" rx="6.00003" fill="#006579" />
-      <rect x="8.00012" y="8.5" width="32" height="32" rx="4.92308" fill="#00BC8D" />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M17.6801 17.8359L23.4377 23.5935C23.9153 24.0712 23.9153 24.8456 23.4377 25.3233L17.6801 31.0808L15.9503 29.351L20.843 24.4584L15.9503 19.5657L17.6801 17.8359ZM24.6114 28.1279H31.9503V30.5742H24.6114V28.1279Z"
-        fill="#B0FF61"
-      />
-    </svg>
-  );
-};
-
 export const UniversalKitSvg = () => {
   return (
     <svg
@@ -97,6 +75,25 @@ export const ToolkitSvg = () => {
         d="M19.4825 15.9766V12.4244C19.4825 11.7477 20.0311 11.1992 20.7077 11.1992H27.2929C27.9695 11.1992 28.518 11.7477 28.518 12.4244V15.9766"
         stroke="#FF5AF1"
         strokeWidth="1.88239"
+      />
+    </svg>
+  );
+};
+
+export const ZetaChainSvg = () => {
+  return (
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 200 200"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-12 h-12 shrink-0"
+    >
+      <rect width="200" height="200" rx="25" fill="#005741" />
+      <path
+        d="M125.965 122.104V135.61H70.2502C71.0188 126.721 73.887 120.467 83.8059 111.673L125.965 75.7064V107.268H141.142V49.2021H54.8456V78.1457H70.0219V64.3785H115.868L73.9149 100.183L73.8145 100.278C56.2323 115.844 54.8345 128.409 54.8345 143.212V150.797H141.147V122.115H125.971L125.965 122.104Z"
+        fill="white"
       />
     </svg>
   );

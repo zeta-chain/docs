@@ -3,27 +3,20 @@
     "title": "Tools",
     "description": "Useful articles to help you get up and running, work with the network, APIs or simply learn key terms."
   },
-  "network": {
-    "title": "RPC & Contracts",
-    "description": "RPC/API endpoints and protocol contract addresses"
+  "details": {
+    "title": "Network Details",
+    "description": "ZetaChain testnet and mainnet details.",
+    "readTime": "5 min"
   },
-  "cli": {
-    "title": "CLI",
-    "description": "Command line interface for building and interacting with universal apps"
+  "api": {
+    "title": "RPC/API Endpoints",
+    "description": "API endpoints that can be used to interact with ZetaChain.",
+    "readTime": "5 min"
   },
-  "localnet": {
-    "title": "Localnet",
-    "readTime": "30 min",
-    "description": "Build and interact with your universal app in a local dev environment"
-  },
-  "toolkit": {
-    "title": "Toolkit",
-    "readTime": "30 min",
-    "description": "TypeScript SDK for building universal apps"
-  },
-  "registry": {
-    "title": "Contract Registry",
-    "description": "Registry of protocol contracts deployed on ZetaChain and connected chains"
+  "openapi": {
+    "title": "ZetaChain HTTP API",
+    "description": "Swagger documentation for the API of ZetaChain.",
+    "readTime": "15 min"
   },
   "faucet": {
     "title": "Faucet",
@@ -34,10 +27,6 @@
   "explorers": {
     "title": "Explorers",
     "description": "Block explorers for ZetaChain mainnet and testnet"
-  },
-  "mcp": {
-    "title": "MCP",
-    "description": "Add ZetaChain MCP server to Cursor or Claude Code"
   },
   "tools": {
     "title": "More Tools",

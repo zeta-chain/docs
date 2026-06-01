@@ -2,29 +2,20 @@
   "overview": {
     "title": "工具"
   },
-  "network": {
-    "title": "RPC 与合约"
+  "details": {
+    "title": "网络详情"
   },
-  "cli": {
-    "title": "CLI"
+  "api": {
+    "title": "RPC / API 端点"
   },
-  "localnet": {
-    "title": "本地网络"
-  },
-  "toolkit": {
-    "title": "工具包"
-  },
-  "registry": {
-    "title": "合约注册表"
+  "openapi": {
+    "title": "ZetaChain HTTP API"
   },
   "faucet": {
     "title": "水龙头"
   },
   "explorers": {
     "title": "区块浏览器"
-  },
-  "mcp": {
-    "title": "MCP"
   },
   "tools": {
     "title": "更多工具"

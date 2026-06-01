@@ -1,0 +1,69 @@
+---
+title: "ZetaChain EVM"
+description: "ZetaChain's EVM-compatible execution environment built on Cosmos SDK and CometBFT."
+---
+
+ZetaChain is a Proof of Stake Layer 1 blockchain that runs a complete Ethereum
+Virtual Machine. Smart contracts compile and deploy with Solidity and the
+standard EVM toolchain — Hardhat, Foundry, Remix, ethers, viem, MetaMask — with
+no modifications. The chain is built on the
+[Cosmos SDK](https://docs.cosmos.network/), the
+[CometBFT](https://docs.cometbft.com/) consensus engine, and the
+[Cosmos EVM](https://evm.cosmos.network/) module.
+
+## Architecture
+
+The Cosmos SDK provides the modular blockchain framework, including staking,
+banking, governance, and other core modules. CometBFT handles consensus,
+producing blocks with deterministic finality. The EVM is integrated as a Cosmos
+SDK module that exposes the Ethereum execution environment natively. The result
+is a sovereign Layer 1 with its own validator set, fee market, and governance,
+running Ethereum-compatible smart contract execution.
+
+## EVM compatibility
+
+ZetaChain implements the full Ethereum bytecode and the complete JSON-RPC API.
+Standard transaction formats are supported: EIP-155 for chain ID replay
+protection, EIP-1559 for the dynamic base fee market, EIP-2930 for access
+lists, and EIP-7702 for code delegation on externally owned accounts. Layer 2
+features like blob transactions (EIP-4844) are not supported, as ZetaChain
+operates as an independent Layer 1 rather than a rollup.
+
+## Finality
+
+Ethereum finalizes blocks probabilistically across many confirmations.
+ZetaChain finalizes deterministically through CometBFT in a single block,
+typically under five seconds. There are no chain reorganizations: once a block
+is committed, it is final, so contracts and integrations do not need to
+account for reorg risk.
+
+## Accounts and addresses
+
+ZetaChain supports both bech32 Cosmos addresses (prefix `zeta`) and hex EVM
+addresses. The two formats are derived from the same public key and represent
+the same account. See [Account Addresses](/developers/addresses) for details
+and conversion utilities.
+
+## Fees
+
+ZetaChain uses the EIP-1559 fee model with a dynamic base fee. From an
+application developer's perspective, fees behave identically to Ethereum. The
+native gas token is [ZETA](/developers/zeta); the on-chain denom is `azeta`
+(1 ZETA = 10¹⁸ azeta).
+
+## Tooling
+
+Existing Ethereum tooling works without modification — MetaMask and other EVM
+wallets, Hardhat, Foundry, Remix, ethers.js, viem, web3.js, and the standard
+ERC-20, ERC-721, and ERC-1155 contracts. Point any EVM client at a ZetaChain
+[RPC endpoint](/reference/api) to read state, send transactions, and
+interact with deployed contracts. Chain IDs, public RPCs, and block explorers
+are documented in [Network Details](/reference/details).
+
+## Cosmos features through precompiles
+
+Cosmos SDK functionality such as staking and governance is exposed to the EVM
+through precompiled contracts at fixed addresses, so Solidity code can call
+into these features directly. EVM wallets can also sign Cosmos SDK
+transactions using `eth_signTypedData` (EIP-712), which lets users delegate
+stake or vote on proposals without a separate Cosmos wallet.

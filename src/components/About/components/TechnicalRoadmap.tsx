@@ -11,14 +11,13 @@ export const TechnicalRoadmap: React.FC = () => {
             <p className="mb-5">
               ZetaChain’s mission is to serve as a platform for universal access, simplicity, and utility across any
               blockchains. ZetaChain’s initial mainnet launch contains all core functionality contemplated within
-              ZetaChain’s proposed features, including its EVM layer, omnichain smart contracts, and cross-chain
-              messaging.
+              ZetaChain’s proposed features, including its EVM layer and interoperable smart contracts.
             </p>
 
             <p>
-              ZetaChain is a Proof-of-Stake blockchain designed for interoperability, supporting the creation of
-              omnichain dApps that can span any chain, including the Bitcoin blockchain, where all transaction,
-              incentives, data security, and cross-chain interaction requires ZETA tokens to function.
+              ZetaChain is a Proof-of-Stake blockchain designed for interoperability, supporting the creation of dApps
+              that can span any chain, including the Bitcoin blockchain, where all transactions, incentives, data
+              security, and interoperability rely on ZETA tokens to function.
             </p>
           </div>
 

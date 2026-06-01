@@ -10,9 +10,9 @@ export const WhatIsZetaChain: React.FC = () => {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-10 gap-5 md:gap-8 text-base leading-[160%] font-normal text-grey-400 dark:text-grey-300">
           <p className="col-span-10 md:col-span-5">
-            ZetaChain is the foundational, public blockchain that enables omnichain smart contracts and messaging
-            between any blockchain. It solves the problems of “cross-chain” and “multi-chain” and aims to open the
-            crypto and global financial ecosystem to anyone.
+            ZetaChain is the foundational, public blockchain that enables interoperable smart contracts and messaging
+            between any blockchain. It solves the problems of fragmented chains and aims to open the crypto and global
+            financial ecosystem to anyone.
           </p>
 
           <p className="col-span-10 md:col-span-5">

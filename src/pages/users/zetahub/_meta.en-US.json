@@ -19,14 +19,6 @@
     "title": "Delegate/Stake ZETA",
     "description": "Explore ZetaChain validators and delegate ZETA."
   },
-  "enroll-zeta-xp": {
-    "title": "Enroll in Zeta XP",
-    "description": "Enroll in the XP program to earn experience points by engaging with the ZetaChain ecosystem, level up through various tiers, and unlock rewards and perks for consistent participation."
-  },
-  "earn-zeta-xp": {
-    "title": "Earn Zeta XP",
-    "description": "Participate in activities to earn XP, including staking, trading, and engaging with apps across DeFi, Gaming, Social, NFTs, and more."
-  },
   "send": {
     "title": "Send Assets",
     "description": "The Send page allows you to move your assets in and out of the ZetaChain network."

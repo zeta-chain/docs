@@ -1,30 +1,26 @@
 {
   "overview": {
-    "title": "Build",
-    "description": "Begin your journey on ZetaChain, the decentralized blockchain and smart contract platform designed for omnichain interoperability."
+    "title": "Architecture",
+    "description": "Take an in-depth look into the inner workings and technical architecture of ZetaChain."
   },
   "evm": {
-    "title": "Universal EVM",
-    "description": "EVM enhanced with omnichain interoperability features, enabling the development of robust universal apps."
+    "title": "ZetaChain EVM",
+    "description": "ZetaChain's EVM-compatible execution environment built on Cosmos SDK and CometBFT."
   },
-  "standards": {
-    "title": "Universal Assets",
-    "description": "Learn about the different contract standards available on ZetaChain and how to use them."
+  "zeta": {
+    "title": "ZETA",
+    "description": "ZETA is the native staking, gas and governance token of ZetaChain"
   },
-  "chains": {
-    "title": "Connected Chains",
-    "description": "Use Gateway to make calls to and from universal apps, deposit and withdraw tokens."
+  "erc20": {
+    "title": "ERC-20",
+    "description": "ZetaChain's EVM supports standard ERC-20 tokens"
   },
-  "tutorials": {
-    "title": "Tutorials",
-    "description": "Step-by-step guides to help you master building on ZetaChain."
+  "addresses": {
+    "title": "Account Addresses",
+    "description": "Learn about types of account address, how to use and convert between them"
   },
-  "protocol": {
-    "title": "Protocol Contracts",
-    "description": "Documentation for the protocol contracts on ZetaChain and connected chains."
-  },
-  "architecture": {
-    "title": "Architecture",
-    "description": "Take an in-depth look into the inner workings and technical architecture of the ZetaChain protocol."
+  "rewards": {
+    "title": "Staking Rewards",
+    "description": "How staking rewards are calculated"
   }
 }

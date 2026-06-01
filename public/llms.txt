@@ -8,24 +8,18 @@
 - [Why Build on ZetaChain?](https://www.zetachain.com/docs/start/build/): Chain orchestration, cross-chain native token transfers, gasless execution environment.
 - [Universal Apps](https://www.zetachain.com/docs/start/app/): Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more.
 
-## Developers
+## Architecture
 
-- [Universal EVM](https://www.zetachain.com/docs/developers/evm/evm/): Smart contract platform with built-in interoperability features, enabling the development of universal apps.
-- [Gateway](https://www.zetachain.com/docs/developers/evm/gateway/): A single point of entry for interacting with universal apps.
-- [Gas Fees](https://www.zetachain.com/docs/developers/evm/gas/): ZRC-20 withdraw fees and message passing fees.
-- [Cross-Chain Transactions](https://www.zetachain.com/docs/developers/evm/cctx/): How cross-chain transactions work on ZetaChain.
-- [ZRC-20 Tokens](https://www.zetachain.com/docs/developers/evm/zrc20/): Native gas and supported ERC-20 tokens from connected chains represented as ZRC-20 on ZetaChain.
-- [Universal Assets](https://www.zetachain.com/docs/developers/standards/overview/): Standards that enable cross-chain interoperability for NFTs and fungible tokens.
-- [Connected Chains](https://www.zetachain.com/docs/developers/chains/list/): Blockchains connected to ZetaChain including Ethereum, BNB, Polygon, Base, Solana, Bitcoin, TON, and Sui.
-- [Tutorials](https://www.zetachain.com/docs/developers/tutorials/intro/): Step-by-step guides to help you master building on ZetaChain.
-- [Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/evm/): Documentation for the protocol contracts on ZetaChain and connected chains.
-- [Architecture](https://www.zetachain.com/docs/developers/architecture/overview/): In-depth look at the technical architecture of the ZetaChain protocol.
+- [ZetaChain EVM](https://www.zetachain.com/docs/developers/evm/): ZetaChain's EVM-compatible execution environment built on Cosmos SDK and CometBFT.
+- [ZETA Token](https://www.zetachain.com/docs/developers/zeta/): ZETA is the native staking, gas and governance token of ZetaChain.
+- [ERC-20 Tokens](https://www.zetachain.com/docs/developers/erc20/): ZetaChain's EVM supports standard ERC-20 tokens.
+- [Account Addresses](https://www.zetachain.com/docs/developers/addresses/): Learn about types of account addresses, how to use and convert between them.
+- [Staking Rewards](https://www.zetachain.com/docs/developers/rewards/): How staking rewards are calculated.
 
 ## Tools & Reference
 
-- [Network Details](https://www.zetachain.com/docs/reference/network/details/): ZetaChain testnet and mainnet details.
-- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/network/api/): API endpoints for interacting with ZetaChain.
-- [Contract Addresses](https://www.zetachain.com/docs/reference/network/contracts/): Protocol contract addresses for ZetaChain.
+- [Network Details](https://www.zetachain.com/docs/reference/details/): ZetaChain testnet and mainnet details.
+- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/api/): API endpoints for interacting with ZetaChain.
 - [CLI](https://www.zetachain.com/docs/reference/cli/): Command line interface for building and interacting with universal apps.
 - [Localnet](https://www.zetachain.com/docs/reference/localnet/): Build and interact with your universal app in a local dev environment.
 - [Toolkit](https://www.zetachain.com/docs/reference/toolkit/): TypeScript SDK for building universal apps.

@@ -8,83 +8,21 @@
 - [Why Build on ZetaChain?](https://www.zetachain.com/docs/start/build/): Chain orchestration, cross-chain native token transfers, gasless execution environment.
 - [Universal Apps](https://www.zetachain.com/docs/start/app/): Apps that seamlessly interact with multiple blockchains, including Ethereum, Bitcoin, Solana, and more.
 
-## Developers — Universal EVM
-
-The Universal EVM is ZetaChain's smart contract platform with built-in interoperability features.
-
-- [Universal EVM Overview](https://www.zetachain.com/docs/developers/evm/evm/): Smart contract platform with built-in interoperability features, enabling the development of universal apps.
-- [Gateway](https://www.zetachain.com/docs/developers/evm/gateway/): A single point of entry for interacting with universal apps. The Gateway contract enables deposits, withdrawals, and cross-chain calls.
-- [Gas Fees](https://www.zetachain.com/docs/developers/evm/gas/): Learn about ZRC-20 withdraw fees and message passing fees.
-- [Cross-Chain Transactions](https://www.zetachain.com/docs/developers/evm/cctx/): How cross-chain transactions are processed on ZetaChain.
-- [ZETA Token](https://www.zetachain.com/docs/developers/evm/zeta/): ZETA is the native staking, gas and governance token of ZetaChain.
-- [ZRC-20 Tokens](https://www.zetachain.com/docs/developers/evm/zrc20/): Native gas and supported ERC-20 tokens from connected chains are represented as ZRC-20 on ZetaChain.
-- [ERC-20 Tokens](https://www.zetachain.com/docs/developers/evm/erc20/): ZetaChain's universal EVM supports standard ERC-20 tokens.
-- [Account Addresses](https://www.zetachain.com/docs/developers/evm/addresses/): Learn about types of account addresses, how to use and convert between EVM and Cosmos (bech32) formats.
-- [Liquidity Throughput](https://www.zetachain.com/docs/developers/evm/throughput/): Liquidity caps on tokens and rate limiting.
-
-## Developers — Universal Assets
-
-Standards that enable cross-chain interoperability for NFTs and fungible tokens.
-
-- [Universal Assets Overview](https://www.zetachain.com/docs/developers/standards/overview/): A set of standards that enable cross-chain interoperability for NFTs and fungible tokens.
-- [Universal NFT](https://www.zetachain.com/docs/developers/standards/nft/): The Universal NFT standard enables non-fungible tokens (ERC-721 NFT) to be minted on any chain and seamlessly transferred between connected chains.
-- [Universal Token](https://www.zetachain.com/docs/developers/standards/token/): The Universal Token standard enables ERC-20 fungible tokens to be minted on any chain and seamlessly transferred between connected chains.
-
-## Developers — Connected Chains
-
-Use Gateway to make calls to and from universal apps, deposit and withdraw tokens.
-
-- [List of Connected Chains](https://www.zetachain.com/docs/developers/chains/list/): Blockchains connected to ZetaChain for cross-chain transactions, including Ethereum, BNB, Polygon, Base, Solana, Bitcoin, TON, and Sui.
-- [Functionality Matrix](https://www.zetachain.com/docs/developers/chains/functionality/): State of ZetaChain functionality across connected chains.
-- [ZetaChain](https://www.zetachain.com/docs/developers/chains/zetachain/): Make calls from universal apps and withdraw tokens to connected chains.
-- [EVM Blockchains](https://www.zetachain.com/docs/developers/chains/evm/): Make calls to universal apps and deposit tokens from Ethereum, BNB, Polygon, Base and more.
-- [Solana](https://www.zetachain.com/docs/developers/chains/solana/): Make calls to universal apps and deposit from Solana.
-- [TON](https://www.zetachain.com/docs/developers/chains/ton/): Make calls to universal apps and deposit from TON.
-- [Sui](https://www.zetachain.com/docs/developers/chains/sui/): Make calls to universal apps and deposit tokens from Sui.
-- [Bitcoin](https://www.zetachain.com/docs/developers/chains/bitcoin/): Make calls to universal apps and deposit BTC from Bitcoin.
-
-## Developers — Tutorials
-
-Step-by-step guides to help you master building on ZetaChain.
-
-- [Getting Started](https://www.zetachain.com/docs/developers/tutorials/intro/): Learn more about universal apps and how to get started.
-- [First Universal Contract](https://www.zetachain.com/docs/developers/tutorials/hello/): Build your first universal contract.
-- [Build a Web App](https://www.zetachain.com/docs/developers/tutorials/frontend/): Create a web app to interact with your universal contract: connect a wallet, send cross-chain calls, and track execution.
-- [Swap Tutorial](https://www.zetachain.com/docs/developers/tutorials/swap/): Implement a universal swap app compatible with chains like Ethereum, Solana and Bitcoin.
-- [Messaging Tutorial](https://www.zetachain.com/docs/developers/tutorials/messaging/): Learn how to make cross-chain calls between contracts on EVM chains.
-- [Calls to/from EVM](https://www.zetachain.com/docs/developers/tutorials/call/): Learn the fundamentals of message passing and cross-chain contract calls.
-- [Calls to/from Solana](https://www.zetachain.com/docs/developers/tutorials/solana/): Deposit assets and call universal apps from Solana, make outgoing calls to Solana.
-- [Calls from Sui](https://www.zetachain.com/docs/developers/tutorials/sui/): Deposit assets and call universal apps from Sui.
-- [Calls to Sui](https://www.zetachain.com/docs/developers/tutorials/sui-withdraw-and-call/): Withdraw assets and call contracts on Sui.
-- [Staking Tutorial](https://www.zetachain.com/docs/developers/tutorials/staking/): Delegate and undelegate ZETA from EVM.
-
-## Developers — Protocol Contracts
-
-Documentation for the protocol contracts on ZetaChain and connected chains.
-
-- [ZetaChain and EVM Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/evm/): Protocol contracts deployed on ZetaChain and EVM chains.
-- [Solana Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/solana/): Protocol contracts deployed on Solana.
-- [TON Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/ton/): Protocol contracts deployed on TON.
-- [Sui Protocol Contracts](https://www.zetachain.com/docs/developers/protocol/sui/): Protocol contracts deployed on Sui.
-
-## Developers — Architecture
+## Architecture
 
 In-depth look at the technical architecture of the ZetaChain protocol.
 
-- [Architecture Overview](https://www.zetachain.com/docs/developers/architecture/overview/): Overview of the architecture of ZetaChain.
-- [Observer-Signer Validators](https://www.zetachain.com/docs/developers/architecture/observers/): List of currently active observer-signer validators.
-- [Privileged Actions](https://www.zetachain.com/docs/developers/architecture/privileged/): Administrative actions that can only be executed by dedicated groups.
-- [Staking Rewards](https://www.zetachain.com/docs/developers/architecture/rewards/): How staking rewards are calculated.
-- [Whitelisting ERC-20](https://www.zetachain.com/docs/developers/architecture/whitelisting/): How to whitelist an ERC-20 as a supported ZRC-20.
-- [Cosmos SDK Modules](https://www.zetachain.com/docs/developers/architecture/modules/): ZetaChain's Cosmos SDK modules.
-- [ZetaChain Node CLI](https://www.zetachain.com/docs/developers/architecture/zetacored/): Command-line interface of the ZetaChain node binary.
+- [ZetaChain EVM](https://www.zetachain.com/docs/developers/evm/): ZetaChain's EVM-compatible execution environment built on Cosmos SDK and CometBFT.
+- [ZETA Token](https://www.zetachain.com/docs/developers/zeta/): ZETA is the native staking, gas and governance token of ZetaChain.
+- [ERC-20 Tokens](https://www.zetachain.com/docs/developers/erc20/): ZetaChain's EVM supports standard ERC-20 tokens.
+- [Account Addresses](https://www.zetachain.com/docs/developers/addresses/): Learn about types of account addresses, how to use and convert between them.
+- [Staking Rewards](https://www.zetachain.com/docs/developers/rewards/): How staking rewards are calculated.
 
 ## Tools & Reference — Network
 
-- [Network Details](https://www.zetachain.com/docs/reference/network/details/): ZetaChain testnet and mainnet details including chain IDs, network names, and currency info.
-- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/network/api/): API endpoints that can be used to interact with ZetaChain, including EVM RPC, Cosmos REST, and Tendermint RPC.
-- [Contract Addresses](https://www.zetachain.com/docs/reference/network/contracts/): A list of protocol contract addresses for ZetaChain mainnet and testnet.
-- [ZetaChain HTTP API](https://www.zetachain.com/docs/reference/network/openapi/): Swagger documentation for the API of ZetaChain.
+- [Network Details](https://www.zetachain.com/docs/reference/details/): ZetaChain testnet and mainnet details including chain IDs, network names, and currency info.
+- [RPC/API Endpoints](https://www.zetachain.com/docs/reference/api/): API endpoints that can be used to interact with ZetaChain, including EVM RPC, Cosmos REST, and Tendermint RPC.
+- [ZetaChain HTTP API](https://www.zetachain.com/docs/reference/openapi/): Swagger documentation for the API of ZetaChain.
 
 ## Tools & Reference — Developer Tools
 
@@ -161,7 +99,6 @@ Become an important part of the ZetaChain network by running a node.
 - [Wallets](https://www.zetachain.com/docs/about/services/wallets/): Supported EVM, Bitcoin and Cosmos wallets.
 - [The Graph](https://www.zetachain.com/docs/about/services/the-graph/): Subgraphs and decentralized indexing protocol.
 - [Alchemy](https://www.zetachain.com/docs/about/services/alchemy/): Node API and subgraphs.
-- [Goldsky](https://www.zetachain.com/docs/about/services/goldsky/): Subgraph indexer.
 - [Pyth](https://www.zetachain.com/docs/about/services/pyth/): Price and VRF oracle.
 - [Particle Network](https://www.zetachain.com/docs/about/services/particle/): Account abstraction.
 - [Envio](https://www.zetachain.com/docs/about/services/envio/): Real-time data indexer.
