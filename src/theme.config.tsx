@@ -95,6 +95,17 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   chat: {
     icon: null,
   },
+  // Sitewide notice for the ZETA move to Solana. Change `key` to show a new
+  // message to readers who dismissed this one.
+  banner: {
+    key: "zeta-moves-to-solana-2026-12-09",
+    text: (
+      <a href="https://hub.zetachain.com/migrate" target="_blank" rel="noopener noreferrer">
+        ZETA moves to Solana on December 9, 2026. See what holders need to do →
+      </a>
+    ),
+  },
+
   // Configure App Head component
   head: <AppHead />,
 
