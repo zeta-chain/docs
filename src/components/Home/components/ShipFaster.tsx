@@ -7,7 +7,7 @@ export const ShipFaster = () => {
       <div className="flex flex-col lg:flex-row gap-8 px-5 md:px-[72px]">
         <div className="basis-full lg:basis-[448px]">
           <p className="text-[16px] leading-[130%] font-normal text-[#00A5C6] text-center lg:text-left mb-2">
-            The chain underneath
+            The network
           </p>
 
           <h2 className="text-[32px] md:text-[36px] leading-[110%] tracking-[-0.64px] md:tracking-[-0.72px] font-medium text-grey-900 dark:text-grey-50 mb-6 text-center lg:text-left">
@@ -19,8 +19,7 @@ export const ShipFaster = () => {
           </div>
 
           <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300 text-center lg:text-left max-w-[448px] mx-auto lg:mx-0">
-            Anuma runs on ZetaChain, the user-owned coordination layer for AI. Dig into the protocol, run a validator,
-            or learn how it all fits together.
+            Dig into how the ZetaChain network works, run a validator, or connect to it over RPC and API endpoints.
           </p>
         </div>
 

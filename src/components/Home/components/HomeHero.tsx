@@ -5,12 +5,21 @@ export const HomeHero: React.FC = () => {
   return (
     <div className="flex flex-col justify-center mt-6 md:mt-0 px-5 md:px-[72px]">
       <h1 className="text-[48px] md:text-[72px] leading-[110%] md:leading-[100%] font-medium tracking-[-0.96px] md:tracking-[-1.44px] text-grey-900 dark:text-grey-50 text-center mb-6">
-        The Private Memory Layer for{" "}
-        <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline-block">AI</span>
+        ZetaChain <span className="text-[#00A87D] dark:text-[#B0FF61] block md:inline-block">Docs</span>
       </h1>
 
       <p className="text-[16px] leading-[160%] font-normal text-grey-400 dark:text-grey-300 text-center max-w-[688px] mx-auto mb-14 md:mb-[72px]">
-        One private memory across every AI you use. Build with it on Anuma, the platform powered by ZetaChain.
+        Guides and reference for the ZetaChain network and the ZETA token: wallets, staking, explorers and network
+        details. Looking for private AI? Try{" "}
+        <a
+          href="https://www.zetachain.com/zetalabs"
+          className="text-[#00A5C6] dark:text-[#B0FF61] hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ZetaLabs
+        </a>
+        .
       </p>
 
       <div className="flex flex-col md:flex-row md:justify-center gap-4 md:gap-6 border-b border-grey-200 dark:border-grey-600 pb-16 md:pb-20">

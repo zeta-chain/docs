@@ -11,10 +11,22 @@ export type NarrowCardLink = {
 
 export const HERO_CARD_LINKS: NarrowCardLink[] = [
   {
-    href: "https://docs.anuma.ai/",
+    href: "/users/overview/",
     svg: <BuildWithTheCliSvg />,
-    title: "Build on Anuma",
-    description: "Create your first AI app",
+    title: "Use ZetaHub",
+    description: "Wallets, staking and sending ZETA",
+  },
+  {
+    href: "/about/token-utility/token/",
+    svg: <ZetaChainSvg />,
+    title: "ZETA Token",
+    description: "Supply, utility and distribution",
+  },
+  {
+    href: "/reference/explorers/",
+    svg: <ToolkitSvg />,
+    title: "Explorers",
+    description: "Look up transactions and accounts",
   },
 ];
 
@@ -86,6 +98,6 @@ export const SHIP_FASTER_CARD_LINKS: NarrowCardLink[] = [
     href: "/about/overview/",
     svg: <ZetaChainSvg />,
     title: "About ZetaChain",
-    description: "The protocol behind Anuma",
+    description: "How the network works",
   },
 ];
