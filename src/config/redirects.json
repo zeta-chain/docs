@@ -1,7 +1,7 @@
 {
   "/reference/network/contracts": "/reference/details",
   "/reference/cli": "/users/cli/setup",
-  "/developers/tokens/zrc20": "/developers/overview",
+  "/developers/tokens/zrc20": "/about/info/glossary",
   "/reference": "/reference/overview",
   "/developers/omnichain/zeta-evm": "/developers/evm",
   "/developers/architecture/overview": "/developers/overview",
@@ -21,7 +21,8 @@
   "/developers": "/developers/overview",
   "/developers/apps/intro": "/start/app",
   "/developers/evm/gateway": "/developers/evm",
-  "/developers/omnichain/zrc-20": "/developers/overview",
+  "/developers/omnichain/zrc-20": "/about/info/glossary",
+  "/developers/evm/zrc20": "/about/info/glossary",
   "/about": "/about/overview",
   "/about/services": "/about/services/index",
   "/users/cli/governance": "/users/cli/governance/index"

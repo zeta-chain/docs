@@ -2,7 +2,6 @@ import { NextSeo } from "next-seo";
 
 import { HomeHero } from "./HomeHero";
 import { ShipFaster } from "./ShipFaster";
-import { DividerSvg } from "./svg/DividerSvgs";
 
 export const HomePage: React.FC = () => {
   return (
@@ -16,7 +15,6 @@ export const HomePage: React.FC = () => {
 
       <HomeHero />
 
-      <DividerSvg />
       <ShipFaster />
     </>
   );
