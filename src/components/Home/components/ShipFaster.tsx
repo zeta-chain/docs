@@ -6,10 +6,6 @@ export const ShipFaster = () => {
     <div className="py-16 md:py-20 max-w-[1312px] mx-auto">
       <div className="flex flex-col lg:flex-row gap-8 px-5 md:px-[72px]">
         <div className="basis-full lg:basis-[448px]">
-          <p className="text-[16px] leading-[130%] font-normal text-[#00A5C6] text-center lg:text-left mb-2">
-            The network
-          </p>
-
           <h2 className="text-[32px] md:text-[36px] leading-[110%] tracking-[-0.64px] md:tracking-[-0.72px] font-medium text-grey-900 dark:text-grey-50 mb-6 text-center lg:text-left">
             ZetaChain network
           </h2>
