@@ -112,7 +112,8 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     const path = asPath
       .split(/[?#]/)[0]
       .replace(/\/+$/, "")
-      .replace(/(?:\/index)?\.(?:en-US|zh-CN)$/, "");
+      .replace(/\.(?:en-US|zh-CN)$/, "")
+      .replace(/^\/index$/, "");
     const localePrefix = locale && locale !== defaultLocale ? `/${locale}` : "";
     const url = `${defaultBaseUrl.replace(/\/+$/, "")}${localePrefix}${path}`;
     const description = frontMatter.description || nextSeoProps.description;

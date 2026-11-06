@@ -22,5 +22,7 @@
   "/developers/apps/intro": "/start/app",
   "/developers/evm/gateway": "/developers/evm",
   "/developers/omnichain/zrc-20": "/developers/overview",
-  "/about": "/about/overview"
+  "/about": "/about/overview",
+  "/about/services": "/about/services/index",
+  "/users/cli/governance": "/users/cli/governance/index"
 }

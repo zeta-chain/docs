@@ -7,9 +7,12 @@ const SITE_URL = (process.env.SITE_URL || "https://www.zetachain.com/docs").repl
  * www.zetachain.com serves docs without a trailing slash, so drop it.
  */
 const toServedPath = (path) => {
-  const match = path.replace(/\/+$/, "").match(/^(.*?)(?:\/index)?\.(en-US|zh-CN)$/);
+  const match = path.replace(/\/+$/, "").match(/^(.*?)\.(en-US|zh-CN)$/);
   if (!match) return path.replace(/\/+$/, "");
-  const [, base, locale] = match;
+  const [, file, locale] = match;
+  // Only the docs root is served without /index; folder index pages
+  // (e.g. /about/services/index) are served at /index.
+  const base = file === "/index" ? "" : file;
   return locale === "zh-CN" ? `/zh-CN${base}` : base;
 };
 
