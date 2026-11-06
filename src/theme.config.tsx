@@ -1,4 +1,5 @@
-import { DocsThemeConfig, LocaleSwitch } from "nextra-theme-docs";
+import { useRouter } from "next/router";
+import { DocsThemeConfig, LocaleSwitch, useConfig } from "nextra-theme-docs";
 
 import {
   AppHead,
@@ -98,10 +99,29 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   head: <AppHead />,
 
   // Configure next-seo props
+  // Built from the router so the server-rendered HTML (what search engines read)
+  // carries each page's own canonical URL. window.location isn't available on the
+  // server, which made every page canonicalize to the docs home.
   useNextSeoProps: () => {
+    const { asPath, locale, defaultLocale } = useRouter();
+    const { frontMatter } = useConfig();
+
+    // On the server, asPath is Nextra's internal file route (`/faq.en-US`,
+    // `/index.en-US`); strip the locale suffix. www.zetachain.com serves docs
+    // without a trailing slash, so drop that too.
+    const path = asPath
+      .split(/[?#]/)[0]
+      .replace(/\/+$/, "")
+      .replace(/(?:\/index)?\.(?:en-US|zh-CN)$/, "");
+    const localePrefix = locale && locale !== defaultLocale ? `/${locale}` : "";
+    const url = `${defaultBaseUrl.replace(/\/+$/, "")}${localePrefix}${path}`;
+    const description = frontMatter.description || nextSeoProps.description;
+
     return {
       ...nextSeoProps,
-      canonical: typeof window !== "undefined" ? window.location.href : defaultBaseUrl,
+      canonical: url,
+      description,
+      openGraph: { ...nextSeoProps.openGraph, url, description },
     };
   },
 

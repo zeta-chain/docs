@@ -73,6 +73,13 @@ const baseNextConfig = {
   },
 
   headers: async () => nextHeadersConfig,
+  // Old docs URLs that moved in earlier restructures and now 404, but still have
+  // backlinks (Ahrefs, Nov 2026). Paths are relative to basePath (/docs).
+  // skipTrailingSlashRedirect is on, so match the trailing-slash form too.
+  redirects: async () =>
+    Object.entries(require("./src/config/redirects.json")).flatMap(([source, destination]) =>
+      [source, `${source}/`].map((s) => ({ source: s, destination, statusCode: 301 }))
+    ),
   webpack(config) {
     // eslint-disable-next-line no-param-reassign
     config.resolve.fallback = {
