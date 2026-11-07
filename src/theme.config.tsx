@@ -101,7 +101,7 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
     key: "zeta-moves-to-solana-2026-12-09",
     text: (
       <a href="https://hub.zetachain.com/migrate" target="_blank" rel="noopener noreferrer">
-        ZETA moves to Solana on December 9, 2026. See what holders need to do →
+        ZETA moves to Solana as a native token, 1:1 under the same ticker, on Dec 9, 2026. See the migration portal →
       </a>
     ),
   },
