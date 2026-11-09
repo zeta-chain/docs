@@ -95,6 +95,23 @@ const nextraDocsThemeConfig: DocsThemeConfig = {
   chat: {
     icon: null,
   },
+  // Sitewide notice for the ZETA move to Solana. Change `key` to show a new
+  // message to readers who dismissed this one.
+  banner: {
+    key: "zeta-moves-to-solana-2026-12-09",
+    text: () => {
+      const { locale } = useRouter();
+
+      return (
+        <a href="https://hub.zetachain.com/migrate" target="_blank" rel="noopener noreferrer">
+          {locale === "zh-CN"
+            ? "ZETA 将于 2026 年 12 月 9 日成为 Solana 原生代币，按 1:1 兑换，代码不变。查看迁移门户 →"
+            : "ZETA moves to Solana as a native token, 1:1 under the same ticker, on Dec 9, 2026. See the migration portal →"}
+        </a>
+      );
+    },
+  },
+
   // Configure App Head component
   head: <AppHead />,
 

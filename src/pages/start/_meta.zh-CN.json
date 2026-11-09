@@ -3,7 +3,8 @@
     "title": "快速入门"
   },
   "zetachain": {
-    "title": "什么是 ZetaChain？"
+    "title": "什么是 ZetaChain？",
+    "description": "ZetaChain 构建私密 AI 聊天应用 ZetaLabs。ZETA 将于 2026 年 12 月 9 日迁移至 Solana；本页介绍 ZetaChain Layer 1 网络。"
   },
   "build": {
     "title": "在 ZetaChain 上构建"

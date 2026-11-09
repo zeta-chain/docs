@@ -4,7 +4,7 @@
   },
   "zetachain": {
     "title": "What is ZetaChain?",
-    "description": "ZetaChain is an EVM-compatible Layer 1 blockchain built on Cosmos SDK and CometBFT."
+    "description": "ZetaChain builds ZetaLabs, a private AI chat. ZETA moves to Solana on Dec 9, 2026; this page covers the ZetaChain Layer 1 network."
   },
   "build": {
     "title": "Build on ZetaChain",
