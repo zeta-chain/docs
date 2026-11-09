@@ -9,7 +9,7 @@ import { NarrowCardLinkContent } from "./NarrowCardLinkContent";
 export const NarrowCardLink: React.FC<NarrowCardLinkProps> = ({ href, svg, title, description }) => {
   const linkClassName = clsx(
     "w-full md:max-w-[296px] flex flex-row gap-4 items-center border border-grey-200 dark:border-grey-600 rounded-lg p-6",
-    "hover:shadow-light hover:border-white bg-white dark:bg-grey-900 dark:hover:bg-grey-800 dark:hover:border-grey-800 transition-all"
+    "hover:shadow-light hover:border-white bg-white dark:bg-grey-900 dark:hover:bg-grey-800 dark:hover:border-grey-800 transition-[box-shadow,border-color,background-color]"
   );
 
   if (isExternalLink(href)) {

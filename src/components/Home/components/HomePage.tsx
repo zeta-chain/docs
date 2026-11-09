@@ -1,27 +1,20 @@
 import { NextSeo } from "next-seo";
 
-import { BuildAnything } from "./BuildAnything";
-import { BuildForNow } from "./BuildForNow";
 import { HomeHero } from "./HomeHero";
 import { ShipFaster } from "./ShipFaster";
-import { DividerSvg } from "./svg/DividerSvgs";
 
 export const HomePage: React.FC = () => {
   return (
     <>
       <NextSeo
         title={"ZetaChain Documentation"}
-        description={"ZetaChain is a decentralized blockchain and smart contract platform built for interoperability."}
+        description={
+          "Guides and reference for the ZetaChain network and the ZETA token: wallets, staking, explorers, network details and running a node."
+        }
       />
 
       <HomeHero />
 
-      <BuildAnything />
-
-      <DividerSvg />
-      <BuildForNow />
-
-      <DividerSvg />
       <ShipFaster />
     </>
   );
