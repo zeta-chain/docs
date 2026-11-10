@@ -1,5 +1,5 @@
 export const globalLinks = {
-  discordLink: "https://discord.gg/zetachain",
+  discordLink: "https://discord.gg/zetalabs",
   twitterLink: "https://x.com/zetachain",
   telegramLink: "https://t.me/zetachainofficial",
   blogUrl: "https://www.zetachain.com/blog",
